@@ -2,7 +2,7 @@ import apiClient from './index'
 
 export const settingsApi = {
   async getSettings() {
-    const response = await apiClient.get('/v1/settings')
+    const response = await apiClient.get('/v1/settings/')
     return response.data
   },
 
@@ -82,16 +82,37 @@ export const settingsApi = {
   },
 
   async getPreferences() {
-    const settings = await this.getSettings()
-    const settingsData = settings.data?.list || settings.data || []
+    try {
+      const settings = await this.getSettings()
+      
+      // Handle different response formats
+      let settingsData = []
+      if (Array.isArray(settings)) {
+        settingsData = settings
+      } else if (settings?.data) {
+        if (Array.isArray(settings.data)) {
+          settingsData = settings.data
+        } else if (settings.data?.results && Array.isArray(settings.data.results)) {
+          settingsData = settings.data.results
+        } else if (settings.data?.list && Array.isArray(settings.data.list)) {
+          settingsData = settings.data.list
+        }
+      }
 
-    const promptConfigSetting = settingsData.find(
-      (s) => s.key === 'prompt_config'
-    )
+      const promptConfigSetting = settingsData.find(
+        (s) => s.key === 'prompt_config'
+      )
 
-    return {
-      language: promptConfigSetting?.value?.language || null,
-      scene: promptConfigSetting?.value?.scene || null
+      return {
+        language: promptConfigSetting?.value?.language || null,
+        scene: promptConfigSetting?.value?.scene || null
+      }
+    } catch (error) {
+      // Return empty preferences if settings endpoint fails
+      return {
+        language: null,
+        scene: null
+      }
     }
   },
 

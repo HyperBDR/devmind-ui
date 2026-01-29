@@ -16,7 +16,7 @@
         <div class="text-center">
           <div class="mb-4">
             <svg
-              class="w-16 h-16 mx-auto text-blue-500"
+              class="w-16 h-16 mx-auto text-primary-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -37,8 +37,8 @@
           </p>
           <div class="mt-6 flex justify-center gap-4">
             <router-link
-              to="/settings"
-              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              :to="{ name: 'SettingsNotifications' }"
+              class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
             >
               {{ t('common.settings') }}
             </router-link>
@@ -46,28 +46,6 @@
         </div>
       </div>
 
-      <!-- User Info Card -->
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          {{ t('dashboard.userInfo') }}
-        </h3>
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ t('dashboard.username') }}:</span>
-            <span class="text-sm font-medium text-gray-900">{{ userStore.userInfo?.username || '-' }}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ t('dashboard.email') }}:</span>
-            <span class="text-sm font-medium text-gray-900">{{ userStore.userInfo?.email || '-' }}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ t('dashboard.isStaff') }}:</span>
-            <span class="text-sm font-medium text-gray-900">
-              {{ userStore.userInfo?.is_staff ? t('common.yes') : t('common.no') }}
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
   </AppLayout>
 </template>
@@ -75,8 +53,6 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { useUserStore } from '@/store/user'
 
 const { t } = useI18n()
-const userStore = useUserStore()
 </script>

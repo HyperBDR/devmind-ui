@@ -55,9 +55,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import i18n from '@/i18n'
+import { usePreferencesStore } from '@/store/preferences'
 
 const { t, locale } = useI18n()
+const preferencesStore = usePreferencesStore()
 
 const showDropdown = ref(false)
 const dropdownRef = ref(null)
@@ -76,11 +77,11 @@ const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
 }
 
-const selectLanguage = (language) => {
-  // Only update UI display language, do not sync to AI prompt language
+const selectLanguage = async (language) => {
+  // Only update UI display language, do not sync to backend Profile
+  // Profile.language is for AI generation and backend logic, not UI display
+  await preferencesStore.setLanguage(language, false)
   locale.value = language
-  i18n.global.locale.value = language
-  localStorage.setItem('userLanguage', language)
   showDropdown.value = false
 }
 

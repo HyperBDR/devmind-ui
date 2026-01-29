@@ -59,6 +59,34 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/cloud-billing',
+    redirect: '/cloud-billing/billing'
+  },
+  {
+    path: '/cloud-billing/billing',
+    name: 'CloudBillingBilling',
+    component: () => import('@/pages/CloudBilling/Billing.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/cloud-billing/tasks',
+    name: 'CloudBillingTasks',
+    component: () => import('@/pages/CloudBilling/Tasks.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/cloud-billing/alerts',
+    name: 'CloudBillingAlerts',
+    component: () => import('@/pages/CloudBilling/Alerts/Records.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/cloud-billing/settings',
+    name: 'CloudBillingSettings',
+    component: () => import('@/pages/CloudBilling/Settings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')
