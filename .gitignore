@@ -34,6 +34,14 @@ dist-ssr
 coverage
 *.lcov
 
+# Playwright test output and auth state
+test-results/
+playwright-report/
+blob-report/
+playwright/.auth/
+.auth/
+storage-state*.json
+
 # nyc test coverage
 .nyc_output
 

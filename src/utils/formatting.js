@@ -1,6 +1,54 @@
 import { format } from 'date-fns'
 
 /**
+ * Locale-aware number format (integer, no decimals). For LLM stats/usage.
+ * @param {number|null|undefined} value
+ * @param {string} locale - BCP 47 locale (e.g. from useI18n().locale.value)
+ * @returns {string}
+ */
+export function formatNumLocale(value, locale) {
+  if (value === null || value === undefined) return '-'
+  const n = Number(value)
+  if (Number.isNaN(n)) return '-'
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(n)
+}
+
+/**
+ * Locale-aware cost format with currency. For LLM stats/usage.
+ * @param {number|null|undefined} value
+ * @param {string} currency - Currency code (default 'USD')
+ * @param {string} locale - BCP 47 locale
+ * @returns {string}
+ */
+export function formatCostLocale(value, currency = 'USD', locale = 'en') {
+  if (value === null || value === undefined) return '-'
+  const n = Number(value)
+  if (Number.isNaN(n)) return '-'
+  const code = (currency || 'USD').toUpperCase()
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: code,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 6
+  }).format(n)
+}
+
+/**
+ * Format ISO date string to locale string (date + time). For LLM usage list.
+ * @param {string} iso - ISO 8601 date string
+ * @param {string} locale - BCP 47 locale
+ * @returns {string}
+ */
+export function formatDateIsoLocale(iso, locale = 'en') {
+  if (!iso) return '-'
+  try {
+    return new Date(iso).toLocaleString(locale)
+  } catch {
+    return iso
+  }
+}
+
+/**
  * Format cost with currency symbol
  * @param {number|null|undefined} cost - The cost value
  * @param {string} currency - Currency code (default: 'CNY')

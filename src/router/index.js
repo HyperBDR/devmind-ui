@@ -87,6 +87,28 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/llm',
+    redirect: '/llm/stats'
+  },
+  {
+    path: '/llm/stats',
+    name: 'LLMStats',
+    component: () => import('@/pages/LLM/Stats.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/llm/usage',
+    name: 'LLMUsage',
+    component: () => import('@/pages/LLM/Usage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/llm/config',
+    name: 'LLMConfig',
+    component: () => import('@/pages/LLM/Config.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')

@@ -47,6 +47,9 @@ api.interceptors.request.use(
       config.headers['X-CSRFToken'] = csrfToken
     }
 
+    const uiLanguage = localStorage.getItem('userLanguage') || 'en'
+    config.headers['Accept-Language'] = uiLanguage
+
     return config
   },
   (error) => {

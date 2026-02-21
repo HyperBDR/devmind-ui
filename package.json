@@ -9,10 +9,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "generate-favicons": "node scripts/generate-favicons.mjs"
+    "sync:provider-icons": "node scripts/sync-lobehub-provider-icons.mjs",
+    "generate-favicons": "node scripts/generate-favicons.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:container": "BASE_URL=http://localhost:10080 playwright test --config=playwright.config.cjs"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.16",
+    "@lobehub/icons-static-svg": "^1.79.0",
     "@vuepic/vue-datepicker": "^12.0.5",
     "@vueuse/core": "^10.5.0",
     "@vueuse/head": "^2.0.0",
@@ -29,6 +34,7 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^20.10.0",
     "@vitejs/plugin-vue": "^4.6.2",
     "@vue/eslint-config-prettier": "^8.0.0",

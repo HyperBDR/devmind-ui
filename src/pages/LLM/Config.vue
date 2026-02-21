@@ -1,0 +1,1048 @@
+<template>
+  <AppLayout>
+    <div class="w-full max-w-full p-6">
+      <div class="mb-4">
+        <h1 class="text-lg font-semibold text-gray-900">
+          {{ t('llm.config.title') }}
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          {{ t('llm.config.subtitleList') }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="p-6">
+          <div class="flex flex-wrap items-center justify-end gap-3 mb-6">
+            <BaseButton
+              variant="outline"
+              size="sm"
+              :loading="loading"
+              :title="t('common.refresh')"
+              class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
+              @click="loadAll"
+            >
+              <svg
+                v-if="!loading"
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <span class="sr-only">{{ t('common.refresh') }}</span>
+            </BaseButton>
+            <BaseButton variant="primary" size="sm" @click="openAddModal">
+              {{ t('llm.config.addConfig') }}
+            </BaseButton>
+          </div>
+
+          <BaseLoading v-if="loading" />
+          <template v-else>
+            <div
+              v-if="configList.length === 0"
+              class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+            >
+              <svg
+                class="mx-auto h-12 w-12 text-gray-400 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <p class="text-sm font-medium text-gray-600">{{ t('llm.config.noConfigs') }}</p>
+            </div>
+
+            <div
+              v-else
+              class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            >
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.scopeLabel') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.user') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.provider') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.model') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.apiBase') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.apiKey') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.capabilities') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.order') }}
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.active') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('llm.config.actions') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                  <tr v-for="row in configList" :key="row.uuid || row.id" class="hover:bg-gray-50 transition-colors duration-150">
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {{ row.scope === 'global' ? t('llm.config.scopeGlobal') : t('llm.config.scopeUser') }}
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {{ row.scope === 'user' ? (row.username || row.user_id || '–') : '–' }}
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <ProviderIcon :provider="row.provider" size="sm">
+                        <span class="text-gray-900">{{ providerLabel(row.provider) }}</span>
+                      </ProviderIcon>
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {{ row.config?.model || '–' }}
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {{ row.config?.api_base || '–' }}
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {{ maskApiKey(row.config?.api_key || row.config?.key) }}
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <span v-if="getRowCapabilities(row).length" class="flex flex-wrap gap-1">
+                        <span
+                          v-for="cap in getRowCapabilities(row)"
+                          :key="cap"
+                          class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+                        >
+                          {{ capabilityLabel(cap) }}
+                        </span>
+                      </span>
+                      <span v-else class="text-gray-400">–</span>
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.order }}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">
+                      <span
+                        v-if="row.is_active"
+                        class="inline-flex items-center text-green-600"
+                        :title="t('common.yes')"
+                      >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                      <span
+                        v-else
+                        class="inline-flex items-center text-gray-400"
+                        :title="t('common.no')"
+                      >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          :title="t('llm.config.testCall')"
+                          class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-sky-50 hover:text-sky-600"
+                          @click="openTestModal(row)"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 8h8" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          :title="row.is_active ? t('llm.config.disable') : t('llm.config.enable')"
+                          :class="row.is_active
+                            ? 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600'
+                            : 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-green-50 hover:text-green-600'"
+                          @click="setActive(row, !row.is_active)"
+                        >
+                          <svg v-if="row.is_active" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+                          </svg>
+                          <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          :title="t('common.edit')"
+                          class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                          @click="editConfig(row)"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          :title="t('common.delete')"
+                          class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                          @click="deleteConfig(row)"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <BaseModal
+        :show="showTestModal"
+        :title="testModalTitle"
+        @close="closeTestModal"
+      >
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              {{ t('llm.config.testPromptLabel') }}
+            </label>
+            <textarea
+              v-model="testPrompt"
+              rows="4"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+              :placeholder="t('llm.config.testPromptPlaceholder')"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              {{ t('llm.config.maxOutputTokens') }} (max_tokens)
+            </label>
+            <input
+              v-model.number="testMaxTokens"
+              type="number"
+              min="1"
+              max="4096"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+          <div class="flex justify-end gap-2">
+            <BaseButton
+              type="button"
+              variant="outline"
+              @click="closeTestModal"
+            >
+              {{ t('common.cancel') }}
+            </BaseButton>
+            <BaseButton
+              type="button"
+              variant="primary"
+              :loading="testCallLoading"
+              :disabled="!testPrompt.trim()"
+              @click="sendTestCall"
+            >
+              {{ t('llm.config.testSend') }}
+            </BaseButton>
+          </div>
+          <div
+            v-if="testCallResult !== null"
+            class="rounded-lg border p-4"
+            :class="testCallOk ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'"
+          >
+            <p class="text-sm font-medium text-gray-700 mb-2">
+              {{ testCallOk ? t('llm.config.testResponse') : t('llm.config.testError') }}
+            </p>
+            <p
+              v-if="testCallOk"
+              class="text-sm text-gray-800 whitespace-pre-wrap break-words"
+            >
+              {{ testCallContent }}
+            </p>
+            <p v-else class="text-sm text-red-700">
+              {{ testCallDetail }}
+            </p>
+            <div
+              v-if="testCallOk && testCallUsage"
+              class="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600"
+            >
+              <span class="font-medium">{{ t('llm.config.testUsage') }}:</span>
+              {{ testCallUsage.prompt_tokens }} in /
+              {{ testCallUsage.completion_tokens }} out /
+              {{ testCallUsage.total_tokens }} total
+              <span v-if="testCallUsage.cost != null">
+                · {{ testCallUsage.cost_currency || 'USD' }} {{ testCallUsage.cost }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </BaseModal>
+
+      <BaseModal :show="showConfigModal" :title="editingId ? t('common.edit') : t('llm.config.addConfig')" @close="closeConfigModal">
+        <form @submit.prevent="submitConfigForm" class="space-y-4">
+          <div v-if="!editingId">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.scopeLabel') }}</label>
+            <select
+              v-model="form.scope"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+            >
+              <option value="global">{{ t('llm.config.scopeGlobal') }}</option>
+              <option value="user">{{ t('llm.config.scopeUser') }}</option>
+            </select>
+          </div>
+          <div v-if="!editingId && form.scope === 'user'">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.user') }}</label>
+            <select
+              v-model="form.user_id"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+              :required="userList.length > 0"
+            >
+              <option value="">{{ t('llm.config.user') }}…</option>
+              <option v-for="u in userList" :key="u.id" :value="u.id">
+                {{ u.username || u.id }}
+              </option>
+            </select>
+            <p v-if="userList.length === 0" class="mt-1 text-sm text-amber-600">
+              {{ t('llm.config.noUsersHint') }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.provider') }}</label>
+            <div class="flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+              <ProviderIcon :provider="form.provider" size="sm" />
+              <select
+                v-model="form.provider"
+                class="min-w-0 flex-1 border-0 bg-transparent p-0 focus:ring-0"
+                @change="onProviderChange"
+              >
+                <option v-for="p in providersFromModels" :key="p.id" :value="p.id">
+                  {{ p.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.model') }}</label>
+            <div class="relative" ref="modelDropdownRef">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @click="modelDropdownOpen = !modelDropdownOpen"
+              >
+                <span class="truncate text-gray-900">{{ modelSelectTriggerLabel }}</span>
+                <svg class="h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div
+                v-show="modelDropdownOpen"
+                class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+              >
+                <button
+                  v-for="m in currentProviderModels"
+                  :key="m.id"
+                  type="button"
+                  class="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                  :class="{ 'bg-primary-50': form.config.model === m.id }"
+                  @click="selectModel(m.id)"
+                >
+                  <div class="font-medium text-gray-900">{{ m.label }}</div>
+                  <div v-if="(m.capabilities || []).length" class="mt-1 flex flex-wrap gap-1">
+                    <span
+                      v-for="cap in (m.capabilities || [])"
+                      :key="cap"
+                      class="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
+                      :class="capabilityTagClass(cap)"
+                    >
+                      {{ capabilityLabel(cap) }}
+                    </span>
+                  </div>
+                  <div v-if="refPriceLine(m.reference_pricing)" class="mt-1 text-xs text-gray-500">
+                    {{ refPriceLine(m.reference_pricing) }}
+                  </div>
+                </button>
+                <div class="border-t border-gray-100" />
+                <button
+                  type="button"
+                  class="w-full px-3 py-2 text-left font-medium text-gray-600 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                  :class="{ 'bg-primary-50': isCustomModel }"
+                  @click="selectModel('__custom__')"
+                >
+                  {{ t('llm.config.modelCustom') }}
+                </button>
+              </div>
+            </div>
+            <div v-if="isCustomModel" class="mt-2">
+              <input
+                v-model="form.config.model"
+                type="text"
+                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                :placeholder="t('llm.config.modelPlaceholder')"
+                @focus="modelDropdownOpen = false"
+              />
+            </div>
+          </div>
+          <div v-if="selectedModelInfo" class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <p class="text-xs font-medium text-gray-600 mb-2">{{ t('llm.config.capabilities') }}</p>
+            <div class="flex flex-wrap gap-1 mb-2">
+              <span
+                v-for="cap in selectedModelInfo.capabilities"
+                :key="cap"
+                class="inline-flex items-center rounded-md bg-primary-50 px-2 py-0.5 text-xs text-primary-800"
+              >
+                {{ capabilityLabel(cap) }}
+              </span>
+            </div>
+            <div v-if="selectedModelInfo.max_input_tokens || selectedModelInfo.max_output_tokens" class="flex flex-wrap gap-3 text-xs text-gray-600">
+              <span v-if="selectedModelInfo.max_input_tokens">
+                {{ t('llm.config.maxInputTokens') }}: {{ selectedModelInfo.max_input_tokens.toLocaleString() }}
+              </span>
+              <span v-if="selectedModelInfo.max_output_tokens">
+                {{ t('llm.config.maxOutputTokens') }}: {{ selectedModelInfo.max_output_tokens.toLocaleString() }}
+              </span>
+            </div>
+            <div v-if="refPriceLine(selectedModelInfo.reference_pricing)" class="mt-2 text-xs text-gray-600">
+              <span class="font-medium text-gray-700">{{ t('llm.config.referencePrice') }}</span>
+              {{ refPriceLine(selectedModelInfo.reference_pricing) }}
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.apiBase') }}</label>
+            <input
+              v-model="form.config.api_base"
+              type="url"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+              :placeholder="defaultApiBasePlaceholder"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.apiKey') }}</label>
+            <input
+              v-model="form.config.api_key"
+              type="password"
+              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+              :placeholder="t('llm.config.apiKeyPlaceholder')"
+            />
+          </div>
+
+          <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+            <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              {{ t('llm.config.advancedOptions') }}
+            </h3>
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.maxOutputTokens') }} (max_tokens)</label>
+                  <input
+                    v-model.number="form.config.max_tokens"
+                    type="number"
+                    min="1"
+                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                    placeholder="optional"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.temperature') }}</label>
+                  <input
+                    v-model.number="form.config.temperature"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="2"
+                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.order') }}</label>
+                  <input
+                    v-model.number="form.order"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.topP') }}</label>
+                  <input
+                    v-model.number="form.config.top_p"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="1"
+                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              <template v-if="form.provider === 'azure_openai'">
+                <div class="grid grid-cols-2 gap-3 border-t border-gray-200 pt-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.deployment') }}</label>
+                    <input
+                      v-model="form.config.deployment"
+                      type="text"
+                      class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.apiVersion') }}</label>
+                    <input
+                      v-model="form.config.api_version"
+                      type="text"
+                      class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                    />
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div v-if="formMessage" :class="formMessageSuccess ? 'text-green-600 text-sm' : 'text-red-600 text-sm'">
+            {{ formMessage }}
+          </div>
+          <div class="flex flex-wrap items-center justify-end gap-3">
+            <BaseButton type="button" variant="outline" :loading="testLoading" @click="testConnection">
+              {{ t('llm.config.testConnection') }}
+            </BaseButton>
+            <BaseButton type="button" variant="outline" @click="closeConfigModal">
+              {{ t('common.cancel') }}
+            </BaseButton>
+            <BaseButton
+              type="submit"
+              variant="primary"
+              :loading="formSaving"
+              :disabled="submitDisabled"
+            >
+              {{ editingId ? t('common.save') : t('llm.config.addConfig') }}
+            </BaseButton>
+          </div>
+        </form>
+      </BaseModal>
+    </div>
+  </AppLayout>
+</template>
+
+<script setup>
+/**
+ * LLM Configuration: Provider -> Model selection with capability tags.
+ * API Base URL below model selection; defaults to official URL for the provider.
+ */
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { llmAdminApi } from '@/api/llmAdmin'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import ProviderIcon from '@/components/llm/ProviderIcon.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseLoading from '@/components/ui/BaseLoading.vue'
+import BaseModal from '@/components/ui/BaseModal.vue'
+
+const PROVIDER_LABELS = {
+  openai: 'OpenAI',
+  azure_openai: 'Azure OpenAI',
+  gemini: 'Google Gemini',
+  anthropic: 'Anthropic',
+  mistral: 'Mistral',
+  dashscope: 'Dashscope (Qwen)',
+  deepseek: 'DeepSeek',
+  xai: 'xAI (Grok)',
+  minimax: 'MiniMax',
+  moonshot: 'Moonshot (Kimi)',
+  zai: 'Z.AI (GLM)',
+  volcengine: 'Volcengine (Doubao)',
+  openrouter: 'OpenRouter'
+}
+
+function providerLabel(provider) {
+  return PROVIDER_LABELS[provider] || provider || '–'
+}
+
+function maskApiKey(value) {
+  if (!value || typeof value !== 'string') return '–'
+  const key = value.trim()
+  if (!key) return '–'
+  if (key.includes('***')) return key
+  if (key.length <= 8) return '***'
+  return `${key.slice(0, 4)}***${key.slice(-4)}`
+}
+
+const { t } = useI18n()
+
+const loading = ref(true)
+const configList = ref([])
+const userList = ref([])
+const modelsData = ref({ providers: [], capability_labels: {} })
+
+const showConfigModal = ref(false)
+const showTestModal = ref(false)
+const testConfigRow = ref(null)
+const testPrompt = ref('')
+const testMaxTokens = ref(2048)
+const testCallLoading = ref(false)
+const testCallResult = ref(null)
+const editingId = ref(null)
+const formSaving = ref(false)
+const testLoading = ref(false)
+const formMessage = ref('')
+const formMessageSuccess = ref(false)
+const connectionTestedSuccess = ref(false)
+const modelDropdownOpen = ref(false)
+const modelDropdownRef = ref(null)
+
+const form = reactive({
+  scope: 'global',
+  user_id: null,
+  provider: 'openai',
+  config: {
+    api_key: '',
+    api_base: '',
+    model: '',
+    deployment: '',
+    api_version: '2024-02-15-preview',
+    max_tokens: null,
+    temperature: null,
+    top_p: null
+  },
+  is_active: true,
+  order: 0
+})
+
+const providersFromModels = computed(() => {
+  return (modelsData.value?.providers || []).map(p => ({ id: p.id, label: p.label }))
+})
+
+const currentProviderModels = computed(() => {
+  const list = (modelsData.value?.providers || []).find(
+    p => (p.id || '').toLowerCase() === (form.provider || '').toLowerCase()
+  )
+  return list?.models || []
+})
+
+const defaultApiBaseForProvider = computed(() => {
+  const p = (modelsData.value?.providers || []).find(
+    x => (x.id || '').toLowerCase() === (form.provider || '').toLowerCase()
+  )
+  return p?.default_api_base || ''
+})
+
+const defaultApiBasePlaceholder = computed(() => {
+  return defaultApiBaseForProvider.value || t('llm.config.apiBasePlaceholder')
+})
+
+const isCurrentModelInList = computed(() => {
+  const id = (form.config.model || '').trim()
+  if (!id) return false
+  return currentProviderModels.value.some(m => (m.id || '').trim() === id)
+})
+
+const isCustomModel = computed(() => {
+  const list = currentProviderModels.value
+  if (list.length === 0) return true
+  return !isCurrentModelInList.value
+})
+
+const modelSelectTriggerLabel = computed(() => {
+  if (isCustomModel.value) {
+    return form.config.model
+      ? `${t('llm.config.modelCustom')} ${form.config.model}`
+      : t('llm.config.modelCustom')
+  }
+  const m = currentProviderModels.value.find(
+    x => (x.id || '').trim() === (form.config.model || '').trim()
+  )
+  return m ? m.label : t('llm.config.modelSelect')
+})
+
+const submitDisabled = computed(() => {
+  if (!editingId.value && form.scope === 'user' && userList.value.length === 0) {
+    return true
+  }
+  if (!editingId.value && !connectionTestedSuccess.value) {
+    return true
+  }
+  return false
+})
+
+const testModalTitle = computed(() => {
+  const row = testConfigRow.value
+  if (!row) return t('llm.config.testCall')
+  const prov = providerLabel(row.provider)
+  const model = row.config?.model || '–'
+  return `${t('llm.config.testCall')} · ${prov} / ${model}`
+})
+
+const testCallOk = computed(() => testCallResult.value?.ok === true)
+const testCallContent = computed(() => testCallResult.value?.content ?? '')
+const testCallDetail = computed(() => testCallResult.value?.detail ?? '')
+const testCallUsage = computed(() => testCallResult.value?.usage ?? null)
+
+const selectedModelInfo = computed(() => {
+  const modelId = (form.config.model || '').trim()
+  if (!modelId) return null
+  const m = currentProviderModels.value.find(
+    x => (x.id || '').trim() === modelId
+  )
+  if (!m) return null
+  return {
+    capabilities: m.capabilities || [],
+    max_input_tokens: m.max_input_tokens,
+    max_output_tokens: m.max_output_tokens,
+    reference_pricing: m.reference_pricing || null
+  }
+})
+
+function capabilityLabel(capKey) {
+  const labels = modelsData.value?.capability_labels || {}
+  return labels[capKey] || capKey
+}
+
+const CAP_TAG_CLASSES = {
+  'text-to-text': 'bg-sky-100 text-sky-800',
+  'code': 'bg-emerald-100 text-emerald-800',
+  'vision': 'bg-violet-100 text-violet-800',
+  'multimodal': 'bg-indigo-100 text-indigo-800',
+  'text-to-image': 'bg-amber-100 text-amber-800',
+  'long-context': 'bg-orange-100 text-orange-800',
+  'low-cost': 'bg-slate-100 text-slate-600',
+  'embedding': 'bg-teal-100 text-teal-800',
+  'reasoning': 'bg-rose-100 text-rose-800'
+}
+
+function capabilityTagClass(capKey) {
+  return CAP_TAG_CLASSES[capKey] || 'bg-gray-100 text-gray-700'
+}
+
+function formatRefPrice(num) {
+  if (num == null || typeof num !== 'number') return '–'
+  return num % 1 === 0 ? String(num) : num.toFixed(2)
+}
+
+function refPriceLine(rp) {
+  if (!rp || (rp.input_usd_per_1m == null && rp.output_usd_per_1m == null)) return ''
+  const inStr = rp.input_usd_per_1m != null ? `$${formatRefPrice(rp.input_usd_per_1m)}/1M in` : ''
+  const outStr = rp.output_usd_per_1m != null ? `$${formatRefPrice(rp.output_usd_per_1m)}/1M out` : ''
+  return [inStr, outStr].filter(Boolean).join(' · ')
+}
+
+function normalizeOrder(value) {
+  const order = Number(value)
+  if (!Number.isFinite(order)) return 0
+  return Math.max(0, Math.trunc(order))
+}
+
+function selectModel(modelId) {
+  if (modelId === '__custom__') {
+    form.config.model = ''
+  } else {
+    form.config.model = modelId
+  }
+  modelDropdownOpen.value = false
+}
+
+function closeModelDropdown(e) {
+  const el = modelDropdownRef.value
+  if (el && e.target && !el.contains(e.target)) {
+    modelDropdownOpen.value = false
+  }
+}
+
+watch(modelDropdownOpen, (open) => {
+  if (open) {
+    nextTick(() => document.addEventListener('click', closeModelDropdown))
+  } else {
+    document.removeEventListener('click', closeModelDropdown)
+  }
+})
+
+function getRowCapabilities(row) {
+  const provider = (row.provider || '').toLowerCase()
+  const modelId = (row.config?.model || '').trim()
+  if (!modelId) return []
+  const prov = (modelsData.value?.providers || []).find(
+    p => (p.id || '').toLowerCase() === provider
+  )
+  const model = prov?.models?.find(m => (m.id || '').trim() === modelId)
+  return model?.capabilities || []
+}
+
+function onProviderChange() {
+  form.config.model = ''
+  form.config.api_base = defaultApiBaseForProvider.value || ''
+  connectionTestedSuccess.value = false
+}
+
+function resetForm() {
+  form.scope = 'global'
+  form.user_id = null
+  form.provider = 'openai'
+  form.config = {
+    api_key: '',
+    api_base: '',
+    model: '',
+    deployment: '',
+    api_version: '2024-02-15-preview',
+    max_tokens: null,
+    temperature: null,
+    top_p: null
+  }
+  form.is_active = true
+  form.order = 0
+  formMessage.value = ''
+  connectionTestedSuccess.value = false
+}
+
+async function loadModels() {
+  try {
+    const data = await llmAdminApi.getLLMConfigModels()
+    modelsData.value = {
+      providers: data?.providers || [],
+      capability_labels: data?.capability_labels || {}
+    }
+  } catch (e) {
+    if (e?.response?.status !== 404) console.error(e)
+    modelsData.value = { providers: [], capability_labels: {} }
+  }
+}
+
+async function loadAll() {
+  loading.value = true
+  try {
+    const data = await llmAdminApi.getLLMConfigAll()
+    configList.value = Array.isArray(data) ? data : []
+  } catch (e) {
+    if (e?.response?.status !== 404) console.error(e)
+    configList.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadUsers() {
+  try {
+    const data = await llmAdminApi.getUsers()
+    userList.value = Array.isArray(data) ? data : []
+  } catch {
+    userList.value = []
+  }
+}
+
+function openAddModal() {
+  editingId.value = null
+  resetForm()
+  form.config.api_base = defaultApiBaseForProvider.value || ''
+  loadUsers()
+  showConfigModal.value = true
+}
+
+async function editConfig(row) {
+  editingId.value = row.uuid || row.id
+  try {
+    const data = await llmAdminApi.getLLMConfigDetail(row.uuid || row.id)
+    form.provider = (data?.provider || 'openai').toLowerCase()
+    const c = data?.config || {}
+    form.config = {
+      api_key: c.api_key ?? '',
+      api_base: c.api_base ?? '',
+      model: c.model ?? '',
+      deployment: c.deployment ?? '',
+      api_version: c.api_version ?? '2024-02-15-preview',
+      max_tokens: c.max_tokens ?? null,
+      temperature: c.temperature ?? null,
+      top_p: c.top_p ?? null
+    }
+    form.is_active = data?.is_active !== false
+    form.order = data?.order ?? 0
+  } catch (e) {
+    formMessage.value = e?.response?.data?.detail || e?.message || 'Failed to load'
+    formMessageSuccess.value = false
+  }
+  showConfigModal.value = true
+}
+
+function closeConfigModal() {
+  showConfigModal.value = false
+  editingId.value = null
+  resetForm()
+}
+
+function openTestModal(row) {
+  testConfigRow.value = row
+  testPrompt.value = ''
+  testMaxTokens.value = 2048
+  testCallResult.value = null
+  showTestModal.value = true
+}
+
+function closeTestModal() {
+  showTestModal.value = false
+  testConfigRow.value = null
+  testPrompt.value = ''
+  testMaxTokens.value = 2048
+  testCallResult.value = null
+}
+
+async function sendTestCall() {
+  const row = testConfigRow.value
+  if (!(row?.uuid || row?.id) || !testPrompt.value.trim()) return
+  const boundedMaxTokens = Math.min(
+    4096,
+    Math.max(1, Number(testMaxTokens.value) || 2048)
+  )
+  testCallLoading.value = true
+  testCallResult.value = null
+  try {
+    const res = await llmAdminApi.postLLMConfigTestCall({
+      config_uuid: row.uuid || row.id,
+      prompt: testPrompt.value.trim(),
+      max_tokens: boundedMaxTokens
+    })
+    testCallResult.value = res
+  } catch (e) {
+    testCallResult.value = {
+      ok: false,
+      detail: e?.response?.data?.detail || e?.message || t('llm.config.testFailed')
+    }
+  } finally {
+    testCallLoading.value = false
+  }
+}
+
+async function testConnection() {
+  testLoading.value = true
+  formMessage.value = ''
+  try {
+    const payload = {
+      provider: form.provider,
+      config: {
+        api_key: form.config.api_key || undefined,
+        api_base: form.config.api_base || undefined,
+        model: form.config.model || undefined,
+        deployment: form.config.deployment || undefined,
+        api_version: form.config.api_version || undefined
+      }
+    }
+    const res = await llmAdminApi.postLLMConfigTest(payload)
+    if (res?.ok) {
+      formMessage.value = t('llm.config.testSuccess')
+      formMessageSuccess.value = true
+      connectionTestedSuccess.value = true
+    } else {
+      formMessage.value = res?.detail || t('llm.config.testFailed')
+      formMessageSuccess.value = false
+    }
+  } catch (e) {
+    formMessage.value = e?.response?.data?.detail || e?.message || t('llm.config.testFailed')
+    formMessageSuccess.value = false
+  } finally {
+    testLoading.value = false
+  }
+}
+
+async function submitConfigForm() {
+  if (!editingId.value && form.scope === 'user' && !form.user_id) {
+    formMessage.value = t('llm.config.user') + '?'
+    formMessageSuccess.value = false
+    return
+  }
+  formSaving.value = true
+  formMessage.value = ''
+  try {
+    const body = {
+      provider: form.provider,
+      config: {
+        api_key: form.config.api_key || undefined,
+        api_base: form.config.api_base || undefined,
+        model: form.config.model || undefined,
+        deployment: form.config.deployment || undefined,
+        api_version: form.config.api_version || undefined,
+        max_tokens: form.config.max_tokens ?? undefined,
+        temperature: form.config.temperature ?? undefined,
+        top_p: form.config.top_p ?? undefined
+      },
+      is_active: form.is_active,
+      order: normalizeOrder(form.order)
+    }
+    if (editingId.value) {
+      await llmAdminApi.putLLMConfigDetail(editingId.value, body)
+    } else {
+      if (form.scope === 'user' && form.user_id) {
+        body.scope = 'user'
+        body.user_id = form.user_id
+      }
+      await llmAdminApi.postLLMConfig(body)
+    }
+    formMessage.value = t('llm.config.saveSuccess')
+    formMessageSuccess.value = true
+    closeConfigModal()
+    await loadAll()
+  } catch (e) {
+    formMessage.value = e?.response?.data?.detail || e?.message || t('llm.config.saveError')
+    formMessageSuccess.value = false
+  } finally {
+    formSaving.value = false
+  }
+}
+
+async function setActive(row, value) {
+  if (!(row?.uuid || row?.id)) return
+  try {
+    const data = await llmAdminApi.getLLMConfigDetail(row.uuid || row.id)
+    const c = data?.config || {}
+    const body = {
+      provider: (data?.provider || row.provider || 'openai').toLowerCase(),
+      config: {
+        api_key: c.api_key ?? '',
+        api_base: c.api_base ?? undefined,
+        model: c.model ?? undefined,
+        deployment: c.deployment ?? undefined,
+        api_version: c.api_version ?? undefined,
+        max_tokens: c.max_tokens ?? undefined,
+        temperature: c.temperature ?? undefined,
+        top_p: c.top_p ?? undefined
+      },
+      is_active: value,
+      order: data?.order ?? row.order ?? 0
+    }
+    await llmAdminApi.putLLMConfigDetail(row.uuid || row.id, body)
+    await loadAll()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function deleteConfig(row) {
+  if (!(row?.uuid || row?.id) || !confirm(t('llm.config.confirmDeleteConfig'))) return
+  try {
+    await llmAdminApi.deleteLLMConfigDetail(row.uuid || row.id)
+    await loadAll()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+onMounted(() => {
+  loadModels()
+  loadAll()
+})
+</script>
