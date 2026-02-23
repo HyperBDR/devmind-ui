@@ -109,6 +109,28 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/task-management',
+    redirect: '/task-management/list'
+  },
+  {
+    path: '/task-management/list',
+    name: 'TaskManagementList',
+    component: () => import('@/pages/TaskManagement/List.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/task-management/stats',
+    name: 'TaskManagementStats',
+    component: () => import('@/pages/TaskManagement/Stats.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/task-management/settings',
+    name: 'TaskManagementSettings',
+    component: () => import('@/pages/TaskManagement/Settings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')

@@ -1,0 +1,315 @@
+<template>
+  <AppLayout>
+    <div class="w-full max-w-full">
+      <!-- Page Header -->
+      <div class="mb-4">
+        <h1 class="text-lg font-semibold text-gray-900">
+          {{ t('taskManagement.list.title') }}
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          {{ t('taskManagement.list.subtitle') }}
+        </p>
+      </div>
+
+      <!-- Content Card -->
+      <div class="bg-white rounded border border-gray-200 shadow-sm">
+        <div class="p-6">
+          <!-- Toolbar -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-3 flex-wrap">
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <BaseInput
+                v-model="searchQuery"
+                :placeholder="t('taskManagement.list.searchPlaceholder')"
+                class="flex-1 sm:w-64"
+                @update:modelValue="debouncedLoad"
+              >
+                <template #icon>
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </template>
+              </BaseInput>
+
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :loading="loading"
+                @click="loadTasks"
+                :title="t('common.refresh')"
+                class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <svg
+                  v-if="!loading"
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                <span class="sr-only">{{ t('common.refresh') }}</span>
+              </BaseButton>
+            </div>
+          </div>
+
+          <BaseLoading v-if="loading && tasks.length === 0" />
+
+          <div
+            v-else-if="!loading && tasks.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <p class="text-sm font-medium text-gray-600">{{ t('taskManagement.list.noTasks') }}</p>
+          </div>
+
+          <!-- Desktop Table View -->
+          <div
+            v-else
+            class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+          >
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.taskName') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.module') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.status') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.startedAt') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.duration') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.createdBy') }}
+                  </th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('common.actions') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-100">
+                <tr
+                  v-for="task in tasks"
+                  :key="task.id"
+                  @click="handlePreview(task)"
+                  class="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
+                >
+                  <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ task.task_name || '-' }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ task.module || '-' }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap">
+                    <StatusBadge :status="mapStatus(task.status)" />
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(task.started_at) }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDuration(task.duration) }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ task.created_by_username || '-' }}
+                  </td>
+                  <td class="px-4 py-3 text-right" @click.stop>
+                    <BaseButton
+                      variant="ghost"
+                      size="sm"
+                      :title="t('taskManagement.list.sync')"
+                      @click="syncTask(task)"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </BaseButton>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            v-if="totalCount > pageSize"
+            class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4"
+          >
+            <p class="text-sm text-gray-600">
+              {{ t('common.pagination.showing', paginationShowing) }}
+            </p>
+            <div class="flex gap-2">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="currentPage--; loadTasks()"
+              >
+                {{ t('common.pagination.previous') }}
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="currentPage++; loadTasks()"
+              >
+                {{ t('common.pagination.next') }}
+              </BaseButton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Detail Panel -->
+      <TaskExecutionDetailPanel
+        :show="showPreviewModal"
+        :task="selectedTask"
+        @close="showPreviewModal = false"
+      />
+    </div>
+  </AppLayout>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { format } from 'date-fns'
+import { useDebounceFn } from '@vueuse/core'
+import { useToast } from '@/composables/useToast'
+import { extractResponseData, extractErrorMessage } from '@/utils/api'
+import { taskManagementApi } from '@/api/taskManagement'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseLoading from '@/components/ui/BaseLoading.vue'
+import StatusBadge from '@/components/ui/StatusBadge.vue'
+import TaskExecutionDetailPanel from '@/components/task-management/TaskExecutionDetailPanel.vue'
+
+const { t } = useI18n()
+const { showSuccess, showError } = useToast()
+
+const loading = ref(false)
+const tasks = ref([])
+const searchQuery = ref('')
+const showPreviewModal = ref(false)
+const selectedTask = ref(null)
+const currentPage = ref(1)
+const totalCount = ref(0)
+const totalPages = ref(1)
+const pageSize = 20
+
+const paginationShowing = computed(() => ({
+  from: (currentPage.value - 1) * pageSize + 1,
+  to: Math.min(currentPage.value * pageSize, totalCount.value),
+  total: totalCount.value
+}))
+
+function mapStatus(status) {
+  const m = {
+    PENDING: 'pending',
+    STARTED: 'processing',
+    SUCCESS: 'success',
+    FAILURE: 'failed',
+    RETRY: 'processing',
+    REVOKED: 'failed'
+  }
+  return m[status] || (status && status.toLowerCase()) || 'pending'
+}
+
+function formatDate(val) {
+  if (!val) return '-'
+  try {
+    return format(new Date(val), 'yyyy-MM-dd HH:mm')
+  } catch {
+    return val
+  }
+}
+
+function formatDuration(seconds) {
+  if (seconds == null) return '-'
+  if (seconds < 60) return `${seconds}s`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return `${h}h ${m}m`
+}
+
+async function loadTasks() {
+  loading.value = true
+  try {
+    const params = { page: currentPage.value, page_size: pageSize }
+    if (searchQuery.value.trim()) {
+      params.task_name = searchQuery.value.trim()
+    }
+    const res = await taskManagementApi.getExecutions(params)
+    const data = extractResponseData(res)
+    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    tasks.value = list
+    const total = data?.count ?? data?.pagination?.total ?? list.length
+    totalCount.value = total
+    totalPages.value = total > 0 ? Math.ceil(total / pageSize) : 1
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
+    tasks.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const debouncedLoad = useDebounceFn(() => {
+  currentPage.value = 1
+  loadTasks()
+}, 300)
+
+async function handlePreview(task) {
+  try {
+    const res = await taskManagementApi.getExecution(task.id)
+    selectedTask.value = extractResponseData(res)
+    showPreviewModal.value = true
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
+  }
+}
+
+async function syncTask(task) {
+  try {
+    await taskManagementApi.syncExecution(task.id)
+    showSuccess(t('taskManagement.list.syncSuccess'))
+    if (selectedTask.value?.id === task.id) {
+      const res = await taskManagementApi.getExecution(task.id)
+      selectedTask.value = extractResponseData(res)
+    }
+    loadTasks()
+  } catch (e) {
+    showError(extractErrorMessage(e, t('taskManagement.list.syncFailed')))
+  }
+}
+
+onMounted(() => {
+  loadTasks()
+})
+</script>

@@ -1,5 +1,5 @@
 /**
- * LLM admin API (agentcore-tracking: token-stats, llm-usage, llm-config).
+ * LLM admin API (agentcore-metering: token-stats, llm-usage, llm-config).
  * Global config: list (GET), add (POST), get/put/delete by id (GET/PUT/DELETE llm-config/<pk>/).
  * Providers schema: GET llm-config/providers/. Test: POST llm-config/test/.
  */
