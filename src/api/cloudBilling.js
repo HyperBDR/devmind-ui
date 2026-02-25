@@ -120,12 +120,13 @@ export const cloudBillingApi = {
     return response
   },
 
-  // Get collection tasks from task_manager
+  // Get cloud billing tasks from unified task management (agentcore-task).
+  // By default only module=cloud_billing so all task types show: collect_billing_data,
+  // send_alert_notification, check_alert_for_provider. Pass task_name in params to filter.
   async getCollectionTasks(params = {}) {
     const queryParams = {
       module: 'cloud_billing',
-      task_name: 'cloud_billing.tasks.collect_billing_data',
-      my_tasks: 'false', // Show all tasks, not just current user's
+      my_tasks: 'false',
       ...params
     }
     const response = await apiClient.get('/v1/tasks/executions/', { params: queryParams })

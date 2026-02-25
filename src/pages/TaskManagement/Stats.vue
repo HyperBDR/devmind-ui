@@ -45,6 +45,16 @@
                 @change="fetchStats"
               />
             </template>
+            <template v-else-if="granularity === 'year'">
+              <input
+                v-model.number="selectedYear"
+                type="number"
+                min="2000"
+                :max="currentYear"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="fetchStats"
+              />
+            </template>
             <BaseButton
               variant="outline"
               size="sm"
@@ -122,6 +132,15 @@
               <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
                 <div class="text-sm text-gray-500">{{ t('taskManagement.stats.revoked') }}</div>
                 <div class="text-2xl font-semibold text-gray-600">{{ stats.revoked ?? 0 }}</div>
+              </div>
+            </div>
+
+            <div v-if="seriesChartData && seriesChartData.labels.length > 0" class="mb-8">
+              <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                {{ t('taskManagement.stats.seriesTitle') }}
+              </h3>
+              <div class="h-64 sm:h-80 rounded-lg border border-gray-200 bg-white p-4">
+                <Bar :data="seriesChartData" :options="seriesChartOptions" />
               </div>
             </div>
 
@@ -276,10 +295,14 @@ const stats = ref(null)
 const granularity = ref('day')
 const selectedDate = ref('')
 const selectedMonth = ref('')
+const selectedYear = ref(new Date().getFullYear())
+
+const currentYear = computed(() => new Date().getFullYear())
 
 const granularityOptions = computed(() => [
   { value: 'day', label: t('taskManagement.stats.granularityDay') },
-  { value: 'month', label: t('taskManagement.stats.granularityMonth') }
+  { value: 'month', label: t('taskManagement.stats.granularityMonth') },
+  { value: 'year', label: t('taskManagement.stats.granularityYear') }
 ])
 
 function setDefaultDates() {
@@ -289,6 +312,7 @@ function setDefaultDates() {
   const d = String(now.getDate()).padStart(2, '0')
   selectedDate.value = `${y}-${m}-${d}`
   selectedMonth.value = `${y}-${m}`
+  selectedYear.value = y
 }
 
 function lastDayOfMonth(ym) {
@@ -302,6 +326,54 @@ function selectGranularity(g) {
   setDefaultDates()
   fetchStats()
 }
+
+const seriesItems = computed(() => {
+  const list = stats.value?.series
+  return Array.isArray(list) ? list : []
+})
+
+const seriesChartData = computed(() => {
+  const list = seriesItems.value
+  if (list.length === 0) return null
+  return {
+    labels: list.map((r) => r.bucket || '-'),
+    datasets: [
+      {
+        label: t('taskManagement.stats.total'),
+        data: list.map((r) => r.count ?? 0),
+        backgroundColor: 'rgba(99, 102, 241, 0.7)',
+        borderColor: 'rgb(99, 102, 241)',
+        borderWidth: 1
+      }
+    ]
+  }
+})
+
+const seriesChartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label(ctx) {
+          return `${t('taskManagement.stats.total')}: ${ctx.raw}`
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { maxRotation: 45, minRotation: 0, font: { size: 11 } }
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.06)' },
+      ticks: { precision: 0 }
+    }
+  }
+}))
 
 const byModuleKeys = computed(() => {
   if (!stats.value?.by_module) return []
@@ -421,13 +493,17 @@ const byTaskNameChartOptions = computed(() => ({
 async function fetchStats() {
   loading.value = true
   try {
-    const params = {}
+    const params = { granularity: granularity.value }
     if (granularity.value === 'day' && selectedDate.value) {
       params.start_date = selectedDate.value
       params.end_date = selectedDate.value
     } else if (granularity.value === 'month' && selectedMonth.value) {
       params.start_date = `${selectedMonth.value}-01`
       params.end_date = lastDayOfMonth(selectedMonth.value)
+    } else if (granularity.value === 'year' && selectedYear.value) {
+      const y = selectedYear.value
+      params.start_date = `${y}-01-01`
+      params.end_date = `${y}-12-31`
     }
     const res = await taskManagementApi.getStats(params)
     stats.value = extractResponseData(res)

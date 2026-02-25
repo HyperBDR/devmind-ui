@@ -37,11 +37,21 @@
           @update:modelValue="handlePublishOssConfigUpdate"
         />
 
-        <!-- Webhook Configuration Card -->
-        <WebhookConfigCard
-          :modelValue="webhookConfig"
-          @update:modelValue="handleWebhookConfigUpdate"
-        />
+        <!-- Notification channels: configured in Admin > Notifications > Channels -->
+        <div v-if="isAdmin" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-semibold text-gray-900 mb-1">
+            {{ t('settings.notificationChannels') }}
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">
+            {{ t('settings.notificationChannelsDesc') }}
+          </p>
+          <router-link
+            to="/notifier/channels"
+            class="text-sm font-medium text-primary-600 hover:text-primary-700"
+          >
+            {{ t('settings.goToChannels') }} →
+          </router-link>
+        </div>
       </template>
     </div>
   </AppLayout>
@@ -60,7 +70,6 @@ import GoogleNewsConfigCard from '@/components/settings/GoogleNewsConfigCard.vue
 import GithubConfigCard from '@/components/settings/GithubConfigCard.vue'
 import SocialOssConfigCard from '@/components/settings/SocialOssConfigCard.vue'
 import PublishOssConfigCard from '@/components/settings/PublishOssConfigCard.vue'
-import WebhookConfigCard from '@/components/settings/WebhookConfigCard.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -90,23 +99,12 @@ const publishOssConfig = reactive({
   use_virtual_style: false
 })
 
-const webhookConfig = reactive({
-  enable: false,
-  url: '',
-  provider: 'wechat',
-  language: 'zh-hans'
-})
-
 const handleSocialOssConfigUpdate = (newValue) => {
   Object.assign(socialOssConfig, newValue)
 }
 
 const handlePublishOssConfigUpdate = (newValue) => {
   Object.assign(publishOssConfig, newValue)
-}
-
-const handleWebhookConfigUpdate = (newValue) => {
-  Object.assign(webhookConfig, newValue)
 }
 
 const loadAllConfigs = async () => {
@@ -119,10 +117,9 @@ const loadAllConfigs = async () => {
 
     // Load all configurations in parallel
     // Note: GoogleNewsConfigCard loads its own data independently
-    const [socialOssData, publishOssData, webhookData] = await Promise.allSettled([
+    const [socialOssData, publishOssData] = await Promise.allSettled([
       settingsApi.getSocialOssConfig().catch(() => null),
-      settingsApi.getPublishOssConfig().catch(() => null),
-      settingsApi.getWebhookConfig().catch(() => null)
+      settingsApi.getPublishOssConfig().catch(() => null)
     ])
 
     // Update social OSS config
@@ -150,17 +147,6 @@ const loadAllConfigs = async () => {
         endpoint: publishOssData.value.endpoint || '',
         region: publishOssData.value.region || '',
         use_virtual_style: publishOssData.value.use_virtual_style || false,
-        _loaded: true // Mark as loaded
-      })
-    }
-
-    // Update webhook config
-    if (webhookData.status === 'fulfilled' && webhookData.value !== null) {
-      Object.assign(webhookConfig, {
-        enable: webhookData.value.enable ?? false,
-        url: webhookData.value.url || '',
-        provider: webhookData.value.provider || 'wechat',
-        language: webhookData.value.language || 'zh-hans',
         _loaded: true // Mark as loaded
       })
     }

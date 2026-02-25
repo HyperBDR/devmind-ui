@@ -230,7 +230,19 @@
     "yourEmailAddress": "Tu Correo IA",
     "emailAddressDesc": "Reenvía una vez, IA maneja todo · Reconocimiento de texto e imágenes",
     "copyEmail": "Copiar dirección de correo",
-    "preferences": "Preferencias",
+    "preferences": {
+      "title": "Idioma y zona horaria global",
+      "desc": "Idioma y zona horaria por defecto para generación IA, notificaciones y lógica del backend. Independiente del idioma de la interfaz.",
+      "language": "Idioma preferido",
+      "languageDesc": "Idioma por defecto para generación IA, notificaciones y lógica del backend. Independiente del idioma de la interfaz.",
+      "timezone": "Zona horaria",
+      "timezoneDesc": "Zona horaria para lógica del backend y visualización de fecha/hora.",
+      "languages": {
+        "en": "English",
+        "zh-CN": "简体中文",
+        "es": "Español"
+      }
+    },
     "language": "Idioma Preferido",
     "languageDesc": "Especifica el idioma utilizado por la IA al generar resúmenes, títulos y metadatos.",
     "timezone": "Zona horaria",
@@ -251,6 +263,9 @@
       "zh-CN": "简体中文",
       "es": "Español"
     },
+    "notificationChannels": "Canales de notificación",
+    "notificationChannelsDesc": "Los canales Webhook y correo se configuran en Admin > Notificaciones > Canales.",
+    "goToChannels": "Ir a canales",
     "emailAliases": "Alias de Correo",
     "emailAliasesDesc": "Gestionar direcciones de correo adicionales",
     "addAlias": "Agregar alias",

@@ -131,6 +131,38 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/notifier',
+    redirect: '/notifier/stats'
+  },
+  {
+    path: '/notifier/stats',
+    name: 'AdminNotificationsStats',
+    component: () => import('@/pages/AdminNotifications/Stats.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/notifier/records',
+    name: 'AdminNotificationsRecords',
+    component: () => import('@/pages/AdminNotifications/Records.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/notifier/channels',
+    name: 'AdminNotificationsChannels',
+    component: () => import('@/pages/AdminNotifications/Channels.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/notifier/settings',
+    name: 'AdminNotificationsSettings',
+    component: () => import('@/pages/AdminNotifications/Config.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/notifier/config',
+    redirect: '/notifier/settings'
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')

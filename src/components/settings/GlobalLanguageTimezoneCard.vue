@@ -119,10 +119,18 @@ const timezoneOptions = computed(() => {
   return getLocalizedTimezones(locale.value === 'zh-CN' ? 'zh-CN' : 'en')
 })
 
+function normalizeLanguage(value) {
+  if (!value || typeof value !== 'string') return 'zh-CN'
+  const v = value.trim()
+  if (v === 'en' || v === 'en-US') return 'en-US'
+  if (v === 'zh-CN' || v === 'zh') return 'zh-CN'
+  return v
+}
+
 function syncFromProfile() {
   const profile = userStore.user?.profile
   if (profile) {
-    form.language = profile.language || 'zh-CN'
+    form.language = normalizeLanguage(profile.language) || 'zh-CN'
     form.timezone = profile.timezone || 'Asia/Shanghai'
   }
 }

@@ -17,6 +17,19 @@
           <!-- Toolbar -->
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-3 flex-wrap">
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                {{ t('taskManagement.list.taskTypeFilter') }}
+              </label>
+              <select
+                v-model="filterModule"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[10rem]"
+                @change="onModuleFilterChange"
+              >
+                <option value="">{{ t('taskManagement.list.taskTypeAll') }}</option>
+                <option value="cloud_billing">{{ t('taskManagement.list.taskTypeCloudBilling') }}</option>
+                <option value="agentcore_notifier">{{ t('taskManagement.list.taskTypeNotifier') }}</option>
+                <option value="agentcore_task">{{ t('taskManagement.list.taskTypeTask') }}</option>
+              </select>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -215,6 +228,7 @@ const { showSuccess, showError } = useToast()
 const loading = ref(false)
 const tasks = ref([])
 const searchQuery = ref('')
+const filterModule = ref('')
 const showPreviewModal = ref(false)
 const selectedTask = ref(null)
 const currentPage = ref(1)
@@ -261,7 +275,14 @@ function formatDuration(seconds) {
 async function loadTasks() {
   loading.value = true
   try {
-    const params = { page: currentPage.value, page_size: pageSize }
+    const params = {
+      page: currentPage.value,
+      page_size: pageSize,
+      my_tasks: 'false'
+    }
+    if (filterModule.value) {
+      params.module = filterModule.value
+    }
     if (searchQuery.value.trim()) {
       params.task_name = searchQuery.value.trim()
     }
@@ -278,6 +299,11 @@ async function loadTasks() {
   } finally {
     loading.value = false
   }
+}
+
+function onModuleFilterChange() {
+  currentPage.value = 1
+  loadTasks()
 }
 
 const debouncedLoad = useDebounceFn(() => {
