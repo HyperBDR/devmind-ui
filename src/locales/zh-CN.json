@@ -854,12 +854,10 @@
       "collectionFailed": "触发采集任务失败",
       "details": "任务详情",
       "basicInfo": "基本信息",
-      "traceback": "错误堆栈",
-      "warningsAndErrors": "警告和错误",
-      "executionLogs": "执行日志",
-      "logSummary": "日志摘要",
-      "totalLogs": "总日志数",
-      "viewLogs": "查看日志"
+      "taskId": "任务 ID",
+      "error": "错误",
+      "result": "结果",
+      "traceback": "错误堆栈"
     },
     "alerts": {
       "title": "告警记录",
@@ -1189,7 +1187,14 @@
       "taskId": "任务 ID",
       "error": "错误",
       "result": "结果",
-      "traceback": "堆栈跟踪"
+      "traceback": "堆栈跟踪",
+      "detailedSteps": "详细步骤",
+      "noStepsOrLogs": "暂无步骤或日志记录",
+      "stepLabel": "步骤",
+      "logLevel": "级别",
+      "logMessage": "说明",
+      "logTime": "时间",
+      "currentProgress": "当前进度"
     },
     "stats": {
       "title": "任务统计",
@@ -1313,6 +1318,13 @@
       "createdAt": "创建时间",
       "sentAt": "发送时间",
       "userId": "用户 ID",
+      "user": "用户",
+      "detailTitle": "发送记录详情",
+      "basicInfo": "基本信息",
+      "errorMessage": "错误信息",
+      "payload": "请求内容",
+      "response": "响应内容",
+      "detailNotFound": "未找到该记录",
       "noRecords": "暂无记录",
       "pageSize": "每页条数",
       "statusAll": "全部状态",

@@ -121,9 +121,6 @@
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('taskManagement.list.createdBy') }}
                   </th>
-                  <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('common.actions') }}
-                  </th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-100">
@@ -151,31 +148,30 @@
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ task.created_by_username || '-' }}
                   </td>
-                  <td class="px-4 py-3 text-right" @click.stop>
-                    <BaseButton
-                      variant="ghost"
-                      size="sm"
-                      :title="t('taskManagement.list.sync')"
-                      @click="syncTask(task)"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </BaseButton>
-                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div
-            v-if="totalCount > pageSize"
-            class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4"
+            v-if="totalCount > 0"
+            class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
           >
             <p class="text-sm text-gray-600">
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <select
+                v-model.number="pageSize"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="currentPage = 1; loadTasks()"
+              >
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
               <BaseButton
                 variant="outline"
                 size="sm"
@@ -234,11 +230,11 @@ const selectedTask = ref(null)
 const currentPage = ref(1)
 const totalCount = ref(0)
 const totalPages = ref(1)
-const pageSize = 20
+const pageSize = ref(20)
 
 const paginationShowing = computed(() => ({
-  from: (currentPage.value - 1) * pageSize + 1,
-  to: Math.min(currentPage.value * pageSize, totalCount.value),
+  from: (currentPage.value - 1) * pageSize.value + 1,
+  to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
 
@@ -277,7 +273,7 @@ async function loadTasks() {
   try {
     const params = {
       page: currentPage.value,
-      page_size: pageSize,
+      page_size: pageSize.value,
       my_tasks: 'false'
     }
     if (filterModule.value) {
@@ -292,7 +288,7 @@ async function loadTasks() {
     tasks.value = list
     const total = data?.count ?? data?.pagination?.total ?? list.length
     totalCount.value = total
-    totalPages.value = total > 0 ? Math.ceil(total / pageSize) : 1
+    totalPages.value = total > 0 ? Math.ceil(total / pageSize.value) : 1
   } catch (e) {
     showError(extractErrorMessage(e, t('common.error')))
     tasks.value = []
@@ -318,20 +314,6 @@ async function handlePreview(task) {
     showPreviewModal.value = true
   } catch (e) {
     showError(extractErrorMessage(e, t('common.error')))
-  }
-}
-
-async function syncTask(task) {
-  try {
-    await taskManagementApi.syncExecution(task.id)
-    showSuccess(t('taskManagement.list.syncSuccess'))
-    if (selectedTask.value?.id === task.id) {
-      const res = await taskManagementApi.getExecution(task.id)
-      selectedTask.value = extractResponseData(res)
-    }
-    loadTasks()
-  } catch (e) {
-    showError(extractErrorMessage(e, t('taskManagement.list.syncFailed')))
   }
 }
 

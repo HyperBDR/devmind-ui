@@ -6,6 +6,7 @@
 import { computed } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js/lib/core'
+import { sanitizeHtml, escapeHtml } from '@/utils/sanitize'
 
 // Import common languages for syntax highlighting
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -182,10 +183,9 @@ const renderedContent = computed(() => {
       }
     )
 
-    return processedHtml
+    return sanitizeHtml(processedHtml)
   } catch (error) {
-    console.error('Markdown parsing error:', error)
-    return `<pre>${props.content}</pre>`
+    return `<pre class="text-gray-600">${escapeHtml(props.content || '')}</pre>`
   }
 })
 </script>

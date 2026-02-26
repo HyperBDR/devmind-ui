@@ -5,6 +5,7 @@
 <script setup>
 import { computed } from 'vue'
 import { marked } from 'marked'
+import { sanitizeHtml, escapeHtml } from '@/utils/sanitize'
 
 const props = defineProps({
   content: {
@@ -90,21 +91,21 @@ const renderedContent = computed(() => {
         : raw
 
     const result = marked.parse(truncatedContent, { renderer: previewRenderer })
-    return result
+    return sanitizeHtml(result)
   } catch (error) {
-    // Fallback to plain text if markdown parsing fails
     const fallback =
       typeof props.content === 'string'
         ? props.content
-        : typeof props.content === 'object'
-          ? props.content?.content ||
-            props.content?.text ||
+        : typeof props.content === 'object' && props.content !== null
+          ? props.content.content ||
+            props.content.text ||
+            props.content.summary ||
             JSON.stringify(props.content)
-          : String(props.content)
-    return (
+          : String(props.content ?? '')
+    const text =
       fallback.substring(0, props.maxLength) +
       (fallback.length > props.maxLength ? '...' : '')
-    )
+    return escapeHtml(text)
   }
 })
 </script>

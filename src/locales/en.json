@@ -844,12 +844,10 @@
       "collectionFailed": "Failed to trigger collection task",
       "details": "Task Details",
       "basicInfo": "Basic Information",
-      "traceback": "Traceback",
-      "warningsAndErrors": "Warnings and Errors",
-      "executionLogs": "Execution Logs",
-      "logSummary": "Log Summary",
-      "totalLogs": "Total Logs",
-      "viewLogs": "View Logs"
+      "taskId": "Task ID",
+      "error": "Error",
+      "result": "Result",
+      "traceback": "Traceback"
     },
     "alerts": {
       "title": "Alert Records",
@@ -1179,7 +1177,14 @@
       "taskId": "Task ID",
       "error": "Error",
       "result": "Result",
-      "traceback": "Traceback"
+      "traceback": "Traceback",
+      "detailedSteps": "Detailed Steps",
+      "noStepsOrLogs": "No steps or logs recorded",
+      "stepLabel": "Step",
+      "logLevel": "Level",
+      "logMessage": "Message",
+      "logTime": "Time",
+      "currentProgress": "Current progress"
     },
     "stats": {
       "title": "Task Statistics",
@@ -1303,6 +1308,13 @@
       "createdAt": "Created At",
       "sentAt": "Sent At",
       "userId": "User ID",
+      "user": "User",
+      "detailTitle": "Send Record Detail",
+      "basicInfo": "Basic Information",
+      "errorMessage": "Error message",
+      "payload": "Payload",
+      "response": "Response",
+      "detailNotFound": "Record not found",
       "noRecords": "No records",
       "pageSize": "Page size",
       "statusAll": "All statuses",

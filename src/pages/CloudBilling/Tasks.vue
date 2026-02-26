@@ -6,6 +6,9 @@
         <h1 class="text-lg font-semibold text-gray-900">
           {{ t('cloudBilling.tasks.title') }}
         </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          {{ t('cloudBilling.tasks.subtitle') }}
+        </p>
       </div>
 
       <!-- Content Card -->
@@ -117,53 +120,91 @@
           <!-- Desktop Table View -->
           <div
             v-if="!loading && tasks.length > 0"
-            class="hidden md:block overflow-x-auto"
+            class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
           >
             <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
+              <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('cloudBilling.tasks.taskName') }}
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('cloudBilling.tasks.status') }}
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('cloudBilling.tasks.startTime') }}
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('cloudBilling.tasks.endTime') }}
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('cloudBilling.tasks.duration') }}
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
+              <tbody class="bg-white divide-y divide-gray-100">
                 <tr
                   v-for="task in tasks"
                   :key="task.id"
                   @click="handlePreview(task)"
-                  class="cursor-pointer hover:bg-gray-50 transition-colors"
+                  class="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
                 >
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                     {{ task.name }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-4 py-3 whitespace-nowrap">
                     <StatusBadge :status="mapTaskStatus(task.status)" />
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(task.started_at) }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(task.finished_at) }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDuration(task.duration) }}
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <div
+            v-if="!loading && totalCount > 0"
+            class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
+          >
+            <p class="text-sm text-gray-600">
+              {{ t('common.pagination.showing', paginationShowing) }}
+            </p>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <select
+                v-model.number="pageSize"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="currentPage = 1; loadTasks(searchQuery.value, 1)"
+              >
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="goPrevPage"
+              >
+                {{ t('common.pagination.previous') }}
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="goNextPage"
+              >
+                {{ t('common.pagination.next') }}
+              </BaseButton>
+            </div>
           </div>
         </div>
       </div>
@@ -179,13 +220,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
 import { useDebounce } from '@/composables/useDebounce'
 import { useToast } from '@/composables/useToast'
-import { extractResponseData } from '@/utils/api'
+import { extractResponseData, extractErrorMessage } from '@/utils/api'
 import { cloudBillingApi } from '@/api/cloudBilling'
+import { taskManagementApi } from '@/api/taskManagement'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
@@ -203,6 +245,19 @@ const tasks = ref([])
 const searchQuery = ref('')
 const showPreviewModal = ref(false)
 const selectedTask = ref(null)
+const currentPage = ref(1)
+const totalCount = ref(0)
+const pageSize = ref(10)
+
+const totalPages = computed(() =>
+  totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
+)
+
+const paginationShowing = computed(() => ({
+  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  to: Math.min(currentPage.value * pageSize.value, totalCount.value),
+  total: totalCount.value
+}))
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
@@ -233,7 +288,8 @@ const mapTaskStatus = (status) => {
 }
 
 const debouncedSearch = useDebounce((query) => {
-  loadTasks(query)
+  currentPage.value = 1
+  loadTasks(query, 1)
 }, 300)
 
 const handleSearch = (query) => {
@@ -242,12 +298,45 @@ const handleSearch = (query) => {
 }
 
 const handleRefresh = () => {
-  loadTasks(searchQuery.value)
+  loadTasks(searchQuery.value, currentPage.value)
 }
 
-const handlePreview = (task) => {
-  selectedTask.value = task
-  showPreviewModal.value = true
+const goPrevPage = () => {
+  if (currentPage.value <= 1) return
+  currentPage.value--
+  loadTasks(searchQuery.value, currentPage.value)
+}
+
+const goNextPage = () => {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value++
+  loadTasks(searchQuery.value, currentPage.value)
+}
+
+async function handlePreview(task) {
+  if (!task?.id) return
+  try {
+    const res = await taskManagementApi.getExecution(task.id)
+    const data = extractResponseData(res)
+    selectedTask.value = {
+      id: data.id,
+      task_id: data.task_id ?? task.task_id,
+      task_name: data.task_name ?? task.name,
+      name: data.task_name ?? task.name,
+      status: data.status ?? task.status,
+      created_at: data.created_at,
+      started_at: data.started_at ?? task.started_at,
+      finished_at: data.finished_at ?? task.finished_at,
+      duration: data.duration ?? task.duration,
+      result: data.result,
+      error: data.error,
+      traceback: data.traceback,
+      metadata: data.metadata || task.metadata
+    }
+    showPreviewModal.value = true
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
+  }
 }
 
 const handleTriggerCollection = async () => {
@@ -276,29 +365,26 @@ const handleTriggerCollection = async () => {
   }
 }
 
-const loadTasks = async (query = '') => {
+const loadTasks = async (query = '', page = currentPage.value) => {
   loading.value = true
   try {
-    const params = {}
+    const params = {
+      page,
+      page_size: pageSize.value
+    }
     if (query) {
-      // Search by task_id or task_name
-      params.search = query
+      params.task_name = query
     }
     const response = await cloudBillingApi.getCollectionTasks(params)
     const data = extractResponseData(response)
-    
-    // Handle paginated response format
-    let taskList = []
-    if (Array.isArray(data)) {
-      taskList = data
-    } else if (data && data.results) {
-      taskList = data.results
-    } else if (data && data.list) {
-      taskList = data.list
-    }
-    
-    // Map task_manager fields to display format
-    tasks.value = taskList.map(task => ({
+
+    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    const total = data?.count ?? data?.pagination?.total ?? list.length
+
+    totalCount.value = total
+    currentPage.value = page
+
+    tasks.value = list.map(task => ({
       id: task.id,
       name: task.task_name || 'cloud_billing.tasks.collect_billing_data',
       status: mapTaskManagerStatus(task.status),

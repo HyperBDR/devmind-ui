@@ -17,6 +17,11 @@ export const notificationsAdminApi = {
       .get('/v1/admin/notifications/notification-records/', { params })
       .then(extractResponseData)
   },
+  getRecord(uuid) {
+    return apiClient
+      .get(`/v1/admin/notifications/notification-records/${uuid}/`)
+      .then(extractResponseData)
+  },
   /**
    * List users that have at least one notification record (for stats/records scope dropdown).
    * Returns [{ user_id, display }].

@@ -3,7 +3,7 @@
     :type="type"
     :disabled="disabled || loading"
     :class="buttonClasses"
-    :aria-label="loading ? 'Loading...' : undefined"
+    :aria-label="loading ? t('common.loading') : undefined"
     :aria-disabled="disabled || loading"
     @click="handleClick"
     @keydown="handleKeydown"
@@ -35,7 +35,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps({
   variant: {
     type: String,

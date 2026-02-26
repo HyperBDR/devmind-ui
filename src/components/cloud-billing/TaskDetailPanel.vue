@@ -56,7 +56,7 @@
       <!-- Content - Scrollable -->
       <div class="flex-1 overflow-y-auto">
         <div v-if="task" class="p-6 space-y-6">
-          <!-- Basic Information -->
+          <!-- Basic Information (same structure as TaskExecutionDetailPanel) -->
           <div>
             <h3 class="text-sm font-semibold text-gray-900 mb-4">
               {{ t('cloudBilling.tasks.basicInfo') }}
@@ -80,7 +80,7 @@
               </div>
               <div>
                 <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  Task ID
+                  {{ t('cloudBilling.tasks.taskId') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 font-mono">
                   {{ task.task_id || '-' }}
@@ -112,21 +112,87 @@
               </div>
               <div v-if="task.error">
                 <dt class="text-xs font-semibold text-red-700 mb-2 uppercase tracking-wider">
-                  Error
+                  {{ t('cloudBilling.tasks.error') }}
                 </dt>
                 <dd class="text-sm text-red-600 whitespace-pre-wrap">
                   {{ task.error }}
                 </dd>
               </div>
-              <div v-if="task.result">
+              <div v-if="task.result !== undefined && task.result !== null">
                 <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  Result
+                  {{ t('cloudBilling.tasks.result') }}
                 </dt>
                 <dd class="text-sm text-gray-600">
                   <pre class="bg-gray-50 p-3 rounded text-xs overflow-auto max-h-64">{{ JSON.stringify(task.result, null, 2) }}</pre>
                 </dd>
               </div>
             </dl>
+          </div>
+
+          <!-- Detailed steps (same block as TaskExecutionDetailPanel) -->
+          <div class="border-t border-gray-200 pt-6">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">
+              {{ t('taskManagement.list.detailedSteps') }}
+            </h3>
+            <div v-if="currentProgressText" class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+              <span class="font-medium">{{ t('taskManagement.list.currentProgress') }}:</span>
+              {{ currentProgressText }}
+            </div>
+            <div
+              v-if="detailSteps.length > 0"
+              class="rounded-lg border border-gray-200 bg-gray-50 shadow-sm overflow-hidden"
+            >
+              <div class="max-h-96 overflow-y-auto divide-y divide-gray-200">
+                <div
+                  v-for="(item, index) in detailSteps"
+                  :key="index"
+                  class="p-4 bg-white hover:bg-gray-50/80 transition-colors"
+                  :class="item.level === 'ERROR' ? 'border-l-4 border-l-red-500' : item.level === 'WARNING' ? 'border-l-4 border-l-amber-500' : ''"
+                >
+                  <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-semibold">
+                      {{ index + 1 }}
+                    </span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <span
+                          v-if="item.level"
+                          class="inline-flex px-2 py-0.5 text-xs font-medium rounded"
+                          :class="logLevelClass(item.level)"
+                        >
+                          {{ item.level }}
+                        </span>
+                        <span
+                          v-if="item.step || item.name"
+                          class="text-xs font-semibold text-gray-700"
+                        >
+                          {{ item.step || item.name }}
+                        </span>
+                        <span
+                          v-if="item.timestamp"
+                          class="text-xs text-gray-500"
+                        >
+                          {{ formatStepTime(item.timestamp) }}
+                        </span>
+                      </div>
+                      <p class="text-sm text-gray-800 whitespace-pre-wrap break-words">
+                        {{ item.message }}
+                      </p>
+                      <pre
+                        v-if="item.exception"
+                        class="mt-2 text-xs font-mono text-red-700 whitespace-pre-wrap bg-red-50 p-2 rounded border border-red-100"
+                      >{{ typeof item.exception === 'string' ? item.exception : JSON.stringify(item.exception) }}</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              v-else
+              class="py-8 text-center text-sm text-gray-500 rounded-lg border border-gray-200 bg-gray-50"
+            >
+              {{ t('taskManagement.list.noStepsOrLogs') }}
+            </p>
           </div>
 
           <!-- Traceback -->
@@ -136,115 +202,6 @@
             </h3>
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
               <pre class="text-xs font-mono text-red-800 whitespace-pre-wrap overflow-auto max-h-96">{{ task.traceback }}</pre>
-            </div>
-          </div>
-
-          <!-- Warnings and Errors -->
-          <div v-if="warningsAndErrors && warningsAndErrors.length > 0" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('cloudBilling.tasks.warningsAndErrors') }}
-              <span class="text-xs font-normal text-gray-500 ml-2">
-                ({{ warningsAndErrors.length }})
-              </span>
-            </h3>
-            <div class="space-y-2 max-h-96 overflow-y-auto">
-              <div
-                v-for="(log, index) in warningsAndErrors"
-                :key="index"
-                class="border rounded-lg p-3 shadow-sm"
-                :class="{
-                  'bg-yellow-50 border-yellow-200': log.level === 'WARNING',
-                  'bg-red-50 border-red-200': log.level === 'ERROR' || log.level === 'CRITICAL'
-                }"
-              >
-                <div class="flex items-start justify-between mb-1">
-                  <span
-                    class="text-xs font-semibold px-2 py-0.5 rounded"
-                    :class="{
-                      'bg-yellow-200 text-yellow-800': log.level === 'WARNING',
-                      'bg-red-200 text-red-800': log.level === 'ERROR' || log.level === 'CRITICAL'
-                    }"
-                  >
-                    {{ log.level }}
-                  </span>
-                  <span class="text-xs text-gray-500">
-                    {{ formatLogTimestamp(log.timestamp) }}
-                  </span>
-                </div>
-                <div class="text-sm font-medium mt-1 whitespace-pre-wrap" :class="{
-                  'text-yellow-800': log.level === 'WARNING',
-                  'text-red-800': log.level === 'ERROR' || log.level === 'CRITICAL'
-                }">
-                  {{ log.message }}
-                </div>
-                <div v-if="log.exception" class="mt-2 pt-2 border-t border-gray-300">
-                  <pre class="text-xs font-mono whitespace-pre-wrap overflow-auto">{{ log.exception.join('') }}</pre>
-                </div>
-                <div v-if="log.module || log.funcName" class="text-xs text-gray-500 mt-1">
-                  {{ log.module }}{{ log.funcName ? '.' + log.funcName : '' }}{{ log.lineno ? ':' + log.lineno : '' }}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Execution Logs -->
-          <div v-if="executionLogs && executionLogs.length > 0" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('cloudBilling.tasks.executionLogs') }}
-              <span class="text-xs font-normal text-gray-500 ml-2">
-                ({{ executionLogs.length }})
-              </span>
-            </h3>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-              <details class="cursor-pointer">
-                <summary class="text-xs font-semibold text-gray-700 mb-2">
-                  {{ t('cloudBilling.tasks.viewLogs') }}
-                </summary>
-                <div class="mt-3 space-y-1 max-h-96 overflow-y-auto">
-                  <div
-                    v-for="(log, index) in executionLogs"
-                    :key="index"
-                    class="text-xs font-mono whitespace-pre-wrap p-2 rounded"
-                    :class="{
-                      'bg-blue-50 text-blue-800': log.level === 'INFO',
-                      'bg-yellow-50 text-yellow-800': log.level === 'WARNING',
-                      'bg-red-50 text-red-800': log.level === 'ERROR' || log.level === 'CRITICAL',
-                      'bg-gray-50 text-gray-600': log.level === 'DEBUG'
-                    }"
-                  >
-                    <span class="text-gray-500">[{{ formatLogTimestamp(log.timestamp) }}]</span>
-                    <span class="font-semibold ml-2">{{ log.level }}:</span>
-                    <span class="ml-1">{{ log.message }}</span>
-                  </div>
-                </div>
-              </details>
-            </div>
-          </div>
-
-          <!-- Log Summary -->
-          <div v-if="logSummary" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('cloudBilling.tasks.logSummary') }}
-            </h3>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-              <dl class="grid grid-cols-2 gap-4">
-                <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-1">
-                    {{ t('cloudBilling.tasks.totalLogs') }}
-                  </dt>
-                  <dd class="text-sm font-medium text-gray-900">
-                    {{ logSummary.total }}
-                  </dd>
-                </div>
-                <div v-for="(count, level) in logSummary.by_level" :key="level">
-                  <dt class="text-xs font-semibold text-gray-700 mb-1">
-                    {{ level }}
-                  </dt>
-                  <dd class="text-sm font-medium text-gray-900">
-                    {{ count }}
-                  </dd>
-                </div>
-              </dl>
             </div>
           </div>
         </div>
@@ -274,20 +231,67 @@ const emit = defineEmits(['close'])
 
 const { t } = useI18n()
 
-const warningsAndErrors = computed(() => {
-  if (!props.task || !props.task.metadata) return []
-  return props.task.metadata.warnings_and_errors || []
+const metadata = computed(() => props.task?.metadata || {})
+
+const detailSteps = computed(() => {
+  const meta = metadata.value
+  if (Array.isArray(meta.steps) && meta.steps.length > 0) {
+    return meta.steps.map((s) => ({
+      step: s.step ?? s.name,
+      name: s.name ?? s.step,
+      message: s.message ?? s.description ?? '',
+      timestamp: s.timestamp ?? s.time
+    }))
+  }
+  if (Array.isArray(meta.logs) && meta.logs.length > 0) {
+    return meta.logs.map((log) => ({
+      level: log.level,
+      message: log.message ?? '',
+      timestamp: log.timestamp,
+      exception: log.exception
+    }))
+  }
+  return []
 })
 
-const executionLogs = computed(() => {
-  if (!props.task || !props.task.metadata) return []
-  return props.task.metadata.logs || []
+const currentProgressText = computed(() => {
+  const meta = metadata.value
+  const percent = meta.progress_percent
+  const msg = meta.progress_message
+  const step = meta.progress_step
+  if (percent != null && (msg || step)) {
+    const parts = []
+    if (step) parts.push(step)
+    if (msg) parts.push(msg)
+    if (percent != null) parts.push(`${percent}%`)
+    return parts.join(' · ')
+  }
+  if (msg) return msg
+  if (step) return step
+  return ''
 })
 
-const logSummary = computed(() => {
-  if (!props.task || !props.task.metadata) return null
-  return props.task.metadata.log_summary || null
-})
+function formatStepTime(value) {
+  if (value == null) return ''
+  try {
+    const date = typeof value === 'number' ? new Date(value * 1000) : new Date(value)
+    if (Number.isNaN(date.getTime())) return String(value)
+    return format(date, 'yyyy-MM-dd HH:mm:ss')
+  } catch {
+    return String(value)
+  }
+}
+
+function logLevelClass(level) {
+  const map = {
+    ERROR: 'bg-red-100 text-red-800',
+    WARNING: 'bg-amber-100 text-amber-800',
+    INFO: 'bg-blue-100 text-blue-800',
+    DEBUG: 'bg-gray-100 text-gray-600',
+    CRITICAL: 'bg-red-200 text-red-900'
+  }
+  return map[level] || 'bg-gray-100 text-gray-700'
+}
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
@@ -299,12 +303,14 @@ const formatDate = (dateString) => {
 }
 
 const formatDuration = (seconds) => {
-  if (!seconds && seconds !== 0) return '-'
-  if (seconds < 60) return `${seconds}s`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  return `${hours}h ${minutes}m`
+  if (seconds != null && seconds !== '') {
+    if (seconds < 60) return `${seconds}s`
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    return `${h}h ${m}m`
+  }
+  return '-'
 }
 
 const calculateDuration = (startTime, endTime) => {
@@ -312,7 +318,7 @@ const calculateDuration = (startTime, endTime) => {
   try {
     const start = new Date(startTime)
     const end = new Date(endTime)
-    return Math.floor((end - start) / 1000) // Duration in seconds
+    return Math.floor((end - start) / 1000)
   } catch {
     return null
   }
@@ -324,24 +330,14 @@ const mapTaskStatus = (status) => {
     running: 'processing',
     completed: 'success',
     failed: 'failed',
-    'PENDING': 'pending',
-    'STARTED': 'processing',
-    'SUCCESS': 'success',
-    'FAILURE': 'failed',
-    'RETRY': 'processing',
-    'REVOKED': 'failed'
+    PENDING: 'pending',
+    STARTED: 'processing',
+    SUCCESS: 'success',
+    FAILURE: 'failed',
+    RETRY: 'processing',
+    REVOKED: 'failed'
   }
   return statusMap[status] || status?.toLowerCase() || 'pending'
-}
-
-const formatLogTimestamp = (timestamp) => {
-  if (!timestamp) return '-'
-  try {
-    const date = new Date(timestamp * 1000)
-    return format(date, 'HH:mm:ss.SSS')
-  } catch {
-    return timestamp
-  }
 }
 
 const handleClose = () => {

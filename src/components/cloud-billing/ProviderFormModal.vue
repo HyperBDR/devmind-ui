@@ -898,11 +898,6 @@ const handleValidate = async () => {
 
   try {
     const config = buildConfig()
-    console.log('Validating config:', {
-      provider_type: formData.provider_type,
-      config: config,
-      configFields: configFields
-    })
     const response = await cloudBillingApi.validateProviderConfig(
       formData.provider_type,
       config

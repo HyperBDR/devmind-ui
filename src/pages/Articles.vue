@@ -138,9 +138,7 @@ const loadArticles = async () => {
       params.social_account = socialAccountFilter.value
     }
 
-    console.log('Loading articles with params:', JSON.stringify(params, null, 2))
     const response = await articlesApi.getArticles(params)
-    console.log('API response:', response.status, response.data)
     const data = extractResponseData(response)
 
     // Handle paginated response
@@ -175,9 +173,7 @@ const loadArticles = async () => {
       totalCount.value = articles.value.length
     }
 
-    console.log('Loaded articles:', articles.value.length, 'total:', totalCount.value)
   } catch (error) {
-    console.error('Error loading articles:', error)
     showError(extractErrorMessage(error, t('articles.loadError')))
   } finally {
     loading.value = false

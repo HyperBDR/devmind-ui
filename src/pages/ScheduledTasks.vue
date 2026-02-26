@@ -269,6 +269,49 @@
                 </tbody>
               </table>
             </div>
+
+            <!-- Desktop pagination with page size -->
+            <div
+              v-if="totalCount > 0"
+              class="hidden md:flex mt-4 flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
+            >
+              <p class="text-sm text-gray-600">
+                {{ t('common.pagination.showing', {
+                  from: (currentPage - 1) * pageSize + 1,
+                  to: Math.min(currentPage * pageSize, totalCount),
+                  total: totalCount
+                }) }}
+              </p>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+                <select
+                  v-model.number="pageSize"
+                  class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                  @change="currentPage = 1; loadTasks()"
+                >
+                  <option :value="10">10</option>
+                  <option :value="20">20</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  :disabled="currentPage <= 1"
+                  @click="currentPage--; loadTasks()"
+                >
+                  {{ t('common.pagination.previous') }}
+                </BaseButton>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  :disabled="currentPage >= totalPages"
+                  @click="currentPage++; loadTasks()"
+                >
+                  {{ t('common.pagination.next') }}
+                </BaseButton>
+              </div>
+            </div>
           </template>
         </div>
       </div>

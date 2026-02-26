@@ -158,6 +158,44 @@
               </tbody>
             </table>
           </div>
+
+          <div
+            v-if="!loading && totalCount > 0"
+            class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
+          >
+            <p class="text-sm text-gray-600">
+              {{ t('common.pagination.showing', paginationShowing) }}
+            </p>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <select
+                v-model.number="pageSize"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="currentPage = 1; loadAlerts()"
+              >
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="goPrevPage"
+              >
+                {{ t('common.pagination.previous') }}
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="goNextPage"
+              >
+                {{ t('common.pagination.next') }}
+              </BaseButton>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -172,7 +210,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
 import { useDebounce } from '@/composables/useDebounce'
@@ -192,6 +230,19 @@ const alerts = ref([])
 const searchQuery = ref('')
 const showPreviewModal = ref(false)
 const selectedAlert = ref(null)
+const currentPage = ref(1)
+const totalCount = ref(0)
+const pageSize = ref(10)
+
+const totalPages = computed(() =>
+  totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
+)
+
+const paginationShowing = computed(() => ({
+  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  to: Math.min(currentPage.value * pageSize.value, totalCount.value),
+  total: totalCount.value
+}))
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
@@ -232,7 +283,8 @@ const getWebhookStatusLabel = (status) => {
 }
 
 const debouncedSearch = useDebounce((query) => {
-  loadAlerts(query)
+  currentPage.value = 1
+  loadAlerts(query, 1)
 }, 300)
 
 const handleSearch = (query) => {
@@ -241,7 +293,19 @@ const handleSearch = (query) => {
 }
 
 const handleRefresh = () => {
-  loadAlerts(searchQuery.value)
+  loadAlerts(searchQuery.value, currentPage.value)
+}
+
+const goPrevPage = () => {
+  if (currentPage.value <= 1) return
+  currentPage.value--
+  loadAlerts(searchQuery.value, currentPage.value)
+}
+
+const goNextPage = () => {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value++
+  loadAlerts(searchQuery.value, currentPage.value)
 }
 
 const handlePreview = (alert) => {
@@ -249,26 +313,25 @@ const handlePreview = (alert) => {
   showPreviewModal.value = true
 }
 
-const loadAlerts = async (query = '') => {
+const loadAlerts = async (query = '', page = currentPage.value) => {
   loading.value = true
   try {
-    const params = {}
+    const params = {
+      page,
+      page_size: pageSize.value
+    }
     if (query) {
       params.search = query
     }
     const response = await cloudBillingApi.getAlertRecords(params)
     const data = extractResponseData(response)
-    
-    // Handle different response formats
-    if (Array.isArray(data)) {
-      alerts.value = data
-    } else if (data && data.results && Array.isArray(data.results)) {
-      alerts.value = data.results
-    } else if (data && data.list && Array.isArray(data.list)) {
-      alerts.value = data.list
-    } else {
-      alerts.value = []
-    }
+
+    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    const total = data?.count ?? data?.pagination?.total ?? list.length
+
+    totalCount.value = total
+    currentPage.value = page
+    alerts.value = list
   } catch (error) {
     console.error('Failed to load alerts:', error)
     alerts.value = []

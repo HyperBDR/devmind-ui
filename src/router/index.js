@@ -199,32 +199,26 @@ router.beforeEach(async (to, from, next) => {
 
     // Check if route requires admin access
     if (to.meta.requiresAdmin) {
-      // If user info is already loaded, check immediately
       if (userStore.user) {
         if (!userStore.userInfo?.is_staff) {
           next('/dashboard')
           return
         }
       } else {
-        // User info not loaded yet - allow navigation first, check in background
-        // This prevents blocking navigation while waiting for API response
-        next()
-
-        // Check auth and redirect if not admin (non-blocking)
-        userStore.checkAuth().then((authSuccess) => {
+        try {
+          const authSuccess = await userStore.checkAuth()
           if (!authSuccess) {
-            router.replace('/login')
+            next('/login')
             return
           }
-          // If user is not admin, redirect to dashboard
           if (!userStore.userInfo?.is_staff) {
-            router.replace('/dashboard')
+            next('/dashboard')
+            return
           }
-        }).catch(() => {
-          // If check fails, redirect to login
-          router.replace('/login')
-        })
-        return
+        } catch {
+          next('/login')
+          return
+        }
       }
     }
 
