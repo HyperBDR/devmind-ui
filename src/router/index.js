@@ -88,79 +88,163 @@ const routes = [
   },
   {
     path: '/llm',
-    redirect: '/llm/stats'
+    redirect: '/management/llm/stats'
   },
   {
     path: '/llm/stats',
-    name: 'LLMStats',
-    component: () => import('@/pages/LLM/Stats.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/llm/stats'
   },
   {
     path: '/llm/usage',
-    name: 'LLMUsage',
-    component: () => import('@/pages/LLM/Usage.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/llm/usage'
   },
   {
     path: '/llm/config',
-    name: 'LLMConfig',
-    component: () => import('@/pages/LLM/Config.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/llm/config'
+  },
+  {
+    path: '/llm/:pathMatch(.*)*',
+    redirect: '/management/llm/stats'
   },
   {
     path: '/task-management',
-    redirect: '/task-management/list'
+    redirect: '/management/task-management/list'
   },
   {
     path: '/task-management/list',
-    name: 'TaskManagementList',
-    component: () => import('@/pages/TaskManagement/List.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/task-management/list'
   },
   {
     path: '/task-management/stats',
-    name: 'TaskManagementStats',
-    component: () => import('@/pages/TaskManagement/Stats.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/task-management/stats'
   },
   {
     path: '/task-management/settings',
-    name: 'TaskManagementSettings',
-    component: () => import('@/pages/TaskManagement/Settings.vue'),
-    meta: { requiresAuth: true }
+    redirect: '/management/task-management/settings'
+  },
+  {
+    path: '/task-management/:pathMatch(.*)*',
+    redirect: '/management/task-management/list'
   },
   {
     path: '/notifier',
-    redirect: '/notifier/stats'
+    redirect: '/management/notifier/stats'
   },
   {
     path: '/notifier/stats',
+    redirect: '/management/notifier/stats'
+  },
+  {
+    path: '/notifier/records',
+    redirect: '/management/notifier/records'
+  },
+  {
+    path: '/notifier/channels',
+    redirect: '/management/notifier/channels'
+  },
+  {
+    path: '/notifier/settings',
+    redirect: '/management/notifier/settings'
+  },
+  {
+    path: '/notifier/config',
+    redirect: '/management/notifier/settings'
+  },
+  {
+    path: '/notifier/:pathMatch(.*)*',
+    redirect: '/management/notifier/stats'
+  },
+  {
+    path: '/management',
+    redirect: '/management/users'
+  },
+  {
+    path: '/management/users',
+    name: 'ManagementUsers',
+    component: () => import('@/pages/Management/Users.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/groups',
+    name: 'ManagementGroups',
+    component: () => import('@/pages/Management/Groups.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/llm',
+    redirect: '/management/llm/stats'
+  },
+  {
+    path: '/management/llm/stats',
+    name: 'LLMStats',
+    component: () => import('@/pages/LLM/Stats.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/llm/usage',
+    name: 'LLMUsage',
+    component: () => import('@/pages/LLM/Usage.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/llm/config',
+    name: 'LLMConfig',
+    component: () => import('@/pages/LLM/Config.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/task-management',
+    redirect: '/management/task-management/list'
+  },
+  {
+    path: '/management/task-management/list',
+    name: 'TaskManagementList',
+    component: () => import('@/pages/TaskManagement/List.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/task-management/stats',
+    name: 'TaskManagementStats',
+    component: () => import('@/pages/TaskManagement/Stats.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/task-management/settings',
+    name: 'TaskManagementSettings',
+    component: () => import('@/pages/TaskManagement/Settings.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/management/notifier',
+    redirect: '/management/notifier/stats'
+  },
+  {
+    path: '/management/notifier/stats',
     name: 'AdminNotificationsStats',
     component: () => import('@/pages/AdminNotifications/Stats.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
-    path: '/notifier/records',
+    path: '/management/notifier/records',
     name: 'AdminNotificationsRecords',
     component: () => import('@/pages/AdminNotifications/Records.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
-    path: '/notifier/channels',
+    path: '/management/notifier/channels',
     name: 'AdminNotificationsChannels',
     component: () => import('@/pages/AdminNotifications/Channels.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
-    path: '/notifier/settings',
+    path: '/management/notifier/settings',
     name: 'AdminNotificationsSettings',
     component: () => import('@/pages/AdminNotifications/Config.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
-    path: '/notifier/config',
-    redirect: '/notifier/settings'
+    path: '/management/notifier/config',
+    redirect: '/management/notifier/settings'
   },
   {
     path: '/404',
@@ -177,7 +261,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior() {
     // Always scroll to top on route change for better UX
     return { top: 0 }
   }

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -541,7 +541,7 @@
         </form>
       </BaseModal>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -552,7 +552,7 @@
 import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { llmAdminApi } from '@/api/llmAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import ProviderIcon from '@/components/llm/ProviderIcon.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'

@@ -327,11 +327,18 @@ const loadAlerts = async (query = '', page = currentPage.value) => {
     const data = extractResponseData(response)
 
     const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
-    const total = data?.count ?? data?.pagination?.total ?? list.length
+    const serverTotal = data?.count ?? data?.pagination?.total
+    const hasServerPagination = Number.isFinite(Number(serverTotal))
+    const total = hasServerPagination ? Number(serverTotal) : list.length
 
     totalCount.value = total
     currentPage.value = page
-    alerts.value = list
+    if (hasServerPagination) {
+      alerts.value = list
+    } else {
+      const start = (page - 1) * pageSize.value
+      alerts.value = list.slice(start, start + pageSize.value)
+    }
   } catch (error) {
     console.error('Failed to load alerts:', error)
     alerts.value = []

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <section class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">
@@ -241,7 +241,7 @@
       </template>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -262,7 +262,7 @@ import {
 } from 'chart.js'
 import { notificationsAdminApi } from '@/api/notificationsAdmin'
 import { llmAdminApi } from '@/api/llmAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 

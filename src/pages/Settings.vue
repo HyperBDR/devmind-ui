@@ -46,7 +46,7 @@
             {{ t('settings.notificationChannelsDesc') }}
           </p>
           <router-link
-            to="/notifier/channels"
+            to="/management/notifier/channels"
             class="text-sm font-medium text-primary-600 hover:text-primary-700"
           >
             {{ t('settings.goToChannels') }} →

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -118,7 +118,7 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -126,7 +126,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { notificationsAdminApi } from '@/api/notificationsAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 

@@ -1,267 +1,364 @@
 <template>
-  <AppLayout>
-    <div class="w-full max-w-full">
-      <!-- Page Header -->
-      <div class="mb-4">
-        <h1 class="text-lg font-semibold text-gray-900">
+  <AdminLayout>
+    <div class="w-full max-w-full p-6">
+      <section class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
           {{ t('taskManagement.stats.title') }}
         </h1>
         <p class="mt-1 text-sm text-gray-500">
           {{ t('taskManagement.stats.subtitle') }}
         </p>
-      </div>
+      </section>
 
-      <div class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-6">
-          <div class="flex flex-wrap items-center gap-3 mb-6">
-            <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('taskManagement.stats.granularity') }}</span>
-            <div class="flex rounded-md border border-gray-300 overflow-hidden">
+      <section
+        class="w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5 flex flex-wrap items-end justify-between gap-6 mb-6"
+        aria-label="Filters"
+      >
+        <div class="flex flex-wrap items-end gap-6 flex-1 min-w-0">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ t('notificationManagement.stats.userScope') }}
+            </label>
+            <select
+              v-model="userScope"
+              class="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 min-w-[140px] hover:border-gray-300 transition-colors"
+              @change="fetchStats"
+            >
+              <option value="">{{ t('notificationManagement.stats.allUsers') }}</option>
+              <option
+                v-for="u in userOptions"
+                :key="u.user_id"
+                :value="String(u.user_id)"
+              >
+                {{ u.display }}
+              </option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ t('taskManagement.stats.granularity') }}
+            </label>
+            <div class="flex rounded-lg bg-gray-100 p-1">
               <button
                 v-for="opt in granularityOptions"
                 :key="opt.value"
                 type="button"
                 :class="[
-                  'px-2.5 py-1.5 text-sm font-medium border-r border-gray-300 last:border-r-0 transition-colors',
-                  granularity === opt.value ? 'bg-primary-100 text-primary-700 border-primary-200' : 'bg-white text-gray-600 hover:bg-gray-50'
+                  'px-4 py-1.5 text-xs font-semibold rounded-md transition-colors',
+                  granularity === opt.value
+                    ? 'bg-white text-primary-600 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
                 ]"
                 @click="selectGranularity(opt.value)"
               >
                 {{ opt.label }}
               </button>
             </div>
-            <template v-if="granularity === 'day'">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ granularity === 'day' ? t('taskManagement.stats.selectDay') : granularity === 'month' ? t('taskManagement.stats.selectYearMonth') : t('taskManagement.stats.selectYear') }}
+            </label>
+            <div v-if="granularity === 'day'" class="flex items-center gap-2">
               <input
-                v-model="selectedDate"
+                v-model="selectedDay"
                 type="date"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                @change="fetchStats"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-40 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
+                @change="onDayChange"
               />
-            </template>
-            <template v-else-if="granularity === 'month'">
-              <input
-                v-model="selectedMonth"
-                type="month"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-36 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                @change="fetchStats"
-              />
-            </template>
-            <template v-else-if="granularity === 'year'">
-              <input
-                v-model.number="selectedYear"
-                type="number"
-                min="2000"
-                :max="currentYear"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                @change="fetchStats"
-              />
-            </template>
-            <BaseButton
-              variant="outline"
-              size="sm"
-              :loading="loading"
-              :title="t('common.refresh')"
-              class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow ml-auto"
-              @click="fetchStats"
-            >
-              <svg
-                v-if="!loading"
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              <span class="sr-only">{{ t('common.refresh') }}</span>
-            </BaseButton>
-          </div>
-
-          <BaseLoading v-if="loading && !stats" />
-
-          <div
-            v-else-if="!loading && !stats"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
-          >
-            <svg
-              class="mx-auto h-12 w-12 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-              />
-            </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('taskManagement.stats.noData') }}</p>
-          </div>
-
-          <template v-else>
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.total') }}</div>
-                <div class="text-2xl font-semibold text-gray-900">{{ stats.total ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.pending') }}</div>
-                <div class="text-2xl font-semibold text-amber-600">{{ stats.pending ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.started') }}</div>
-                <div class="text-2xl font-semibold text-blue-600">{{ stats.started ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.success') }}</div>
-                <div class="text-2xl font-semibold text-green-600">{{ stats.success ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.failure') }}</div>
-                <div class="text-2xl font-semibold text-red-600">{{ stats.failure ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.retry') }}</div>
-                <div class="text-2xl font-semibold text-purple-600">{{ stats.retry ?? 0 }}</div>
-              </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('taskManagement.stats.revoked') }}</div>
-                <div class="text-2xl font-semibold text-gray-600">{{ stats.revoked ?? 0 }}</div>
-              </div>
             </div>
+            <div v-else-if="granularity === 'month'" class="flex items-center gap-2">
+              <select
+                v-model="selectedYear"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
+                @change="onMonthYearChange"
+              >
+                <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+              </select>
+              <select
+                v-model="selectedMonth"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-28 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
+                @change="onMonthYearChange"
+              >
+                <option v-for="m in 12" :key="m" :value="m">{{ String(m).padStart(2, '0') }}</option>
+              </select>
+            </div>
+            <div v-else class="flex items-center gap-2">
+              <select
+                v-model="selectedYear"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
+                @change="onYearChange"
+              >
+                <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-end shrink-0">
+          <BaseButton
+            variant="outline"
+            size="sm"
+            :loading="loading"
+            class="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium"
+            @click="fetchStats"
+          >
+            <svg v-if="!loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ t('notificationManagement.stats.refreshData') }}
+          </BaseButton>
+        </div>
+      </section>
 
-            <div v-if="seriesChartData && seriesChartData.labels.length > 0" class="mb-8">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">
-                {{ t('taskManagement.stats.seriesTitle') }}
-              </h3>
-              <div class="h-64 sm:h-80 rounded-lg border border-gray-200 bg-white p-4">
+      <div class="w-full">
+        <BaseLoading v-if="loading && !stats" />
+
+        <div
+          v-if="!loading && !stats"
+          class="py-16 text-center rounded-2xl border border-gray-200 bg-white shadow-sm"
+        >
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <p class="text-sm font-medium text-gray-600">{{ t('taskManagement.stats.noData') }}</p>
+        </div>
+
+        <template v-else-if="stats">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 text-gray-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-gray-600">{{ t('taskManagement.stats.total') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-gray-900">{{ formatNum(stats.total) }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-green-600">{{ t('taskManagement.stats.success') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-green-600">{{ formatNum(stats.success) }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-red-600">{{ t('taskManagement.stats.failure') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-red-600">{{ formatNum(stats.failure) }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-amber-100 text-amber-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-amber-600">{{ t('taskManagement.stats.pending') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-amber-600">{{ formatNum(stats.pending) }}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 text-blue-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-blue-600">{{ t('taskManagement.stats.started') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-blue-600">{{ formatNum(stats.started) }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-purple-100 text-purple-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-purple-600">{{ t('taskManagement.stats.retry') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-purple-600">{{ formatNum(stats.retry) }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-slate-600">{{ t('taskManagement.stats.revoked') }}</span>
+              </div>
+              <div class="text-2xl font-semibold text-slate-600">{{ formatNum(stats.revoked) }}</div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[360px] mb-6">
+            <h3 class="text-base font-semibold text-gray-900 mb-1">
+              {{ t('taskManagement.stats.seriesTitle') }}
+            </h3>
+            <p class="text-sm text-gray-500 mb-4">{{ t('taskManagement.stats.seriesSubtitle') }}</p>
+            <div class="flex-1 min-h-0 flex flex-col">
+              <div v-if="seriesChartData && seriesChartData.labels.length > 0" class="flex-1 min-h-[280px]">
                 <Bar :data="seriesChartData" :options="seriesChartOptions" />
               </div>
+              <div v-else class="flex-1 min-h-[280px] flex items-center justify-center text-gray-400 text-sm">
+                {{ t('taskManagement.stats.noData') }}
+              </div>
             </div>
+          </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ t('taskManagement.stats.chartStatusDistribution') }}</h3>
-                <div v-if="statusChartData && statusChartData.labels.length > 0" class="relative" style="min-height: 240px">
-                  <Doughnut :data="statusChartData" :options="statusChartOptions" />
-                </div>
-                <p v-else class="text-sm text-gray-500 py-8 text-center">{{ t('taskManagement.stats.noData') }}</p>
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-stretch">
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]">
+              <h3 class="text-base font-semibold text-gray-900 mb-1">
+                {{ t('taskManagement.stats.chartStatusDistribution') }}
+              </h3>
+              <p class="text-sm text-gray-500 mb-3">{{ t('taskManagement.stats.chartStatusSubtitle') }}</p>
+              <div v-if="statusChartData && statusChartData.labels.length > 0" class="flex-1 min-h-[260px]">
+                <Doughnut :data="statusChartData" :options="statusChartOptions" />
               </div>
-              <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ t('taskManagement.stats.chartByModule') }}</h3>
-                <div v-if="byModuleChartData && byModuleChartData.labels.length > 0" class="relative" style="min-height: 240px">
-                  <Bar :data="byModuleChartData" :options="byModuleChartOptions" />
-                </div>
-                <p v-else class="text-sm text-gray-500 py-8 text-center">{{ t('taskManagement.stats.noData') }}</p>
+              <div v-else class="flex-1 min-h-[260px] flex items-center justify-center text-gray-500 text-sm rounded-lg border border-gray-200 bg-gray-50">
+                {{ t('taskManagement.stats.noData') }}
               </div>
             </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]">
+              <h3 class="text-base font-semibold text-gray-900 mb-1">
+                {{ t('taskManagement.stats.chartByModule') }}
+              </h3>
+              <p class="text-sm text-gray-500 mb-3">{{ t('taskManagement.stats.chartByModuleSubtitle') }}</p>
+              <div v-if="byModuleChartData && byModuleChartData.labels.length > 0" class="flex-1 min-h-[260px]">
+                <Bar :data="byModuleChartData" :options="byModuleChartOptions" />
+              </div>
+              <div v-else class="flex-1 min-h-[260px] flex items-center justify-center text-gray-500 text-sm rounded-lg border border-gray-200 bg-gray-50">
+                {{ t('taskManagement.stats.noData') }}
+              </div>
+            </div>
+          </div>
 
-            <div v-if="byTaskNameChartData && byTaskNameChartData.labels.length > 0" class="mb-8">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ t('taskManagement.stats.chartByTaskName') }}</h3>
-              <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <div class="relative" style="min-height: 280px">
-                  <Bar :data="byTaskNameChartData" :options="byTaskNameChartOptions" />
-                </div>
-              </div>
+          <div v-if="byTaskNameChartData && byTaskNameChartData.labels.length > 0" class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px] mb-6">
+            <h3 class="text-base font-semibold text-gray-900 mb-1">
+              {{ t('taskManagement.stats.chartByTaskName') }}
+            </h3>
+            <p class="text-sm text-gray-500 mb-4">{{ t('taskManagement.stats.chartByTaskNameSubtitle') }}</p>
+            <div class="flex-1 min-h-[280px]">
+              <Bar :data="byTaskNameChartData" :options="byTaskNameChartOptions" />
             </div>
+          </div>
 
-            <div v-if="byModuleKeys.length > 0" class="mb-8">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ t('taskManagement.stats.byModule') }}</h3>
-              <div class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <tr>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.moduleColumn') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.total') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.pending') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.started') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.success') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.failure') }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-100">
-                    <tr
-                      v-for="key in byModuleKeys"
-                      :key="key"
-                      class="transition-colors duration-150 hover:bg-gray-50"
-                    >
-                      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ key || '-' }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.total ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.pending ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.started ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.success ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.failure ?? 0 }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div v-if="byModuleKeys.length > 0" class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 mb-6">
+            <h3 class="text-base font-semibold text-gray-900 mb-3">
+              {{ t('taskManagement.stats.byModule') }}
+            </h3>
+            <div class="overflow-x-auto relative rounded-lg border border-gray-200">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.moduleColumn') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.total') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.pending') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.started') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.success') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.failure') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                  <tr
+                    v-for="key in byModuleKeys"
+                    :key="key"
+                    class="transition-colors duration-150 hover:bg-gray-50"
+                  >
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ key || '-' }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.total ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.pending ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.started ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.success ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_module[key]?.failure ?? 0 }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
 
-            <div v-if="byTaskNameKeys.length > 0">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ t('taskManagement.stats.byTaskName') }}</h3>
-              <div class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <tr>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.taskColumn') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.total') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.pending') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.started') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.success') }}
-                      </th>
-                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                        {{ t('taskManagement.stats.failure') }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-100">
-                    <tr
-                      v-for="key in byTaskNameKeys"
-                      :key="key"
-                      class="transition-colors duration-150 hover:bg-gray-50"
-                    >
-                      <td class="px-4 py-3 text-sm font-medium text-gray-900 break-all">{{ key || '-' }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.total ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.pending ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.started ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.success ?? 0 }}</td>
-                      <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.failure ?? 0 }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div v-if="byTaskNameKeys.length > 0" class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+            <h3 class="text-base font-semibold text-gray-900 mb-3">
+              {{ t('taskManagement.stats.byTaskName') }}
+            </h3>
+            <div class="overflow-x-auto relative rounded-lg border border-gray-200">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.taskColumn') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.total') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.pending') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.started') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.success') }}
+                    </th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      {{ t('taskManagement.stats.failure') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                  <tr
+                    v-for="key in byTaskNameKeys"
+                    :key="key"
+                    class="transition-colors duration-150 hover:bg-gray-50"
+                  >
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900 break-all">{{ key || '-' }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.total ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.pending ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.started ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.success ?? 0 }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600">{{ stats.by_task_name[key]?.failure ?? 0 }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -270,6 +367,8 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
 import { taskManagementApi } from '@/api/taskManagement'
+import { notificationsAdminApi } from '@/api/notificationsAdmin'
+import { llmAdminApi } from '@/api/llmAdmin'
 import { Doughnut, Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -281,7 +380,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 
@@ -290,14 +389,29 @@ ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tool
 const { t } = useI18n()
 const { showError } = useToast()
 
+function formatNum(value) {
+  if (value == null || value === '') return '0'
+  const n = Number(value)
+  return Number.isFinite(n) ? n.toLocaleString() : '0'
+}
+
 const loading = ref(false)
 const stats = ref(null)
 const granularity = ref('day')
-const selectedDate = ref('')
-const selectedMonth = ref('')
+const userScope = ref('')
+const userOptions = ref([])
+const startDate = ref('')
+const endDate = ref('')
+const selectedDay = ref('')
 const selectedYear = ref(new Date().getFullYear())
+const selectedMonth = ref(new Date().getMonth() + 1)
 
-const currentYear = computed(() => new Date().getFullYear())
+const currentYear = new Date().getFullYear()
+const yearOptions = computed(() => {
+  const arr = []
+  for (let y = currentYear; y >= currentYear - 10; y--) arr.push(y)
+  return arr
+})
 
 const granularityOptions = computed(() => [
   { value: 'day', label: t('taskManagement.stats.granularityDay') },
@@ -305,20 +419,56 @@ const granularityOptions = computed(() => [
   { value: 'year', label: t('taskManagement.stats.granularityYear') }
 ])
 
-function setDefaultDates() {
-  const now = new Date()
-  const y = now.getFullYear()
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  const d = String(now.getDate()).padStart(2, '0')
-  selectedDate.value = `${y}-${m}-${d}`
-  selectedMonth.value = `${y}-${m}`
-  selectedYear.value = y
+function formatDate(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
-function lastDayOfMonth(ym) {
-  const [y, m] = ym.split('-').map(Number)
-  const last = new Date(y, m, 0).getDate()
-  return `${y}-${String(m).padStart(2, '0')}-${String(last).padStart(2, '0')}`
+function setDefaultDates() {
+  const now = new Date()
+  const g = granularity.value
+  if (g === 'day') {
+    selectedDay.value = formatDate(now)
+    startDate.value = selectedDay.value
+    endDate.value = selectedDay.value
+  } else if (g === 'month') {
+    selectedYear.value = now.getFullYear()
+    selectedMonth.value = now.getMonth() + 1
+    startDate.value = `${selectedYear.value}-${String(selectedMonth.value).padStart(2, '0')}-01`
+    const last = new Date(selectedYear.value, selectedMonth.value, 0)
+    endDate.value = formatDate(last)
+  } else {
+    selectedYear.value = now.getFullYear()
+    startDate.value = `${selectedYear.value}-01-01`
+    endDate.value = `${selectedYear.value}-12-31`
+  }
+}
+
+function onDayChange() {
+  if (!selectedDay.value) return
+  startDate.value = selectedDay.value
+  endDate.value = selectedDay.value
+  fetchStats()
+}
+
+function onMonthYearChange() {
+  const y = selectedYear.value
+  const m = selectedMonth.value
+  if (!y || !m) return
+  startDate.value = `${y}-${String(m).padStart(2, '0')}-01`
+  const last = new Date(y, m, 0)
+  endDate.value = formatDate(last)
+  fetchStats()
+}
+
+function onYearChange() {
+  const y = selectedYear.value
+  if (!y) return
+  startDate.value = `${y}-01-01`
+  endDate.value = `${y}-12-31`
+  fetchStats()
 }
 
 function selectGranularity(g) {
@@ -353,7 +503,7 @@ const seriesChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: false },
+    legend: { position: 'top', align: 'end', labels: { usePointStyle: true, padding: 12 } },
     tooltip: {
       callbacks: {
         label(ctx) {
@@ -365,7 +515,7 @@ const seriesChartOptions = computed(() => ({
   scales: {
     x: {
       grid: { display: false },
-      ticks: { maxRotation: 45, minRotation: 0, font: { size: 11 } }
+      ticks: { maxTicksLimit: 12, maxRotation: 45, minRotation: 0, font: { size: 11 } }
     },
     y: {
       beginAtZero: true,
@@ -410,7 +560,7 @@ const statusChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'right', labels: { usePointStyle: true, padding: 8 } },
+    legend: { position: 'right', labels: { usePointStyle: true, padding: 10, font: { size: 11 } } },
     tooltip: {
       callbacks: {
         label(ctx) {
@@ -485,26 +635,21 @@ const byTaskNameChartOptions = computed(() => ({
     tooltip: { callbacks: { label: (ctx) => `${t('taskManagement.stats.total')}: ${ctx.raw}` } }
   },
   scales: {
-    x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0 } },
+    x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0, font: { size: 11 } } },
     y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' } }
   }
 }))
 
 async function fetchStats() {
+  if (!startDate.value || !endDate.value) {
+    setDefaultDates()
+  }
   loading.value = true
   try {
     const params = { granularity: granularity.value }
-    if (granularity.value === 'day' && selectedDate.value) {
-      params.start_date = selectedDate.value
-      params.end_date = selectedDate.value
-    } else if (granularity.value === 'month' && selectedMonth.value) {
-      params.start_date = `${selectedMonth.value}-01`
-      params.end_date = lastDayOfMonth(selectedMonth.value)
-    } else if (granularity.value === 'year' && selectedYear.value) {
-      const y = selectedYear.value
-      params.start_date = `${y}-01-01`
-      params.end_date = `${y}-12-31`
-    }
+    if (startDate.value) params.start_date = startDate.value
+    if (endDate.value) params.end_date = endDate.value
+    if (userScope.value) params.created_by = userScope.value
     const res = await taskManagementApi.getStats(params)
     stats.value = extractResponseData(res)
   } catch (e) {
@@ -515,7 +660,33 @@ async function fetchStats() {
   }
 }
 
+async function fetchUserOptions() {
+  try {
+    const list = await notificationsAdminApi.getUsers()
+    if (Array.isArray(list) && list.length > 0) {
+      userOptions.value = list.map((u) => ({
+        user_id: u.user_id ?? u.id,
+        display: (u.display ?? u.username ?? (u.user_id != null ? `#${u.user_id}` : u.id != null ? `#${u.id}` : '')).toString()
+      }))
+      return
+    }
+  } catch {
+    /* fallback to admin users list */
+  }
+  try {
+    const data = await llmAdminApi.getUsers({ page_size: 200 })
+    const raw = Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : [])
+    userOptions.value = raw.map((u) => ({
+      user_id: u.id ?? u.user_id,
+      display: (u.username ?? u.display ?? u.email ?? (u.id != null ? `#${u.id}` : '')).toString()
+    }))
+  } catch {
+    userOptions.value = []
+  }
+}
+
 onMounted(() => {
+  fetchUserOptions()
   setDefaultDates()
   fetchStats()
 })

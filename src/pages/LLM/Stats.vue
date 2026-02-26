@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -147,7 +147,7 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -157,7 +157,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar } from 'vue-chartjs'
 import { formatNumLocale, formatCostLocale } from '@/utils/formatting'
 import { llmAdminApi } from '@/api/llmAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)

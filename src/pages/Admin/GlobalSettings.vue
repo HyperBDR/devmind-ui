@@ -27,7 +27,7 @@
             {{ t('globalSettings.notificationSectionDesc') }}
           </p>
           <router-link
-            to="/notifier/config"
+            to="/management/notifier/settings"
             class="inline-flex items-center gap-2 rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

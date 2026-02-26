@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full">
       <!-- Page Header -->
       <div class="mb-4">
@@ -200,7 +200,7 @@
         @close="showPreviewModal = false"
       />
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -211,7 +211,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
 import { taskManagementApi } from '@/api/taskManagement'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
@@ -219,7 +219,7 @@ import StatusBadge from '@/components/ui/StatusBadge.vue'
 import TaskExecutionDetailPanel from '@/components/task-management/TaskExecutionDetailPanel.vue'
 
 const { t } = useI18n()
-const { showSuccess, showError } = useToast()
+const { showError } = useToast()
 
 const loading = ref(false)
 const tasks = ref([])
@@ -285,8 +285,12 @@ async function loadTasks() {
     const res = await taskManagementApi.getExecutions(params)
     const data = extractResponseData(res)
     const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
-    tasks.value = list
-    const total = data?.count ?? data?.pagination?.total ?? list.length
+    const serverTotal = data?.count ?? data?.pagination?.total
+    const hasServerPagination = Number.isFinite(Number(serverTotal))
+    const total = hasServerPagination ? Number(serverTotal) : list.length
+    tasks.value = hasServerPagination
+      ? list
+      : list.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
     totalCount.value = total
     totalPages.value = total > 0 ? Math.ceil(total / pageSize.value) : 1
   } catch (e) {

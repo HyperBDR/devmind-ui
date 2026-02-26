@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -61,7 +61,6 @@
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.channels.scope') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.channels.configSummary') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.channels.isActive') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.channels.order') }}</th>
                     <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.channels.actions') }}</th>
                   </tr>
                 </thead>
@@ -96,7 +95,6 @@
                         </svg>
                       </span>
                     </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ row.ordering }}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-right">
                       <div class="flex items-center justify-end gap-1">
                         <button
@@ -155,16 +153,6 @@
               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
               :placeholder="t('notificationManagement.channels.namePlaceholder')"
             />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.order') }}</label>
-            <input
-              v-model.number="form.ordering"
-              type="number"
-              min="0"
-              class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
-            />
-            <p class="mt-1 text-xs text-gray-500">{{ t('notificationManagement.channels.orderDesc') }}</p>
           </div>
           <template v-if="form.channel_type === 'webhook'">
             <div>
@@ -453,7 +441,7 @@
         </div>
       </BaseModal>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -461,7 +449,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { notificationsAdminApi } from '@/api/notificationsAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
@@ -508,7 +496,6 @@ const form = reactive({
   channel_type: 'webhook',
   name: '',
   is_active: true,
-  ordering: 0,
   config: defaultWebhookConfig()
 })
 
@@ -671,7 +658,6 @@ function resetForm() {
   form.channel_type = 'webhook'
   form.name = ''
   form.is_active = true
-  form.ordering = 0
   form.config = defaultWebhookConfig()
   editingId.value = null
   formMessage.value = ''
@@ -709,7 +695,6 @@ function openEditModal(row) {
   form.channel_type = row.channel_type
   form.name = row.name || ''
   form.is_active = !!row.is_active
-  form.ordering = row.ordering ?? 0
   if (row.channel_type === 'webhook') {
     const c = row.config && typeof row.config === 'object' ? row.config : {}
     form.config = {
@@ -785,7 +770,6 @@ async function submitForm() {
       channel_type: form.channel_type,
       name: form.name.trim(),
       is_active: form.is_active,
-      ordering: form.ordering,
       config
     }
     if (editingId.value) {

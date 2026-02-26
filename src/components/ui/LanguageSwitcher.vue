@@ -2,7 +2,12 @@
   <div class="relative" ref="dropdownRef">
     <button
       @click="toggleDropdown"
-      class="flex items-center space-x-1 px-2 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+      :class="[
+        'flex items-center space-x-1 px-2 py-1 text-sm rounded-md transition-colors',
+        variant === 'dark'
+          ? 'text-white hover:text-white hover:bg-slate-700'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+      ]"
       :title="t('common.language')"
     >
       <!-- Language icon -->
@@ -56,6 +61,14 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
+
+defineProps({
+  variant: {
+    type: String,
+    default: 'default',
+    validator: (v) => ['default', 'dark'].includes(v)
+  }
+})
 
 const { t, locale } = useI18n()
 const preferencesStore = usePreferencesStore()

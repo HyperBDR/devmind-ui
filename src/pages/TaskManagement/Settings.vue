@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -16,12 +16,12 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
 import { useI18n } from 'vue-i18n'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import TaskConfigSection from '@/components/task-management/TaskConfigSection.vue'
 
 const { t } = useI18n()

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
@@ -128,7 +128,7 @@
         </div>
       </div>
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -137,7 +137,7 @@ import { useI18n } from 'vue-i18n'
 import { useDebounce } from '@/composables/useDebounce'
 import { formatNumLocale, formatCostLocale, formatDateIsoLocale } from '@/utils/formatting'
 import { llmAdminApi } from '@/api/llmAdmin'
-import AppLayout from '@/components/layout/AppLayout.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 
