@@ -34,10 +34,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            # 1. 如果是手动触发，强制生成 latest 标签
+            type=raw,value=latest,enable=${{ github.event_name == 'workflow_dispatch' }}
+            # 2. 如果是推送 v* 标签，生成版本号标签
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=semver,pattern=latest
+            # 3. 始终为每次构建生成一个基于 SHA 的唯一标签（可选，方便追溯）
+            type=sha,prefix=sha-
 
       - name: Build and push Docker image
         id: build
@@ -51,9 +54,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
-          build-args: |
-            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL || '' }}
-            VITE_EMAIL_DOMAIN=${{ vars.VITE_EMAIL_DOMAIN || 'aimychats.com' }}
 
       - name: Image digest
         run: echo ${{ steps.build.outputs.digest }}
