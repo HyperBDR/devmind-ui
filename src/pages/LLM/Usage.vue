@@ -71,19 +71,27 @@
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.promptTokens') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.completionTokens') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.totalTokens') }}</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.e2eLatency') }}</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.outputTps') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.costUsd') }}</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.success') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.error') }}</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                  <tr v-for="u in items" :key="u.id" class="hover:bg-gray-50 transition-colors duration-150">
+                  <tr
+                    v-for="u in items"
+                    :key="u.id"
+                    class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                    @click="openDetail(u)"
+                  >
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(u.created_at) }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ u.username || u.user_id || '-' }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ u.model || '-' }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.prompt_tokens) }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.completion_tokens) }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.total_tokens) }}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatE2eLatency(u.e2e_latency_sec) }}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatOutputTps(u.output_tps) }}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm text-amber-600 font-medium">{{ formatCost(u.cost, u.cost_currency) }}</td>
                     <td class="px-4 py-4 whitespace-nowrap">
                       <span
@@ -92,7 +100,6 @@
                         {{ u.success ? t('common.yes') : t('common.no') }}
                       </span>
                     </td>
-                    <td class="px-4 py-4 text-sm text-red-600 max-w-xs truncate" :title="u.error">{{ u.error || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -127,6 +134,118 @@
           </template>
         </div>
       </div>
+
+      <!-- Detail drawer (right slide-out, same style as Records detail panel) -->
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="detailVisible"
+          class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40"
+          aria-hidden="true"
+          @click="closeDetail"
+        />
+      </Transition>
+      <Transition
+        enter-active-class="transition-transform duration-300 ease-out"
+        enter-from-class="translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition-transform duration-250 ease-in"
+        leave-from-class="translate-x-0"
+        leave-to-class="translate-x-full"
+      >
+        <div
+          v-if="detailVisible"
+          class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="t('llm.usage.detailTitle')"
+        >
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+            <h2 class="text-lg font-semibold text-gray-900">
+              {{ t('llm.usage.detailTitle') }}
+            </h2>
+            <button
+              type="button"
+              class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              :aria-label="t('common.close')"
+              @click="closeDetail"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div v-if="selectedDetail" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.basicInfo') }}</h3>
+              <dl class="grid grid-cols-1 gap-4">
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.time') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatDate(selectedDetail.created_at) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.startedAt') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.started_at ? formatDate(selectedDetail.started_at) : '–' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.user') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.username || selectedDetail.user_id || '–' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.model') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.model || '–' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.promptTokens') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.prompt_tokens) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.completionTokens') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.completion_tokens) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.totalTokens') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.total_tokens) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.e2eLatency') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatE2eLatency(selectedDetail.e2e_latency_sec) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.outputTps') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatOutputTps(selectedDetail.output_tps) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.costUsd') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ formatCost(selectedDetail.cost, selectedDetail.cost_currency) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.success') }}</dt>
+                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.success ? t('common.yes') : t('common.no') }}</dd>
+                </div>
+              </dl>
+            </div>
+            <div v-if="selectedDetail.error" class="border-t border-gray-200 pt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.error') }}</h3>
+              <div class="rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm">
+                <pre class="text-xs font-mono text-red-800 whitespace-pre-wrap break-words">{{ selectedDetail.error }}</pre>
+              </div>
+            </div>
+            <div v-if="selectedDetail.metadata && Object.keys(selectedDetail.metadata).length" class="border-t border-gray-200 pt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.metadata') }}</h3>
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
+                <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words">{{ JSON.stringify(selectedDetail.metadata, null, 2) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </div>
   </AdminLayout>
 </template>
@@ -155,6 +274,17 @@ function formatDate(iso) {
   return formatDateIsoLocale(iso, locale.value)
 }
 
+function formatE2eLatency(sec) {
+  if (sec == null || typeof sec !== 'number') return '–'
+  if (sec < 1) return `${(sec * 1000).toFixed(0)} ms`
+  return `${sec.toFixed(2)} s`
+}
+
+function formatOutputTps(tps) {
+  if (tps == null || typeof tps !== 'number') return '–'
+  return `${tps.toFixed(2)} tok/s`
+}
+
 const items = ref([])
 const total = ref(0)
 const page = ref(1)
@@ -163,6 +293,18 @@ const loading = ref(false)
 const filters = reactive({ model: '', success: '', startDate: '', endDate: '' })
 const userOptions = ref([])
 const selectedUserId = ref('')
+const detailVisible = ref(false)
+const selectedDetail = ref(null)
+
+function openDetail(record) {
+  selectedDetail.value = record
+  detailVisible.value = true
+}
+
+function closeDetail() {
+  detailVisible.value = false
+  selectedDetail.value = null
+}
 
 function toUserLabel(u) {
   const parts = []

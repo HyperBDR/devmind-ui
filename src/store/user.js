@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
-import { settingsApi } from '@/api/settings'
 import { usePreferencesStore } from './preferences'
 
 export const useUserStore = defineStore('user', () => {
@@ -23,21 +22,6 @@ export const useUserStore = defineStore('user', () => {
       // Note: Profile.language is for AI generation and backend logic, not UI display
       // UI language is stored in localStorage and managed separately
       // We don't sync Profile.language to UI language anymore
-      
-      // Load from settings API (for scene and other preferences)
-      try {
-        const preferences = await settingsApi.getPreferences()
-        // Note: preferences.timezone is no longer returned from backend
-        // timezone is a frontend-only setting for UI display
-        if (preferences.scene) {
-          localStorage.setItem('userScene', preferences.scene)
-        }
-      } catch (err) {
-        // Silently handle 404 errors as the settings endpoint might not be available
-        if (err.response?.status !== 404) {
-          console.error('Failed to load user preferences:', err)
-        }
-      }
     } catch (err) {
       console.error('Failed to load user preferences:', err)
     }

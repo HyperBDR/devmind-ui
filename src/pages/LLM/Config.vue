@@ -93,7 +93,7 @@
                       {{ t('llm.config.capabilities') }}
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                      {{ t('llm.config.order') }}
+                      {{ t('llm.config.default') }}
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                       {{ t('llm.config.active') }}
@@ -137,7 +137,29 @@
                       </span>
                       <span v-else class="text-gray-400">–</span>
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.order }}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">
+                      <span
+                        v-if="row.is_default"
+                        class="inline-flex items-center text-primary-600"
+                        :title="t('llm.config.testUseDefault')"
+                      >
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      <button
+                        v-else-if="row.scope === 'global'"
+                        type="button"
+                        class="inline-flex items-center rounded p-1 text-gray-400 hover:bg-primary-50 hover:text-primary-600"
+                        :title="t('llm.config.setAsDefault')"
+                        @click="setAsDefault(row)"
+                      >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </button>
+                      <span v-else class="text-gray-300">–</span>
+                    </td>
                     <td class="px-4 py-4 whitespace-nowrap text-sm">
                       <span
                         v-if="row.is_active"
@@ -475,16 +497,6 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.order') }}</label>
-                  <input
-                    v-model.number="form.order"
-                    type="number"
-                    min="0"
-                    step="1"
-                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
                   <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.topP') }}</label>
                   <input
                     v-model.number="form.config.top_p"
@@ -624,8 +636,7 @@ const form = reactive({
     temperature: null,
     top_p: null
   },
-  is_active: true,
-  order: 0
+  is_active: true
 })
 
 const providersFromModels = computed(() => {
@@ -745,12 +756,6 @@ function refPriceLine(rp) {
   return [inStr, outStr].filter(Boolean).join(' · ')
 }
 
-function normalizeOrder(value) {
-  const order = Number(value)
-  if (!Number.isFinite(order)) return 0
-  return Math.max(0, Math.trunc(order))
-}
-
 function selectModel(modelId) {
   if (modelId === '__custom__') {
     form.config.model = ''
@@ -807,7 +812,6 @@ function resetForm() {
     top_p: null
   }
   form.is_active = true
-  form.order = 0
   formMessage.value = ''
   connectionTestedSuccess.value = false
 }
@@ -872,7 +876,6 @@ async function editConfig(row) {
       top_p: c.top_p ?? null
     }
     form.is_active = data?.is_active !== false
-    form.order = data?.order ?? 0
   } catch (e) {
     formMessage.value = e?.response?.data?.detail || e?.message || 'Failed to load'
     formMessageSuccess.value = false
@@ -912,11 +915,12 @@ async function sendTestCall() {
   testCallLoading.value = true
   testCallResult.value = null
   try {
-    const res = await llmAdminApi.postLLMConfigTestCall({
-      config_uuid: row.uuid || row.id,
+    const body = {
       prompt: testPrompt.value.trim(),
       max_tokens: boundedMaxTokens
-    })
+    }
+    body.config_uuid = row.uuid || row.id
+    const res = await llmAdminApi.postLLMConfigTestCall(body)
     testCallResult.value = res
   } catch (e) {
     testCallResult.value = {
@@ -980,8 +984,7 @@ async function submitConfigForm() {
         temperature: form.config.temperature ?? undefined,
         top_p: form.config.top_p ?? undefined
       },
-      is_active: form.is_active,
-      order: normalizeOrder(form.order)
+      is_active: form.is_active
     }
     if (editingId.value) {
       await llmAdminApi.putLLMConfigDetail(editingId.value, body)
@@ -1021,8 +1024,34 @@ async function setActive(row, value) {
         temperature: c.temperature ?? undefined,
         top_p: c.top_p ?? undefined
       },
-      is_active: value,
-      order: data?.order ?? row.order ?? 0
+      is_active: value
+    }
+    await llmAdminApi.putLLMConfigDetail(row.uuid || row.id, body)
+    await loadAll()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function setAsDefault(row) {
+  if (!(row?.uuid || row?.id) || row.scope !== 'global') return
+  try {
+    const data = await llmAdminApi.getLLMConfigDetail(row.uuid || row.id)
+    const c = data?.config || {}
+    const body = {
+      provider: (data?.provider || row.provider || 'openai').toLowerCase(),
+      config: {
+        api_key: c.api_key ?? '',
+        api_base: c.api_base ?? undefined,
+        model: c.model ?? undefined,
+        deployment: c.deployment ?? undefined,
+        api_version: c.api_version ?? undefined,
+        max_tokens: c.max_tokens ?? undefined,
+        temperature: c.temperature ?? undefined,
+        top_p: c.top_p ?? undefined
+      },
+      is_active: data?.is_active !== false,
+      is_default: true
     }
     await llmAdminApi.putLLMConfigDetail(row.uuid || row.id, body)
     await loadAll()

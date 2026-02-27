@@ -133,6 +133,9 @@
         @close="closeModal"
       >
         <form @submit.prevent="submitForm" class="space-y-4">
+          <p v-if="editingId" class="text-xs text-gray-500 mb-2">
+            {{ t('notificationManagement.channels.editSaveHint') }}
+          </p>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.channelType') }}</label>
             <select
@@ -195,7 +198,9 @@
                 class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
                 :placeholder="t('notificationManagement.channels.signSecretPlaceholder')"
               />
-              <p class="mt-1 text-xs text-gray-500">{{ t('notificationManagement.channels.signSecretDesc') }}</p>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ editingId ? t('notificationManagement.channels.signSecretEditHint') : t('notificationManagement.channels.signSecretDesc') }}
+              </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
               <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -292,6 +297,14 @@
                   />
                   <span class="text-sm font-medium text-gray-700">{{ t('notificationManagement.channels.useTls') }}</span>
                 </label>
+                <label class="flex cursor-pointer items-center gap-3">
+                  <input
+                    v-model="form.config.use_ssl"
+                    type="checkbox"
+                    class="h-4 w-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span class="text-sm font-medium text-gray-700">{{ t('notificationManagement.channels.useSsl') }}</span>
+                </label>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.smtpUser') }}</label>
                   <input
@@ -305,8 +318,13 @@
                   <input
                     v-model="form.config.smtp_password"
                     type="password"
+                    autocomplete="new-password"
                     class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                    :placeholder="editingId ? t('notificationManagement.channels.smtpPasswordEditHint') : ''"
                   />
+                  <p v-if="editingId" class="mt-1 text-xs text-gray-500">
+                    {{ t('notificationManagement.channels.smtpPasswordEditHint') }}
+                  </p>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.fromEmail') }}</label>
@@ -445,7 +463,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { notificationsAdminApi } from '@/api/notificationsAdmin'
@@ -471,6 +489,7 @@ const formMessageSuccess = ref(false)
 const validationSuccess = ref(false)
 const showValidateEmailModal = ref(false)
 const validateModalRecipient = ref('')
+const isOpeningEdit = ref(false)
 
 const defaultWebhookConfig = () => ({
   provider_type: 'feishu',
@@ -485,6 +504,7 @@ const defaultEmailConfig = () => ({
   smtp_host: '',
   smtp_port: 587,
   use_tls: true,
+  use_ssl: false,
   smtp_user: '',
   smtp_password: '',
   from_email: '',
@@ -509,8 +529,24 @@ function channelTypeLabel(type) {
   return t(channelTypeLabels[type] || type || '–')
 }
 
+function normalizeConfig(rawConfig) {
+  if (rawConfig && typeof rawConfig === 'object') {
+    return { ...rawConfig }
+  }
+  if (typeof rawConfig === 'string' && rawConfig.trim()) {
+    try {
+      const parsed = JSON.parse(rawConfig)
+      if (parsed && typeof parsed === 'object') {
+        return parsed
+      }
+    } catch (e) {
+      return {}
+    }
+  }
+  return {}
+}
+
 const submitDisabled = computed(() => {
-  if (editingId.value) return false
   return !validationSuccess.value
 })
 
@@ -519,6 +555,26 @@ watch(
   () => {
     if (form.channel_type === 'webhook') {
       validationSuccess.value = false
+    }
+  }
+)
+
+watch(
+  () => form.config?.use_tls,
+  (useTls) => {
+    if (form.channel_type !== 'email') return
+    if (useTls) {
+      form.config.use_ssl = false
+    }
+  }
+)
+
+watch(
+  () => form.config?.use_ssl,
+  (useSsl) => {
+    if (form.channel_type !== 'email') return
+    if (useSsl) {
+      form.config.use_tls = false
     }
   }
 )
@@ -577,11 +633,13 @@ async function validateForm() {
             smtp_host: (form.config.smtp_host || '').trim(),
             smtp_port: Math.max(1, Math.min(65535, Number(form.config.smtp_port) || 587)),
             use_tls: !!form.config.use_tls,
+            use_ssl: !!form.config.use_ssl,
             smtp_user: (form.config.smtp_user || '').trim() || undefined,
             smtp_password: (form.config.smtp_password || '').trim() || undefined,
             from_email: (form.config.from_email || '').trim()
           }
     }
+    if (editingId.value) body.channel_uuid = editingId.value
     await notificationsAdminApi.validateChannel(body)
     formMessage.value = t('notificationManagement.channels.validateSuccess')
     formMessageSuccess.value = true
@@ -610,11 +668,13 @@ async function confirmValidateEmail() {
       smtp_host: (form.config.smtp_host || '').trim(),
       smtp_port: Math.max(1, Math.min(65535, Number(form.config.smtp_port) || 587)),
       use_tls: !!form.config.use_tls,
+      use_ssl: !!form.config.use_ssl,
       smtp_user: (form.config.smtp_user || '').trim() || undefined,
       smtp_password: (form.config.smtp_password || '').trim() || undefined,
       from_email: (form.config.from_email || '').trim()
     }
   }
+  if (editingId.value) body.channel_uuid = editingId.value
   const to = (validateModalRecipient.value || '').trim()
   if (to) body.test_recipient = to
   validating.value = true
@@ -668,6 +728,7 @@ function resetForm() {
 watch(
   () => form.channel_type,
   (type) => {
+    if (isOpeningEdit.value) return
     validationSuccess.value = false
     if (type === 'email') {
       form.config = defaultEmailConfig()
@@ -680,6 +741,7 @@ watch(
 watch(
   () => form.config,
   () => {
+    if (isOpeningEdit.value) return
     validationSuccess.value = false
   },
   { deep: true }
@@ -691,12 +753,14 @@ function openAddModal() {
 }
 
 function openEditModal(row) {
+  isOpeningEdit.value = true
   editingId.value = row.uuid
   form.channel_type = row.channel_type
   form.name = row.name || ''
   form.is_active = !!row.is_active
+  const config = normalizeConfig(row.config)
   if (row.channel_type === 'webhook') {
-    const c = row.config && typeof row.config === 'object' ? row.config : {}
+    const c = config
     form.config = {
       ...defaultWebhookConfig(),
       ...c,
@@ -707,17 +771,22 @@ function openEditModal(row) {
       silence_window_minutes: Math.max(0, Math.min(1440, Number(c.silence_window_minutes) ?? 0))
     }
   } else if (row.channel_type === 'email') {
-    const c = row.config && typeof row.config === 'object' ? row.config : {}
+    const c = config
     form.config = {
       ...defaultEmailConfig(),
       ...c,
       smtp_port: c.smtp_port ?? 587,
-      use_tls: c.use_tls !== false
+      use_tls: c.use_tls !== false,
+      use_ssl: c.use_ssl === true
     }
   } else {
-    form.config = row.config && typeof row.config === 'object' ? { ...row.config } : defaultWebhookConfig()
+    form.config = config
   }
   showModal.value = true
+  nextTick(() => {
+    isOpeningEdit.value = false
+    validationSuccess.value = true
+  })
 }
 
 function closeModal() {
@@ -729,7 +798,13 @@ async function loadList() {
   loading.value = true
   try {
     const data = await notificationsAdminApi.getChannels()
-    list.value = data?.results ?? []
+    const rawList = Array.isArray(data)
+      ? data
+      : (Array.isArray(data?.results) ? data.results : [])
+    list.value = rawList.map((row) => ({
+      ...row,
+      config: normalizeConfig(row?.config),
+    }))
   } catch {
     list.value = []
   } finally {
@@ -757,6 +832,7 @@ async function submitForm() {
         smtp_host: (form.config.smtp_host || '').trim(),
         smtp_port: Math.max(1, Math.min(65535, Number(form.config.smtp_port) || 587)),
         use_tls: !!form.config.use_tls,
+        use_ssl: !!form.config.use_ssl,
         smtp_user: (form.config.smtp_user || '').trim(),
         smtp_password: (form.config.smtp_password || '').trim(),
         from_email: (form.config.from_email || '').trim(),

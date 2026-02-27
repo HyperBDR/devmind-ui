@@ -462,21 +462,32 @@
                 id="alertChannelUuid"
                 v-model="selectedChannelValue"
                 required
+                :disabled="channelsLoading"
                 class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="" disabled>
-                  {{ t('cloudBilling.providers.alertChannelPlaceholder') }}
+                  {{
+                    channelsLoading
+                      ? t('common.loading')
+                      : t('cloudBilling.providers.alertChannelPlaceholder')
+                  }}
                 </option>
                 <option
                   v-for="ch in allChannels"
-                  :key="`${ch.channel_type}:${ch.uuid}`"
-                  :value="`${ch.channel_type}:${ch.uuid}`"
+                  :key="`${resolveChannelType(ch)}:${ch.uuid}`"
+                  :value="`${resolveChannelType(ch)}:${ch.uuid}`"
                 >
                   {{ getChannelOptionLabel(ch) }}
                 </option>
               </select>
               <p
-                v-if="allChannels.length === 0"
+                v-if="channelsLoading"
+                class="text-xs text-gray-500 mt-1"
+              >
+                {{ t('common.loading') }}
+              </p>
+              <p
+                v-if="!channelsLoading && allChannels.length === 0"
                 class="text-xs text-gray-500 mt-1"
               >
                 {{ t('cloudBilling.providers.alertChannelEmptyHint') }}
@@ -772,8 +783,10 @@ const alertRuleData = reactive({
 
 const existingAlertRuleId = ref(null)
 const allChannels = ref([])
+const channelsLoading = ref(false)
 const selectedChannelValue = ref('')
 const emailToRecipients = ref(['', '', ''])
+const pendingChannelUuid = ref('')
 
 // Watch provider_type to auto-generate display_name and name
 watch(() => formData.provider_type, (type) => {
@@ -827,8 +840,9 @@ watch(() => props.provider, async (newProvider) => {
 
     const config = newProvider.config || {}
     const notification = config.notification
-    if (notification?.type && notification?.channel_uuid) {
-      selectedChannelValue.value = `${notification.type}:${notification.channel_uuid}`
+    const channelUuid = getNotificationChannelUuid(notification)
+    if (channelUuid) {
+      applyNotificationSelection(notification)
       const to = notification.email_to
       if (Array.isArray(to) && to.length) {
         emailToRecipients.value = [
@@ -841,6 +855,7 @@ watch(() => props.provider, async (newProvider) => {
       }
     } else {
       selectedChannelValue.value = ''
+      pendingChannelUuid.value = ''
       emailToRecipients.value = ['', '', '']
     }
     if (newProvider.provider_type === 'aws') {
@@ -928,6 +943,7 @@ watch(() => props.provider, async (newProvider) => {
     alertRuleData.growth_threshold = ''
     alertRuleData.growth_amount_threshold = ''
     selectedChannelValue.value = ''
+    pendingChannelUuid.value = ''
     emailToRecipients.value = ['', '', '']
   }
 }, { immediate: true })
@@ -936,18 +952,105 @@ const isEmailChannelSelected = computed(() =>
   (selectedChannelValue.value || '').startsWith('email:')
 )
 
+function normalizeChannelType(value) {
+  const type = String(value || '').trim().toLowerCase()
+  if (type === 'email' || type === 'webhook') {
+    return type
+  }
+  return ''
+}
+
+function resolveChannelType(channel) {
+  const direct = normalizeChannelType(channel?.channel_type || channel?.type)
+  if (direct) {
+    return direct
+  }
+  const cfg = channel?.config || {}
+  if (cfg.smtp_host || cfg.from_email || cfg.smtp_user) {
+    return 'email'
+  }
+  return 'webhook'
+}
+
+function applyNotificationSelection(notification) {
+  const n = notification && typeof notification === 'object' ? notification : {}
+  const channelUuid = getNotificationChannelUuid(n)
+  const channelType = normalizeChannelType(n.type || n.channel_type || n.notification_type)
+
+  if (!channelUuid) {
+    selectedChannelValue.value = ''
+    pendingChannelUuid.value = ''
+    return
+  }
+
+  if (channelType) {
+    selectedChannelValue.value = `${channelType}:${channelUuid}`
+    pendingChannelUuid.value = ''
+    return
+  }
+
+  const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === channelUuid)
+  if (matched) {
+    selectedChannelValue.value = `${resolveChannelType(matched)}:${channelUuid}`
+    pendingChannelUuid.value = ''
+    return
+  }
+
+  selectedChannelValue.value = ''
+  pendingChannelUuid.value = channelUuid
+}
+
+function getNotificationChannelUuid(notification) {
+  const n = notification && typeof notification === 'object' ? notification : {}
+  return String(
+    n.channel_uuid ||
+    n.channelUuid ||
+    n.channel_id ||
+    n.channelId ||
+    n.uuid ||
+    n.id ||
+    ''
+  ).trim()
+}
+
 async function loadChannels() {
+  channelsLoading.value = true
   try {
-    const [webhookRes, emailRes] = await Promise.all([
-      notificationsAdminApi.getChannels({ channel_type: 'webhook' }),
-      notificationsAdminApi.getChannels({ channel_type: 'email' }),
-    ])
-    const webhookList = (webhookRes?.results ?? []).filter((ch) => ch.is_active !== false)
-    const emailList = (emailRes?.results ?? []).filter((ch) => ch.is_active !== false)
-    allChannels.value = [...webhookList, ...emailList]
+    const channelRes = await notificationsAdminApi.getChannels()
+    let rawList = []
+    if (Array.isArray(channelRes)) {
+      rawList = channelRes
+    } else if (Array.isArray(channelRes?.results)) {
+      rawList = channelRes.results
+    } else if (Array.isArray(channelRes?.list)) {
+      rawList = channelRes.list
+    } else if (Array.isArray(channelRes?.items)) {
+      rawList = channelRes.items
+    } else if (Array.isArray(channelRes?.data)) {
+      rawList = channelRes.data
+    } else if (Array.isArray(channelRes?.data?.results)) {
+      rawList = channelRes.data.results
+    } else if (Array.isArray(channelRes?.data?.list)) {
+      rawList = channelRes.data.list
+    } else if (Array.isArray(channelRes?.data?.items)) {
+      rawList = channelRes.data.items
+    }
+    allChannels.value = rawList.filter((ch) => {
+      const type = resolveChannelType(ch)
+      return type === 'webhook' || type === 'email'
+    })
+    if (pendingChannelUuid.value) {
+      const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === pendingChannelUuid.value)
+      if (matched) {
+        selectedChannelValue.value = `${resolveChannelType(matched)}:${pendingChannelUuid.value}`
+        pendingChannelUuid.value = ''
+      }
+    }
   } catch (err) {
     console.error('Failed to load channels:', err)
     allChannels.value = []
+  } finally {
+    channelsLoading.value = false
   }
 }
 
@@ -964,11 +1067,12 @@ onMounted(() => {
 
 function getChannelOptionLabel(ch) {
   const name = (ch.name || '').trim() || t('cloudBilling.providers.channelUnnamed')
-  const typeLabel = ch.channel_type === 'email'
+  const channelType = resolveChannelType(ch)
+  const typeLabel = channelType === 'email'
     ? t('cloudBilling.providers.channelTypeEmail')
     : t('cloudBilling.providers.channelTypeWebhook')
   const cfg = ch.config || {}
-  if (ch.channel_type === 'email') {
+  if (channelType === 'email') {
     const host = (cfg.smtp_host || '').trim()
     const hint = host ? ` · ${host}` : ''
     return `${name} (${typeLabel})${hint}`

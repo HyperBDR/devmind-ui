@@ -56,9 +56,12 @@ export const llmAdminApi = {
   /**
    * POST run test call with a saved config. Body: { config_uuid, prompt, max_tokens? }.
    * Sync call; records to LLM usage. Returns { ok, content?, detail?, usage? }.
+   * Uses 90s timeout because LLM completion (e.g. reasoning models) can be slow.
    */
   postLLMConfigTestCall(body) {
-    return apiClient.post('/v1/admin/llm-config/test-call/', body).then(extractData)
+    return apiClient
+      .post('/v1/admin/llm-config/test-call/', body, { timeout: 90000 })
+      .then(extractData)
   },
 
   getLLMConfigUsers(params = {}) {
