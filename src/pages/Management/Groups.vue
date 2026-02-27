@@ -13,7 +13,7 @@
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div class="p-6">
           <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <span class="text-sm text-gray-600">{{ t('management.totalGroups', { count: groups.length }) }}</span>
+            <span class="text-sm text-gray-600">{{ t('management.totalGroups', { count: totalCount }) }}</span>
             <div class="flex items-center gap-2">
               <BaseButton
                 variant="outline"
@@ -76,6 +76,44 @@
               </tbody>
             </table>
           </div>
+
+          <div
+            v-if="!loading && totalCount > 0"
+            class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
+          >
+            <p class="text-sm text-gray-600">
+              {{ t('common.pagination.showing', paginationShowing) }}
+            </p>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <select
+                v-model.number="pageSize"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="currentPage = 1; fetchGroups()"
+              >
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="currentPage--; fetchGroups()"
+              >
+                {{ t('common.pagination.previous') }}
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="currentPage++; fetchGroups()"
+              >
+                {{ t('common.pagination.next') }}
+              </BaseButton>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -108,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -120,10 +158,23 @@ const { t } = useI18n()
 const groups = ref([])
 const loading = ref(false)
 const error = ref(null)
+const currentPage = ref(1)
+const pageSize = ref(20)
+const totalCount = ref(0)
 const showCreateModal = ref(false)
 const createLoading = ref(false)
 const createError = ref(null)
 const createForm = ref({ name: '' })
+
+const totalPages = computed(() =>
+  totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
+)
+
+const paginationShowing = computed(() => ({
+  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  to: Math.min(currentPage.value * pageSize.value, totalCount.value),
+  total: totalCount.value
+}))
 
 function closeCreateModal() {
   showCreateModal.value = false
@@ -158,10 +209,20 @@ async function fetchGroups() {
   loading.value = true
   error.value = null
   try {
-    const data = await managementApi.getGroups()
-    groups.value = Array.isArray(data) ? data : (data?.results ?? [])
+    const data = await managementApi.getGroups({
+      page: currentPage.value,
+      page_size: pageSize.value
+    })
+    if (Array.isArray(data)) {
+      groups.value = data
+      totalCount.value = data.length
+    } else {
+      groups.value = data?.results ?? []
+      totalCount.value = Number(data?.count ?? groups.value.length)
+    }
   } catch (e) {
     groups.value = []
+    totalCount.value = 0
     error.value = e?.response?.data?.detail || e?.message || t('common.error')
   } finally {
     loading.value = false
