@@ -268,7 +268,33 @@
               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
+          <div class="flex flex-col gap-1 pt-1">
+            <div class="flex items-center gap-2 min-h-[1.5rem]">
+              <input
+                id="test-streaming"
+                v-model="testStreaming"
+                type="checkbox"
+                class="h-4 w-4 shrink-0 rounded border-2 border-gray-400 text-primary-600 focus:ring-2 focus:ring-primary-500 cursor-pointer"
+              />
+              <label for="test-streaming" class="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                {{ t('llm.config.streamingOutput') === 'llm.config.streamingOutput' ? '流式输出' : t('llm.config.streamingOutput') }}
+              </label>
+            </div>
+            <p class="text-xs text-gray-500">
+              {{ t('llm.config.streamingParamHint') === 'llm.config.streamingParamHint' ? '请求参数 stream：控制是否以 SSE 流式返回' : t('llm.config.streamingParamHint') }}
+            </p>
+          </div>
           <div class="flex justify-end gap-2">
+            <BaseButton
+              v-if="testCallLoading && testStreaming"
+              type="button"
+              variant="outline"
+              class="border-red-300 text-red-700 hover:bg-red-50"
+              :disabled="!testCallAbortController"
+              @click="stopTestCallStream"
+            >
+              {{ t('llm.config.streamStop') === 'llm.config.streamStop' ? '停止' : t('llm.config.streamStop') }}
+            </BaseButton>
             <BaseButton
               type="button"
               variant="outline"
@@ -287,19 +313,41 @@
             </BaseButton>
           </div>
           <div
-            v-if="testCallResult !== null"
+            v-if="testCallResult !== null || (testCallLoading && testStreaming)"
             class="rounded-lg border p-4"
-            :class="testCallOk ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'"
+            :class="testCallLoading && testStreaming ? 'border-gray-200 bg-gray-50' : (testCallOk ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50')"
           >
-            <p class="text-sm font-medium text-gray-700 mb-2">
+            <div v-if="testCallLoading && testStreaming" class="flex items-center gap-2 mb-2">
+              <svg class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </div>
+            <p v-else class="text-sm font-medium text-gray-700 mb-2">
               {{ testCallOk ? t('llm.config.testResponse') : t('llm.config.testError') }}
             </p>
-            <p
-              v-if="testCallOk"
-              class="text-sm text-gray-800 whitespace-pre-wrap break-words"
+            <div
+              v-if="(testCallLoading && testStreaming && streamingThinking) || (testCallResult && (testCallResult.thinking || '').trim())"
+              class="mb-3 rounded-lg border border-amber-200 bg-amber-50/80"
             >
-              {{ testCallContent }}
-            </p>
+              <div class="flex items-center gap-2 px-3 py-2 border-b border-amber-200 bg-amber-100/60">
+                <span class="text-xs font-semibold uppercase tracking-wide text-amber-800">
+                  {{ t('llm.config.thinkingBlock') === 'llm.config.thinkingBlock' ? '思考过程' : t('llm.config.thinkingBlock') }}
+                </span>
+              </div>
+              <p class="px-3 py-2 text-xs text-amber-900/90 whitespace-pre-wrap break-words font-mono leading-relaxed max-h-48 overflow-y-auto">
+                {{ testCallLoading && testStreaming ? streamingThinking : (testCallResult && testCallResult.thinking) }}
+              </p>
+            </div>
+            <div
+              v-if="testCallOk || (testCallLoading && testStreaming)"
+              class="test-call-markdown text-sm text-gray-800 overflow-x-auto"
+            >
+              <MarkdownRenderer
+                :content="markdownContentForTest"
+                :enable-highlight="true"
+              />
+            </div>
             <p v-else class="text-sm text-red-700">
               {{ testCallDetail }}
             </p>
@@ -313,6 +361,16 @@
               {{ testCallUsage.total_tokens }} total
               <span v-if="testCallUsage.cost != null">
                 · {{ testCallUsage.cost_currency || 'USD' }} {{ testCallUsage.cost }}
+              </span>
+            </div>
+            <div
+              v-if="testCallResult && testCallResult.streaming !== undefined"
+              class="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-600"
+            >
+              <span class="font-medium">{{ t('llm.config.streamingReturn') || '返回方式' }}:</span>
+              {{ testCallResult.streaming ? (t('llm.config.streamingMode') || '流式') : (t('llm.config.nonStreamingMode') || '非流式') }}
+              <span v-if="testCallResult.stopped" class="ml-2 text-amber-600">
+                ({{ t('llm.config.streamStopped') === 'llm.config.streamStopped' ? '已停止' : t('llm.config.streamStopped') }})
               </span>
             </div>
           </div>
@@ -569,6 +627,7 @@ import ProviderIcon from '@/components/llm/ProviderIcon.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import MarkdownRenderer from '@/components/ui/MarkdownRenderer.vue'
 
 const PROVIDER_LABELS = {
   openai: 'OpenAI',
@@ -613,6 +672,10 @@ const testPrompt = ref('')
 const testMaxTokens = ref(2048)
 const testCallLoading = ref(false)
 const testCallResult = ref(null)
+const testStreaming = ref(true)
+const streamingContent = ref('')
+const streamingThinking = ref('')
+const testCallAbortController = ref(null)
 const editingId = ref(null)
 const formSaving = ref(false)
 const testLoading = ref(false)
@@ -707,6 +770,22 @@ const testCallOk = computed(() => testCallResult.value?.ok === true)
 const testCallContent = computed(() => testCallResult.value?.content ?? '')
 const testCallDetail = computed(() => testCallResult.value?.detail ?? '')
 const testCallUsage = computed(() => testCallResult.value?.usage ?? null)
+
+function unwrapMarkdownIfCodeBlock(raw) {
+  if (typeof raw !== 'string' || !raw.trim()) return raw
+  const trimmed = raw.trim()
+  const openMatch = trimmed.match(/^```(?:markdown|md)?\s*\n?/i)
+  const closeMatch = trimmed.match(/\n?```\s*$/)
+  if (openMatch && closeMatch && trimmed.length > openMatch[0].length + closeMatch[0].length) {
+    return trimmed.slice(openMatch[0].length, trimmed.length - closeMatch[0].length).trim()
+  }
+  return raw
+}
+
+const markdownContentForTest = computed(() => {
+  const src = (testCallLoading.value && testStreaming.value) ? streamingContent.value : testCallContent.value
+  return unwrapMarkdownIfCodeBlock(src || '')
+})
 
 const selectedModelInfo = computed(() => {
   const modelId = (form.config.model || '').trim()
@@ -894,6 +973,7 @@ function openTestModal(row) {
   testPrompt.value = ''
   testMaxTokens.value = 2048
   testCallResult.value = null
+  streamingContent.value = ''
   showTestModal.value = true
 }
 
@@ -903,6 +983,7 @@ function closeTestModal() {
   testPrompt.value = ''
   testMaxTokens.value = 2048
   testCallResult.value = null
+  streamingContent.value = ''
 }
 
 async function sendTestCall() {
@@ -914,21 +995,92 @@ async function sendTestCall() {
   )
   testCallLoading.value = true
   testCallResult.value = null
+  streamingContent.value = ''
+  streamingThinking.value = ''
+  testCallAbortController.value = null
+  const body = {
+    prompt: testPrompt.value.trim(),
+    max_tokens: boundedMaxTokens,
+    config_uuid: row.uuid || row.id
+  }
   try {
-    const body = {
-      prompt: testPrompt.value.trim(),
-      max_tokens: boundedMaxTokens
+    if (testStreaming.value) {
+      const controller = new AbortController()
+      testCallAbortController.value = controller
+      await llmAdminApi.postLLMConfigTestCallStream(body, {
+        onChunk(content) {
+          streamingContent.value += content
+        },
+        onReasoning(content) {
+          streamingThinking.value += content
+        },
+        onDone(usage) {
+          testCallResult.value = {
+            ok: true,
+            content: streamingContent.value,
+            usage,
+            streaming: true,
+            thinking: streamingThinking.value
+          }
+          testCallLoading.value = false
+          testCallAbortController.value = null
+        },
+        onError(detail) {
+          if (detail === 'aborted') {
+            testCallResult.value = {
+              ok: true,
+              content: streamingContent.value,
+              streaming: true,
+              stopped: true,
+              thinking: streamingThinking.value
+            }
+          } else {
+            testCallResult.value = {
+              ok: false,
+              detail: detail || t('llm.config.testFailed'),
+              streaming: true
+            }
+          }
+          testCallLoading.value = false
+          testCallAbortController.value = null
+        }
+      }, controller.signal)
+      if (testCallResult.value === null) {
+        testCallLoading.value = false
+        testCallAbortController.value = null
+      }
+    } else {
+      const res = await llmAdminApi.postLLMConfigTestCall(body)
+      testCallResult.value =
+        res && typeof res === 'object' && !Array.isArray(res)
+          ? { ...res, streaming: false }
+          : res
     }
-    body.config_uuid = row.uuid || row.id
-    const res = await llmAdminApi.postLLMConfigTestCall(body)
-    testCallResult.value = res
   } catch (e) {
-    testCallResult.value = {
-      ok: false,
-      detail: e?.response?.data?.detail || e?.message || t('llm.config.testFailed')
+    if (e?.name === 'AbortError') {
+      testCallResult.value = {
+        ok: true,
+        content: streamingContent.value,
+        streaming: true,
+        stopped: true,
+        thinking: streamingThinking.value
+      }
+    } else {
+      testCallResult.value = {
+        ok: false,
+        detail: e?.response?.data?.detail || e?.detail || e?.message || t('llm.config.testFailed'),
+        streaming: testStreaming.value
+      }
     }
   } finally {
     testCallLoading.value = false
+    testCallAbortController.value = null
+  }
+}
+
+function stopTestCallStream() {
+  if (testCallAbortController.value) {
+    testCallAbortController.value.abort()
   }
 }
 
@@ -1075,3 +1227,16 @@ onMounted(() => {
   loadAll()
 })
 </script>
+
+<style scoped>
+.test-call-markdown {
+  max-height: 28rem;
+  overflow-y: auto;
+}
+.test-call-markdown :deep(.markdown-content) {
+  @apply text-gray-800;
+}
+.test-call-markdown :deep(.markdown-content pre) {
+  @apply text-xs;
+}
+</style>

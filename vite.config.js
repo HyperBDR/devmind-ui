@@ -43,31 +43,31 @@ export default defineConfig({
     minify: 'esbuild'
   },
   server: {
-    host: '0.0.0.0', // 允许外部访问
+    // Listen on all interfaces for Docker / remote access
+    host: '0.0.0.0',
     port: 3000,
     hmr: {
-      overlay: false // 减少热重载错误覆盖
+      overlay: false
     },
     proxy: {
       '/api': {
         target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
-        configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
-            console.log('proxy error', err)
-          })
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Sending Request to the Target:', req.method, req.url)
-          })
-          proxy.on('proxyRes', (proxyRes, req, res) => {
-            console.log(
-              'Received Response from the Target:',
-              proxyRes.statusCode,
-              req.url
-            )
-          })
-        }
+        configure:
+          process.env.VITE_DEBUG_PROXY === 'true'
+            ? (proxy) => {
+                proxy.on('error', (err) => {
+                  console.warn('Proxy error', err)
+                })
+                proxy.on('proxyReq', (proxyReq, req) => {
+                  console.log('Proxy request:', req.method, req.url)
+                })
+                proxy.on('proxyRes', (proxyRes, req) => {
+                  console.log('Proxy response:', proxyRes.statusCode, req.url)
+                })
+              }
+            : undefined
       },
       '/accounts': {
         target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',

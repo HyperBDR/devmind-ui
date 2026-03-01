@@ -537,7 +537,7 @@ const detailsAccountId = ref('')
 const showPreviewModal = ref(false)
 const selectedBilling = ref(null)
 
-// Initialize date range
+// Initialize date range: details tab default is last 3 days (from 3 days ago to today)
 const initDateRange = () => {
   const now = new Date()
   
@@ -545,10 +545,9 @@ const initDateRange = () => {
   statsSelectedPeriod.value = format(now, 'yyyy-MM')
   statsSelectedYear.value = now.getFullYear()
   
-  // Initialize date range for details tab
   const endStr = format(now, 'yyyy-MM-dd')
-  const start = new Date()
-  start.setMonth(start.getMonth() - 2)
+  const start = new Date(now)
+  start.setDate(start.getDate() - 3)
   const startStr = format(start, 'yyyy-MM-dd')
   detailsEndDate.value = endStr
   detailsStartDate.value = startStr

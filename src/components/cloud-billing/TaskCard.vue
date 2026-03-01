@@ -31,6 +31,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
+import { formatDuration } from '@/utils/formatting'
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 
 const props = defineProps({
@@ -51,15 +52,6 @@ const formatDate = (dateString) => {
   } catch {
     return dateString
   }
-}
-
-const formatDuration = (seconds) => {
-  if (!seconds) return '-'
-  if (seconds < 60) return `${seconds}s`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  return `${hours}h ${minutes}m`
 }
 
 const calculateDuration = (startTime, endTime) => {

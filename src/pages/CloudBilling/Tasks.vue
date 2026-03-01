@@ -226,6 +226,7 @@ import { format } from 'date-fns'
 import { useDebounce } from '@/composables/useDebounce'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
+import { formatDuration } from '@/utils/formatting'
 import { cloudBillingApi } from '@/api/cloudBilling'
 import { taskManagementApi } from '@/api/taskManagement'
 import AppLayout from '@/components/layout/AppLayout.vue'
@@ -266,15 +267,6 @@ const formatDate = (dateString) => {
   } catch {
     return dateString
   }
-}
-
-const formatDuration = (seconds) => {
-  if (!seconds) return '-'
-  if (seconds < 60) return `${seconds}s`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  return `${hours}h ${minutes}m`
 }
 
 const mapTaskStatus = (status) => {

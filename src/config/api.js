@@ -40,7 +40,8 @@ const getOAuthBaseUrl = () => {
 const getApiTimeout = () => {
   const envTimeout = import.meta.env.VITE_API_TIMEOUT
   if (envTimeout) {
-    return parseInt(envTimeout, 10)
+    const parsed = parseInt(envTimeout, 10)
+    if (Number.isFinite(parsed) && parsed > 0) return parsed
   }
   // Default to 30 seconds for production stability
   return 30000

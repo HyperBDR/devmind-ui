@@ -88,6 +88,26 @@ export function formatDate(dateString, pattern = 'yyyy-MM-dd HH:mm') {
 }
 
 /**
+ * Format duration in seconds to human-readable string with 2 decimal places for numeric parts.
+ * @param {number|null|undefined} seconds - Duration in seconds
+ * @returns {string} e.g. "12.35s", "1m 45.68s", "2h 30.50m"
+ */
+export function formatDuration(seconds) {
+  if (seconds == null || seconds === '') return '-'
+  const s = Number(seconds)
+  if (Number.isNaN(s)) return '-'
+  if (s < 60) return `${s.toFixed(2)}s`
+  if (s < 3600) {
+    const m = Math.floor(s / 60)
+    const sec = s % 60
+    return `${m}m ${sec.toFixed(2)}s`
+  }
+  const h = Math.floor(s / 3600)
+  const min = (s % 3600) / 60
+  return `${h}h ${min.toFixed(2)}m`
+}
+
+/**
  * Get CSS class for change value (positive/negative)
  * @param {number|null|undefined} change - The change value
  * @param {string} defaultClass - Default class when change is null/undefined (default: 'text-gray-500')

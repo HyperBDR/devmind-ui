@@ -54,6 +54,8 @@ const renderedContent = computed(() => {
 
   try {
     let markdown = props.content
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
 
     // Convert relative image paths to absolute URLs
     // Always use local HTTP service, never object storage URLs
@@ -214,6 +216,13 @@ const renderedContent = computed(() => {
 
 .markdown-content :deep(p) {
   @apply mb-3 leading-relaxed;
+  white-space: pre-wrap;
+}
+
+.markdown-content :deep(br) {
+  display: block;
+  content: "";
+  margin-bottom: 0.25em;
 }
 
 .markdown-content :deep(ul) {

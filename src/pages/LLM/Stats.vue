@@ -1,22 +1,27 @@
 <template>
   <AdminLayout>
     <div class="w-full max-w-full p-6">
-      <div class="mb-4">
-        <h1 class="text-lg font-semibold text-gray-900">
+      <section class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
           {{ t('llm.stats.title') }}
         </h1>
         <p class="mt-1 text-sm text-gray-500">
           {{ t('llm.stats.subtitle') }}
         </p>
-      </div>
+      </section>
 
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-6">
-          <div class="flex flex-wrap items-center gap-3 mb-6">
-            <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('llm.stats.filterByUser') }}</span>
+      <section
+        class="w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5 flex flex-wrap items-end justify-between gap-6 mb-6"
+        aria-label="Filters"
+      >
+        <div class="flex flex-wrap items-end gap-6 flex-1 min-w-0">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ t('llm.stats.filterByUser') }}
+            </label>
             <select
               v-model="selectedUserId"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-56 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+              class="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 min-w-[140px] hover:border-gray-300 transition-colors"
               @change="fetchStats"
             >
               <option value="">{{ t('llm.stats.allUsers') }}</option>
@@ -24,26 +29,37 @@
                 {{ u.label }}
               </option>
             </select>
-            <span class="text-sm text-gray-600 whitespace-nowrap ml-1">{{ t('llm.stats.granularity') }}</span>
-            <div class="flex rounded-md border border-gray-300 overflow-hidden">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ t('llm.stats.granularity') }}
+            </label>
+            <div class="flex rounded-lg bg-gray-100 p-1">
               <button
                 v-for="opt in granularityOptions"
                 :key="opt.value"
                 type="button"
                 :class="[
-                  'px-2.5 py-1.5 text-sm font-medium border-r border-gray-300 last:border-r-0 transition-colors',
-                  granularity === opt.value ? 'bg-primary-100 text-primary-700 border-primary-200' : 'bg-white text-gray-600 hover:bg-gray-50'
+                  'px-4 py-1.5 text-xs font-semibold rounded-md transition-colors',
+                  granularity === opt.value
+                    ? 'bg-white text-primary-600 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
                 ]"
                 @click="selectGranularity(opt.value)"
               >
                 {{ opt.label }}
               </button>
             </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {{ granularity === 'day' ? t('llm.stats.selectDay') : granularity === 'month' ? t('llm.stats.selectYearMonth') : t('llm.stats.selectYear') }}
+            </label>
             <template v-if="granularity === 'day'">
               <input
                 v-model="selectedDate"
                 type="date"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-40 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="fetchStats"
               />
             </template>
@@ -51,73 +67,140 @@
               <input
                 v-model="selectedMonth"
                 type="month"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-36 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-40 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="fetchStats"
               />
             </template>
             <template v-else-if="granularity === 'year'">
               <select
                 v-model.number="selectedYear"
-                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-28 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-24 bg-white focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="fetchStats"
               >
                 <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
               </select>
             </template>
           </div>
-
-          <BaseLoading v-if="loading && !statsData" />
-
-          <div
-            v-if="!loading && !statsData"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+        </div>
+        <div class="flex items-end shrink-0">
+          <BaseButton
+            variant="outline"
+            size="sm"
+            class="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium"
+            @click="fetchStats"
           >
-            <p class="text-sm font-medium text-gray-600">{{ t('llm.stats.noData') }}</p>
-          </div>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ t('llm.stats.refreshData') }}
+          </BaseButton>
+        </div>
+      </section>
 
-          <template v-else-if="statsData">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.totalTokens') }}</div>
-                <div class="text-2xl font-semibold text-primary-600">{{ formatNum(statsData.summary?.total_tokens) }}</div>
+      <div class="w-full">
+        <BaseLoading v-if="loading && !statsData" />
+
+        <div
+          v-if="!loading && !statsData"
+          class="py-16 text-center rounded-2xl border border-gray-200 bg-white shadow-sm"
+        >
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <p class="text-sm font-medium text-gray-600">{{ t('llm.stats.noData') }}</p>
+        </div>
+
+        <template v-else-if="statsData">
+          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343L12.657 5.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-indigo-600">TOKENS</span>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.totalCalls') }}</div>
-                <div class="text-2xl font-semibold text-green-600">{{ formatNum(statsData.summary?.total_calls) }}</div>
+              <div class="text-2xl font-semibold text-gray-900">{{ formatNum(statsData.summary?.total_tokens) }}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{{ t('llm.stats.totalTokens') }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-green-600">CALLS</span>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.totalCostUsd') }}</div>
-                <div class="text-2xl font-semibold text-amber-600">{{ formatCost(statsData.summary?.total_cost, statsData.summary?.total_cost_currency) }}</div>
+              <div class="text-2xl font-semibold text-green-600">{{ formatNum(statsData.summary?.total_calls) }}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{{ t('llm.stats.totalCalls') }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-amber-100 text-amber-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-amber-600">COST</span>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.promptTokens') }}</div>
-                <div class="text-2xl font-semibold text-purple-600">{{ formatNum(statsData.summary?.total_prompt_tokens) }}</div>
+              <div class="text-2xl font-semibold text-amber-600">{{ formatCost(statsData.summary?.total_cost, statsData.summary?.total_cost_currency) }}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{{ t('llm.stats.totalCostUsd') }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-purple-100 text-purple-600 shrink-0">
+                  <span class="text-sm font-bold">P</span>
+                </span>
+                <span class="text-xs font-medium uppercase text-purple-600">PROMPT</span>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.completionTokens') }}</div>
-                <div class="text-2xl font-semibold text-orange-600">{{ formatNum(statsData.summary?.total_completion_tokens) }}</div>
+              <div class="text-2xl font-semibold text-purple-600">{{ formatNum(statsData.summary?.total_prompt_tokens) }}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{{ t('llm.stats.promptTokens') }}</div>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="flex items-center justify-center w-9 h-9 rounded-full bg-orange-100 text-orange-600 shrink-0">
+                  <span class="text-sm font-bold">C</span>
+                </span>
+                <span class="text-xs font-medium uppercase text-orange-600">COMPLETION</span>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.cachedTokens') }}</div>
-                <div class="text-2xl font-semibold text-cyan-600">{{ formatNum(statsData.summary?.total_cached_tokens) }}</div>
+              <div class="text-2xl font-semibold text-orange-600">{{ formatNum(statsData.summary?.total_completion_tokens) }}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{{ t('llm.stats.completionTokens') }}</div>
+            </div>
+          </section>
+
+          <section
+            v-if="seriesByModelTokensChartData || seriesByModelCostChartData || byModel.length"
+            class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 mb-6"
+          >
+            <div v-if="seriesByModelTokensChartData || seriesByModelCostChartData" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div v-if="seriesByModelTokensChartData" class="flex flex-col min-h-[280px]">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">
+                  {{ t('llm.stats.chartByModelTokens') }}
+                </h3>
+                <p class="text-sm text-gray-500 mb-3">{{ chartSubtitle }}</p>
+                <div class="flex-1 min-h-[240px]">
+                  <Line :data="seriesByModelTokensChartData" :options="lineChartOptions" />
+                </div>
               </div>
-              <div class="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-                <div class="text-sm text-gray-500">{{ t('llm.stats.reasoningTokens') }}</div>
-                <div class="text-2xl font-semibold text-teal-600">{{ formatNum(statsData.summary?.total_reasoning_tokens) }}</div>
+              <div v-if="seriesByModelCostChartData" class="flex flex-col min-h-[280px]">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">
+                  {{ t('llm.stats.chartByModelCost') }}
+                </h3>
+                <p class="text-sm text-gray-500 mb-3">{{ chartSubtitle }}</p>
+                <div class="flex-1 min-h-[240px]">
+                  <Line :data="seriesByModelCostChartData" :options="lineChartOptions" />
+                </div>
               </div>
             </div>
-
-            <div v-if="seriesItems.length" class="mb-6">
-              <h3 class="text-sm font-semibold text-gray-700 mb-3">
-                {{ t('llm.stats.chartTitle') }} — {{ chartSubtitle }}
-              </h3>
-              <div class="h-64 sm:h-80 rounded-lg border border-gray-200 bg-white p-4">
-                <Bar :data="chartData" :options="chartOptions" />
-              </div>
-            </div>
-
-            <div v-if="byModel.length" class="mb-6">
-              <h3 class="text-sm font-semibold text-gray-700 mb-2">{{ t('llm.stats.byModel') }}</h3>
+            <div v-if="byModel.length">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">{{ t('llm.stats.byModel') }}</h3>
               <div class="overflow-x-auto rounded-lg border border-gray-200">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
@@ -143,8 +226,37 @@
                 </table>
               </div>
             </div>
-          </template>
-        </div>
+          </section>
+
+          <section
+            v-if="seriesByModelE2eChartData || seriesByModelTtftChartData || seriesByModelOutputTpsChartData"
+            class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 mb-6"
+          >
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div v-if="seriesByModelE2eChartData" class="flex flex-col min-h-[280px]">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">{{ t('llm.stats.chartByModelE2e') }}</h3>
+                <p class="text-sm text-gray-500 mb-3">{{ chartSubtitle }}</p>
+                <div class="flex-1 min-h-[240px]">
+                  <Line :data="seriesByModelE2eChartData" :options="lineChartOptions" />
+                </div>
+              </div>
+              <div v-if="seriesByModelTtftChartData" class="flex flex-col min-h-[280px]">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">{{ t('llm.stats.chartByModelTtft') }}</h3>
+                <p class="text-sm text-gray-500 mb-3">{{ chartSubtitle }}</p>
+                <div class="flex-1 min-h-[240px]">
+                  <Line :data="seriesByModelTtftChartData" :options="lineChartOptions" />
+                </div>
+              </div>
+            </div>
+            <div v-if="seriesByModelOutputTpsChartData" class="flex flex-col min-h-[280px]">
+              <h3 class="text-base font-semibold text-gray-900 mb-1">{{ t('llm.stats.chartByModelOutputTps') }}</h3>
+              <p class="text-sm text-gray-500 mb-3">{{ chartSubtitle }}</p>
+              <div class="flex-1 min-h-[240px]">
+                <Line :data="seriesByModelOutputTpsChartData" :options="lineChartOptions" />
+              </div>
+            </div>
+          </section>
+        </template>
       </div>
     </div>
   </AdminLayout>
@@ -153,14 +265,34 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
-import { Bar } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Filler,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import { Line } from 'vue-chartjs'
 import { formatNumLocale, formatCostLocale } from '@/utils/formatting'
 import { llmAdminApi } from '@/api/llmAdmin'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Filler,
+  Title,
+  Tooltip,
+  Legend
+)
 
 const { t, locale } = useI18n()
 
@@ -242,6 +374,17 @@ const seriesItems = computed(() => {
   return Array.isArray(s?.items) ? s.items : []
 })
 
+const expectedBuckets = computed(() => {
+  const buckets = statsData.value?.expected_buckets
+  if (Array.isArray(buckets) && buckets.length > 0) return buckets
+  return seriesItems.value.map((i) => i.bucket).filter(Boolean)
+})
+
+const seriesByModel = computed(() => {
+  const list = statsData.value?.series_by_model
+  return Array.isArray(list) ? list : []
+})
+
 const chartSubtitle = computed(() => {
   const g = statsData.value?.series?.granularity || granularity.value
   if (g === 'day') return t('llm.stats.chartByHour')
@@ -264,37 +407,94 @@ function formatBucketLabel(bucketIso) {
   return bucketIso
 }
 
-const chartData = computed(() => ({
-  labels: seriesItems.value.map((i) => formatBucketLabel(i.bucket)),
-  datasets: [
-    {
-      label: t('llm.stats.totalTokens'),
-      data: seriesItems.value.map((i) => i.total_tokens ?? 0),
-      backgroundColor: 'rgba(245, 158, 11, 0.6)',
-      borderColor: 'rgb(217, 119, 6)',
-      borderWidth: 1
-    }
-  ]
-}))
+const MODEL_CHART_COLORS = [
+  { border: 'rgb(99, 102, 241)', fill: 'rgba(99, 102, 241, 0.1)' },
+  { border: 'rgb(34, 197, 94)', fill: 'rgba(34, 197, 94, 0.1)' },
+  { border: 'rgb(239, 68, 68)', fill: 'rgba(239, 68, 68, 0.1)' },
+  { border: 'rgb(245, 158, 11)', fill: 'rgba(245, 158, 11, 0.1)' },
+  { border: 'rgb(139, 92, 246)', fill: 'rgba(139, 92, 246, 0.1)' },
+  { border: 'rgb(6, 182, 212)', fill: 'rgba(6, 182, 212, 0.1)' }
+]
 
-const chartOptions = computed(() => ({
+function buildSeriesByModelChartData(valueKey, options = {}) {
+  const { useNullForMissing = false, fill = true } = options
+  const keys = expectedBuckets.value
+  if (keys.length === 0) return null
+  const labels = keys.map((b) => formatBucketLabel(b))
+  const list = seriesByModel.value
+  const byModel = new Map()
+  for (const r of list) {
+    const m = r.model || '-'
+    if (!byModel.has(m)) byModel.set(m, new Map())
+    const val = r[valueKey]
+    byModel.get(m).set(r.bucket, val !== undefined && val !== null ? val : (useNullForMissing ? null : 0))
+  }
+  const datasets = []
+  let idx = 0
+  byModel.forEach((bucketValues, model) => {
+    const data = keys.map((b) => {
+      const v = bucketValues.get(b)
+      return v !== undefined ? v : (useNullForMissing ? null : 0)
+    })
+    const colors = MODEL_CHART_COLORS[idx % MODEL_CHART_COLORS.length]
+    datasets.push({
+      label: model,
+      data,
+      borderColor: colors.border,
+      backgroundColor: colors.fill,
+      tension: 0.3,
+      fill,
+      spanGaps: false
+    })
+    idx += 1
+  })
+  return {
+    labels,
+    datasets
+  }
+}
+
+const seriesByModelTokensChartData = computed(() =>
+  buildSeriesByModelChartData('total_tokens')
+)
+const seriesByModelCostChartData = computed(() =>
+  buildSeriesByModelChartData('total_cost')
+)
+const seriesByModelE2eChartData = computed(() =>
+  buildSeriesByModelChartData('avg_e2e_latency_sec', { fill: false })
+)
+const seriesByModelTtftChartData = computed(() =>
+  buildSeriesByModelChartData('avg_ttft_sec', { fill: false })
+)
+const seriesByModelOutputTpsChartData = computed(() =>
+  buildSeriesByModelChartData('avg_output_tps', { fill: false })
+)
+
+const lineChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
   plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label(ctx) {
-          return `${t('llm.stats.totalTokens')}: ${formatNum(ctx.raw)}`
-        }
+    legend: {
+      position: 'top',
+      align: 'end',
+      labels: {
+        usePointStyle: true,
+        pointStyle: 'circle',
+        boxWidth: 8,
+        boxHeight: 8,
+        padding: 4,
+        font: { size: 10 }
       }
-    }
+    },
+    tooltip: { mode: 'index', intersect: false }
   },
   scales: {
-    x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0 } },
-    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' } }
+    x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0, maxTicksLimit: 14, font: { size: 10 } } },
+    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { font: { size: 10 } } }
   }
 }))
+
 
 async function fetchStats() {
   loading.value = true
@@ -315,6 +515,7 @@ async function fetchStats() {
     if (start) params.start_date = start
     if (end) params.end_date = end
     if (selectedUserId.value) params.user_id = selectedUserId.value
+    if (start && end) params.use_series = 1
     const data = await llmAdminApi.getTokenStats(params)
     statsData.value = data ?? null
   } catch {

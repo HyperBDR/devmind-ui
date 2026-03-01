@@ -193,6 +193,12 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/management/llm/data-settings',
+    name: 'LLMDataSettings',
+    component: () => import('@/pages/LLM/DataSettings.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/management/task-management',
     redirect: '/management/task-management/list'
   },

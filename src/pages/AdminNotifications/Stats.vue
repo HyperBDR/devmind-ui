@@ -253,6 +253,7 @@ import {
   Chart as ChartJS,
   ArcElement,
   CategoryScale,
+  Filler,
   LinearScale,
   PointElement,
   LineElement,
@@ -269,6 +270,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 ChartJS.register(
   ArcElement,
   CategoryScale,
+  Filler,
   LinearScale,
   PointElement,
   LineElement,

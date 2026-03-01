@@ -23,13 +23,46 @@
               <select
                 v-model="filterModule"
                 class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[10rem]"
-                @change="onModuleFilterChange"
+                @change="onFilterChange"
               >
                 <option value="">{{ t('taskManagement.list.taskTypeAll') }}</option>
                 <option value="cloud_billing">{{ t('taskManagement.list.taskTypeCloudBilling') }}</option>
                 <option value="agentcore_notifier">{{ t('taskManagement.list.taskTypeNotifier') }}</option>
                 <option value="agentcore_task">{{ t('taskManagement.list.taskTypeTask') }}</option>
               </select>
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                {{ t('taskManagement.list.userFilter') }}
+              </label>
+              <select
+                v-model="filterUserId"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[10rem]"
+                @change="onFilterChange"
+              >
+                <option value="">{{ t('taskManagement.list.userFilterAll') }}</option>
+                <option
+                  v-for="u in userOptions"
+                  :key="u.id"
+                  :value="u.id"
+                >
+                  {{ u.label }}
+                </option>
+              </select>
+              <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('taskManagement.list.dateRange') }}</span>
+              <input
+                v-model="filterStartDate"
+                type="date"
+                :max="filterEndDate || undefined"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="onFilterChange"
+              />
+              <span class="text-gray-400">–</span>
+              <input
+                v-model="filterEndDate"
+                type="date"
+                :min="filterStartDate || undefined"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="onFilterChange"
+              />
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -210,7 +243,9 @@ import { format } from 'date-fns'
 import { useDebounceFn } from '@vueuse/core'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
+import { formatDuration } from '@/utils/formatting'
 import { taskManagementApi } from '@/api/taskManagement'
+import { managementApi } from '@/api/management'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
@@ -221,10 +256,23 @@ import TaskExecutionDetailPanel from '@/components/task-management/TaskExecution
 const { t } = useI18n()
 const { showError } = useToast()
 
+function getDefaultDetailDateRange() {
+  const now = new Date()
+  const endStr = format(now, 'yyyy-MM-dd')
+  const start = new Date(now)
+  start.setDate(start.getDate() - 3)
+  return { startDate: format(start, 'yyyy-MM-dd'), endDate: endStr }
+}
+
+const defaultDateRange = getDefaultDetailDateRange()
 const loading = ref(false)
 const tasks = ref([])
 const searchQuery = ref('')
 const filterModule = ref('')
+const filterUserId = ref('')
+const filterStartDate = ref(defaultDateRange.startDate)
+const filterEndDate = ref(defaultDateRange.endDate)
+const userOptions = ref([])
 const showPreviewModal = ref(false)
 const selectedTask = ref(null)
 const currentPage = ref(1)
@@ -259,15 +307,6 @@ function formatDate(val) {
   }
 }
 
-function formatDuration(seconds) {
-  if (seconds == null) return '-'
-  if (seconds < 60) return `${seconds}s`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  return `${h}h ${m}m`
-}
-
 async function loadTasks() {
   loading.value = true
   try {
@@ -278,6 +317,15 @@ async function loadTasks() {
     }
     if (filterModule.value) {
       params.module = filterModule.value
+    }
+    if (filterUserId.value) {
+      params.created_by = filterUserId.value
+    }
+    if (filterStartDate.value) {
+      params.start_date = filterStartDate.value
+    }
+    if (filterEndDate.value) {
+      params.end_date = filterEndDate.value
     }
     if (searchQuery.value.trim()) {
       params.task_name = searchQuery.value.trim()
@@ -301,9 +349,28 @@ async function loadTasks() {
   }
 }
 
-function onModuleFilterChange() {
+function onFilterChange() {
   currentPage.value = 1
   loadTasks()
+}
+
+function toUserLabel(u) {
+  if (u.display_name) return u.display_name
+  if (u.username) return u.username
+  if (u.id != null) return String(u.id)
+  return ''
+}
+
+async function fetchUserOptions() {
+  try {
+    const data = await managementApi.getUsers({ page_size: 200 })
+    const list = Array.isArray(data)
+      ? data
+      : (Array.isArray(data?.results) ? data.results : [])
+    userOptions.value = list.map((u) => ({ id: u.id, label: toUserLabel(u) }))
+  } catch {
+    userOptions.value = []
+  }
 }
 
 const debouncedLoad = useDebounceFn(() => {
@@ -322,6 +389,7 @@ async function handlePreview(task) {
 }
 
 onMounted(() => {
+  fetchUserOptions()
   loadTasks()
 })
 </script>

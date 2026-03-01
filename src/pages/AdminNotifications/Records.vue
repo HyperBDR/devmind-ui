@@ -12,63 +12,87 @@
 
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <div class="p-6">
-          <div class="flex flex-wrap items-center gap-3 mb-6">
-            <input
-              v-model="filters.source_app"
-              type="text"
-              :placeholder="t('notificationManagement.records.sourceApp')"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-40 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
-            <input
-              v-model="filters.source_type"
-              type="text"
-              :placeholder="t('notificationManagement.records.sourceType')"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-40 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
-            <select
-              v-model="filters.status"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-36 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500"
-            >
-              <option value="">{{ t('notificationManagement.records.statusAll') }}</option>
-              <option value="success">{{ t('notificationManagement.records.statusSuccess') }}</option>
-              <option value="failed">{{ t('notificationManagement.records.statusFailed') }}</option>
-              <option value="merged">{{ t('notificationManagement.records.statusMerged') }}</option>
-              <option value="silenced">{{ t('notificationManagement.records.statusSilenced') }}</option>
-              <option value="pending">{{ t('notificationManagement.records.statusPending') }}</option>
-            </select>
-            <input
-              v-model="filters.start_date"
-              type="date"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
-            <input
-              v-model="filters.end_date"
-              type="date"
-              class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
-            <BaseButton
-              variant="primary"
-              size="sm"
-              :loading="loading"
-              class="flex items-center gap-1"
-              @click="fetchRecords"
-            >
-              <svg v-if="!loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              {{ t('common.search') }}
-            </BaseButton>
-            <BaseButton
-              variant="outline"
-              size="sm"
-              class="flex items-center gap-1"
-              @click="resetFilters"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              {{ t('notificationManagement.records.resetFilters') }}
-            </BaseButton>
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex flex-wrap items-center gap-3">
+              <input
+                v-model="filters.source_app"
+                type="text"
+                :placeholder="t('notificationManagement.records.sourceApp')"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-40 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @input="onFiltersChanged"
+              />
+              <input
+                v-model="filters.source_type"
+                type="text"
+                :placeholder="t('notificationManagement.records.sourceType')"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-40 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @input="onFiltersChanged"
+              />
+              <select
+                v-model="filters.status"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-36 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @change="onFiltersChanged"
+              >
+                <option value="">{{ t('notificationManagement.records.statusAll') }}</option>
+                <option value="success">{{ t('notificationManagement.records.statusSuccess') }}</option>
+                <option value="failed">{{ t('notificationManagement.records.statusFailed') }}</option>
+                <option value="merged">{{ t('notificationManagement.records.statusMerged') }}</option>
+                <option value="silenced">{{ t('notificationManagement.records.statusSilenced') }}</option>
+                <option value="pending">{{ t('notificationManagement.records.statusPending') }}</option>
+              </select>
+              <input
+                v-model="filters.start_date"
+                type="date"
+                :max="filters.end_date || undefined"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @change="onFiltersChanged"
+              />
+              <span class="text-gray-400">–</span>
+              <input
+                v-model="filters.end_date"
+                type="date"
+                :min="filters.start_date || undefined"
+                class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
+                @change="onFiltersChanged"
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :loading="loading"
+                :title="t('common.refresh')"
+                class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
+                @click="fetchRecords"
+              >
+                <svg
+                  v-if="!loading"
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                <span class="sr-only">{{ t('common.refresh') }}</span>
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                class="flex items-center gap-1"
+                @click="resetFilters"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {{ t('notificationManagement.records.resetFilters') }}
+              </BaseButton>
+            </div>
           </div>
 
           <BaseLoading v-if="loading && records.length === 0" />
@@ -294,12 +318,16 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
+import { useDebounceFn } from '@vueuse/core'
+import { useToast } from '@/composables/useToast'
+import { extractErrorMessage } from '@/utils/api'
 import { notificationsAdminApi } from '@/api/notificationsAdmin'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 
 const { t } = useI18n()
+const { showError } = useToast()
 
 const loading = ref(false)
 const records = ref([])
@@ -311,12 +339,21 @@ const detailLoading = ref(false)
 const detailRecord = ref(null)
 const selectedRecordUuid = ref(null)
 
+function getDefaultDetailDateRange() {
+  const now = new Date()
+  const endStr = format(now, 'yyyy-MM-dd')
+  const start = new Date(now)
+  start.setDate(start.getDate() - 3)
+  return { start_date: format(start, 'yyyy-MM-dd'), end_date: endStr }
+}
+
+const defaultDateRange = getDefaultDetailDateRange()
 const filters = ref({
   source_app: '',
   source_type: '',
   status: '',
-  start_date: '',
-  end_date: ''
+  start_date: defaultDateRange.start_date,
+  end_date: defaultDateRange.end_date
 })
 
 const totalPages = computed(() => (total.value > 0 ? Math.ceil(total.value / pageSize.value) : 1))
@@ -340,8 +377,24 @@ function statusClass(status) {
   return `${base} bg-gray-100 text-gray-600`
 }
 
+function onFiltersChanged() {
+  page.value = 1
+  debouncedFetch()
+}
+
+const debouncedFetch = useDebounceFn(() => {
+  fetchRecords()
+}, 300)
+
 function resetFilters() {
-  filters.value = { source_app: '', source_type: '', status: '', start_date: '', end_date: '' }
+  const range = getDefaultDetailDateRange()
+  filters.value = {
+    source_app: '',
+    source_type: '',
+    status: '',
+    start_date: range.start_date,
+    end_date: range.end_date
+  }
   page.value = 1
   fetchRecords()
 }
@@ -384,7 +437,8 @@ async function fetchRecords() {
     const data = await notificationsAdminApi.getRecords(params)
     records.value = data?.results ?? []
     total.value = data?.total ?? 0
-  } catch {
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
     records.value = []
     total.value = 0
   } finally {
