@@ -1,6 +1,6 @@
 <template>
   <AdminLayout>
-    <div class="w-full max-w-full">
+    <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
           {{ t('taskManagement.settings.moduleConfigTitle') }}

@@ -1,13 +1,12 @@
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto space-y-4">
-      <!-- Page Header -->
-      <div class="mb-3 flex items-center justify-between">
+    <div class="w-full max-w-full p-6">
+      <div class="mb-4 flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-semibold text-gray-900">
+          <h1 class="text-lg font-semibold text-gray-900">
             {{ t('cloudBilling.providers.title') }}
-          </h2>
-          <p class="text-sm text-gray-600 mt-1">
+          </h1>
+          <p class="mt-1 text-sm text-gray-500">
             {{ t('cloudBilling.providers.subtitle') }}
           </p>
         </div>
@@ -19,12 +18,9 @@
         </button>
       </div>
 
-      <!-- Loading State -->
       <BaseLoading v-if="loading" full-page size="lg" variant="primary" />
 
-      <!-- Content -->
       <template v-else>
-        <!-- Providers List -->
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">

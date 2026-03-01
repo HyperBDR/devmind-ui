@@ -1,14 +1,14 @@
 <template>
   <AdminLayout>
     <div class="w-full max-w-full p-6">
-      <section class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">
+      <div class="mb-4">
+        <h1 class="text-lg font-semibold text-gray-900">
           {{ t('llm.stats.title') }}
         </h1>
         <p class="mt-1 text-sm text-gray-500">
           {{ t('llm.stats.subtitle') }}
         </p>
-      </section>
+      </div>
 
       <section
         class="w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5 flex flex-wrap items-end justify-between gap-6 mb-6"

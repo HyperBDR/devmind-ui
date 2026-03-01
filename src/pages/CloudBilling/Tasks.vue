@@ -1,7 +1,6 @@
 <template>
   <AppLayout>
-    <div class="w-full max-w-full">
-      <!-- Page Header -->
+    <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
           {{ t('cloudBilling.tasks.title') }}
@@ -11,7 +10,6 @@
         </p>
       </div>
 
-      <!-- Content Card -->
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar -->
