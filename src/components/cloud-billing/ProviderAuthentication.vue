@@ -292,7 +292,7 @@ import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
 
 const { t } = useI18n()
-const { showToast } = useToast()
+const { showSuccess, showError } = useToast()
 
 const loading = ref(true)
 const providers = ref([])
@@ -374,13 +374,12 @@ const toggleProvider = async (id, enabled) => {
     if (provider) {
       provider.is_active = enabled
     }
-    showToast(
-      enabled ? t('cloudBilling.providers.enableSuccess') : t('cloudBilling.providers.disableSuccess'),
-      'success'
+    showSuccess(
+      enabled ? t('cloudBilling.providers.enableSuccess') : t('cloudBilling.providers.disableSuccess')
     )
   } catch (error) {
     console.error('Failed to toggle provider:', error)
-    showToast(t('cloudBilling.providers.toggleError'), 'error')
+    showError(t('cloudBilling.providers.toggleError'))
     const provider = providers.value.find(p => p.id === id)
     if (provider) {
       provider.is_active = !enabled
@@ -418,13 +417,13 @@ const validateProvider = async (id) => {
     const response = await cloudBillingApi.validateProvider(id)
     const data = extractResponseData(response)
     if (data?.valid) {
-      showToast(t('cloudBilling.providers.validationSuccess'), 'success')
+      showSuccess(t('cloudBilling.providers.validationSuccess'))
     } else {
-      showToast(t('cloudBilling.providers.validationFailed') + ': ' + (data?.message || ''), 'error')
+      showError(t('cloudBilling.providers.validationFailed') + ': ' + (data?.message || ''))
     }
   } catch (error) {
     console.error('Failed to validate provider:', error)
-    showToast(t('cloudBilling.providers.validationError'), 'error')
+    showError(t('cloudBilling.providers.validationError'))
   }
 }
 
@@ -435,11 +434,11 @@ const deleteProvider = async (id) => {
 
   try {
     await cloudBillingApi.deleteProvider(id)
-    showToast(t('cloudBilling.providers.deleteSuccess'), 'success')
+    showSuccess(t('cloudBilling.providers.deleteSuccess'))
     loadProviders()
   } catch (error) {
     console.error('Failed to delete provider:', error)
-    showToast(t('cloudBilling.providers.deleteError'), 'error')
+    showError(t('cloudBilling.providers.deleteError'))
   }
 }
 

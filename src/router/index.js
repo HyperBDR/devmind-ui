@@ -88,6 +88,40 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/data-collector',
+    redirect: '/data-collector/stats'
+  },
+  {
+    path: '/data-collector/stats',
+    name: 'DataCollectorStats',
+    component: () => import('@/pages/DataCollector/Stats.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/data-collector/records',
+    name: 'DataCollectorRecords',
+    component: () => import('@/pages/DataCollector/Records.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/data-collector/records/:uuid',
+    name: 'DataCollectorRecordDetail',
+    component: () => import('@/pages/DataCollector/RecordDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/data-collector/tasks',
+    name: 'DataCollectorTasks',
+    component: () => import('@/pages/DataCollector/Tasks.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/data-collector/settings',
+    name: 'DataCollectorSettings',
+    component: () => import('@/pages/DataCollector/Settings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/llm',
     redirect: '/management/llm/stats'
   },

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
-import { usePreferencesStore } from './preferences'
 
 export const useUserStore = defineStore('user', () => {
   // State
@@ -14,18 +13,9 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const userInfo = computed(() => user.value)
 
-  // Helper function to load user preferences
-  const loadUserPreferences = async () => {
-    try {
-      const preferencesStore = usePreferencesStore()
-      
-      // Note: Profile.language is for AI generation and backend logic, not UI display
-      // UI language is stored in localStorage and managed separately
-      // We don't sync Profile.language to UI language anymore
-    } catch (err) {
-      console.error('Failed to load user preferences:', err)
-    }
-  }
+  // No-op: UI language is managed separately (localStorage); Profile.language is for
+  // backend/AI only. Kept for future use if we need to load other preferences here.
+  const loadUserPreferences = async () => {}
 
   // Actions
   const login = async (credentials) => {

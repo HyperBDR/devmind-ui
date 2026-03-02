@@ -192,7 +192,7 @@ async function loadConfig() {
       }
     }
   } catch (e) {
-    showError(extractErrorMessage ? extractErrorMessage(e, t('common.error')) : (e?.message || t('common.error')))
+    showError(extractErrorMessage(e, t('common.error')))
   } finally {
     loading.value = false
   }
@@ -233,7 +233,7 @@ async function saveConfig() {
     }
     showSuccess(t('llm.dataSettings.saveSuccess'))
   } catch (e) {
-    showError(extractErrorMessage ? extractErrorMessage(e, t('llm.dataSettings.saveFailed')) : (e?.message || t('llm.dataSettings.saveFailed')))
+    showError(extractErrorMessage(e, t('llm.dataSettings.saveFailed')))
   } finally {
     saving.value = false
   }

@@ -15,46 +15,50 @@
     />
   </Transition>
 
-  <!-- Right Panel -->
+  <!-- Center Modal -->
   <Transition
-    enter-active-class="transition-transform duration-300 ease-out"
-    enter-from-class="translate-x-full"
-    enter-to-class="translate-x-0"
-    leave-active-class="transition-transform duration-250 ease-in"
-    leave-from-class="translate-x-0"
-    leave-to-class="translate-x-full"
+    enter-active-class="transition-all duration-200 ease-out"
+    enter-from-class="opacity-0 scale-95"
+    enter-to-class="opacity-100 scale-100"
+    leave-active-class="transition-all duration-150 ease-in"
+    leave-from-class="opacity-100 scale-100"
+    leave-to-class="opacity-0 scale-95"
   >
     <div
       v-if="show"
-      class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
     >
-      <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
-        <h2 class="text-lg font-semibold text-gray-900">
-          {{ t('tasks.details') }}
-        </h2>
-        <button
-          @click="handleClose"
-          class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div
+        class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col pointer-events-auto"
+        @click.stop
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0 rounded-t-lg">
+          <h2 class="text-lg font-semibold text-gray-900">
+            {{ t('tasks.details') }}
+          </h2>
+          <button
+            @click="handleClose"
+            class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
 
-      <!-- Content - Scrollable -->
-      <div class="flex-1 overflow-y-auto">
+        <!-- Content - Scrollable -->
+        <div class="flex-1 overflow-y-auto min-h-0">
         <div v-if="task" class="p-6 space-y-6">
           <div>
             <h3 class="text-sm font-semibold text-gray-900 mb-4">
@@ -276,6 +280,7 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

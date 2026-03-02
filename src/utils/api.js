@@ -40,28 +40,29 @@ export function extractErrorMessage(
 ) {
   if (error.response?.data) {
     const data = error.response.data
+    const inner = data.data && typeof data.data === 'object' ? data.data : data
 
-    // Handle unified error format
-    if (data.message) {
-      return data.message
+    if (inner !== data && inner.detail) {
+      return typeof inner.detail === 'string' ? inner.detail : (inner.detail[0] || String(inner.detail))
     }
 
-    // Handle DRF error format
-    if (data.detail) {
-      return data.detail
+    if (inner.detail) {
+      return typeof inner.detail === 'string' ? inner.detail : (inner.detail[0] || String(inner.detail))
     }
 
-    // Handle validation errors
-    if (data.non_field_errors && Array.isArray(data.non_field_errors)) {
-      return data.non_field_errors[0]
+    if (inner.non_field_errors && Array.isArray(inner.non_field_errors)) {
+      return inner.non_field_errors[0]
     }
 
-    // Handle field-specific errors
-    const firstFieldError = Object.values(data).find(
+    const firstFieldError = Object.values(inner).find(
       (value) => Array.isArray(value) && value.length > 0
     )
     if (firstFieldError) {
       return firstFieldError[0]
+    }
+
+    if (data.message && data.message !== 'failed') {
+      return data.message
     }
   }
 

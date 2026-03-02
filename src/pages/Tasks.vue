@@ -749,10 +749,7 @@ const handlePageChange = (page) => {
 }
 
 const handlePageSizeChange = () => {
-  // Reset to first page when page size changes
   currentPage.value = 1
-
-  // Force reload tasks with new page size
   loadTasks()
 }
 
@@ -888,13 +885,43 @@ const hasRunningTasks = computed(() => {
   )
 })
 
-// Polling for real-time updates only when there are running tasks
-const { pause, resume } = useIntervalFn(() => {
-  // Only poll if there are running tasks
-  if (hasRunningTasks.value) {
-    loadTasks(true) // Pass true to indicate this is a polling refresh
+const isDetailTaskRunning = (task) => {
+  if (!task || !task.status) return false
+  const s = String(task.status).toLowerCase()
+  return s === 'running' || s === 'pending' || s === 'started' || s === 'retry'
+}
+
+// Poll single task when detail modal is open and task is still running
+const pollDetailTask = useIntervalFn(async () => {
+  const task = selectedTask.value
+  if (!showDetailsModal.value || !task?.id || !isDetailTaskRunning(task)) return
+  try {
+    const response = await tasksApi.getTask(task.id)
+    const data = extractResponseData(response)
+    if (data) selectedTask.value = data
+  } catch {
+    // Ignore poll errors (e.g. network), keep showing current data
   }
-}, 10000) // Poll every 10 seconds
+}, 4000, { immediate: false })
+
+watch(
+  [showDetailsModal, () => selectedTask.value?.id, () => selectedTask.value?.status],
+  () => {
+    if (showDetailsModal.value && selectedTask.value?.id && isDetailTaskRunning(selectedTask.value)) {
+      pollDetailTask.resume()
+    } else {
+      pollDetailTask.pause()
+    }
+  },
+  { immediate: true }
+)
+
+// Polling for real-time updates only when there are running tasks (list)
+const { pause, resume } = useIntervalFn(() => {
+  if (hasRunningTasks.value) {
+    loadTasks(true)
+  }
+}, 10000)
 
 // Watch for changes in tasks, hasMore, loading states, or mobile status to re-setup observer
 watch(
@@ -942,6 +969,7 @@ onMounted(() => {
 onUnmounted(() => {
   try {
     pause()
+    pollDetailTask.pause()
     window.removeEventListener('resize', checkMobile)
     if (observer) {
       try {
