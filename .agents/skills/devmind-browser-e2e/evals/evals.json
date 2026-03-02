@@ -1,0 +1,35 @@
+{
+  "skill_name": "devmind-browser-e2e",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用 devmind-browser-e2e 对研发环境做一次基础功能测试：BASE_URL 为 http://localhost:9091，账号 admin/adminpassword，包含云平台账单设置、管理员面板所有页面（设置页完整测，其余轻量测），最后给一份按页面汇总的报告。",
+      "expected_output": "A structured report (e.g. Markdown table) with one row per tested route: Route, Access (ok/fail), Layout (ok/warning/fail), GET/config (ok/skip/fail), Note. The report covers at least /cloud-billing/settings, the three management settings pages (task-management/settings, notifier/settings, llm/data-settings), and the dashboard plus remaining admin panel routes.",
+      "expectations": [
+        "The output includes a report (table or structured list) with route/path column or equivalent",
+        "The report includes at least one of: /cloud-billing/settings, /management/task-management/settings, /management/notifier/settings, /management/llm/data-settings",
+        "The report includes an access or layout outcome (ok/fail/warning or similar) per route"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "用浏览器 MCP 跑一遍云平台账单设置、任务管理设置、通知设置、LLM 数据设置，以及管理员面板其他页，验证能打开、布局正常、设置页 GET 正常。",
+      "expected_output": "Browser MCP is used to navigate, login, then open each of the four settings pages and other admin panel pages. A summary or report indicates which pages were opened successfully and whether layout and (for settings pages) config GET are ok.",
+      "expectations": [
+        "The response describes or references using Browser MCP (e.g. browser_navigate, browser_snapshot)",
+        "The response mentions or reports on at least: cloud billing settings, task management settings, notifier settings, LLM data settings",
+        "The response includes a conclusion or report on whether pages opened and layout/GET are normal"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "对研发环境做基础功能测试，只测 GET 和设置页（任务保留时间、任务执行时间、通知/LLM 数据设置、云平台账单设置），BASE_URL 用 http://localhost:9091，admin/adminpassword，最后给按页面汇总的报告。",
+      "expected_output": "E2E run limited to settings pages and GET-driven checks; output is a per-page summary report with access, layout, and (for settings) config GET status.",
+      "expectations": [
+        "The output is a report that summarizes results by page or route",
+        "Settings pages (task, notifier, LLM data, cloud billing) are included in the scope or report",
+        "No deep assertion on list/statistics data content; focus is on settings and GET"
+      ]
+    }
+  ]
+}

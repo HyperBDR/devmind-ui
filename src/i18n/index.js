@@ -2,6 +2,8 @@ import { createI18n } from 'vue-i18n'
 
 import en from '../locales/en.json'
 import zhCN from '../locales/zh-CN.json'
+import adminEn from '../admin/locales/en.json'
+import adminZhCN from '../admin/locales/zh-CN.json'
 
 // Get language from localStorage or default to 'en'
 // If stored language is 'es' (Spanish), fallback to 'en' since Spanish is no longer supported
@@ -22,8 +24,8 @@ const i18n = createI18n({
   locale: getStoredLanguage(),
   fallbackLocale: 'en',
   messages: {
-    en: en,
-    'zh-CN': zhCN
+    en: { ...en, ...adminEn },
+    'zh-CN': { ...zhCN, ...adminZhCN }
   }
 })
 

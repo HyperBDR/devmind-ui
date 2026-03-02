@@ -90,15 +90,11 @@ npm run preview
 npm run lint
 ```
 
-### E2E 测试（对容器内服务）
+### E2E 测试
 
-在宿主机对容器暴露的页面跑 Playwright，无需在镜像内安装 Playwright。
+**推荐**：使用本仓库内的 **devmind-browser-e2e** Skill（Browser MCP）对已部署的容器环境做基础功能测试，无需单独 E2E 镜像或 Dockerfile.e2e。Skill 位于 `devmind-ui/.agents/skills/devmind-browser-e2e`，测试报告输出到 `devmind-ui/docs/e2e/`。容器就绪后（如 `http://localhost:9091`），在 Cursor 中触发该 Skill 即可完成登录与逐页校验并生成报告。
 
-1. 宿主机首次安装浏览器：`npx playwright install chromium`
-2. 启动 devmind 容器（保证前端服务可从宿主机访问，如 `http://localhost:10080`）
-3. 在 devmind-ui 目录执行：`npm run test:e2e:container`（内部使用 `BASE_URL=http://localhost:10080`）
-
-也可自定义地址：`BASE_URL=http://localhost:10080 npm run test:e2e`。
+可选：在宿主机用 Playwright 对容器暴露的页面跑用例——宿主机安装 `npx playwright install chromium`，启动容器后执行 `npm run test:e2e:container`（默认 `BASE_URL=http://localhost:10080`），或自定义 `BASE_URL=... npm run test:e2e`。
 
 ## 核心功能
 

@@ -1,12 +1,12 @@
 <template>
-  <AppLayout>
+  <AdminLayout>
     <div class="w-full max-w-full p-6">
       <div class="mb-4">
         <h1 class="text-lg font-semibold text-gray-900">
-          {{ t('cloudBilling.tasks.title') }}
+          {{ t('taskManagement.list.title') }}
         </h1>
         <p class="mt-1 text-sm text-gray-500">
-          {{ t('cloudBilling.tasks.subtitle') }}
+          {{ t('taskManagement.list.subtitle') }}
         </p>
       </div>
 
@@ -14,40 +14,61 @@
         <div class="p-6">
           <!-- Toolbar -->
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <!-- Actions (Left) -->
             <div class="flex items-center gap-3 flex-wrap">
-              <BaseButton
-                variant="primary"
-                size="sm"
-                :loading="triggering"
-                @click="handleTriggerCollection"
-                class="flex items-center gap-2"
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                {{ t('taskManagement.list.taskTypeFilter') }}
+              </label>
+              <select
+                v-model="filterModule"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[10rem]"
+                @change="onFilterChange"
               >
-                <svg
-                  v-if="!triggering"
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <option value="">{{ t('taskManagement.list.taskTypeAll') }}</option>
+                <option value="cloud_billing">{{ t('taskManagement.list.taskTypeCloudBilling') }}</option>
+                <option value="agentcore_notifier">{{ t('taskManagement.list.taskTypeNotifier') }}</option>
+                <option value="agentcore_task">{{ t('taskManagement.list.taskTypeTask') }}</option>
+              </select>
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                {{ t('taskManagement.list.userFilter') }}
+              </label>
+              <select
+                v-model="filterUserId"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[10rem]"
+                @change="onFilterChange"
+              >
+                <option value="">{{ t('taskManagement.list.userFilterAll') }}</option>
+                <option
+                  v-for="u in userOptions"
+                  :key="u.id"
+                  :value="u.id"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                {{ triggering ? t('cloudBilling.tasks.triggering') : t('cloudBilling.tasks.triggerCollection') }}
-              </BaseButton>
+                  {{ u.label }}
+                </option>
+              </select>
+              <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('taskManagement.list.dateRange') }}</span>
+              <input
+                v-model="filterStartDate"
+                type="date"
+                :max="filterEndDate || undefined"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="onFilterChange"
+              />
+              <span class="text-gray-400">–</span>
+              <input
+                v-model="filterEndDate"
+                type="date"
+                :min="filterStartDate || undefined"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                @change="onFilterChange"
+              />
             </div>
 
-            <!-- Search and Filter (Right) -->
             <div class="flex items-center gap-3 w-full sm:w-auto">
               <BaseInput
                 v-model="searchQuery"
-                :placeholder="t('common.search')"
+                :placeholder="t('taskManagement.list.searchPlaceholder')"
                 class="flex-1 sm:w-64"
-                @update:modelValue="handleSearch"
+                @update:modelValue="debouncedLoad"
               >
                 <template #icon>
                   <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +81,7 @@
                 variant="outline"
                 size="sm"
                 :loading="loading"
-                @click="handleRefresh"
+                @click="loadTasks"
                 :title="t('common.refresh')"
                 class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
               >
@@ -85,7 +106,10 @@
 
           <BaseLoading v-if="loading && tasks.length === 0" />
 
-          <div v-if="!loading && tasks.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-else-if="!loading && tasks.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -99,44 +123,34 @@
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('cloudBilling.tasks.noTasks') }}</p>
-          </div>
-
-          <!-- Mobile Card View -->
-          <div
-            v-if="!loading && tasks.length > 0"
-            class="md:hidden space-y-3"
-          >
-            <TaskCard
-              v-for="task in tasks"
-              :key="task.id"
-              :task="task"
-              @view="handlePreview"
-            />
+            <p class="text-sm font-medium text-gray-600">{{ t('taskManagement.list.noTasks') }}</p>
           </div>
 
           <!-- Desktop Table View -->
           <div
-            v-if="!loading && tasks.length > 0"
-            class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            v-else
+            class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
           >
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('cloudBilling.tasks.taskName') }}
+                    {{ t('taskManagement.list.taskName') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('cloudBilling.tasks.status') }}
+                    {{ t('taskManagement.list.module') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('cloudBilling.tasks.startTime') }}
+                    {{ t('taskManagement.list.status') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('cloudBilling.tasks.endTime') }}
+                    {{ t('taskManagement.list.startedAt') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('cloudBilling.tasks.duration') }}
+                    {{ t('taskManagement.list.duration') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('taskManagement.list.createdBy') }}
                   </th>
                 </tr>
               </thead>
@@ -148,19 +162,22 @@
                   class="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
                 >
                   <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {{ task.name }}
+                    {{ task.task_name || '-' }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ task.module || '-' }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap">
-                    <StatusBadge :status="mapTaskStatus(task.status)" />
+                    <StatusBadge :status="mapStatus(task.status)" />
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(task.started_at) }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDate(task.finished_at) }}
+                    {{ formatDuration(task.duration) }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDuration(task.duration) }}
+                    {{ task.created_by_username || '-' }}
                   </td>
                 </tr>
               </tbody>
@@ -168,7 +185,7 @@
           </div>
 
           <div
-            v-if="!loading && totalCount > 0"
+            v-if="totalCount > 0"
             class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
           >
             <p class="text-sm text-gray-600">
@@ -179,7 +196,7 @@
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                @change="currentPage = 1; loadTasks(searchQuery.value, 1)"
+                @change="currentPage = 1; loadTasks()"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
@@ -190,7 +207,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="goPrevPage"
+                @click="currentPage--; loadTasks()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -198,7 +215,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="goNextPage"
+                @click="currentPage++; loadTasks()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>
@@ -208,221 +225,168 @@
       </div>
 
       <!-- Task Detail Panel -->
-      <TaskDetailPanel
+      <TaskExecutionDetailPanel
         :show="showPreviewModal"
         :task="selectedTask"
         @close="showPreviewModal = false"
       />
     </div>
-  </AppLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
-import { useDebounce } from '@/composables/useDebounce'
+import { useDebounceFn } from '@vueuse/core'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
 import { formatDuration } from '@/utils/formatting'
-import { cloudBillingApi } from '@/api/cloudBilling'
-import { taskManagementApi } from '@/admin/api'
-import AppLayout from '@/components/layout/AppLayout.vue'
-import BaseLoading from '@/components/ui/BaseLoading.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import { taskManagementApi, managementApi } from '@/admin/api'
+import AdminLayout from '@/admin/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseLoading from '@/components/ui/BaseLoading.vue'
 import StatusBadge from '@/components/ui/StatusBadge.vue'
-import TaskCard from '@/components/cloud-billing/TaskCard.vue'
-import TaskDetailPanel from '@/components/cloud-billing/TaskDetailPanel.vue'
+import TaskExecutionDetailPanel from '@/components/task-management/TaskExecutionDetailPanel.vue'
 
 const { t } = useI18n()
-const { showSuccess, showError } = useToast()
+const { showError } = useToast()
 
+function getDefaultDetailDateRange() {
+  const now = new Date()
+  const endStr = format(now, 'yyyy-MM-dd')
+  const start = new Date(now)
+  start.setDate(start.getDate() - 3)
+  return { startDate: format(start, 'yyyy-MM-dd'), endDate: endStr }
+}
+
+const defaultDateRange = getDefaultDetailDateRange()
 const loading = ref(false)
-const triggering = ref(false)
 const tasks = ref([])
 const searchQuery = ref('')
+const filterModule = ref('')
+const filterUserId = ref('')
+const filterStartDate = ref(defaultDateRange.startDate)
+const filterEndDate = ref(defaultDateRange.endDate)
+const userOptions = ref([])
 const showPreviewModal = ref(false)
 const selectedTask = ref(null)
 const currentPage = ref(1)
 const totalCount = ref(0)
-const pageSize = ref(10)
-
-const totalPages = computed(() =>
-  totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
-)
+const totalPages = ref(1)
+const pageSize = ref(20)
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from: (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
 
-const formatDate = (dateString) => {
-  if (!dateString) return '-'
+function mapStatus(status) {
+  const m = {
+    PENDING: 'pending',
+    STARTED: 'processing',
+    SUCCESS: 'success',
+    FAILURE: 'failed',
+    RETRY: 'processing',
+    REVOKED: 'failed'
+  }
+  return m[status] || (status && status.toLowerCase()) || 'pending'
+}
+
+function formatDate(val) {
+  if (!val) return '-'
   try {
-    return format(new Date(dateString), 'yyyy-MM-dd HH:mm')
+    return format(new Date(val), 'yyyy-MM-dd HH:mm')
   } catch {
-    return dateString
+    return val
   }
 }
 
-const mapTaskStatus = (status) => {
-  const statusMap = {
-    pending: 'pending',
-    running: 'processing',
-    completed: 'success',
-    failed: 'failed'
-  }
-  return statusMap[status] || status
-}
-
-const debouncedSearch = useDebounce((query) => {
-  currentPage.value = 1
-  loadTasks(query, 1)
-}, 300)
-
-const handleSearch = (query) => {
-  searchQuery.value = query
-  debouncedSearch(query)
-}
-
-const handleRefresh = () => {
-  loadTasks(searchQuery.value, currentPage.value)
-}
-
-const goPrevPage = () => {
-  if (currentPage.value <= 1) return
-  currentPage.value--
-  loadTasks(searchQuery.value, currentPage.value)
-}
-
-const goNextPage = () => {
-  if (currentPage.value >= totalPages.value) return
-  currentPage.value++
-  loadTasks(searchQuery.value, currentPage.value)
-}
-
-async function handlePreview(task) {
-  if (!task?.id) return
-  try {
-    const res = await taskManagementApi.getExecution(task.id)
-    const data = extractResponseData(res)
-    selectedTask.value = {
-      id: data.id,
-      task_id: data.task_id ?? task.task_id,
-      task_name: data.task_name ?? task.name,
-      name: data.task_name ?? task.name,
-      status: data.status ?? task.status,
-      created_at: data.created_at,
-      started_at: data.started_at ?? task.started_at,
-      finished_at: data.finished_at ?? task.finished_at,
-      duration: data.duration ?? task.duration,
-      result: data.result,
-      error: data.error,
-      traceback: data.traceback,
-      metadata: data.metadata || task.metadata
-    }
-    showPreviewModal.value = true
-  } catch (e) {
-    showError(extractErrorMessage(e, t('common.error')))
-  }
-}
-
-const handleTriggerCollection = async () => {
-  triggering.value = true
-  try {
-    const response = await cloudBillingApi.triggerCollection()
-    const data = extractResponseData(response)
-    
-    if (data.success) {
-      showSuccess(t('cloudBilling.tasks.collectionTriggered'))
-      // Refresh task list after a short delay
-      setTimeout(() => {
-        loadTasks(searchQuery.value)
-      }, 1000)
-    } else {
-      showError(data.message || t('cloudBilling.tasks.collectionFailed'))
-    }
-  } catch (error) {
-    console.error('Failed to trigger collection:', error)
-    const errorMessage = error.response?.data?.message || 
-                         error.response?.data?.detail ||
-                         t('cloudBilling.tasks.collectionFailed')
-    showError(errorMessage)
-  } finally {
-    triggering.value = false
-  }
-}
-
-const loadTasks = async (query = '', page = currentPage.value) => {
+async function loadTasks() {
   loading.value = true
   try {
     const params = {
-      page,
-      page_size: pageSize.value
+      page: currentPage.value,
+      page_size: pageSize.value,
+      my_tasks: 'false'
     }
-    if (query) {
-      params.task_name = query
+    if (filterModule.value) {
+      params.module = filterModule.value
     }
-    const response = await cloudBillingApi.getCollectionTasks(params)
-    const data = extractResponseData(response)
-
+    if (filterUserId.value) {
+      params.created_by = filterUserId.value
+    }
+    if (filterStartDate.value) {
+      params.start_date = filterStartDate.value
+    }
+    if (filterEndDate.value) {
+      params.end_date = filterEndDate.value
+    }
+    if (searchQuery.value.trim()) {
+      params.task_name = searchQuery.value.trim()
+    }
+    const res = await taskManagementApi.getExecutions(params)
+    const data = extractResponseData(res)
     const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
     const serverTotal = data?.count ?? data?.pagination?.total
     const hasServerPagination = Number.isFinite(Number(serverTotal))
     const total = hasServerPagination ? Number(serverTotal) : list.length
-
-    totalCount.value = total
-    currentPage.value = page
-    const pageList = hasServerPagination
+    tasks.value = hasServerPagination
       ? list
-      : list.slice((page - 1) * pageSize.value, page * pageSize.value)
-
-    tasks.value = pageList.map(task => ({
-      id: task.id,
-      name: task.task_name || 'cloud_billing.tasks.collect_billing_data',
-      status: mapTaskManagerStatus(task.status),
-      started_at: task.started_at || task.created_at,
-      finished_at: task.finished_at,
-      duration: calculateDuration(task.started_at, task.finished_at),
-      task_id: task.task_id,
-      result: task.result,
-      error: task.error,
-      metadata: task.metadata
-    }))
-  } catch (error) {
-    console.error('Failed to load tasks:', error)
+      : list.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+    totalCount.value = total
+    totalPages.value = total > 0 ? Math.ceil(total / pageSize.value) : 1
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
     tasks.value = []
   } finally {
     loading.value = false
   }
 }
 
-const calculateDuration = (startTime, endTime) => {
-  if (!startTime || !endTime) return null
+function onFilterChange() {
+  currentPage.value = 1
+  loadTasks()
+}
+
+function toUserLabel(u) {
+  if (u.display_name) return u.display_name
+  if (u.username) return u.username
+  if (u.id != null) return String(u.id)
+  return ''
+}
+
+async function fetchUserOptions() {
   try {
-    const start = new Date(startTime)
-    const end = new Date(endTime)
-    return Math.floor((end - start) / 1000) // Duration in seconds
+    const data = await managementApi.getUsers({ page_size: 200 })
+    const list = Array.isArray(data)
+      ? data
+      : (Array.isArray(data?.results) ? data.results : [])
+    userOptions.value = list.map((u) => ({ id: u.id, label: toUserLabel(u) }))
   } catch {
-    return null
+    userOptions.value = []
   }
 }
 
-const mapTaskManagerStatus = (status) => {
-  const statusMap = {
-    'PENDING': 'pending',
-    'STARTED': 'running',
-    'SUCCESS': 'completed',
-    'FAILURE': 'failed',
-    'RETRY': 'running',
-    'REVOKED': 'failed'
+const debouncedLoad = useDebounceFn(() => {
+  currentPage.value = 1
+  loadTasks()
+}, 300)
+
+async function handlePreview(task) {
+  try {
+    const res = await taskManagementApi.getExecution(task.id)
+    selectedTask.value = extractResponseData(res)
+    showPreviewModal.value = true
+  } catch (e) {
+    showError(extractErrorMessage(e, t('common.error')))
   }
-  return statusMap[status] || status?.toLowerCase() || 'pending'
 }
 
 onMounted(() => {
+  fetchUserOptions()
   loadTasks()
 })
 </script>

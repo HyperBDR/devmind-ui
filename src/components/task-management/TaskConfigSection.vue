@@ -168,7 +168,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData, extractErrorMessage } from '@/utils/api'
-import { taskManagementApi } from '@/api/taskManagement'
+import { taskManagementApi } from '@/admin/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 

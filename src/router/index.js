@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store/user'
+import { adminRoutes } from '@/admin/routes'
 
 const routes = [
   {
@@ -154,104 +155,7 @@ const routes = [
     path: '/notifier/:pathMatch(.*)*',
     redirect: '/management/notifier/stats'
   },
-  {
-    path: '/management',
-    redirect: '/management/users'
-  },
-  {
-    path: '/management/users',
-    name: 'ManagementUsers',
-    component: () => import('@/pages/Management/Users.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/groups',
-    name: 'ManagementGroups',
-    component: () => import('@/pages/Management/Groups.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/llm',
-    redirect: '/management/llm/stats'
-  },
-  {
-    path: '/management/llm/stats',
-    name: 'LLMStats',
-    component: () => import('@/pages/LLM/Stats.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/llm/usage',
-    name: 'LLMUsage',
-    component: () => import('@/pages/LLM/Usage.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/llm/config',
-    name: 'LLMConfig',
-    component: () => import('@/pages/LLM/Config.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/llm/data-settings',
-    name: 'LLMDataSettings',
-    component: () => import('@/pages/LLM/DataSettings.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/task-management',
-    redirect: '/management/task-management/list'
-  },
-  {
-    path: '/management/task-management/list',
-    name: 'TaskManagementList',
-    component: () => import('@/pages/TaskManagement/List.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/task-management/stats',
-    name: 'TaskManagementStats',
-    component: () => import('@/pages/TaskManagement/Stats.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/task-management/settings',
-    name: 'TaskManagementSettings',
-    component: () => import('@/pages/TaskManagement/Settings.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/notifier',
-    redirect: '/management/notifier/stats'
-  },
-  {
-    path: '/management/notifier/stats',
-    name: 'AdminNotificationsStats',
-    component: () => import('@/pages/AdminNotifications/Stats.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/notifier/records',
-    name: 'AdminNotificationsRecords',
-    component: () => import('@/pages/AdminNotifications/Records.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/notifier/channels',
-    name: 'AdminNotificationsChannels',
-    component: () => import('@/pages/AdminNotifications/Channels.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/notifier/settings',
-    name: 'AdminNotificationsSettings',
-    component: () => import('@/pages/AdminNotifications/Config.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/management/notifier/config',
-    redirect: '/management/notifier/settings'
-  },
+  ...adminRoutes,
   {
     path: '/404',
     name: 'NotFound',
