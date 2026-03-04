@@ -762,7 +762,7 @@ const loadBillings = async (query = '') => {
   }
 }
 
-const debouncedSearch = useDebounce((query) => {
+const { debouncedFn: debouncedSearch } = useDebounce((query) => {
   loadBillings(query)
 }, 300)
 

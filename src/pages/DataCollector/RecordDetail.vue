@@ -38,12 +38,22 @@
                 <dd class="font-medium text-gray-900">{{ record.platform }}</dd>
               </div>
               <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.sourceId') }}</dt>
+                <dt class="text-gray-500">
+                  {{ record.platform === 'feishu' ? t('dataCollector.records.approvalInstanceCode') : t('dataCollector.records.sourceId') }}
+                </dt>
                 <dd class="font-medium text-gray-900">{{ record.source_unique_id }}</dd>
               </div>
-              <div class="sm:col-span-2">
-                <dt class="text-gray-500">{{ t('dataCollector.records.title') }}</dt>
-                <dd class="font-medium text-gray-900">{{ displayTitle }}</dd>
+              <div v-if="record.platform === 'license'" class="sm:col-span-2">
+                <dt class="text-gray-500">{{ t('dataCollector.records.resourceType') }}</dt>
+                <dd class="font-medium text-gray-900">{{ t('dataCollector.records.order') }}</dd>
+              </div>
+              <div v-else class="sm:col-span-2">
+                <dt class="text-gray-500">
+                  {{ record.platform === 'feishu' ? t('dataCollector.records.approvalName') : t('dataCollector.records.title') }}
+                </dt>
+                <dd class="font-medium text-gray-900">
+                  {{ record.platform === 'feishu' ? (record.filter_metadata?.approval_name ?? displayTitle) : displayTitle }}
+                </dd>
               </div>
               <div>
                 <dt class="text-gray-500">{{ t('dataCollector.records.lastCollected') }}</dt>
@@ -85,7 +95,7 @@
             </dl>
           </section>
 
-          <section v-if="commentsList.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
+          <section v-if="record.platform !== 'license' && commentsList.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
             <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
               {{ t('dataCollector.records.comments') }} ({{ commentsList.length }})
             </h2>
@@ -126,7 +136,7 @@
             </div>
           </section>
 
-          <section v-if="effectiveAttachments.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
+          <section v-if="record.platform !== 'license' && effectiveAttachments.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
             <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
               {{ t('dataCollector.records.attachments') }} ({{ effectiveAttachments.length }})
             </h2>

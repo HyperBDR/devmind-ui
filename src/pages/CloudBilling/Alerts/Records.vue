@@ -283,7 +283,7 @@ const getWebhookStatusLabel = (status) => {
   return statusLabels[status] || status
 }
 
-const debouncedSearch = useDebounce((query) => {
+const { debouncedFn: debouncedSearch } = useDebounce((query) => {
   currentPage.value = 1
   loadAlerts(query, 1)
 }, 300)

@@ -33,7 +33,7 @@
           </span>
         </nav>
 
-      <form v-if="currentStep === 1" @submit.prevent="currentStep = 2; loadProjectsIfNeeded()" class="space-y-4">
+      <form v-if="currentStep === 1" @submit.prevent="canGoNextFromStep1 && (currentStep = 2, loadProjectsIfNeeded())" class="space-y-4">
         <div class="space-y-3 border-b border-gray-200 pb-4">
           <h4 class="text-sm font-semibold text-gray-900">
             {{ t('dataCollector.settings.basicInfo') }}
@@ -52,11 +52,12 @@
                 id="platform"
                 v-model="formData.platform"
                 required
-                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 :disabled="!!config"
               >
-                <option value="jira">Jira</option>
-                <option value="feishu">Feishu</option>
+                <option value="jira">{{ t('dataCollector.platforms.jira') }}</option>
+                <option value="feishu">{{ t('dataCollector.platforms.feishu') }}</option>
+                <option value="license">{{ t('dataCollector.platforms.license') }}</option>
               </select>
             </div>
           </div>
@@ -213,37 +214,264 @@
             </template>
           </div>
         </template>
+
+        <template v-else-if="formData.platform === 'feishu'">
+          <div class="space-y-3 border-b border-gray-200 pb-4">
+            <h4 class="text-sm font-semibold text-gray-900">
+              {{ t('dataCollector.settings.authConfig') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+              <div class="md:col-span-1">
+                <label for="feishuAppId" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ t('dataCollector.feishu.appId') }}
+                </label>
+                <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                  {{ t('dataCollector.feishu.appIdDesc') }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <BaseInput
+                  id="feishuAppId"
+                  v-model="formData.feishu_app_id"
+                  type="text"
+                  :placeholder="t('dataCollector.feishu.appIdPlaceholder')"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+              <div class="md:col-span-1">
+                <label for="feishuAppSecret" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ t('dataCollector.feishu.appSecret') }}
+                </label>
+                <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                  {{ t('dataCollector.feishu.appSecretDesc') }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <BaseInput
+                  id="feishuAppSecret"
+                  v-model="formData.feishu_app_secret"
+                  type="password"
+                  :placeholder="config ? t('dataCollector.feishu.appSecretPlaceholderEdit') : t('dataCollector.feishu.appSecretPlaceholder')"
+                  :required="!config"
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template v-else-if="formData.platform === 'license'">
+          <div class="space-y-3 border-b border-gray-200 pb-4">
+            <h4 class="text-sm font-semibold text-gray-900">
+              {{ t('dataCollector.settings.authConfig') }}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+              <div class="md:col-span-1">
+                <label for="licenseBaseUrl" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ t('dataCollector.license.baseUrl') }}
+                </label>
+                <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                  {{ t('dataCollector.license.baseUrlDesc') }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <BaseInput
+                  id="licenseBaseUrl"
+                  v-model="formData.license_base_url"
+                  type="url"
+                  :placeholder="t('dataCollector.license.baseUrlPlaceholder')"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+              <div class="md:col-span-1">
+                <label for="licenseUsername" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ t('dataCollector.license.username') }}
+                </label>
+                <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                  {{ t('dataCollector.license.usernameDesc') }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <BaseInput
+                  id="licenseUsername"
+                  v-model="formData.license_username"
+                  type="text"
+                  :placeholder="t('dataCollector.license.usernamePlaceholder')"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+              <div class="md:col-span-1">
+                <label for="licensePassword" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ t('dataCollector.license.password') }}
+                </label>
+                <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                  {{ t('dataCollector.license.passwordDesc') }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <BaseInput
+                  id="licensePassword"
+                  v-model="formData.license_password"
+                  type="password"
+                  :placeholder="config ? t('dataCollector.license.passwordPlaceholderEdit') : t('dataCollector.license.passwordPlaceholder')"
+                  :required="!config"
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <div v-if="formData.platform === 'jira' || formData.platform === 'feishu' || formData.platform === 'license'" class="space-y-1 pt-2">
+          <p class="text-sm text-gray-500">
+            {{ t('dataCollector.settings.verifyHint') }}
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <span v-if="step1AuthVerified" class="text-sm text-green-600">
+              {{ t('dataCollector.settings.verifyAuthSuccess') }}
+            </span>
+            <span v-if="authError" class="text-sm text-red-600">
+              {{ authError }}
+            </span>
+          </div>
+        </div>
       </form>
 
       <div v-else-if="currentStep === 2" class="space-y-4">
-        <p class="text-sm text-gray-600">
-          {{ t('dataCollector.settings.selectProjectsDesc') }}
-        </p>
-        <div v-if="projectsLoading" class="py-8 text-center text-sm text-gray-500">
-          {{ t('dataCollector.settings.loadingProjects') }}
-        </div>
-        <div v-else-if="projectsError" class="rounded-md p-3 text-sm bg-red-50 text-red-800">
-          {{ projectsError }}
-        </div>
-        <div v-else-if="projects.length === 0" class="py-8 text-center text-sm text-gray-500">
-          {{ t('dataCollector.settings.noProjects') }}
-        </div>
-        <div v-else class="max-h-64 overflow-y-auto rounded border border-gray-200 divide-y divide-gray-200">
-          <label
-            v-for="proj in projects"
-            :key="proj.key"
-            class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
-          >
-            <input
-              v-model="formData.selected_project_keys"
-              type="checkbox"
-              :value="proj.key"
-              class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-            />
-            <span class="font-medium text-gray-900">{{ proj.key }}</span>
-            <span class="text-sm text-gray-500">{{ proj.name }}</span>
-          </label>
-        </div>
+        <!-- Jira: 选择项目 -->
+        <template v-if="formData.platform === 'jira'">
+          <p class="text-sm text-gray-600">
+            {{ t('dataCollector.settings.selectProjectsDesc') }}
+          </p>
+          <div v-if="projectsLoading" class="py-8 text-center text-sm text-gray-500">
+            {{ t('dataCollector.settings.loadingProjects') }}
+          </div>
+          <div v-else-if="projectsError" class="rounded-md p-3 text-sm bg-red-50 text-red-800">
+            {{ projectsError }}
+          </div>
+          <div v-else-if="projects.length === 0" class="py-8 text-center text-sm text-gray-500">
+            {{ t('dataCollector.settings.noProjects') }}
+          </div>
+          <div v-else class="max-h-64 overflow-y-auto rounded border border-gray-200 divide-y divide-gray-200">
+            <label
+              v-for="proj in projects"
+              :key="proj.key"
+              class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+            >
+              <input
+                v-model="formData.selected_project_keys"
+                type="checkbox"
+                :value="proj.key"
+                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <span class="font-medium text-gray-900">{{ proj.key }}</span>
+              <span class="text-sm text-gray-500">{{ proj.name }}</span>
+            </label>
+          </div>
+        </template>
+
+        <!-- License: 选择订单采集 -->
+        <template v-else-if="formData.platform === 'license'">
+          <p class="text-sm text-gray-600">
+            {{ t('dataCollector.license.step2Desc') }}
+          </p>
+          <div v-if="projectsLoading" class="py-8 text-center text-sm text-gray-500">
+            {{ t('dataCollector.settings.loadingProjects') }}
+          </div>
+          <div v-else-if="projectsError" class="rounded-md p-3 text-sm bg-red-50 text-red-800">
+            {{ projectsError }}
+          </div>
+          <div v-else-if="projects.length === 0" class="py-8 text-center text-sm text-gray-500">
+            {{ t('dataCollector.settings.noProjects') }}
+          </div>
+          <div v-else class="max-h-64 overflow-y-auto rounded border border-gray-200 divide-y divide-gray-200">
+            <label
+              v-for="proj in projects"
+              :key="proj.key"
+              class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+            >
+              <input
+                v-model="formData.selected_project_keys"
+                type="checkbox"
+                :value="proj.key"
+                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <span class="font-medium text-gray-900">{{ proj.key === 'order' ? t('dataCollector.license.orderCollection') : proj.name }}</span>
+              <span class="text-sm text-gray-500">{{ proj.key === 'order' ? t('dataCollector.license.orderCollection') : proj.name }}</span>
+            </label>
+          </div>
+        </template>
+
+        <!-- Feishu: 手动配置审批定义 ID + 名称 -->
+        <template v-else-if="formData.platform === 'feishu'">
+          <p class="text-sm text-gray-600">
+            {{ t('dataCollector.feishu.approvalDefinitionsDesc') }}
+          </p>
+          <div class="space-y-2">
+            <div
+              v-for="(item, index) in formData.feishu_definitions"
+              :key="index"
+              class="grid grid-cols-12 gap-3 items-start"
+            >
+              <div class="col-span-5">
+                <label class="block text-xs font-medium text-gray-500 mb-1">
+                  {{ t('dataCollector.feishu.approvalDefinitionId') }}
+                </label>
+                <BaseInput
+                  v-model="item.id"
+                  type="text"
+                  class="w-full"
+                />
+              </div>
+              <div class="col-span-5">
+                <label class="block text-xs font-medium text-gray-500 mb-1">
+                  {{ t('dataCollector.feishu.approvalDefinitionName') }}
+                </label>
+                <BaseInput
+                  v-model="item.name"
+                  type="text"
+                  class="w-full"
+                />
+              </div>
+              <div class="col-span-2 flex items-end justify-end">
+                <BaseButton
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  @click="removeFeishuDefinition(index)"
+                >
+                  {{ t('common.delete') }}
+                </BaseButton>
+              </div>
+            </div>
+            <div>
+              <BaseButton
+                type="button"
+                variant="outline"
+                size="sm"
+                @click="addFeishuDefinition"
+              >
+                {{ t('dataCollector.feishu.addApprovalDefinition') }}
+              </BaseButton>
+            </div>
+          </div>
+        </template>
+
+        <!-- 其他平台暂不需要第二步 -->
+        <template v-else>
+          <p class="text-sm text-gray-500">
+            {{ t('dataCollector.settings.selectProjectsDesc') }}
+          </p>
+        </template>
       </div>
 
       <form v-else-if="currentStep === 3" @submit.prevent="handleSubmit" class="space-y-4">
@@ -349,8 +577,22 @@
                 v-model="formData.initial_range"
                 class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option value="1m">{{ t('dataCollector.settings.initialRange1m') }}</option>
-                <option value="3m">{{ t('dataCollector.settings.initialRange3m') }}</option>
+                <template v-if="formData.platform === 'feishu'">
+                  <option value="10d">
+                    {{ t('dataCollector.settings.initialRange10d') }}
+                  </option>
+                  <option value="30d">
+                    {{ t('dataCollector.settings.initialRange30d') }}
+                  </option>
+                </template>
+                <template v-else>
+                  <option value="1m">
+                    {{ t('dataCollector.settings.initialRange1m') }}
+                  </option>
+                  <option value="3m">
+                    {{ t('dataCollector.settings.initialRange3m') }}
+                  </option>
+                </template>
               </select>
             </div>
           </div>
@@ -387,10 +629,24 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
               <div class="md:col-span-1"><label for="sec-initialRange" class="block text-sm font-medium text-gray-700 mb-1">{{ t('dataCollector.settings.initialRange') }}</label></div>
               <div class="md:col-span-2">
-                <select id="sec-initialRange" v-model="formData.initial_range" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                  <option value="1m">{{ t('dataCollector.settings.initialRange1m') }}</option>
-                  <option value="3m">{{ t('dataCollector.settings.initialRange3m') }}</option>
-                </select>
+              <select id="sec-initialRange" v-model="formData.initial_range" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <template v-if="formData.platform === 'feishu'">
+                  <option value="10d">
+                    {{ t('dataCollector.settings.initialRange10d') }}
+                  </option>
+                  <option value="30d">
+                    {{ t('dataCollector.settings.initialRange30d') }}
+                  </option>
+                </template>
+                <template v-else>
+                  <option value="1m">
+                    {{ t('dataCollector.settings.initialRange1m') }}
+                  </option>
+                  <option value="3m">
+                    {{ t('dataCollector.settings.initialRange3m') }}
+                  </option>
+                </template>
+              </select>
               </div>
             </div>
           </section>
@@ -417,7 +673,19 @@
         <template v-else-if="currentStep === 1">
           <BaseButton
             type="button"
+            variant="outline"
+            :loading="authVerifying"
+            :disabled="!step1AuthFieldsFilled || authVerifying"
+            :title="!step1AuthFieldsFilled ? t('dataCollector.settings.verifyAuthRequired') : ''"
+            @click="handleVerifyAuth"
+            class="w-full sm:w-auto"
+          >
+            {{ authVerifying ? t('common.loading') : t('dataCollector.settings.verifyAuth') }}
+          </BaseButton>
+          <BaseButton
+            type="button"
             :disabled="!canGoNextFromStep1"
+            :title="!canGoNextFromStep1 ? t('dataCollector.settings.verifyFirst') : ''"
             @click="currentStep = 2; loadProjectsIfNeeded()"
             class="w-full sm:w-auto"
           >
@@ -495,17 +763,30 @@ const currentStep = ref(1)
 const projects = ref([])
 const projectsLoading = ref(false)
 const projectsError = ref('')
+const step1AuthVerified = ref(false)
+const authVerifying = ref(false)
+const authError = ref('')
 
 const formData = reactive({
   platform: 'jira',
   key: '',
   is_enabled: true,
+  // Jira-specific fields
   jira_auth_version: 'legacy',
   jira_base_url: '',
   jira_username: '',
   jira_password: '',
   jira_email: '',
   jira_api_token: '',
+  // Feishu-specific fields
+  feishu_app_id: '',
+  feishu_app_secret: '',
+  feishu_definitions: [],
+  // License-specific fields
+  license_base_url: '',
+  license_username: '',
+  license_password: '',
+  // Common fields
   selected_project_keys: [],
   schedule_cron: '0 */2 * * *',
   cleanup_cron: '0 3 * * *',
@@ -528,30 +809,121 @@ const savingSection = computed(() => {
   return false
 })
 
-const canGoNextFromStep1 = computed(() => true)
-
-const canGoNextFromStep2 = computed(() => {
-  if (formData.platform !== 'jira') return true
-  return Array.isArray(formData.selected_project_keys) && formData.selected_project_keys.length > 0
+const step1AuthFieldsFilled = computed(() => {
+  if (formData.platform === 'jira') {
+    const base = (formData.jira_base_url || '').trim()
+    if (!base) return false
+    if (formData.jira_auth_version === 'legacy') {
+      return !!(formData.jira_username || '').trim() && !!(formData.jira_password || '').trim()
+    }
+    return !!(formData.jira_email || '').trim() && !!(formData.jira_api_token || '').trim()
+  }
+  if (formData.platform === 'feishu') {
+    return !!(formData.feishu_app_id || '').trim() && !!(formData.feishu_app_secret || '').trim()
+  }
+  if (formData.platform === 'license') {
+    return (
+      !!(formData.license_base_url || '').trim() &&
+      !!(formData.license_username || '').trim() &&
+      !!(formData.license_password || '').trim()
+    )
+  }
+  return false
 })
 
+const canGoNextFromStep1 = computed(() => step1AuthVerified.value)
+
+const canGoNextFromStep2 = computed(() => {
+  if (formData.platform === 'jira' || formData.platform === 'license') {
+    return (
+      Array.isArray(formData.selected_project_keys) &&
+      formData.selected_project_keys.length > 0
+    )
+  }
+  if (formData.platform === 'feishu') {
+    const defs = Array.isArray(formData.feishu_definitions)
+      ? formData.feishu_definitions
+      : []
+    const validDefs = defs.filter(
+      (d) => (d.id || '').trim() && (d.name || '').trim()
+    )
+    return validDefs.length > 0
+  }
+  return true
+})
+
+async function handleVerifyAuth() {
+  authError.value = ''
+  authVerifying.value = true
+  try {
+    const value = buildAuthValue()
+    const res = await dataCollectorApi.validateConfigPayload(formData.platform, value)
+    const data = extractResponseData(res)
+    if (data && data.valid) {
+      step1AuthVerified.value = true
+      showSuccess(t('dataCollector.settings.verifyAuthSuccess'))
+    } else {
+      step1AuthVerified.value = false
+      const msg = (data && data.message) ? data.message : t('dataCollector.settings.verifyAuthRequired')
+      authError.value = msg
+      showError(msg)
+    }
+  } catch (e) {
+    step1AuthVerified.value = false
+    const msg = extractErrorMessage(e, t('dataCollector.settings.verifyAuthRequired'))
+    authError.value = msg
+    showError(msg)
+  } finally {
+    authVerifying.value = false
+  }
+}
+
 function buildAuthValue() {
-  const value = { base_url: formData.jira_base_url }
-  value.auth = {
-    auth_version: formData.jira_auth_version,
-    base_url: formData.jira_base_url
+  if (formData.platform === 'jira') {
+    const value = { base_url: formData.jira_base_url }
+    value.auth = {
+      auth_version: formData.jira_auth_version,
+      base_url: formData.jira_base_url
+    }
+    if (formData.jira_auth_version === 'legacy') {
+      value.auth.username = formData.jira_username
+      value.auth.password = formData.jira_password
+    } else {
+      value.auth.email = formData.jira_email
+      value.auth.api_token = formData.jira_api_token
+    }
+    return value
   }
-  if (formData.jira_auth_version === 'legacy') {
-    value.auth.username = formData.jira_username
-    value.auth.password = formData.jira_password
-  } else {
-    value.auth.email = formData.jira_email
-    value.auth.api_token = formData.jira_api_token
+  if (formData.platform === 'feishu') {
+    return {
+      auth: {
+        app_id: formData.feishu_app_id,
+        app_secret: formData.feishu_app_secret
+      }
+    }
   }
-  return value
+  if (formData.platform === 'license') {
+    return {
+      base_url: formData.license_base_url,
+      auth: {
+        username: formData.license_username,
+        password: formData.license_password
+      }
+    }
+  }
+  return {}
 }
 
 function buildAuthValueForPatch() {
+  if (formData.platform === 'license') {
+    return {
+      base_url: formData.license_base_url,
+      auth: {
+        username: formData.license_username,
+        password: formData.license_password
+      }
+    }
+  }
   const v = {
     base_url: formData.jira_base_url,
     auth: {
@@ -577,10 +949,8 @@ function buildSyncTargetsValueForPatch() {
 
 function buildFullEditValueForPatch() {
   const authPatch = buildAuthValueForPatch()
-  return {
-    ...authPatch,
-    project_keys: Array.isArray(formData.selected_project_keys) ? formData.selected_project_keys : []
-  }
+  const projectKeys = Array.isArray(formData.selected_project_keys) ? formData.selected_project_keys : []
+  return { ...authPatch, project_keys: projectKeys }
 }
 
 function buildScheduleValueForPatch() {
@@ -620,7 +990,33 @@ function buildValue() {
       value.auth.email = formData.jira_email
       value.auth.api_token = formData.jira_api_token
     }
-    value.project_keys = Array.isArray(formData.selected_project_keys) ? formData.selected_project_keys : []
+    value.project_keys = Array.isArray(formData.selected_project_keys)
+      ? formData.selected_project_keys
+      : []
+  } else if (formData.platform === 'feishu') {
+    value.auth = {
+      app_id: formData.feishu_app_id,
+      app_secret: formData.feishu_app_secret
+    }
+    const defs = Array.isArray(formData.feishu_definitions)
+      ? formData.feishu_definitions
+          .map((d) => ({
+            id: String(d.id || '').trim(),
+            name: String(d.name || '').trim()
+          }))
+          .filter((d) => d.id && d.name)
+      : []
+    value.approval_definitions = defs
+    value.project_keys = defs.map((d) => d.id)
+  } else if (formData.platform === 'license') {
+    value.base_url = formData.license_base_url
+    value.auth = {
+      username: formData.license_username,
+      password: formData.license_password
+    }
+    value.project_keys = Array.isArray(formData.selected_project_keys)
+      ? formData.selected_project_keys
+      : []
   }
   return value
 }
@@ -638,7 +1034,23 @@ function applyConfig(c) {
   formData.jira_password = ''
   formData.jira_email = auth.email || ''
   formData.jira_api_token = ''
-  formData.selected_project_keys = Array.isArray(v.project_keys) ? [...v.project_keys] : []
+  formData.license_base_url = v.base_url || auth.base_url || ''
+  formData.license_username = auth.username || ''
+  formData.license_password = ''
+  // Feishu 只在新建时从表单获取，编辑时不回显密钥
+  formData.feishu_app_id = auth.app_id || ''
+  formData.feishu_app_secret = ''
+  formData.feishu_definitions = Array.isArray(v.approval_definitions)
+    ? v.approval_definitions.map((d) => ({
+        id: d.id ?? d.code ?? d.key ?? '',
+        name: d.name ?? ''
+      }))
+    : []
+  formData.selected_project_keys = Array.isArray(v.project_keys)
+    ? [...v.project_keys]
+    : (formData.platform === 'feishu'
+        ? formData.feishu_definitions.map((d) => d.id).filter((x) => x)
+        : [])
   formData.schedule_cron = v.schedule_cron || '0 */2 * * *'
   formData.cleanup_cron = v.cleanup_cron || '0 3 * * *'
   formData.retention_days = v.retention_days ?? 180
@@ -649,13 +1061,18 @@ watch(() => props.config, (c) => {
   applyConfig(c)
   const v = c?.value || {}
   const hasBaseUrl = !!(v.base_url || v.auth?.base_url)
-  if (hasBaseUrl && (props.editSection === 'full' || props.editSection === 'sync') && formData.platform === 'jira') {
+  const needProjects = (props.editSection === 'full' || props.editSection === 'sync') &&
+    (formData.platform === 'jira' || formData.platform === 'license')
+  if (hasBaseUrl && needProjects) {
     nextTick(loadProjectsIfNeeded)
   }
 }, { immediate: true })
 
 watch(() => props.show, (visible) => {
   if (visible) {
+    step1AuthVerified.value = false
+    authError.value = ''
+    authVerifying.value = false
     if (props.config) {
       applyConfig(props.config)
       currentStep.value = 1
@@ -671,6 +1088,12 @@ watch(() => props.show, (visible) => {
       formData.jira_password = ''
       formData.jira_email = ''
       formData.jira_api_token = ''
+      formData.feishu_app_id = ''
+      formData.feishu_app_secret = ''
+      formData.feishu_definitions = []
+      formData.license_base_url = ''
+      formData.license_username = ''
+      formData.license_password = ''
       formData.selected_project_keys = []
       formData.schedule_cron = '0 */2 * * *'
       formData.cleanup_cron = '0 3 * * *'
@@ -690,7 +1113,10 @@ watch(
     formData.jira_password,
     formData.jira_email,
     formData.jira_api_token,
-    formData.jira_auth_version
+    formData.jira_auth_version,
+    formData.license_base_url,
+    formData.license_username,
+    formData.license_password
   ],
   () => {
     projects.value = []
@@ -698,15 +1124,76 @@ watch(
   }
 )
 
+watch(
+  () => ({
+    platform: formData.platform,
+    key: formData.key,
+    jira_base_url: formData.jira_base_url,
+    jira_username: formData.jira_username,
+    jira_password: formData.jira_password,
+    jira_email: formData.jira_email,
+    jira_api_token: formData.jira_api_token,
+    jira_auth_version: formData.jira_auth_version,
+    feishu_app_id: formData.feishu_app_id,
+    feishu_app_secret: formData.feishu_app_secret,
+    license_base_url: formData.license_base_url,
+    license_username: formData.license_username,
+    license_password: formData.license_password
+  }),
+  () => {
+    step1AuthVerified.value = false
+    authError.value = ''
+  },
+  { deep: true }
+)
+
+watch(
+  () => currentStep.value,
+  (step) => {
+    if (step === 1) {
+      step1AuthVerified.value = false
+      authError.value = ''
+    }
+  }
+)
+
+// 平台切换时，为不同平台设置合适的首次采集范围默认值
+watch(
+  () => formData.platform,
+  (plat) => {
+    if (plat === 'feishu') {
+      if (
+        !formData.initial_range ||
+        formData.initial_range === '1m' ||
+        formData.initial_range === '3m'
+      ) {
+        formData.initial_range = '10d'
+      }
+    } else if (plat === 'jira' || plat === 'license') {
+      if (
+        formData.initial_range === '10d' ||
+        formData.initial_range === '30d' ||
+        formData.initial_range === '90d'
+      ) {
+        formData.initial_range = '1m'
+      }
+    }
+  }
+)
+
 async function loadProjectsIfNeeded() {
-  if (formData.platform !== 'jira') return
+  if (formData.platform !== 'jira' && formData.platform !== 'license') return
   if (projects.value.length > 0) return
   projectsLoading.value = true
   projectsError.value = ''
   try {
     const configUuid = props.config?.uuid ?? null
     const value = buildAuthValue()
-    const res = await dataCollectorApi.fetchProjects(formData.platform, value, configUuid)
+    const res = await dataCollectorApi.fetchProjects(
+      formData.platform,
+      value,
+      configUuid
+    )
     const data = extractResponseData(res)
     projects.value = data?.projects ?? []
   } catch (e) {
@@ -726,7 +1213,10 @@ watch(currentStep, (step) => {
 watch(
   () => [props.show, props.editSection],
   ([visible, section]) => {
-    if (visible && props.config && (section === 'full' || section === 'sync') && formData.platform === 'jira' && formData.jira_base_url) {
+    const needLoad = visible && props.config && (section === 'full' || section === 'sync') &&
+      ((formData.platform === 'jira' && formData.jira_base_url) ||
+       (formData.platform === 'license' && formData.license_base_url))
+    if (needLoad) {
       loadProjectsIfNeeded()
     }
   },
@@ -756,8 +1246,21 @@ async function handleSaveSection() {
   if (props.editSection === 'schedule') await handleSaveSchedule()
 }
 
+function addFeishuDefinition() {
+  if (!Array.isArray(formData.feishu_definitions)) {
+    formData.feishu_definitions = []
+  }
+  formData.feishu_definitions.push({ id: '', name: '' })
+}
+
+function removeFeishuDefinition(index) {
+  if (!Array.isArray(formData.feishu_definitions)) return
+  formData.feishu_definitions.splice(index, 1)
+}
+
 async function handleSubmit() {
-  if (formData.platform === 'jira' && (!formData.selected_project_keys || formData.selected_project_keys.length === 0)) {
+  // 步骤 2 校验：Jira 需要至少选一个项目；Feishu 需要至少配置一个审批定义
+  if (!canGoNextFromStep2.value) {
     showError(t('dataCollector.settings.selectAtLeastOne'))
     return
   }

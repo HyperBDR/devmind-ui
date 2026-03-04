@@ -29,14 +29,6 @@
         <div class="border-b border-gray-200">
           <nav class="flex gap-1 px-6 pt-4" aria-label="Platform tabs">
             <button
-              type="button"
-              :class="platformFilter === '' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-              class="px-4 py-2.5 text-sm font-medium border-b-2 transition-colors"
-              @click="selectPlatform('')"
-            >
-              {{ t('dataCollector.records.tabAll') }}
-            </button>
-            <button
               v-for="p in platforms"
               :key="p"
               type="button"
@@ -63,9 +55,28 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.platform') }}</th>
-                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.sourceId') }}</th>
-                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.title') }}</th>
+                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    {{ t('dataCollector.records.platform') }}
+                  </th>
+                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    <span v-if="platformFilter === 'feishu'">
+                      {{ t('dataCollector.records.approvalInstanceCode') }}
+                    </span>
+                    <span v-else>
+                      {{ t('dataCollector.records.sourceId') }}
+                    </span>
+                  </th>
+                  <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    <span v-if="platformFilter === 'license'">
+                      {{ t('dataCollector.records.resourceType') }}
+                    </span>
+                    <span v-else-if="platformFilter === 'feishu'">
+                      {{ t('dataCollector.records.approvalName') }}
+                    </span>
+                    <span v-else>
+                      {{ t('dataCollector.records.title') }}
+                    </span>
+                  </th>
                   <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.filterMetadata') }}</th>
                   <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.lastCollected') }}</th>
                   <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.records.attachmentCount') }}</th>
@@ -74,7 +85,9 @@
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="r in records" :key="r.uuid" class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm text-gray-900">{{ r.platform }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900">
+                    {{ getPlatformLabel(r.platform) || '—' }}
+                  </td>
                   <td class="px-4 py-3 text-sm font-medium">
                     <button
                       type="button"
@@ -85,14 +98,29 @@
                     </button>
                   </td>
                   <td class="px-4 py-3 text-sm text-gray-700 max-w-[280px] truncate">
-                    <button
-                      type="button"
-                      class="text-primary-600 hover:text-primary-900 hover:underline block truncate text-left w-full"
-                      :title="r.display_title || r.source_unique_id"
-                      @click="openRecordDetail(r.uuid)"
-                    >
-                      {{ r.display_title || r.source_unique_id || '—' }}
-                    </button>
+                    <template v-if="r.platform === 'license'">
+                      <span class="block truncate text-left w-full text-gray-900">
+                        {{ t('dataCollector.records.order') }}
+                      </span>
+                    </template>
+                    <template v-else-if="r.platform === 'feishu'">
+                      <span
+                        class="block truncate text-left w-full text-gray-900"
+                        :title="r.display_title || r.source_unique_id || ''"
+                      >
+                        {{ r.display_title || r.source_unique_id || '—' }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      <button
+                        type="button"
+                        class="text-primary-600 hover:text-primary-900 hover:underline block truncate text-left w-full"
+                        :title="r.display_title || r.source_unique_id"
+                        @click="openRecordDetail(r.uuid)"
+                      >
+                        {{ r.display_title || r.source_unique_id || '—' }}
+                      </button>
+                    </template>
                   </td>
                   <td class="px-4 py-3">
                     <span
@@ -181,8 +209,10 @@ const selectedRecordUuid = ref('')
 
 const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / pageSize.value)))
 
-const platformLabels = { jira: 'Jira', feishu: 'Feishu' }
+const platformLabels = { jira: 'Jira' }
 function getPlatformLabel(platform) {
+  if (platform === 'feishu') return t('dataCollector.platforms.feishu')
+  if (platform === 'license') return t('dataCollector.platforms.license')
   return platformLabels[platform] || (platform ? platform.charAt(0).toUpperCase() + platform.slice(1) : platform)
 }
 
@@ -243,8 +273,11 @@ async function loadPlatforms() {
   }
 }
 
-onMounted(() => {
-  loadPlatforms()
-  loadRecords()
+onMounted(async () => {
+  await loadPlatforms()
+  if (!platformFilter.value && platforms.value.length > 0) {
+    platformFilter.value = platforms.value[0]
+  }
+  await loadRecords()
 })
 </script>

@@ -49,15 +49,27 @@
           {{ t('dataCollector.records.tabDetail') }}
         </button>
         <button
+          v-if="record.platform !== 'license'"
           type="button"
           :class="activeTab === 'comments' ? 'border-primary-600 text-primary-600 bg-white -mb-px' : 'border-transparent text-gray-600 hover:text-gray-900'"
           class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
           @click="activeTab = 'comments'"
         >
-          {{ t('dataCollector.records.tabComments') }}
-          <span v-if="commentsList.length" class="ml-1 text-gray-500">({{ commentsList.length }})</span>
+          <span v-if="record.platform === 'feishu'">
+            {{ t('dataCollector.records.tabApprovalFlow') }}
+          </span>
+          <span v-else>
+            {{ t('dataCollector.records.tabComments') }}
+          </span>
+          <span
+            v-if="record.platform === 'feishu' ? feishuTimelineRows.length : commentsList.length"
+            class="ml-1 text-gray-500"
+          >
+            ({{ record.platform === 'feishu' ? feishuTimelineRows.length : commentsList.length }})
+          </span>
         </button>
         <button
+          v-if="record.platform !== 'license'"
           type="button"
           :class="activeTab === 'attachments' ? 'border-primary-600 text-primary-600 bg-white -mb-px' : 'border-transparent text-gray-600 hover:text-gray-900'"
           class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
@@ -136,12 +148,22 @@
                   <dd class="font-medium text-gray-900">{{ record.platform }}</dd>
                 </div>
                 <div>
-                  <dt class="text-gray-500">{{ t('dataCollector.records.sourceId') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ record.platform === 'feishu' ? t('dataCollector.records.approvalInstanceCode') : t('dataCollector.records.sourceId') }}
+                  </dt>
                   <dd class="font-medium text-gray-900">{{ record.source_unique_id }}</dd>
                 </div>
-                <div class="sm:col-span-2">
-                  <dt class="text-gray-500">{{ t('dataCollector.records.title') }}</dt>
-                  <dd class="font-medium text-gray-900">{{ displayTitle }}</dd>
+                <div v-if="record.platform === 'license'" class="sm:col-span-2">
+                  <dt class="text-gray-500">{{ t('dataCollector.records.resourceType') }}</dt>
+                  <dd class="font-medium text-gray-900">{{ t('dataCollector.records.order') }}</dd>
+                </div>
+                <div v-else class="sm:col-span-2">
+                  <dt class="text-gray-500">
+                    {{ record.platform === 'feishu' ? t('dataCollector.records.approvalName') : t('dataCollector.records.title') }}
+                  </dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ record.platform === 'feishu' ? (record.filter_metadata?.approval_name ?? displayTitle) : displayTitle }}
+                  </dd>
                 </div>
                 <div>
                   <dt class="text-gray-500">{{ t('dataCollector.records.lastCollected') }}</dt>
@@ -193,63 +215,137 @@
           </div>
 
           <div v-show="activeTab === 'comments'" class="p-6">
-            <section v-if="commentsList.length">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.commentsFullData') }} ({{ commentsList.length }})</h3>
-              <ul class="space-y-4">
-                <li
-                  v-for="(c, idx) in commentsList"
-                  :key="c.id || idx"
-                  class="border border-gray-200 rounded-lg p-4 bg-gray-50"
-                >
-                  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    <div v-if="c.id != null">
-                      <dt class="text-gray-500">{{ t('dataCollector.records.commentId') }}</dt>
-                      <dd class="text-gray-900 font-mono">{{ c.id }}</dd>
-                    </div>
-                    <div>
-                      <dt class="text-gray-500">{{ t('dataCollector.records.commentAuthor') }}</dt>
-                      <dd class="text-gray-900">{{ commentAuthor(c) }}</dd>
-                    </div>
-                    <div v-if="c.created">
-                      <dt class="text-gray-500">{{ t('dataCollector.records.commentCreated') }}</dt>
-                      <dd class="text-gray-900">{{ formatDate(c.created) }}</dd>
-                    </div>
-                    <div v-if="c.updated">
-                      <dt class="text-gray-500">{{ t('dataCollector.records.commentUpdated') }}</dt>
-                      <dd class="text-gray-900">{{ formatDate(c.updated) }}</dd>
-                    </div>
-                    <div class="sm:col-span-2">
-                      <dt class="text-gray-500">{{ t('dataCollector.records.commentBody') }}</dt>
-                      <dd class="text-gray-900 whitespace-pre-wrap break-words mt-1">{{ commentBodyText(c) }}</dd>
-                    </div>
-                  </dl>
-                  <div class="mt-3 pt-3 border-t border-gray-200">
-                    <button
-                      type="button"
-                      class="w-full px-3 py-2 flex items-center justify-between bg-white border border-gray-200 rounded text-left text-xs font-medium text-gray-600 hover:bg-gray-50"
-                      @click="toggleCommentRaw(idx)"
-                    >
-                      {{ t('dataCollector.records.commentRawData') }}
-                      <svg
-                        class="w-3.5 h-3.5 transition-transform shrink-0"
-                        :class="{ 'rotate-180': expandedCommentRaw.has(idx) }"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+            <!-- Feishu: show approval flow based on instance.timeline -->
+            <template v-if="record.platform === 'feishu'">
+              <section v-if="feishuTimelineRows.length">
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('dataCollector.records.approvalFlow') }} ({{ feishuTimelineRows.length }})
+                </h3>
+                <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {{ t('dataCollector.records.approvalNodeName') }}
+                        </th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {{ t('dataCollector.records.approvalUser') }}
+                        </th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {{ t('dataCollector.records.approvalStatus') }}
+                        </th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {{ t('dataCollector.records.approvalTime') }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                      <tr v-for="row in feishuTimelineRows" :key="row.index" class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-sm text-gray-700">
+                          {{ row.nodeDisplay }}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                          <div class="flex items-center gap-2">
+                            <span
+                              class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xs font-semibold text-white uppercase"
+                            >
+                              {{ (row.userName || '—').slice(0, 2) }}
+                            </span>
+                            <div class="min-w-0">
+                              <div class="text-sm font-medium text-gray-900 truncate">
+                                {{ row.userName || '—' }}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                          <span
+                            class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                            :class="feishuStatusBadgeClass(row.status)"
+                          >
+                            {{ row.statusLabel }}
+                          </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                          {{ row.time ? formatDate(row.time) : '—' }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+              <div v-else class="py-8 text-center text-sm text-gray-500">
+                {{ t('dataCollector.records.noApprovalFlow') }}
+              </div>
+            </template>
+
+            <!-- Other platforms: keep original comments view -->
+            <template v-else>
+              <section v-if="commentsList.length">
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('dataCollector.records.commentsFullData') }} ({{ commentsList.length }})
+                </h3>
+                <ul class="space-y-4">
+                  <li
+                    v-for="(c, idx) in commentsList"
+                    :key="c.id || idx"
+                    class="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                  >
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                      <div v-if="c.id != null">
+                        <dt class="text-gray-500">{{ t('dataCollector.records.commentId') }}</dt>
+                        <dd class="text-gray-900 font-mono">{{ c.id }}</dd>
+                      </div>
+                      <div>
+                        <dt class="text-gray-500">{{ t('dataCollector.records.commentAuthor') }}</dt>
+                        <dd class="text-gray-900">{{ commentAuthor(c) }}</dd>
+                      </div>
+                      <div v-if="c.created">
+                        <dt class="text-gray-500">{{ t('dataCollector.records.commentCreated') }}</dt>
+                        <dd class="text-gray-900">{{ formatDate(c.created) }}</dd>
+                      </div>
+                      <div v-if="c.updated">
+                        <dt class="text-gray-500">{{ t('dataCollector.records.commentUpdated') }}</dt>
+                        <dd class="text-gray-900">{{ formatDate(c.updated) }}</dd>
+                      </div>
+                      <div class="sm:col-span-2">
+                        <dt class="text-gray-500">{{ t('dataCollector.records.commentBody') }}</dt>
+                        <dd class="text-gray-900 whitespace-pre-wrap break-words mt-1">
+                          {{ commentBodyText(c) }}
+                        </dd>
+                      </div>
+                    </dl>
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                      <button
+                        type="button"
+                        class="w-full px-3 py-2 flex items-center justify-between bg-white border border-gray-200 rounded text-left text-xs font-medium text-gray-600 hover:bg-gray-50"
+                        @click="toggleCommentRaw(idx)"
                       >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <div v-show="expandedCommentRaw.has(idx)" class="mt-2 p-3 border border-gray-200 rounded overflow-x-auto bg-white">
-                      <pre class="text-xs text-gray-700 whitespace-pre-wrap break-words">{{ commentRawJson(c) }}</pre>
+                        {{ t('dataCollector.records.commentRawData') }}
+                        <svg
+                          class="w-3.5 h-3.5 transition-transform shrink-0"
+                          :class="{ 'rotate-180': expandedCommentRaw.has(idx) }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      <div
+                        v-show="expandedCommentRaw.has(idx)"
+                        class="mt-2 p-3 border border-gray-200 rounded overflow-x-auto bg-white"
+                      >
+                        <pre class="text-xs text-gray-700 whitespace-pre-wrap break-words">{{ commentRawJson(c) }}</pre>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              </ul>
-            </section>
-            <div v-else class="py-8 text-center text-sm text-gray-500">
-              {{ t('dataCollector.records.noComments') }}
-            </div>
+                  </li>
+                </ul>
+              </section>
+              <div v-else class="py-8 text-center text-sm text-gray-500">
+                {{ t('dataCollector.records.noComments') }}
+              </div>
+            </template>
           </div>
 
           <div v-show="activeTab === 'attachments'" class="p-6">
@@ -420,6 +516,219 @@ const commentsList = computed(() => {
   return Array.isArray(list) ? list : []
 })
 
+const feishuUserMap = computed(() => {
+  const inst = record.value?.raw_data?.instance
+  const map = {}
+  if (!inst || typeof inst !== 'object') return map
+
+  function addUser(u) {
+    if (!u || typeof u !== 'object') return
+    const id = u.user_id || u.id || u.open_id || u.openId
+    const name = u.name || u.username || u.cn_name || u.en_name || u.display_name
+    if (id && name && !map[id]) {
+      map[id] = name
+    }
+  }
+
+  const candidateArrays = ['approvers', 'cc_list', 'participants', 'users', 'user_list', 'userList']
+  candidateArrays.forEach((key) => {
+    const arr = inst[key]
+    if (Array.isArray(arr)) {
+      arr.forEach(addUser)
+    }
+  })
+
+  const userMap = inst.user_map || inst.userMap
+  if (userMap && typeof userMap === 'object') {
+    Object.entries(userMap).forEach(([id, val]) => {
+      if (typeof val === 'string') {
+        if (!map[id]) map[id] = val
+      } else if (val && typeof val === 'object') {
+        const name = val.name || val.username || val.cn_name || val.en_name || val.display_name
+        if (id && name && !map[id]) {
+          map[id] = name
+        }
+      }
+    })
+  }
+
+  return map
+})
+
+const feishuTimeline = computed(() => {
+  const inst = record.value?.raw_data?.instance
+  if (!inst || typeof inst !== 'object') return []
+  const tl = inst.timeline || inst.time_line || inst.approval_timeline
+  return Array.isArray(tl) ? tl : []
+})
+
+/** task_id -> node_name from instance.task_list, for timeline node name column */
+const feishuTaskIdToNodeName = computed(() => {
+  const inst = record.value?.raw_data?.instance
+  if (!inst || typeof inst !== 'object') return {}
+  const taskList = inst.task_list || inst.task_list_list || inst.tasks || []
+  if (!Array.isArray(taskList)) return {}
+  const map = {}
+  for (const task of taskList) {
+    if (!task || typeof task !== 'object') continue
+    const tid = task.task_id ?? task.id
+    if (tid == null) continue
+    const name = task.node_name ?? task.name ?? task.node_key
+    if (name != null && String(name).trim()) map[String(tid).trim()] = String(name).trim()
+  }
+  return map
+})
+
+const feishuTimelineRows = computed(() => {
+  const taskIdToNodeName = feishuTaskIdToNodeName.value
+  return feishuTimeline.value.map((item, index) => {
+    const rawAction =
+      item.type ||
+      item.result ||
+      item.action ||
+      item.node_status ||
+      item.status
+    const action = typeof rawAction === 'string' ? rawAction.toUpperCase() : String(rawAction || '')
+
+    // CC: users from ext.user_id_list or user_id_list
+    let userName
+    let userId
+    if (action === 'CC') {
+      const ext = item.ext || {}
+      const idList = ext.user_id_list ?? item.user_id_list ?? (ext.user_id ? [ext.user_id] : [])
+      const ids = Array.isArray(idList) ? idList : [idList].filter(Boolean)
+      const names = ids.map((id) => resolveFeishuUserName(id, null)).filter((n) => n && n !== '—')
+      userName = names.length ? names.join(', ') : resolveFeishuUserName(item.user_id || item.userId || item.operator_id || item.operatorId, item)
+      userId = ids[0] ?? item.user_id ?? item.userId ?? item.operator_id ?? item.operatorId
+    } else {
+      userId =
+        item.user_id ||
+        item.userId ||
+        item.operator_id ||
+        item.operatorId ||
+        item.user?.user_id ||
+        item.operator?.user_id
+      userName = resolveFeishuUserName(userId, item)
+    }
+    const time =
+      item.create_time ||
+      item.time ||
+      item.update_time ||
+      item.action_time ||
+      item.timestamp
+
+    const statusLabel = (() => {
+      const s = action
+      switch (s) {
+        case 'START':
+          return '审批开始'
+        case 'PASS':
+          return '通过'
+        case 'REJECT':
+          return '拒绝'
+        case 'AUTO_PASS':
+          return '自动通过'
+        case 'AUTO_REJECT':
+          return '自动拒绝'
+        case 'REMOVE_REPEAT':
+          return '自动通过'
+        case 'TRANSFER':
+          return '转交'
+        case 'ADD_APPROVER_BEFORE':
+          return '前加签'
+        case 'ADD_APPROVER':
+          return '并加签'
+        case 'ADD_APPROVER_AFTER':
+          return '后加签'
+        case 'DELETE_APPROVER':
+          return '减签'
+        case 'ROLLBACK_SELECTED':
+          return '指定回退'
+        case 'ROLLBACK':
+          return '全部回退'
+        case 'CANCEL':
+          return '撤回'
+        case 'DELETE':
+          return '删除'
+        case 'CC':
+          return '抄送'
+        default:
+          return action || '—'
+      }
+    })()
+
+    const taskId = item.task_id != null ? String(item.task_id).trim() : ''
+    const nodeNameFromTask = taskId ? (taskIdToNodeName[taskId] ?? null) : null
+    const node = nodeNameFromTask ?? item.type ?? item.result ?? item.status ?? item.node_name ?? item.nodeName ?? item.stage_name ?? item.step_name ?? '—'
+    const nodeUpper = node != null ? String(node).toUpperCase() : ''
+    const nodeDisplay = nodeUpper === 'CC' ? '抄送' : nodeUpper === 'START' ? '审批开始' : (node || '—')
+    const remark = item.comment || item.remark || item.reason || item.note || ''
+    return {
+      index: index + 1,
+      userId,
+      userName,
+      time,
+      status: action,
+      statusLabel,
+      node,
+      nodeDisplay,
+      remark,
+      raw: item
+    }
+  })
+})
+
+function resolveFeishuUserName(userId, item) {
+  if (item) {
+    if (item.user_name) return item.user_name
+    if (item.operator_name) return item.operator_name
+    if (item.user && typeof item.user === 'object') {
+      const u = item.user
+      const name = u.name || u.username || u.cn_name || u.en_name || u.display_name
+      if (name) return name
+    }
+    if (item.operator && typeof item.operator === 'object') {
+      const o = item.operator
+      const name = o.name || o.username || o.cn_name || o.en_name || o.display_name
+      if (name) return name
+    }
+  }
+  if (userId && feishuUserMap.value[userId]) {
+    return feishuUserMap.value[userId]
+  }
+  return userId || '—'
+}
+
+function feishuStatusBadgeClass(status) {
+  const s = String(status || '').toUpperCase()
+  if (!s) return 'bg-gray-100 text-gray-700'
+  if (s === 'PASS' || s === 'AUTO_PASS' || s === 'REMOVE_REPEAT' || s.includes('同意') || s.includes('通过')) {
+    return 'bg-green-100 text-green-800'
+  }
+  if (s === 'REJECT' || s === 'AUTO_REJECT' || s.includes('拒绝') || s.includes('驳回')) {
+    return 'bg-red-100 text-red-800'
+  }
+  if (s === 'START' || s === 'ROLLBACK' || s === 'ROLLBACK_SELECTED' || s.includes('开始') || s.includes('处理中')) {
+    return 'bg-amber-100 text-amber-800'
+  }
+  return 'bg-gray-100 text-gray-700'
+}
+
+function feishuStatusDotClass(status) {
+  const s = String(status || '').toUpperCase()
+  if (!s) return 'bg-gray-300'
+  if (s === 'PASS' || s === 'AUTO_PASS' || s === 'REMOVE_REPEAT' || s.includes('同意') || s.includes('通过')) {
+    return 'bg-green-400'
+  }
+  if (s === 'REJECT' || s === 'AUTO_REJECT' || s.includes('拒绝') || s.includes('驳回')) {
+    return 'bg-red-400'
+  }
+  if (s === 'START' || s === 'ROLLBACK' || s === 'ROLLBACK_SELECTED' || s.includes('开始') || s.includes('处理中')) {
+    return 'bg-amber-400'
+  }
+  return 'bg-gray-300'
+}
+
 function commentAuthor(c) {
   if (!c) return '—'
   const a = c.author
@@ -488,11 +797,20 @@ const effectiveAttachments = computed(() => {
 })
 
 function formatDate(s) {
-  if (!s) return '—'
+  if (s === null || s === undefined || s === '') return '—'
   try {
+    if (typeof s === 'number') {
+      const ms = s > 1e12 ? s : s * 1000
+      return new Date(ms).toLocaleString()
+    }
+    if (typeof s === 'string' && /^\d+$/.test(s)) {
+      const num = Number(s)
+      const ms = num > 1e12 ? num : num * 1000
+      return new Date(ms).toLocaleString()
+    }
     return new Date(s).toLocaleString()
   } catch {
-    return s
+    return String(s)
   }
 }
 
@@ -603,20 +921,27 @@ async function loadRecord() {
   }
 }
 
-watch(() => props.recordUuid, (uuid) => {
-  if (uuid && props.show) loadRecord()
-  else record.value = null
-}, { immediate: true })
+watch(
+  () => props.recordUuid,
+  (uuid) => {
+    if (uuid && props.show) loadRecord()
+    else record.value = null
+  },
+  { immediate: true }
+)
 
-watch(() => props.show, (visible) => {
-  if (visible && props.recordUuid) loadRecord()
-  if (!visible) {
-    record.value = null
-    showRawData.value = false
-    activeTab.value = 'detail'
-    expandedCommentRaw.value = new Set()
+watch(
+  () => props.show,
+  (visible) => {
+    if (visible && props.recordUuid) loadRecord()
+    if (!visible) {
+      record.value = null
+      showRawData.value = false
+      activeTab.value = 'detail'
+      expandedCommentRaw.value = new Set()
+    }
   }
-})
+)
 
 function handleClose() {
   emit('close')

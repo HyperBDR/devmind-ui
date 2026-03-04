@@ -18,11 +18,11 @@
               <!-- Optional left actions (e.g. trigger) can go here -->
             </div>
 
-            <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="flex items-center gap-3 w-full sm:w-auto flex-wrap">
               <BaseInput
                 v-model="searchQuery"
-                :placeholder="t('common.search')"
-                class="flex-1 sm:w-64"
+                :placeholder="t('dataCollector.tasks.searchPlaceholder')"
+                class="flex-1 min-w-[140px] sm:w-44"
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
@@ -31,6 +31,40 @@
                   </svg>
                 </template>
               </BaseInput>
+
+              <span class="flex items-center gap-1.5 shrink-0">
+                <span class="text-sm text-gray-600">{{ t('dataCollector.tasks.filterPlatform') }}：</span>
+                <select
+                  v-model="platformFilter"
+                  :aria-label="t('dataCollector.tasks.filterPlatform')"
+                  class="block px-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[100px]"
+                  @change="onFilterChange"
+                >
+                  <option value="">{{ t('dataCollector.tasks.filterAll') }}</option>
+                  <option value="jira">{{ t('dataCollector.platforms.jira') }}</option>
+                  <option value="feishu">{{ t('dataCollector.platforms.feishu') }}</option>
+                  <option value="license">{{ t('dataCollector.platforms.license') }}</option>
+                </select>
+              </span>
+
+              <span class="flex items-center gap-1.5 shrink-0">
+                <span class="text-sm text-gray-600">{{ t('dataCollector.tasks.filterConfigName') }}：</span>
+                <select
+                  v-model="configKeyFilter"
+                  :aria-label="t('dataCollector.tasks.filterConfigName')"
+                  class="block px-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[120px]"
+                  @change="onFilterChange"
+                >
+                  <option value="">{{ t('dataCollector.tasks.filterAll') }}</option>
+                  <option
+                    v-for="c in configList"
+                    :key="c.uuid"
+                    :value="c.key"
+                  >
+                    {{ c.key }}
+                  </option>
+                </select>
+              </span>
 
               <BaseButton
                 variant="outline"
@@ -115,6 +149,12 @@
                     {{ t('dataCollector.tasks.taskName') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('dataCollector.records.platform') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    {{ t('dataCollector.settings.key') }}
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
                     {{ t('dataCollector.tasks.status') }}
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
@@ -137,6 +177,12 @@
                 >
                   <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                     {{ task.name }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ getPlatformLabel(task.platform) || '—' }}
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {{ task.config_key || '—' }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap">
                     <StatusBadge :status="mapTaskStatus(task.status)" />
@@ -225,9 +271,23 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
+const platformLabels = {
+  jira: 'Jira'
+}
+
+function getPlatformLabel(platform) {
+  if (!platform) return ''
+  if (platform === 'feishu') return t('dataCollector.platforms.feishu')
+  if (platform === 'license') return t('dataCollector.platforms.license')
+  return platformLabels[platform] || platform
+}
+
 const loading = ref(false)
 const tasks = ref([])
 const searchQuery = ref('')
+const platformFilter = ref('')
+const configKeyFilter = ref('')
+const configList = ref([])
 const showPreviewModal = ref(false)
 const selectedTask = ref(null)
 const currentPage = ref(1)
@@ -274,35 +334,40 @@ const mapTaskStatus = (status) => {
   return statusMap[status] || status?.toLowerCase() || 'pending'
 }
 
-const debouncedSearch = useDebounce((query) => {
+const { debouncedFn: debouncedSearch } = useDebounce(() => {
   currentPage.value = 1
-  loadTasks(query, 1)
+  loadTasks(1)
 }, 300)
 
 const handleSearch = (query) => {
   searchQuery.value = query
-  debouncedSearch(query)
+  debouncedSearch()
+}
+
+function onFilterChange() {
+  currentPage.value = 1
+  loadTasks(1)
 }
 
 const handleRefresh = () => {
-  loadTasks(searchQuery.value, currentPage.value)
+  loadTasks(currentPage.value)
 }
 
 const goPrevPage = () => {
   if (currentPage.value <= 1) return
   currentPage.value--
-  loadTasks(searchQuery.value, currentPage.value)
+  loadTasks(currentPage.value)
 }
 
 const goNextPage = () => {
   if (currentPage.value >= totalPages.value) return
   currentPage.value++
-  loadTasks(searchQuery.value, currentPage.value)
+  loadTasks(currentPage.value)
 }
 
 function onPageSizeChange() {
   currentPage.value = 1
-  loadTasks(searchQuery.value, 1)
+  loadTasks(1)
 }
 
 function extractData(res) {
@@ -321,7 +386,7 @@ const hasRunningTasks = computed(() =>
 
 const pollListWhenRunning = useIntervalFn(() => {
   if (!hasRunningTasks.value) return
-  loadTasks(searchQuery.value, currentPage.value)
+  loadTasks(currentPage.value)
 }, 4000, { immediate: false })
 
 watch(hasRunningTasks, (running) => {
@@ -354,6 +419,7 @@ const pollDetailExecution = useIntervalFn(async () => {
       selectedTask.value = updated
       const idx = tasks.value.findIndex((t) => t.id === task.id)
       if (idx !== -1) {
+        const meta = updated.metadata || {}
         tasks.value = [
           ...tasks.value.slice(0, idx),
           {
@@ -361,10 +427,13 @@ const pollDetailExecution = useIntervalFn(async () => {
             name: updated.task_name ?? updated.name ?? tasks.value[idx].name,
             status: mapTaskStatus(updated.status),
             finished_at: updated.finished_at,
-            duration: updated.duration ?? calculateDuration(updated.started_at ?? updated.created_at, updated.finished_at),
+            duration:
+              updated.duration ?? calculateDuration(updated.started_at ?? updated.created_at, updated.finished_at),
             result: updated.result,
             error: updated.error,
-            metadata: updated.metadata
+            metadata: updated.metadata,
+            platform: meta.config_platform,
+            config_key: meta.config_key
           },
           ...tasks.value.slice(idx + 1)
         ]
@@ -414,15 +483,22 @@ async function handlePreview(task) {
   }
 }
 
-async function loadTasks(query = '', page = currentPage.value) {
+async function loadTasks(page = currentPage.value) {
   loading.value = true
   try {
     const params = {
       page,
       page_size: pageSize.value
     }
-    if (query) {
-      params.task_name = query
+    const searchTerm = searchQuery.value != null ? String(searchQuery.value).trim() : ''
+    if (searchTerm) {
+      params.search = searchTerm
+    }
+    if (platformFilter.value) {
+      params.config_platform = platformFilter.value
+    }
+    if (configKeyFilter.value) {
+      params.config_key = configKeyFilter.value
     }
     const res = await dataCollectorApi.getExecutions(params)
     const data = extractData(res)
@@ -447,7 +523,9 @@ async function loadTasks(query = '', page = currentPage.value) {
       task_id: task.task_id,
       result: task.result,
       error: task.error,
-      metadata: task.metadata
+      metadata: task.metadata,
+      platform: task.metadata?.config_platform,
+      config_key: task.metadata?.config_key
     }))
   } catch (e) {
     tasks.value = []
@@ -477,7 +555,19 @@ function calculateDuration(startTime, endTime) {
   }
 }
 
+async function loadConfigs() {
+  try {
+    const res = await dataCollectorApi.getConfigs()
+    const data = extractData(res)
+    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    configList.value = list.map((c) => ({ uuid: c.uuid, key: c.key || '' })).filter((c) => c.key)
+  } catch {
+    configList.value = []
+  }
+}
+
 onMounted(() => {
+  loadConfigs()
   loadTasks()
 })
 
