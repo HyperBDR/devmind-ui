@@ -277,7 +277,7 @@ const mapTaskStatus = (status) => {
   return statusMap[status] || status
 }
 
-const debouncedSearch = useDebounce((query) => {
+const { debouncedFn: debouncedSearch } = useDebounce((query) => {
   currentPage.value = 1
   loadTasks(query, 1)
 }, 300)

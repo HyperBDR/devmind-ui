@@ -5,6 +5,19 @@
       </div>
       <div class="flex items-center gap-3 w-full sm:w-auto">
         <BaseButton
+          variant="outline"
+          size="sm"
+          :loading="loading"
+          :disabled="loading"
+          class="flex items-center gap-1.5"
+          @click="loadConfigs"
+        >
+          <svg v-if="!loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          {{ t('common.refresh') }}
+        </BaseButton>
+        <BaseButton
           @click="showCreateModal = true"
           size="sm"
           class="flex items-center gap-1.5"
@@ -75,7 +88,7 @@
                   {{ getPlatformLabel(c.platform) }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                  {{ (c.value && c.value.schedule_cron) || '0 */2 * * *' }}
+                  {{ c.schedule_cron || '0 */2 * * *' }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <label class="relative inline-flex items-center cursor-pointer">
@@ -97,7 +110,7 @@
                 <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end gap-2">
                     <button
-                      v-if="c.platform === 'jira'"
+                      v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license'"
                       @click="openFullEdit(c)"
                       class="text-amber-600 hover:text-amber-900 transition-colors"
                       :title="t('dataCollector.settings.editConfig')"
@@ -165,10 +178,10 @@
               </label>
             </div>
             <div class="text-xs text-gray-500 mb-3">
-              {{ t('dataCollector.settings.scheduleCron') }}: {{ (c.value && c.value.schedule_cron) || '0 */2 * * *' }}
+              {{ t('dataCollector.settings.scheduleCron') }}: {{ c.schedule_cron || '0 */2 * * *' }}
             </div>
             <div class="flex flex-wrap gap-2">
-              <BaseButton v-if="c.platform === 'jira'" variant="outline" size="sm" @click="openFullEdit(c)">{{ t('dataCollector.settings.editConfig') }}</BaseButton>
+              <BaseButton v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license'" variant="outline" size="sm" @click="openFullEdit(c)">{{ t('dataCollector.settings.editConfig') }}</BaseButton>
               <BaseButton variant="outline" size="sm" @click="openSectionEdit(c, 'schedule')">{{ t('dataCollector.settings.editScheduleAndRetention') }}</BaseButton>
               <BaseButton variant="outline" size="sm" @click="openCollectModal(c)">{{ t('dataCollector.settings.triggerCollect') }}</BaseButton>
               <BaseButton variant="outline" size="sm" class="text-red-600" @click="deleteConfig(c)">{{ t('common.delete') }}</BaseButton>
@@ -214,6 +227,8 @@
               <input
                 v-model="customStartDate"
                 type="date"
+                :max="feishuDateMax"
+                :min="feishuDateMin"
                 class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -222,6 +237,8 @@
               <input
                 v-model="customEndDate"
                 type="date"
+                :max="feishuDateMax"
+                :min="feishuDateMin"
                 class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -270,12 +287,37 @@ const customStartDate = ref('')
 const customEndDate = ref('')
 const submittingCollect = ref(false)
 
-const collectRangeOptions = computed(() => [
-  { value: '1w', label: t('dataCollector.settings.collectRange1w') },
-  { value: '1m', label: t('dataCollector.settings.collectRange1m') },
-  { value: '3m', label: t('dataCollector.settings.collectRange3m') },
-  { value: 'custom', label: t('dataCollector.settings.collectRangeCustom') }
-])
+const collectRangeOptions = computed(() => {
+  const platform = collectConfig.value?.platform
+  if (platform === 'feishu') {
+    return [
+      { value: '1w', label: t('dataCollector.settings.collectRange1w') },
+      { value: '1m', label: t('dataCollector.settings.collectRange1m') },
+      { value: 'custom', label: t('dataCollector.settings.collectRangeCustom') }
+    ]
+  }
+  return [
+    { value: '1w', label: t('dataCollector.settings.collectRange1w') },
+    { value: '1m', label: t('dataCollector.settings.collectRange1m') },
+    { value: '3m', label: t('dataCollector.settings.collectRange3m') },
+    { value: 'custom', label: t('dataCollector.settings.collectRangeCustom') }
+  ]
+})
+
+const feishuDateMax = computed(() => {
+  const platform = collectConfig.value?.platform
+  if (platform !== 'feishu') return null
+  const today = new Date()
+  return format(today, 'yyyy-MM-dd')
+})
+
+const feishuDateMin = computed(() => {
+  const platform = collectConfig.value?.platform
+  if (platform !== 'feishu') return null
+  const today = new Date()
+  const min = subDays(today, 30)
+  return format(min, 'yyyy-MM-dd')
+})
 
 const collectRangeError = computed(() => {
   if (collectRange.value !== 'custom') return ''
@@ -286,16 +328,23 @@ const collectRangeError = computed(() => {
   const endD = new Date(end)
   if (startD > endD) return t('dataCollector.settings.collectRangeCustomOrder')
   const days = (endD - startD) / (24 * 60 * 60 * 1000)
-  if (days > 90) return t('dataCollector.settings.collectRangeMax3Months')
+  const platform = collectConfig.value?.platform
+  const maxDays = platform === 'feishu' ? 30 : 90
+  if (days > maxDays) {
+    return platform === 'feishu'
+      ? t('dataCollector.settings.collectRangeMax30Days')
+      : t('dataCollector.settings.collectRangeMax3Months')
+  }
   return ''
 })
 
 const platformLabels = {
-  jira: 'Jira',
-  feishu: 'Feishu'
+  jira: 'Jira'
 }
 
 function getPlatformLabel(platform) {
+  if (platform === 'feishu') return t('dataCollector.platforms.feishu')
+  if (platform === 'license') return t('dataCollector.platforms.license')
   return platformLabels[platform] || platform
 }
 

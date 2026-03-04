@@ -8,6 +8,15 @@
         {{ task.name || task.task_name || '-' }}
       </h3>
 
+      <p
+        v-if="task.platform || task.config_key"
+        class="text-xs text-gray-500 mb-2"
+      >
+        <span v-if="task.platform">{{ task.platform }}</span>
+        <span v-if="task.platform && task.config_key"> · </span>
+        <span v-if="task.config_key">{{ task.config_key }}</span>
+      </p>
+
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <StatusBadge :status="mapTaskStatus(task.status)" />

@@ -79,6 +79,18 @@
                   <StatusBadge :status="mapTaskStatus(task.status)" />
                 </dd>
               </div>
+              <div v-if="metadata.config_platform || metadata.config_key">
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('dataCollector.tasks.config') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  <span v-if="metadata.config_platform">
+                    {{ getPlatformLabel(metadata.config_platform) }}
+                  </span>
+                  <span v-if="metadata.config_platform && metadata.config_key"> · </span>
+                  <span v-if="metadata.config_key">{{ metadata.config_key }}</span>
+                </dd>
+              </div>
               <div>
                 <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
                   {{ t('dataCollector.tasks.taskId') }}
@@ -232,6 +244,17 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const { t } = useI18n()
+
+const platformLabels = {
+  jira: 'Jira'
+}
+
+function getPlatformLabel(platform) {
+  if (!platform) return ''
+  if (platform === 'feishu') return t('dataCollector.platforms.feishu')
+  if (platform === 'license') return t('dataCollector.platforms.license')
+  return platformLabels[platform] || platform
+}
 
 const metadata = computed(() => props.task?.metadata || {})
 
