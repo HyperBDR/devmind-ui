@@ -33,14 +33,24 @@
           >
             <!-- Header -->
             <div
-              class="flex-shrink-0 bg-white px-4 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-4 border-b border-gray-200"
+              class="flex-shrink-0 flex items-start justify-between gap-3 bg-white px-4 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-4 border-b border-gray-200"
             >
               <h3
                 v-if="title"
-                class="text-base font-semibold leading-6 text-gray-900 text-left"
+                class="text-base font-semibold leading-6 text-gray-900 text-left flex-1 min-w-0"
               >
                 {{ title }}
               </h3>
+              <button
+                type="button"
+                class="flex-shrink-0 inline-flex items-center justify-center rounded-md p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-colors"
+                aria-label="Close"
+                @click="$emit('close')"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
             <!-- Scrollable Content -->

@@ -190,6 +190,17 @@
               <p class="mt-1 text-xs text-gray-500">{{ t('notificationManagement.channels.messagePrefixDesc') }}</p>
             </div>
             <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.language') }}</label>
+              <select
+                v-model="form.config.language"
+                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white"
+              >
+                <option value="zh-hans">{{ t('notificationManagement.channels.languageZhHans') }}</option>
+                <option value="en">{{ t('notificationManagement.channels.languageEn') }}</option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500">{{ t('notificationManagement.channels.languageDesc') }}</p>
+            </div>
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('notificationManagement.channels.signSecret') }}</label>
               <input
                 v-model="form.config.sign_secret"
@@ -495,6 +506,7 @@ const defaultWebhookConfig = () => ({
   provider_type: 'feishu',
   url: '',
   message_prefix: '',
+  language: 'zh-hans',
   sign_secret: '',
   merge_enabled: false,
   merge_window_minutes: 0,
@@ -627,6 +639,7 @@ async function validateForm() {
             provider_type: form.config.provider_type || 'feishu',
             url: (form.config.url || '').trim(),
             message_prefix: (form.config.message_prefix || '').trim() || undefined,
+            language: form.config.language || 'zh-hans',
             sign_secret: (form.config.sign_secret || '').trim() || undefined
           }
         : {
@@ -696,13 +709,17 @@ async function confirmValidateEmail() {
   }
 }
 
+const languageLabels = { 'zh-hans': '简体中文', en: 'English' }
 function configSummary(row) {
   if (!row.config || typeof row.config !== 'object') return '–'
   if (row.channel_type === 'webhook') {
     const p = row.config.provider_type
     const label = providerLabels[p] || p || ''
     const url = row.config.url ? `${row.config.url.slice(0, 40)}${row.config.url.length > 40 ? '…' : ''}` : ''
-    return label && url ? `${label} · ${url}` : url || label || '–'
+    const lang = row.config.language ? languageLabels[row.config.language] || row.config.language : ''
+    const parts = [label, url].filter(Boolean)
+    if (lang) parts.push(lang)
+    return parts.length ? parts.join(' · ') : '–'
   }
   if (row.channel_type === 'email') {
     const host = row.config.smtp_host || ''
@@ -766,6 +783,7 @@ function openEditModal(row) {
       ...c,
       provider_type: c.provider_type || 'feishu',
       message_prefix: (c.message_prefix || '').trim(),
+      language: c.language || 'zh-hans',
       sign_secret: (c.sign_secret || '').trim(),
       merge_window_minutes: c.merge_window_minutes ?? 0,
       silence_window_minutes: Math.max(0, Math.min(1440, Number(c.silence_window_minutes) ?? 0))
@@ -822,6 +840,7 @@ async function submitForm() {
         provider_type: form.config.provider_type,
         url: (form.config.url || '').trim(),
         message_prefix: (form.config.message_prefix || '').trim(),
+        language: form.config.language || 'zh-hans',
         sign_secret: (form.config.sign_secret || '').trim() || undefined,
         merge_enabled: !!form.config.merge_enabled,
         merge_window_minutes: Math.max(0, Math.min(1440, Number(form.config.merge_window_minutes) || 0)),
