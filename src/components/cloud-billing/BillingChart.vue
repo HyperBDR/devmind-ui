@@ -228,8 +228,8 @@ const chartData = computed(() => {
 
 function generateProviderData(providerData, labels, dateRange) {
   const data = new Array(labels.length).fill(null)
-  const providerId = providerData.provider_id
-  const accountId = providerData.account_id || ''
+  const providerId = String(providerData.provider_id)
+  const accountId = String(providerData.account_id || '')
 
   if (props.periodType === 'month' && props.dailyData && props.dailyData.length > 0) {
     // Use daily data if available - show cumulative total cost
@@ -350,18 +350,18 @@ function aggregateDailyDataByProvider(dailyData, providerId, accountId) {
   // Match by both provider_id and account_id
   const dailyMap = {}
   const dailyLatestHour = {}
-  
+
   dailyData.forEach(billing => {
-    const billingProviderId = billing.provider || billing.provider_id
-    const billingAccountId = billing.account_id || ''
+    const billingProviderId = String(billing.provider || billing.provider_id)
+    const billingAccountId = String(billing.account_id || '')
     const targetAccountId = accountId || ''
-    
-    // Match provider and account_id
+
+    // Match provider and account_id (convert both to string for comparison)
     if (billingProviderId === providerId && billingAccountId === targetAccountId) {
       const date = new Date(billing.collected_at)
       const dateKey = format(date, 'yyyy-MM-dd')
       const hour = billing.hour || 0
-      
+
       // Keep track of the latest hour for each day
       if (!dailyLatestHour[dateKey] || hour > dailyLatestHour[dateKey].hour) {
         dailyLatestHour[dateKey] = {
@@ -382,12 +382,12 @@ function aggregateDailyDataByProvider(dailyData, providerId, accountId) {
       }
     }
   })
-  
+
   // Convert to cumulative map
   Object.keys(dailyLatestHour).forEach(dateKey => {
     dailyMap[dateKey] = dailyLatestHour[dateKey].total_cost
   })
-  
+
   return dailyMap
 }
 
@@ -474,7 +474,7 @@ function aggregateDailyDataTotal(dailyData) {
     const dateKey = format(date, 'yyyy-MM-dd')
     const hour = billing.hour || 0
     // Use provider_id + account_id as key to distinguish different accounts
-    const providerKey = `${billing.provider || billing.provider_id}_${billing.account_id || ''}`
+    const providerKey = `${String(billing.provider || billing.provider_id)}_${String(billing.account_id || '')}`
     
     if (!dailyProviderMap[dateKey]) {
       dailyProviderMap[dateKey] = {}
