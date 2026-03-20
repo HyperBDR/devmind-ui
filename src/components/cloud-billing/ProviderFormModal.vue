@@ -37,6 +37,7 @@
               <option value="tencentcloud">{{ t('cloudBilling.providers.types.tencentcloud') }}</option>
               <option value="alibaba">{{ t('cloudBilling.providers.types.alibaba') }}</option>
               <option value="azure">{{ t('cloudBilling.providers.types.azure') }}</option>
+              <option value="volcengine">{{ t('cloudBilling.providers.types.volcengine') }}</option>
             </select>
           </div>
         </div>
@@ -501,6 +502,173 @@
             </div>
           </div>
         </template>
+
+        <!-- Volcengine Configuration -->
+        <template v-if="formData.provider_type === 'volcengine'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineAccessKeyId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineAccessKeyId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineAccessKeyIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineAccessKeyId"
+                v-model="configFields.volcengine_access_key_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcengineAccessKeyIdPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineSecretAccessKey"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineSecretAccessKey') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineSecretAccessKeyDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineSecretAccessKey"
+                v-model="configFields.volcengine_secret_access_key"
+                type="password"
+                :placeholder="t('cloudBilling.providers.volcengineSecretAccessKeyPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineRegion"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineRegion') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineRegionDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineRegion"
+                v-model="configFields.volcengine_region"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcengineRegionPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineEndpoint"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineEndpoint') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineEndpointDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineEndpoint"
+                v-model="configFields.volcengine_endpoint"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcengineEndpointPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcenginePayerId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcenginePayerId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcenginePayerIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcenginePayerId"
+                v-model="configFields.volcengine_payer_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcenginePayerIdPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineService"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineService') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineServiceDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineService"
+                v-model="configFields.volcengine_service"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcengineServicePlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="volcengineVersion"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.volcengineVersion') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.volcengineVersionDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="volcengineVersion"
+                v-model="configFields.volcengine_version"
+                type="text"
+                :placeholder="t('cloudBilling.providers.volcengineVersionPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+        </template>
       </div>
 
       <!-- Alert Rule Section -->
@@ -711,7 +879,11 @@
       </div>
 
       <!-- Validation Messages -->
-      <div v-if="validationErrors.length > 0" class="rounded-md bg-red-50 p-2.5">
+      <div
+        v-if="validationErrors.length > 0"
+        ref="validationErrorsRef"
+        class="rounded-md bg-red-50 p-2.5"
+      >
         <div class="flex gap-2">
           <div class="flex-shrink-0 pt-0.5">
             <svg
@@ -798,7 +970,7 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, onMounted, computed } from 'vue'
+import { ref, watch, reactive, onMounted, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData } from '@/utils/api'
@@ -832,6 +1004,7 @@ const validating = ref(false)
 const isValidated = ref(false)
 const validationErrors = ref([])
 const validationSuccess = ref('')
+const validationErrorsRef = ref(null)
 
 const formData = reactive({
   name: '',
@@ -876,6 +1049,13 @@ const configFields = reactive({
   tencent_access_key_id: '',
   tencent_access_key_secret: '',
   tencent_app_id: '',
+  volcengine_access_key_id: '',
+  volcengine_secret_access_key: '',
+  volcengine_region: '',
+  volcengine_endpoint: '',
+  volcengine_payer_id: '',
+  volcengine_service: '',
+  volcengine_version: '',
 })
 
 const alertRuleData = reactive({
@@ -892,6 +1072,14 @@ const selectedChannelValue = ref('')
 const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
 
+const scrollToValidationErrors = async () => {
+  await nextTick()
+  validationErrorsRef.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  })
+}
+
 // Watch provider_type to auto-generate display_name and name
 watch(() => formData.provider_type, (type) => {
   if (!props.provider) {
@@ -902,7 +1090,8 @@ watch(() => formData.provider_type, (type) => {
       'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
-      'azure': t('cloudBilling.providers.types.azure')
+      'azure': t('cloudBilling.providers.types.azure'),
+      'volcengine': t('cloudBilling.providers.types.volcengine')
     }
     formData.display_name = typeLabels[type] || type
     formData.name = generateName(type, formData.display_name)
@@ -931,6 +1120,13 @@ watch(() => [
   configFields.tencent_access_key_id,
   configFields.tencent_access_key_secret,
   configFields.tencent_app_id,
+  configFields.volcengine_access_key_id,
+  configFields.volcengine_secret_access_key,
+  configFields.volcengine_region,
+  configFields.volcengine_endpoint,
+  configFields.volcengine_payer_id,
+  configFields.volcengine_service,
+  configFields.volcengine_version,
 ], () => {
   if (!props.provider) {
     isValidated.value = false
@@ -988,6 +1184,14 @@ watch(() => props.provider, async (newProvider) => {
       configFields.tencent_access_key_id = config.access_key_id || config.TENCENT_ACCESS_KEY_ID || ''
       configFields.tencent_access_key_secret = config.access_key_secret || config.TENCENT_ACCESS_KEY_SECRET || ''
       configFields.tencent_app_id = config.app_id || config.TENCENT_APP_ID || ''
+    } else if (newProvider.provider_type === 'volcengine') {
+      configFields.volcengine_access_key_id = config.api_key || config.VOLCENGINE_ACCESS_KEY_ID || ''
+      configFields.volcengine_secret_access_key = config.api_secret || config.VOLCENGINE_SECRET_ACCESS_KEY || config.VOLCENGINE_ACCESS_KEY_SECRET || ''
+      configFields.volcengine_region = config.region || config.VOLCENGINE_REGION || ''
+      configFields.volcengine_endpoint = config.endpoint || config.VOLCENGINE_ENDPOINT || ''
+      configFields.volcengine_payer_id = config.payer_id || config.VOLCENGINE_PAYER_ID || ''
+      configFields.volcengine_service = config.service || config.VOLCENGINE_SERVICE || ''
+      configFields.volcengine_version = config.version || config.VOLCENGINE_VERSION || ''
     }
 
     // Load alert rule if exists and showAlertRule is true
@@ -1029,7 +1233,8 @@ watch(() => props.provider, async (newProvider) => {
       'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
-      'azure': t('cloudBilling.providers.types.azure')
+      'azure': t('cloudBilling.providers.types.azure'),
+      'volcengine': t('cloudBilling.providers.types.volcengine')
     }
     Object.assign(formData, {
       name: '',
@@ -1055,6 +1260,13 @@ watch(() => props.provider, async (newProvider) => {
       tencent_access_key_id: '',
       tencent_access_key_secret: '',
       tencent_app_id: '',
+      volcengine_access_key_id: '',
+      volcengine_secret_access_key: '',
+      volcengine_region: '',
+      volcengine_endpoint: '',
+      volcengine_payer_id: '',
+      volcengine_service: '',
+      volcengine_version: '',
     })
     existingAlertRuleId.value = null
     alertRuleData.is_active = false
@@ -1263,6 +1475,28 @@ const buildConfig = () => {
     if (configFields.tencent_app_id) {
       config.app_id = configFields.tencent_app_id
     }
+  } else if (formData.provider_type === 'volcengine') {
+    if (configFields.volcengine_access_key_id) {
+      config.VOLCENGINE_ACCESS_KEY_ID = configFields.volcengine_access_key_id
+    }
+    if (configFields.volcengine_secret_access_key) {
+      config.VOLCENGINE_SECRET_ACCESS_KEY = configFields.volcengine_secret_access_key
+    }
+    if (configFields.volcengine_region) {
+      config.VOLCENGINE_REGION = configFields.volcengine_region
+    }
+    if (configFields.volcengine_endpoint) {
+      config.VOLCENGINE_ENDPOINT = configFields.volcengine_endpoint
+    }
+    if (configFields.volcengine_payer_id) {
+      config.VOLCENGINE_PAYER_ID = configFields.volcengine_payer_id
+    }
+    if (configFields.volcengine_service) {
+      config.VOLCENGINE_SERVICE = configFields.volcengine_service
+    }
+    if (configFields.volcengine_version) {
+      config.VOLCENGINE_VERSION = configFields.volcengine_version
+    }
   }
   const raw = (selectedChannelValue.value || '').trim()
   if (raw) {
@@ -1315,6 +1549,7 @@ const handleValidate = async () => {
           t('cloudBilling.providers.validationFailed'))
       validationErrors.value = [errorMessage]
       isValidated.value = false
+      await scrollToValidationErrors()
     }
   } catch (error) {
     console.error('Failed to validate provider config:', error)
@@ -1329,6 +1564,7 @@ const handleValidate = async () => {
     }
     validationErrors.value = [errorMessage]
     isValidated.value = false
+    await scrollToValidationErrors()
   } finally {
     validating.value = false
   }
