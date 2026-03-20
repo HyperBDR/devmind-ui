@@ -640,17 +640,36 @@ const loadDailyBillingData = async () => {
       params.account_id = statsAccountId.value
     }
     
-    const response = await cloudBillingApi.getBillingData(params)
-    const data = extractResponseData(response)
+    // Fetch all pages of data
+    let allBillings = []
+    let nextPage = null
     
-    let billingList = []
-    if (Array.isArray(data)) {
-      billingList = data
-    } else if (data && data.results) {
-      billingList = data.results
-    }
+    do {
+      const response = await cloudBillingApi.getBillingData(params)
+      const data = extractResponseData(response)
+      
+      let billingList = []
+      if (Array.isArray(data)) {
+        billingList = data
+      } else if (data && data.results) {
+        billingList = data.results
+        nextPage = data.next || null
+      }
+      
+      allBillings = allBillings.concat(billingList)
+      
+      // If there's a next page, update params to fetch it
+      if (nextPage) {
+        // Parse next URL to get the page parameter
+        const urlObj = new URL(nextPage)
+        const page = urlObj.searchParams.get('page')
+        if (page) {
+          params.page = page
+        }
+      }
+    } while (nextPage)
     
-    dailyBillingData.value = billingList
+    dailyBillingData.value = allBillings
   } catch (error) {
     console.error('Failed to load daily billing data:', error)
     dailyBillingData.value = []
@@ -683,25 +702,44 @@ const loadBillings = async (query = '') => {
       params.account_id = detailsAccountId.value
     }
 
-    const response = await cloudBillingApi.getBillingData(params)
-    const data = extractResponseData(response)
+    // Fetch all pages of data
+    let allBillings = []
+    let nextPage = null
+    
+    do {
+      const response = await cloudBillingApi.getBillingData(params)
+      const data = extractResponseData(response)
 
-    let billingList = []
-    if (Array.isArray(data)) {
-      billingList = data
-    } else if (data && data.results) {
-      billingList = data.results
-    }
+      let billingList = []
+      if (Array.isArray(data)) {
+        billingList = data
+      } else if (data && data.results) {
+        billingList = data.results
+        nextPage = data.next || null
+      }
+      
+      allBillings = allBillings.concat(billingList)
+      
+      // If there's a next page, update params to fetch it
+      if (nextPage) {
+        // Parse next URL to get the page parameter
+        const urlObj = new URL(nextPage)
+        const page = urlObj.searchParams.get('page')
+        if (page) {
+          params.page = page
+        }
+      }
+    } while (nextPage)
 
     // Map backend fields to frontend format and calculate changes
     const billingMap = new Map()
-    billingList.forEach(billing => {
+    allBillings.forEach(billing => {
       const key = `${billing.provider}_${billing.period}_${billing.hour}_${billing.account_id || ''}`
       billingMap.set(key, billing)
     })
 
     // Calculate change from last hour for each billing record
-    billings.value = billingList.map(billing => {
+    billings.value = allBillings.map(billing => {
       const currentHour = billing.hour
       let prevHour = currentHour === 0 ? 23 : currentHour - 1
       let prevPeriod = billing.period

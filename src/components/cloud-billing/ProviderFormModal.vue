@@ -34,6 +34,7 @@
               <option value="aws">{{ t('cloudBilling.providers.types.aws') }}</option>
               <option value="huawei">{{ t('cloudBilling.providers.types.huawei') }}</option>
               <option value="huawei-intl">{{ t('cloudBilling.providers.types.huaweiIntl') }}</option>
+              <option value="tencentcloud">{{ t('cloudBilling.providers.types.tencentcloud') }}</option>
               <option value="alibaba">{{ t('cloudBilling.providers.types.alibaba') }}</option>
               <option value="azure">{{ t('cloudBilling.providers.types.azure') }}</option>
             </select>
@@ -252,6 +253,81 @@
           </div>
         </template>
 
+        <!-- Tencent Cloud Configuration -->
+        <template v-if="formData.provider_type === 'tencentcloud'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="tencentAccessKeyId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.tencentAccessKeyId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.tencentAccessKeyIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="tencentAccessKeyId"
+                v-model="configFields.tencent_access_key_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.tencentAccessKeyIdPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="tencentAccessKeySecret"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.tencentAccessKeySecret') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.tencentAccessKeySecretDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="tencentAccessKeySecret"
+                v-model="configFields.tencent_access_key_secret"
+                type="password"
+                :placeholder="t('cloudBilling.providers.tencentAccessKeySecretPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="tencentAppId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.tencentAppId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.tencentAppIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="tencentAppId"
+                v-model="configFields.tencent_app_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.tencentAppIdPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+        </template>
+
         <!-- Azure Configuration -->
         <template v-if="formData.provider_type === 'azure'">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
@@ -395,6 +471,30 @@
                 v-model="configFields.alibaba_secret_access_key"
                 type="password"
                 :placeholder="t('cloudBilling.providers.alibabaSecretAccessKeyPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="alibabaRegion"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.alibabaRegion') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.alibabaRegionDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="alibabaRegion"
+                v-model="configFields.alibaba_region"
+                type="text"
+                :placeholder="t('cloudBilling.providers.alibabaRegionPlaceholder')"
                 required
                 class="w-full"
               />
@@ -772,6 +872,10 @@ const configFields = reactive({
   azure_subscription_id: '',
   alibaba_access_key_id: '',
   alibaba_secret_access_key: '',
+  alibaba_region: '',
+  tencent_access_key_id: '',
+  tencent_access_key_secret: '',
+  tencent_app_id: '',
 })
 
 const alertRuleData = reactive({
@@ -796,6 +900,7 @@ watch(() => formData.provider_type, (type) => {
       'aws': t('cloudBilling.providers.types.aws'),
       'huawei': t('cloudBilling.providers.types.huawei'),
       'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+      'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure')
     }
@@ -822,6 +927,10 @@ watch(() => [
   configFields.azure_subscription_id,
   configFields.alibaba_access_key_id,
   configFields.alibaba_secret_access_key,
+  configFields.alibaba_region,
+  configFields.tencent_access_key_id,
+  configFields.tencent_access_key_secret,
+  configFields.tencent_app_id,
 ], () => {
   if (!props.provider) {
     isValidated.value = false
@@ -874,6 +983,11 @@ watch(() => props.provider, async (newProvider) => {
     } else if (newProvider.provider_type === 'alibaba') {
       configFields.alibaba_access_key_id = config.ALIBABA_ACCESS_KEY_ID || ''
       configFields.alibaba_secret_access_key = config.ALIBABA_SECRET_ACCESS_KEY || ''
+      configFields.alibaba_region = config.ALIBABA_REGION || config.alibaba_region || ''
+    } else if (newProvider.provider_type === 'tencentcloud') {
+      configFields.tencent_access_key_id = config.access_key_id || config.TENCENT_ACCESS_KEY_ID || ''
+      configFields.tencent_access_key_secret = config.access_key_secret || config.TENCENT_ACCESS_KEY_SECRET || ''
+      configFields.tencent_app_id = config.app_id || config.TENCENT_APP_ID || ''
     }
 
     // Load alert rule if exists and showAlertRule is true
@@ -913,6 +1027,7 @@ watch(() => props.provider, async (newProvider) => {
       'aws': t('cloudBilling.providers.types.aws'),
       'huawei': t('cloudBilling.providers.types.huawei'),
       'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+      'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure')
     }
@@ -936,6 +1051,10 @@ watch(() => props.provider, async (newProvider) => {
       azure_subscription_id: '',
       alibaba_access_key_id: '',
       alibaba_secret_access_key: '',
+      alibaba_region: '',
+      tencent_access_key_id: '',
+      tencent_access_key_secret: '',
+      tencent_app_id: '',
     })
     existingAlertRuleId.value = null
     alertRuleData.is_active = false
@@ -1131,6 +1250,19 @@ const buildConfig = () => {
     if (configFields.alibaba_secret_access_key) {
       config.ALIBABA_SECRET_ACCESS_KEY = configFields.alibaba_secret_access_key
     }
+    if (configFields.alibaba_region) {
+      config.ALIBABA_REGION = configFields.alibaba_region
+    }
+  } else if (formData.provider_type === 'tencentcloud') {
+    if (configFields.tencent_access_key_id) {
+      config.access_key_id = configFields.tencent_access_key_id
+    }
+    if (configFields.tencent_access_key_secret) {
+      config.access_key_secret = configFields.tencent_access_key_secret
+    }
+    if (configFields.tencent_app_id) {
+      config.app_id = configFields.tencent_app_id
+    }
   }
   const raw = (selectedChannelValue.value || '').trim()
   if (raw) {
@@ -1178,8 +1310,9 @@ const handleValidate = async () => {
       }, 5000)
     } else {
       const errorCode = validation.error_code || 'validation_failed'
-      const errorMessage = t(`cloudBilling.providers.validationErrorCodes.${errorCode}`, 
-        t('cloudBilling.providers.validationFailed'))
+      const errorMessage = validation.message ||
+        t(`cloudBilling.providers.validationErrorCodes.${errorCode}`,
+          t('cloudBilling.providers.validationFailed'))
       validationErrors.value = [errorMessage]
       isValidated.value = false
     }
@@ -1243,6 +1376,7 @@ const handleSubmit = async () => {
         'aws': t('cloudBilling.providers.types.aws'),
         'huawei': t('cloudBilling.providers.types.huawei'),
         'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+        'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
         'alibaba': t('cloudBilling.providers.types.alibaba'),
         'azure': t('cloudBilling.providers.types.azure')
       }
