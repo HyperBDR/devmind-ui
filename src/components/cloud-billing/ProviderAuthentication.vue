@@ -305,6 +305,8 @@ const togglingIds = ref([])
 const providerTypes = {
   aws: t('cloudBilling.providers.types.aws'),
   huawei: t('cloudBilling.providers.types.huawei'),
+  'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+  tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
   alibaba: t('cloudBilling.providers.types.alibaba'),
   azure: t('cloudBilling.providers.types.azure'),
 }

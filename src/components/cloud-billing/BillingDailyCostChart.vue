@@ -203,27 +203,28 @@ const chartData = computed(() => {
 
     // Group billing data by date and provider+account
     const dailyProviderMap = {}
-    
+
     props.dailyData.forEach(billing => {
       const date = new Date(billing.collected_at)
       const dateKey = format(date, 'yyyy-MM-dd')
       const providerId = billing.provider || billing.provider_id
       const accountId = billing.account_id || ''
       // Use provider_id + account_id as key to distinguish different accounts
-      const providerAccountKey = `${providerId}_${accountId}`
+      // Convert to string to ensure consistent key matching
+      const providerAccountKey = `${String(providerId)}_${String(accountId)}`
       const hour = billing.hour || 0
-      
+
       if (!dailyProviderMap[dateKey]) {
         dailyProviderMap[dateKey] = {}
       }
-      
+
       if (!dailyProviderMap[dateKey][providerAccountKey]) {
         dailyProviderMap[dateKey][providerAccountKey] = {
           hour: -1,
           total_cost: 0
         }
       }
-      
+
       // Keep the latest hour's data for each provider+account on each day
       if (hour > dailyProviderMap[dateKey][providerAccountKey].hour) {
         dailyProviderMap[dateKey][providerAccountKey] = {
@@ -259,13 +260,21 @@ const chartData = computed(() => {
     ]
 
     const datasets = []
-    const prevDayCosts = {}
+    // Initialize prev day costs for each provider
+    const providerPrevDayCosts = {}
+    // Separate prev day costs for total calculation to avoid contamination
+    const totalPrevDayCosts = {}
+    providerList.forEach((provider) => {
+      const providerAccountKey = `${String(provider.id)}_${provider.accountId}`
+      providerPrevDayCosts[providerAccountKey] = 0
+      totalPrevDayCosts[providerAccountKey] = 0
+    })
 
     // Add provider+account datasets
     providerList.forEach((provider, index) => {
       const color = colors[index % colors.length]
       const data = []
-      const providerAccountKey = `${provider.id}_${provider.accountId}`
+      const providerAccountKey = `${String(provider.id)}_${provider.accountId}`
 
       days.forEach((day, dayIndex) => {
         const dateKey = format(day, 'yyyy-MM-dd')
@@ -282,14 +291,14 @@ const chartData = computed(() => {
         
         if (dayData) {
           // Calculate daily cost: current day's total_cost - previous day's total_cost
-          const prevCost = prevDayCosts[providerAccountKey] || 0
+          const prevCost = providerPrevDayCosts[providerAccountKey] || 0
           const dailyCost = dayData.total_cost - prevCost
           
           // Only show positive costs
           data.push(dailyCost >= 0 ? dailyCost : 0)
           
           // Update previous day's cost for next iteration
-          prevDayCosts[providerAccountKey] = dayData.total_cost
+          providerPrevDayCosts[providerAccountKey] = dayData.total_cost
         } else {
           data.push(null)
         }
@@ -310,24 +319,25 @@ const chartData = computed(() => {
         fill: false,
         tension: 0.4,
         pointRadius: (value) => {
-          return value.raw !== null && value.raw !== undefined ? 4 : 0
+          // Show points for actual data values, hide for null/undefined
+          return value.raw !== null && value.raw !== undefined && value.raw !== 0 ? 4 : 0
         },
         pointHoverRadius: 6,
         pointBackgroundColor: color.border,
         pointBorderColor: '#fff',
-        pointBorderWidth: 2
+        pointBorderWidth: 2,
+        spanGaps: false  // Don't connect lines across null gaps
       })
     })
 
     // Add total cost dataset
     const totalData = []
-    const totalPrevDayCosts = {}
 
     days.forEach((day, dayIndex) => {
       const dateKey = format(day, 'yyyy-MM-dd')
       const dateOnly = new Date(day)
       dateOnly.setHours(0, 0, 0, 0)
-      
+
       // If date is in the future, set data as null
       if (dateOnly > today) {
         totalData.push(null)
@@ -337,7 +347,7 @@ const chartData = computed(() => {
       // Calculate total cost for the day (sum of all provider+account combinations' daily costs)
       let dayTotal = 0
       providerList.forEach(provider => {
-        const providerAccountKey = `${provider.id}_${provider.accountId}`
+        const providerAccountKey = `${String(provider.id)}_${provider.accountId}`
         const dayData = dailyProviderMap[dateKey]?.[providerAccountKey]
         if (dayData) {
           const prevCost = totalPrevDayCosts[providerAccountKey] || 0
@@ -349,7 +359,7 @@ const chartData = computed(() => {
         }
       })
 
-      totalData.push(dayTotal > 0 ? dayTotal : null)
+      totalData.push(dayTotal)
     })
 
     datasets.push({
