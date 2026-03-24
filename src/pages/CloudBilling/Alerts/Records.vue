@@ -130,7 +130,7 @@
                     {{ formatDate(alert.created_at) }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {{ alert.provider_name || alert.provider }}
+                    {{ alert.provider_label || alert.provider_name || alert.provider }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     <div class="space-y-1">

@@ -22,7 +22,7 @@
         <div class="flex items-center justify-between">
           <span class="text-xs text-gray-500">{{ t('cloudBilling.alerts.provider') }}</span>
           <span class="text-sm font-medium text-gray-900">
-            {{ alert.provider_name || alert.provider }}
+            {{ alert.provider_label || alert.provider_name || alert.provider }}
           </span>
         </div>
         <div class="space-y-1 text-xs text-gray-600">

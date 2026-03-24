@@ -75,7 +75,7 @@
                   {{ t('cloudBilling.alerts.provider') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ alert.provider_name || alert.provider }}
+                  {{ alert.provider_label || alert.provider_name || alert.provider }}
                 </dd>
               </div>
               <div>

@@ -125,6 +125,15 @@
                 <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end gap-2">
                     <button
+                      @click="editNotes(provider)"
+                      class="text-gray-500 hover:text-gray-900 transition-colors"
+                      :title="t('cloudBilling.providers.editNotes')"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11 16H8v-3L18.586 5.414z" />
+                      </svg>
+                    </button>
+                    <button
                       @click="editAuthConfig(provider)"
                       class="text-primary-600 hover:text-primary-900 transition-colors"
                       :title="t('cloudBilling.providers.editAuthConfig')"
@@ -228,6 +237,15 @@
             </div>
             <div class="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-gray-200">
               <button
+                @click="editNotes(provider)"
+                class="text-gray-500 hover:text-gray-900 transition-colors"
+                :title="t('cloudBilling.providers.editNotes')"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11 16H8v-3L18.586 5.414z" />
+                </svg>
+              </button>
+              <button
                 @click="editAuthConfig(provider)"
                 class="text-primary-600 hover:text-primary-900 text-sm font-medium"
               >
@@ -267,6 +285,15 @@
       @saved="handleSaved"
     />
 
+    <!-- Edit Notes Modal -->
+    <ProviderNotesModal
+      v-if="editingNotesProvider"
+      :show="!!editingNotesProvider"
+      :provider="editingNotesProvider"
+      @close="editingNotesProvider = null"
+      @saved="handleNotesSaved"
+    />
+
     <!-- Alert Rule Modal -->
     <AlertRuleModal
       v-if="editingAlertRuleProvider"
@@ -289,6 +316,7 @@ import { cloudBillingApi } from '@/api/cloudBilling'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
+import ProviderNotesModal from '@/components/cloud-billing/ProviderNotesModal.vue'
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
 
 const { t } = useI18n()
@@ -299,6 +327,7 @@ const providers = ref([])
 const alertRules = ref([])
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
+const editingNotesProvider = ref(null)
 const editingAlertRuleProvider = ref(null)
 const togglingIds = ref([])
 
@@ -396,6 +425,10 @@ const editAuthConfig = (provider) => {
   editingProvider.value = provider
 }
 
+const editNotes = (provider) => {
+  editingNotesProvider.value = provider
+}
+
 const editAlertRule = (provider) => {
   editingAlertRuleProvider.value = provider
 }
@@ -403,6 +436,11 @@ const editAlertRule = (provider) => {
 const closeModal = () => {
   showCreateModal.value = false
   editingProvider.value = null
+}
+
+const handleNotesSaved = () => {
+  editingNotesProvider.value = null
+  loadProviders()
 }
 
 const handleAlertRuleSaved = () => {

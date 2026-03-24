@@ -962,6 +962,8 @@
       "createdAt": "创建时间",
       "createProvider": "添加云平台",
       "editProvider": "编辑云平台",
+      "editNotes": "修改备注",
+      "editNotesDesc": "正在编辑 {name} 的备注信息",
       "editAuthConfig": "鉴权配置",
       "testConnection": "测试连接",
       "confirmDelete": "确定要删除这个云平台吗？",
@@ -999,6 +1001,8 @@
         "timeout_error": "凭证验证失败：连接超时。请检查您的网络连接和区域配置是否正确。",
         "network_error": "凭证验证失败：网络连接错误。请检查您的网络连接是否正常。"
       },
+      "notesUpdateSuccess": "备注已更新",
+      "notesUpdateError": "备注更新失败",
       "deleteError": "删除失败",
       "saveError": "保存失败",
       "createSuccess": "创建成功",
