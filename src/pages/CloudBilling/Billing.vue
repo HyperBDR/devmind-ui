@@ -537,6 +537,11 @@ const detailsProviderId = ref('')
 const detailsAccountId = ref('')
 const showPreviewModal = ref(false)
 const selectedBilling = ref(null)
+const isInitializing = ref(true)
+
+// Prevent multiple concurrent calls
+let isStatsLoading = false
+let isDetailsLoading = false
 
 // Initialize date range: details tab default is last 3 days (from 3 days ago to today)
 const initDateRange = () => {
@@ -574,6 +579,9 @@ const loadProviders = async () => {
 
 // Load statistics
 const loadStatistics = async () => {
+  if (isStatsLoading) return
+  
+  isStatsLoading = true
   statsLoading.value = true
   try {
     const params = {}
@@ -615,6 +623,7 @@ const loadStatistics = async () => {
     statistics.value = null
   } finally {
     statsLoading.value = false
+    isStatsLoading = false
   }
 }
 
@@ -678,6 +687,9 @@ const loadDailyBillingData = async () => {
 
 // Load billing details
 const loadBillings = async (query = '') => {
+  if (isDetailsLoading) return
+  
+  isDetailsLoading = true
   detailsLoading.value = true
   try {
     const params = {}
@@ -797,12 +809,21 @@ const loadBillings = async (query = '') => {
     billings.value = []
   } finally {
     detailsLoading.value = false
+    isDetailsLoading = false
   }
 }
 
 const { debouncedFn: debouncedSearch } = useDebounce((query) => {
   loadBillings(query)
 }, 300)
+
+const { debouncedFn: debouncedLoadStatistics } = useDebounce(() => {
+  loadStatistics()
+}, 100)
+
+const { debouncedFn: debouncedLoadBillings } = useDebounce(() => {
+  loadBillings(searchQuery.value)
+}, 100)
 
 const handleSearch = (query) => {
   searchQuery.value = query
@@ -833,20 +854,23 @@ watch(activeTab, (newTab) => {
 
 // Watch statistics filter changes for real-time updates
 watch([statsPeriodType, statsSelectedPeriod, statsSelectedYear, statsProviderId, statsAccountId], () => {
+  if (isInitializing.value) return
   if (activeTab.value === 'statistics') {
-    loadStatistics()
+    debouncedLoadStatistics()
   }
 })
 
 // Watch details filter changes
 watch([detailsStartDate, detailsEndDate, detailsProviderId, detailsAccountId], () => {
+  if (isInitializing.value) return
   if (activeTab.value === 'details') {
-    loadBillings(searchQuery.value)
+    debouncedLoadBillings()
   }
 })
 
 onMounted(() => {
   initDateRange()
+  isInitializing.value = false
   loadProviders()
   loadStatistics()
 })
