@@ -133,6 +133,7 @@ const providerTypes = {
   alibaba: t('cloudBilling.providers.types.alibaba'),
   azure: t('cloudBilling.providers.types.azure'),
   volcengine: t('cloudBilling.providers.types.volcengine'),
+  zhipu: t('cloudBilling.providers.types.zhipu'),
 }
 
 const getProviderTypeLabel = (type) => {

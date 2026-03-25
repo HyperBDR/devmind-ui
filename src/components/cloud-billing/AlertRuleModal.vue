@@ -202,6 +202,31 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="balanceThreshold"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.settings.alertRule.balanceThreshold') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.settings.alertRule.balanceThresholdDesc') }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <BaseInput
+              id="balanceThreshold"
+              v-model="formData.balance_threshold"
+              type="number"
+              step="0.01"
+              min="0"
+              :placeholder="t('cloudBilling.settings.alertRule.balanceThresholdPlaceholder')"
+              class="w-full"
+            />
+          </div>
+        </div>
+
         <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
           <p class="text-xs text-blue-800">
             {{ t('cloudBilling.settings.alertRule.note') }}
@@ -274,6 +299,7 @@ const formData = ref({
   cost_threshold: null,
   growth_threshold: null,
   growth_amount_threshold: null,
+  balance_threshold: null,
 })
 
 const allChannels = ref([])
@@ -285,6 +311,14 @@ const pendingChannelUuid = ref('')
 const canSave = computed(() => {
   return true
 })
+
+function normalizeThresholdValue(value) {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+  const text = String(value).trim()
+  return text === '' ? null : text
+}
 
 const isEmailChannelSelected = computed(() =>
   (selectedChannelValue.value || '').startsWith('email:')
@@ -469,9 +503,10 @@ watch(() => props.alertRule, (newRule) => {
   if (newRule) {
     formData.value = {
       is_active: newRule.is_active ?? true,
-      cost_threshold: newRule.cost_threshold ? String(newRule.cost_threshold) : null,
-      growth_threshold: newRule.growth_threshold ? String(newRule.growth_threshold) : null,
-      growth_amount_threshold: newRule.growth_amount_threshold ? String(newRule.growth_amount_threshold) : null,
+      cost_threshold: newRule.cost_threshold != null ? String(newRule.cost_threshold) : null,
+      growth_threshold: newRule.growth_threshold != null ? String(newRule.growth_threshold) : null,
+      growth_amount_threshold: newRule.growth_amount_threshold != null ? String(newRule.growth_amount_threshold) : null,
+      balance_threshold: newRule.balance_threshold != null ? String(newRule.balance_threshold) : null,
     }
   } else {
     formData.value = {
@@ -479,16 +514,18 @@ watch(() => props.alertRule, (newRule) => {
       cost_threshold: null,
       growth_threshold: null,
       growth_amount_threshold: null,
+      balance_threshold: null,
     }
   }
 }, { immediate: true })
 
 const handleSubmit = async () => {
   // Check if any threshold has a value (handle both null and empty string)
-  const costThreshold = formData.value.cost_threshold && String(formData.value.cost_threshold).trim()
-  const growthThreshold = formData.value.growth_threshold && String(formData.value.growth_threshold).trim()
-  const growthAmountThreshold = formData.value.growth_amount_threshold && String(formData.value.growth_amount_threshold).trim()
-  const hasAnyThreshold = !!(costThreshold || growthThreshold || growthAmountThreshold)
+  const costThreshold = normalizeThresholdValue(formData.value.cost_threshold)
+  const growthThreshold = normalizeThresholdValue(formData.value.growth_threshold)
+  const growthAmountThreshold = normalizeThresholdValue(formData.value.growth_amount_threshold)
+  const balanceThreshold = normalizeThresholdValue(formData.value.balance_threshold)
+  const hasAnyThreshold = !!(costThreshold || growthThreshold || growthAmountThreshold || balanceThreshold)
 
   saving.value = true
   try {
@@ -543,6 +580,7 @@ const handleSubmit = async () => {
       cost_threshold: costThreshold ? parseFloat(costThreshold) : null,
       growth_threshold: growthThreshold ? parseFloat(growthThreshold) : null,
       growth_amount_threshold: growthAmountThreshold ? parseFloat(growthAmountThreshold) : null,
+      balance_threshold: balanceThreshold ? parseFloat(balanceThreshold) : null,
     }
 
     const successMessage = props.alertRule

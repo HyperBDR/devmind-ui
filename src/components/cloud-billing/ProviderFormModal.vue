@@ -38,6 +38,8 @@
               <option value="alibaba">{{ t('cloudBilling.providers.types.alibaba') }}</option>
               <option value="azure">{{ t('cloudBilling.providers.types.azure') }}</option>
               <option value="volcengine">{{ t('cloudBilling.providers.types.volcengine') }}</option>
+              <option value="baidu">{{ t('cloudBilling.providers.types.baidu') }}</option>
+              <option value="zhipu">{{ t('cloudBilling.providers.types.zhipu') }}</option>
             </select>
           </div>
         </div>
@@ -426,6 +428,29 @@
               />
             </div>
           </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="azureBillingAccountId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.azureBillingAccountId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.azureBillingAccountIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="azureBillingAccountId"
+                v-model="configFields.azure_billing_account_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.azureBillingAccountIdPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
         </template>
 
         <!-- Alibaba Configuration -->
@@ -668,6 +693,109 @@
               />
             </div>
           </div>
+        </template>
+
+        <!-- Baidu Configuration -->
+        <template v-if="formData.provider_type === 'baidu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduAccessKeyId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduAccessKeyId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduAccessKeyIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduAccessKeyId"
+                v-model="configFields.baidu_access_key_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.baiduAccessKeyIdPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduSecretAccessKey"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduSecretAccessKey') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduSecretAccessKeyDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduSecretAccessKey"
+                v-model="configFields.baidu_secret_access_key"
+                type="password"
+                :placeholder="t('cloudBilling.providers.baiduSecretAccessKeyPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+        </template>
+
+        <template v-if="formData.provider_type === 'zhipu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuUsername"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuUsername') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuUsernameDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuUsername"
+                v-model="configFields.zhipu_username"
+                type="text"
+                :placeholder="t('cloudBilling.providers.zhipuUsernamePlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuPassword"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuPassword') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuPasswordDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuPassword"
+                v-model="configFields.zhipu_password"
+                type="password"
+                :placeholder="t('cloudBilling.providers.zhipuPasswordPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
         </template>
       </div>
 
@@ -1043,6 +1171,7 @@ const configFields = reactive({
   azure_client_secret: '',
   azure_tenant_id: '',
   azure_subscription_id: '',
+  azure_billing_account_id: '',
   alibaba_access_key_id: '',
   alibaba_secret_access_key: '',
   alibaba_region: '',
@@ -1056,6 +1185,10 @@ const configFields = reactive({
   volcengine_payer_id: '',
   volcengine_service: '',
   volcengine_version: '',
+  baidu_access_key_id: '',
+  baidu_secret_access_key: '',
+  zhipu_username: '',
+  zhipu_password: '',
 })
 
 const alertRuleData = reactive({
@@ -1091,7 +1224,9 @@ watch(() => formData.provider_type, (type) => {
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
+      'volcengine': t('cloudBilling.providers.types.volcengine'),
+      'baidu': t('cloudBilling.providers.types.baidu'),
+      'zhipu': t('cloudBilling.providers.types.zhipu')
     }
     formData.display_name = typeLabels[type] || type
     formData.name = generateName(type, formData.display_name)
@@ -1114,6 +1249,7 @@ watch(() => [
   configFields.azure_client_secret,
   configFields.azure_tenant_id,
   configFields.azure_subscription_id,
+  configFields.azure_billing_account_id,
   configFields.alibaba_access_key_id,
   configFields.alibaba_secret_access_key,
   configFields.alibaba_region,
@@ -1127,6 +1263,10 @@ watch(() => [
   configFields.volcengine_payer_id,
   configFields.volcengine_service,
   configFields.volcengine_version,
+  configFields.baidu_access_key_id,
+  configFields.baidu_secret_access_key,
+  configFields.zhipu_username,
+  configFields.zhipu_password,
 ], () => {
   if (!props.provider) {
     isValidated.value = false
@@ -1176,6 +1316,7 @@ watch(() => props.provider, async (newProvider) => {
       configFields.azure_client_secret = config.AZURE_CLIENT_SECRET || ''
       configFields.azure_tenant_id = config.AZURE_TENANT_ID || ''
       configFields.azure_subscription_id = config.AZURE_SUBSCRIPTION_ID || ''
+      configFields.azure_billing_account_id = config.AZURE_BILLING_ACCOUNT_ID || ''
     } else if (newProvider.provider_type === 'alibaba') {
       configFields.alibaba_access_key_id = config.ALIBABA_ACCESS_KEY_ID || ''
       configFields.alibaba_secret_access_key = config.ALIBABA_SECRET_ACCESS_KEY || ''
@@ -1192,6 +1333,12 @@ watch(() => props.provider, async (newProvider) => {
       configFields.volcengine_payer_id = config.payer_id || config.VOLCENGINE_PAYER_ID || ''
       configFields.volcengine_service = config.service || config.VOLCENGINE_SERVICE || ''
       configFields.volcengine_version = config.version || config.VOLCENGINE_VERSION || ''
+    } else if (newProvider.provider_type === 'baidu') {
+      configFields.baidu_access_key_id = config.api_key || config.BAIDU_ACCESS_KEY_ID || ''
+      configFields.baidu_secret_access_key = config.api_secret || config.BAIDU_SECRET_ACCESS_KEY || ''
+    } else if (newProvider.provider_type === 'zhipu') {
+      configFields.zhipu_username = config.username || config.ZHIPU_USERNAME || ''
+      configFields.zhipu_password = config.password || config.ZHIPU_PASSWORD || ''
     }
 
     // Load alert rule if exists and showAlertRule is true
@@ -1234,7 +1381,9 @@ watch(() => props.provider, async (newProvider) => {
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
+      'volcengine': t('cloudBilling.providers.types.volcengine'),
+      'baidu': t('cloudBilling.providers.types.baidu'),
+      'zhipu': t('cloudBilling.providers.types.zhipu')
     }
     Object.assign(formData, {
       name: '',
@@ -1254,6 +1403,7 @@ watch(() => props.provider, async (newProvider) => {
       azure_client_secret: '',
       azure_tenant_id: '',
       azure_subscription_id: '',
+      azure_billing_account_id: '',
       alibaba_access_key_id: '',
       alibaba_secret_access_key: '',
       alibaba_region: '',
@@ -1267,6 +1417,10 @@ watch(() => props.provider, async (newProvider) => {
       volcengine_payer_id: '',
       volcengine_service: '',
       volcengine_version: '',
+      baidu_access_key_id: '',
+      baidu_secret_access_key: '',
+      zhipu_username: '',
+      zhipu_password: '',
     })
     existingAlertRuleId.value = null
     alertRuleData.is_active = false
@@ -1455,6 +1609,9 @@ const buildConfig = () => {
     if (configFields.azure_subscription_id) {
       config.AZURE_SUBSCRIPTION_ID = configFields.azure_subscription_id
     }
+    if (configFields.azure_billing_account_id) {
+      config.AZURE_BILLING_ACCOUNT_ID = configFields.azure_billing_account_id
+    }
   } else if (formData.provider_type === 'alibaba') {
     if (configFields.alibaba_access_key_id) {
       config.ALIBABA_ACCESS_KEY_ID = configFields.alibaba_access_key_id
@@ -1496,6 +1653,20 @@ const buildConfig = () => {
     }
     if (configFields.volcengine_version) {
       config.VOLCENGINE_VERSION = configFields.volcengine_version
+    }
+  } else if (formData.provider_type === 'baidu') {
+    if (configFields.baidu_access_key_id) {
+      config.BAIDU_ACCESS_KEY_ID = configFields.baidu_access_key_id
+    }
+    if (configFields.baidu_secret_access_key) {
+      config.BAIDU_SECRET_ACCESS_KEY = configFields.baidu_secret_access_key
+    }
+  } else if (formData.provider_type === 'zhipu') {
+    if (configFields.zhipu_username) {
+      config.ZHIPU_USERNAME = configFields.zhipu_username
+    }
+    if (configFields.zhipu_password) {
+      config.ZHIPU_PASSWORD = configFields.zhipu_password
     }
   }
   const raw = (selectedChannelValue.value || '').trim()
