@@ -80,12 +80,13 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import CloudBillingOverviewPanel from '@/components/cloud-billing/CloudBillingOverviewPanel.vue'
 import {
   OPERATIONS_CURRENCIES,
+  OPERATIONS_DEFAULT_TIMEZONE,
   OPERATIONS_TIMEZONES
 } from '@/constants/operationsView'
 
 const { t } = useI18n()
 const overviewPanelRef = ref(null)
-const selectedTimezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const selectedTimezone = ref(OPERATIONS_DEFAULT_TIMEZONE)
 const selectedCurrency = ref('CNY')
 const timezones = OPERATIONS_TIMEZONES
 const currencies = OPERATIONS_CURRENCIES

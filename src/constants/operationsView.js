@@ -1,33 +1,48 @@
-import { getLocalizedTimezones } from '@/utils/timezones'
+import { getAllTimezones, getTimezoneOffset } from '@/utils/timezones'
 
-const preferredTimezoneValues = [
-  'Asia/Shanghai',
-  'UTC',
-  'Asia/Singapore',
-  'Asia/Tokyo',
-  'Europe/London',
-  'Europe/Frankfurt',
-  'America/Los_Angeles',
-  'America/New_York',
-]
+const defaultTimezone = 'Asia/Shanghai'
 
-const browserLanguage =
-  typeof navigator !== 'undefined' && navigator.language
-    ? navigator.language
-    : 'en'
+function normalizeOffsetLabel(offset) {
+  const normalized = String(offset || 'GMT+00:00')
+    .replace('GMT', 'UTC')
+    .replace(/UTC([+-])(\d):/, 'UTC$10$2:')
+    .replace('UTC+0:00', 'UTC+00:00')
+    .replace('UTC-0:00', 'UTC-00:00')
 
-const localizedTimezones = getLocalizedTimezones(browserLanguage)
-const timezoneMap = new Map(
-  localizedTimezones.map((item) => [item.value, item])
+  return normalized === 'UTC' ? 'UTC+00:00' : normalized
+}
+
+function offsetToMinutes(offsetLabel) {
+  const match = /^UTC([+-])(\d{2}):(\d{2})$/.exec(offsetLabel)
+  if (!match) {
+    return 0
+  }
+  const [, sign, hours, minutes] = match
+  const totalMinutes = Number(hours) * 60 + Number(minutes)
+  return sign === '-' ? -totalMinutes : totalMinutes
+}
+
+const timezoneOptionsByOffset = new Map()
+
+timezoneOptionsByOffset.set('UTC+08:00', {
+  value: defaultTimezone,
+  label: 'UTC+08:00',
+})
+
+for (const timezone of getAllTimezones()) {
+  const offsetLabel = normalizeOffsetLabel(getTimezoneOffset(timezone.value))
+  if (!timezoneOptionsByOffset.has(offsetLabel)) {
+    timezoneOptionsByOffset.set(offsetLabel, {
+      value: timezone.value,
+      label: offsetLabel,
+    })
+  }
+}
+
+export const OPERATIONS_TIMEZONES = Array.from(timezoneOptionsByOffset.values()).sort(
+  (left, right) => offsetToMinutes(left.label) - offsetToMinutes(right.label)
 )
 
-export const OPERATIONS_TIMEZONES = [
-  ...preferredTimezoneValues
-    .map((value) => timezoneMap.get(value))
-    .filter(Boolean),
-  ...localizedTimezones.filter(
-    (item) => !preferredTimezoneValues.includes(item.value)
-  ),
-]
+export const OPERATIONS_DEFAULT_TIMEZONE = defaultTimezone
 
 export const OPERATIONS_CURRENCIES = ['CNY', 'USD']

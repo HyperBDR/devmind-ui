@@ -233,16 +233,33 @@
                 </p>
               </div>
               <div class="space-y-4">
-                <div v-for="item in overview.financial_health.recharge_alerts" :key="item.name" class="space-y-2">
-                  <div class="flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2">
+                <div
+                  v-for="item in overview.financial_health.recharge_alerts"
+                  :key="`${item.name}-${item.account_id || 'default'}`"
+                  class="space-y-2"
+                >
+                  <div class="flex items-start justify-between gap-3 text-xs">
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
                       <span
                         class="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase"
                         :class="item.category === 'LLM' ? 'bg-gray-200 text-gray-700' : 'bg-primary-100 text-primary-700'"
                       >
                         {{ item.category }}
                       </span>
-                      <span class="font-medium text-gray-700">{{ item.name }}</span>
+                        <span class="truncate font-medium text-gray-700">{{ item.name }}</span>
+                      </div>
+                      <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-gray-500">
+                        <span class="font-mono text-gray-600">
+                          {{ item.account_id || t('cloudBilling.billing.defaultAccount') }}
+                        </span>
+                        <span
+                          v-if="item.notes"
+                          class="truncate font-medium text-gray-600"
+                        >
+                          {{ item.notes }}
+                        </span>
+                      </div>
                     </div>
                     <span class="font-mono font-semibold" :class="riskTextClass(daysToRisk(item.days_remaining))">
                       {{ item.days_remaining }}{{ t('cloudBilling.billing.overviewDaysShort') }}
@@ -589,6 +606,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import {
   OPERATIONS_CURRENCIES,
+  OPERATIONS_DEFAULT_TIMEZONE,
   OPERATIONS_TIMEZONES
 } from '@/constants/operationsView'
 import {
@@ -663,7 +681,7 @@ const defaultCurrency = ref('CNY')
 const searchQuery = ref('')
 const groupByProvider = ref(true)
 const expandedProviders = ref({})
-const defaultTimezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const defaultTimezone = ref(OPERATIONS_DEFAULT_TIMEZONE)
 const selectedTrendRange = ref('month')
 
 const selectedCurrency = computed({
