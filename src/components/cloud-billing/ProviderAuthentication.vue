@@ -339,6 +339,7 @@ const providerTypes = {
   alibaba: t('cloudBilling.providers.types.alibaba'),
   azure: t('cloudBilling.providers.types.azure'),
   volcengine: t('cloudBilling.providers.types.volcengine'),
+  baidu: t('cloudBilling.providers.types.baidu'),
   zhipu: t('cloudBilling.providers.types.zhipu'),
 }
 

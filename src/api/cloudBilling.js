@@ -66,6 +66,11 @@ export const cloudBillingApi = {
     return response
   },
 
+  async getOverview(params = {}) {
+    const response = await apiClient.get('/v1/cloud-billing/billing-data/overview/', { params })
+    return response
+  },
+
   // Alert Rule APIs
   async getAlertRules(params = {}) {
     const response = await apiClient.get('/v1/cloud-billing/alert-rules/', { params })

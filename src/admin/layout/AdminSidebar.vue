@@ -49,7 +49,7 @@
 
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto flex flex-col">
       <div class="flex-1 space-y-1">
-        <div class="menu-group">
+        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
           <button
             @click="toggleUserManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
@@ -97,11 +97,21 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                 <span>{{ t('management.groupManagement') }}</span>
               </router-link>
+              <router-link
+                to="/management/roles"
+                class="admin-nav-item admin-nav-item-child"
+                :class="isActive('/management/roles') ? 'admin-nav-item-active' : ''"
+                @click="isMobile && $emit('close')"
+                @mouseenter="preloadRoute('/management/roles')"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6l2.09 4.26L19 11l-3.5 3.41L16.18 19 12 16.77 7.82 19l.68-4.59L5 11l4.91-.74L12 6z" /></svg>
+                <span>{{ t('management.roleManagement') }}</span>
+              </router-link>
             </div>
           </Transition>
         </div>
 
-        <div class="menu-group">
+        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
           <button
             @click="toggleLLMMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
@@ -173,7 +183,7 @@
           </Transition>
         </div>
 
-        <div class="menu-group">
+        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
           <button
             @click="toggleTaskManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
@@ -235,7 +245,7 @@
           </Transition>
         </div>
 
-        <div class="menu-group">
+        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
           <button
             @click="toggleNotificationManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
@@ -329,6 +339,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/store/user'
 
 const props = defineProps({
   showMobileMenu: {
@@ -342,6 +353,7 @@ defineEmits(['close'])
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const userManagementMenuOpen = ref(true)
 const llmMenuOpen = ref(true)
@@ -377,7 +389,11 @@ const toggleNotificationManagementMenu = () => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath.startsWith('/management/users') || newPath.startsWith('/management/groups')) userManagementMenuOpen.value = true
+    if (
+      newPath.startsWith('/management/users') ||
+      newPath.startsWith('/management/groups') ||
+      newPath.startsWith('/management/roles')
+    ) userManagementMenuOpen.value = true
     if (newPath.startsWith('/management/llm')) llmMenuOpen.value = true
     if (newPath.startsWith('/management/task-management')) taskManagementMenuOpen.value = true
     if (newPath.startsWith('/management/notifier')) notificationManagementMenuOpen.value = true

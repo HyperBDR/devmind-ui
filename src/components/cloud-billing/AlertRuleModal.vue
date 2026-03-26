@@ -525,7 +525,12 @@ const handleSubmit = async () => {
   const growthThreshold = normalizeThresholdValue(formData.value.growth_threshold)
   const growthAmountThreshold = normalizeThresholdValue(formData.value.growth_amount_threshold)
   const balanceThreshold = normalizeThresholdValue(formData.value.balance_threshold)
-  const hasAnyThreshold = !!(costThreshold || growthThreshold || growthAmountThreshold || balanceThreshold)
+  const hasAnyThreshold = [
+    costThreshold,
+    growthThreshold,
+    growthAmountThreshold,
+    balanceThreshold,
+  ].some((value) => value !== null)
 
   saving.value = true
   try {
@@ -577,10 +582,10 @@ const handleSubmit = async () => {
     const data = {
       provider: providerId,
       is_active: formData.value.is_active,
-      cost_threshold: costThreshold ? parseFloat(costThreshold) : null,
-      growth_threshold: growthThreshold ? parseFloat(growthThreshold) : null,
-      growth_amount_threshold: growthAmountThreshold ? parseFloat(growthAmountThreshold) : null,
-      balance_threshold: balanceThreshold ? parseFloat(balanceThreshold) : null,
+      cost_threshold: costThreshold !== null ? parseFloat(costThreshold) : null,
+      growth_threshold: growthThreshold !== null ? parseFloat(growthThreshold) : null,
+      growth_amount_threshold: growthAmountThreshold !== null ? parseFloat(growthAmountThreshold) : null,
+      balance_threshold: balanceThreshold !== null ? parseFloat(balanceThreshold) : null,
     }
 
     const successMessage = props.alertRule

@@ -28,7 +28,7 @@
     <!-- Logo and close button -->
     <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200">
       <router-link
-        to="/dashboard"
+        :to="homePath"
         class="flex items-center space-x-2 flex-1"
         @click="isMobile && $emit('close')"
       >
@@ -66,6 +66,7 @@
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto flex flex-col">
       <div class="flex-1 space-y-1">
         <router-link
+          v-if="userStore.userHasFeature('workspace')"
           to="/dashboard"
           class="nav-item"
           :class="isActive('/dashboard') ? 'nav-item-active' : ''"
@@ -89,7 +90,7 @@
         </router-link>
 
         <!-- Cloud Billing Menu with Submenu -->
-      <div class="menu-group">
+      <div v-if="userStore.userHasFeature('operations_console')" class="menu-group">
         <button
           @click="toggleCloudBillingMenu"
           class="nav-item nav-item-parent w-full"
@@ -232,7 +233,7 @@
       </div>
 
         <!-- Data Collector Menu with Submenu -->
-      <div class="menu-group">
+      <div v-if="userStore.userHasFeature('operations_console')" class="menu-group">
         <button
           @click="toggleDataCollectorMenu"
           class="nav-item nav-item-parent w-full"
@@ -369,6 +370,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/store/user'
 
 const props = defineProps({
   showMobileMenu: {
@@ -382,6 +384,8 @@ defineEmits(['close'])
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
+const homePath = computed(() => userStore.getUserLandingPath())
 
 // Menu expand/collapse state - default to expanded
 const cloudBillingMenuOpen = ref(true)

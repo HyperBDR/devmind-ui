@@ -13,13 +13,13 @@
         <BaseButton
           variant="outline"
           size="sm"
-          :loading="activeTab === 'statistics' ? statsLoading : detailsLoading"
+          :loading="activeTab === 'statistics' ? statsLoading : activeTab === 'details' ? detailsLoading : false"
           @click="handleRefresh"
           :title="t('common.refresh')"
           class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
         >
           <svg
-            v-if="!(activeTab === 'statistics' ? statsLoading : detailsLoading)"
+            v-if="!(activeTab === 'statistics' ? statsLoading : activeTab === 'details' ? detailsLoading : false)"
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
@@ -164,7 +164,13 @@
                             {{ t('cloudBilling.billing.totalCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.total_cost, statsSummaryCurrency) }}
+                            {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                           </div>
                         </div>
                       </div>
@@ -179,7 +185,13 @@
                             {{ t('cloudBilling.billing.averageCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.average_cost, statsSummaryCurrency) }}
+                            {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                           </div>
                         </div>
                       </div>
@@ -201,6 +213,12 @@
                             class="mt-1 text-xs font-medium text-amber-600"
                           >
                             {{ t('cloudBilling.billing.balanceUnsupported') }}
+                          </div>
+                          <div
+                            v-else-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                           </div>
                         </div>
                       </div>
@@ -235,7 +253,13 @@
                         {{ t('cloudBilling.billing.totalCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.total_cost, statsSummaryCurrency) }}
+                        {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                     <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
@@ -243,7 +267,13 @@
                         {{ t('cloudBilling.billing.averageCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.average_cost, statsSummaryCurrency) }}
+                        {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                     <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
@@ -266,6 +296,12 @@
                         class="mt-1 text-xs font-medium text-amber-600"
                       >
                         {{ t('cloudBilling.billing.balanceUnsupported') }}
+                      </div>
+                      <div
+                        v-else-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                   </div>
@@ -567,10 +603,10 @@ const selectedProviderBalanceUnsupported = computed(() => {
   return rows.length > 0 && rows.every((providerData) => providerData.balance_supported === false)
 })
 
-const statsSummaryCurrency = computed(() => {
+const statsSummaryCurrencies = computed(() => {
   const byProvider = statistics.value?.by_provider
   if (!byProvider) {
-    return 'CNY'
+    return []
   }
 
   const rows = Object.values(byProvider).filter((providerData) => {
@@ -588,18 +624,20 @@ const statsSummaryCurrency = computed(() => {
     )
   )
 
-  if (currencies.length === 1) {
-    return currencies[0]
-  }
-
-  return 'CNY'
+  return currencies
 })
 
+const statsSummaryHasMixedCurrencies = computed(() => statsSummaryCurrencies.value.length > 1)
+
+const statsSummaryCurrency = computed(() => (
+  statsSummaryCurrencies.value.length === 1 ? statsSummaryCurrencies.value[0] : null
+))
+
 const activeTab = ref('statistics')
-const tabs = [
+const tabs = computed(() => [
   { id: 'statistics', label: t('cloudBilling.billing.statistics') },
   { id: 'details', label: t('cloudBilling.billing.details') }
-]
+])
 
 // Statistics tab state
 const statsLoading = ref(false)
@@ -704,10 +742,20 @@ const loadStatistics = async () => {
 }
 
 const formatBalanceSummary = (value, currency = 'CNY') => {
+  if (!currency) {
+    return '--'
+  }
   if (selectedProviderBalanceUnsupported.value) {
     return formatCost(0, currency)
   }
   return formatCost(value ?? 0, currency)
+}
+
+const formatStatsSummaryAmount = (value) => {
+  if (!statsSummaryCurrency.value) {
+    return '--'
+  }
+  return formatCost(value ?? 0, statsSummaryCurrency.value)
 }
 
 const formatBillingBalance = (billing) => {
@@ -928,7 +976,7 @@ const handlePreview = (billing) => {
 watch(activeTab, (newTab) => {
   if (newTab === 'statistics') {
     loadStatistics()
-  } else {
+  } else if (newTab === 'details') {
     loadBillings()
   }
 })

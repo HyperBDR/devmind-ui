@@ -10,20 +10,15 @@
         </p>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div class="p-6">
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
             <span class="text-sm text-gray-600">{{ t('management.totalGroups', { count: totalCount }) }}</span>
             <div class="flex items-center gap-2">
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :loading="loading"
-                @click="fetchGroups"
-              >
+              <BaseButton variant="outline" size="sm" :loading="loading" @click="fetchGroups">
                 {{ t('common.refresh') }}
               </BaseButton>
-              <BaseButton variant="primary" size="sm" @click="showCreateModal = true">
+              <BaseButton variant="primary" size="sm" @click="openCreateModal">
                 {{ t('management.createGroup') }}
               </BaseButton>
             </div>
@@ -31,47 +26,41 @@
 
           <BaseLoading v-if="loading && !groups.length" />
 
-          <div
-            v-else-if="error"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
-          >
+          <div v-else-if="error" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
             <p class="text-sm font-medium text-red-600">{{ error }}</p>
           </div>
 
-          <div
-            v-else-if="!groups.length"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
-          >
+          <div v-else-if="!groups.length" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
             <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
           </div>
 
           <div
             v-else
-            class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            class="relative overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm"
           >
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    ID
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.groupName') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.groupUserCount') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.permissionCount') }}
-                  </th>
+                  <th class="table-head">ID</th>
+                  <th class="table-head">{{ t('management.groupName') }}</th>
+                  <th class="table-head">{{ t('management.groupUserCount') }}</th>
+                  <th class="table-head">{{ t('management.roles') }}</th>
+                  <th class="table-head">{{ t('management.permissionCount') }}</th>
+                  <th class="table-head">{{ t('common.actions') }}</th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-100">
-                <tr v-for="g in groups" :key="g.id" class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-4 py-4 text-sm text-gray-900">{{ g.id }}</td>
-                  <td class="px-4 py-4 text-sm font-medium text-gray-900">{{ g.name }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ g.user_count ?? 0 }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ g.permission_count ?? 0 }}</td>
+              <tbody class="divide-y divide-gray-100 bg-white">
+                <tr v-for="group in groups" :key="group.id" class="transition-colors duration-150 hover:bg-gray-50">
+                  <td class="table-cell text-gray-900">{{ group.id }}</td>
+                  <td class="table-cell font-medium text-gray-900">{{ group.name }}</td>
+                  <td class="table-cell text-gray-500">{{ group.user_count ?? 0 }}</td>
+                  <td class="table-cell text-gray-500">{{ joinNames(group.roles) }}</td>
+                  <td class="table-cell text-gray-500">{{ group.permission_count ?? 0 }}</td>
+                  <td class="table-cell">
+                    <BaseButton variant="outline" size="sm" @click="openEditModal(group)">
+                      {{ t('common.edit') }}
+                    </BaseButton>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -88,7 +77,7 @@
               <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
               <select
                 v-model.number="pageSize"
-                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 @change="currentPage = 1; fetchGroups()"
               >
                 <option :value="10">10</option>
@@ -96,20 +85,10 @@
                 <option :value="50">50</option>
                 <option :value="100">100</option>
               </select>
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage <= 1"
-                @click="currentPage--; fetchGroups()"
-              >
+              <BaseButton variant="outline" size="sm" :disabled="currentPage <= 1" @click="currentPage--; fetchGroups()">
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage >= totalPages"
-                @click="currentPage++; fetchGroups()"
-              >
+              <BaseButton variant="outline" size="sm" :disabled="currentPage >= totalPages" @click="currentPage++; fetchGroups()">
                 {{ t('common.pagination.next') }}
               </BaseButton>
             </div>
@@ -117,25 +96,29 @@
         </div>
       </div>
 
-      <BaseModal :show="showCreateModal" :title="t('management.createGroup')" @close="closeCreateModal">
-        <form @submit.prevent="submitCreateGroup" class="space-y-4">
-          <p v-if="createError" class="text-sm text-red-600">{{ createError }}</p>
+      <BaseModal :show="showModal" :title="modalTitle" @close="closeModal">
+        <form @submit.prevent="submitGroup" class="space-y-4">
+          <p v-if="submitError" class="text-sm text-red-600">{{ submitError }}</p>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('management.groupName') }}</label>
-            <input
-              v-model="createForm.name"
-              type="text"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-              :placeholder="t('management.groupName')"
-            />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.groupName') }}</label>
+            <input v-model="form.name" type="text" class="form-input" />
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectRoles') }}</label>
+            <div class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
+              <label v-for="role in roleOptions" :key="role.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
+                <input v-model="form.role_ids" type="checkbox" :value="role.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                <span class="text-sm text-gray-700">{{ role.name }}</span>
+              </label>
+            </div>
           </div>
         </form>
         <template #footer>
           <div class="flex flex-row-reverse gap-2">
-            <BaseButton variant="primary" :loading="createLoading" @click="submitCreateGroup">
+            <BaseButton variant="primary" :loading="submitLoading" @click="submitGroup">
               {{ t('common.confirm') }}
             </BaseButton>
-            <BaseButton variant="outline" @click="closeCreateModal">
+            <BaseButton variant="outline" @click="closeModal">
               {{ t('common.cancel') }}
             </BaseButton>
           </div>
@@ -146,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AdminLayout from '@/admin/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -155,16 +138,22 @@ import BaseModal from '@/components/ui/BaseModal.vue'
 import { managementApi } from '@/admin/api'
 
 const { t } = useI18n()
+
 const groups = ref([])
 const loading = ref(false)
 const error = ref(null)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const totalCount = ref(0)
-const showCreateModal = ref(false)
-const createLoading = ref(false)
-const createError = ref(null)
-const createForm = ref({ name: '' })
+
+const roleOptions = ref([])
+
+const showModal = ref(false)
+const mode = ref('create')
+const editingGroupId = ref(null)
+const submitLoading = ref(false)
+const submitError = ref(null)
+const form = ref({ name: '', role_ids: [] })
 
 const totalPages = computed(() =>
   totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
@@ -176,32 +165,76 @@ const paginationShowing = computed(() => ({
   total: totalCount.value
 }))
 
-function closeCreateModal() {
-  showCreateModal.value = false
-  createError.value = null
-  createForm.value = { name: '' }
+const modalTitle = computed(() =>
+  mode.value === 'create' ? t('management.createGroup') : t('management.editGroup')
+)
+
+function joinNames(items) {
+  return Array.isArray(items) && items.length ? items.map((item) => item.name).join(', ') : '—'
 }
 
-async function submitCreateGroup() {
-  createError.value = null
-  const name = (createForm.value.name || '').trim()
+function closeModal() {
+  showModal.value = false
+  editingGroupId.value = null
+  submitError.value = null
+  submitLoading.value = false
+  form.value = { name: '', role_ids: [] }
+}
+
+function openCreateModal() {
+  mode.value = 'create'
+  form.value = { name: '', role_ids: [] }
+  showModal.value = true
+}
+
+function openEditModal(group) {
+  mode.value = 'edit'
+  editingGroupId.value = group.id
+  form.value = {
+    name: group.name || '',
+    role_ids: Array.isArray(group.roles) ? group.roles.map((item) => item.id) : []
+  }
+  showModal.value = true
+}
+
+async function loadRoleOptions() {
+  try {
+    const data = await managementApi.getRoles({ page: 1, page_size: 1000 })
+    roleOptions.value = Array.isArray(data) ? data : (data?.results ?? [])
+  } catch {
+    roleOptions.value = []
+  }
+}
+
+async function submitGroup() {
+  submitError.value = null
+  const name = (form.value.name || '').trim()
   if (!name) {
-    createError.value = t('management.groupNameRequired')
+    submitError.value = t('management.groupNameRequired')
     return
   }
-  createLoading.value = true
+
+  submitLoading.value = true
   try {
-    await managementApi.createGroup({ name })
-    closeCreateModal()
+    const payload = {
+      name,
+      role_ids: Array.isArray(form.value.role_ids) ? form.value.role_ids : []
+    }
+    if (mode.value === 'create') {
+      await managementApi.createGroup(payload)
+    } else {
+      await managementApi.updateGroup(editingGroupId.value, payload)
+    }
+    closeModal()
     await fetchGroups()
   } catch (e) {
     if (e?.response?.data?.code === 'name_taken') {
-      createError.value = t('management.groupNameTaken')
+      submitError.value = t('management.groupNameTaken')
     } else {
-      createError.value = e?.response?.data?.detail || e?.message || t('common.error')
+      submitError.value = e?.response?.data?.detail || e?.message || t('common.error')
     }
   } finally {
-    createLoading.value = false
+    submitLoading.value = false
   }
 }
 
@@ -213,13 +246,8 @@ async function fetchGroups() {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    if (Array.isArray(data)) {
-      groups.value = data
-      totalCount.value = data.length
-    } else {
-      groups.value = data?.results ?? []
-      totalCount.value = Number(data?.count ?? groups.value.length)
-    }
+    groups.value = Array.isArray(data) ? data : (data?.results ?? [])
+    totalCount.value = Array.isArray(data) ? data.length : Number(data?.count ?? groups.value.length)
   } catch (e) {
     groups.value = []
     totalCount.value = 0
@@ -229,7 +257,21 @@ async function fetchGroups() {
   }
 }
 
-onMounted(() => {
-  fetchGroups()
+onMounted(async () => {
+  await Promise.all([fetchGroups(), loadRoleOptions()])
 })
 </script>
+
+<style scoped>
+.table-head {
+  @apply border-b border-gray-200 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700;
+}
+
+.table-cell {
+  @apply px-4 py-4 text-sm;
+}
+
+.form-input {
+  @apply w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+}
+</style>

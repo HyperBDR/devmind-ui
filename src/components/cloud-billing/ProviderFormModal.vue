@@ -1573,6 +1573,7 @@ function getChannelOptionLabel(ch) {
 
 const buildConfig = () => {
   const config = {}
+  const existingConfig = props.provider?.config || {}
   if (formData.provider_type === 'aws') {
     if (configFields.aws_access_key_id) {
       config.AWS_ACCESS_KEY_ID = configFields.aws_access_key_id
@@ -1667,6 +1668,18 @@ const buildConfig = () => {
     }
     if (configFields.zhipu_password) {
       config.ZHIPU_PASSWORD = configFields.zhipu_password
+    }
+    const preservedUserType = existingConfig.ZHIPU_USER_TYPE || existingConfig.user_type
+    const preservedTimeout = existingConfig.ZHIPU_TIMEOUT || existingConfig.timeout
+    const preservedMaxRetries = existingConfig.ZHIPU_MAX_RETRIES || existingConfig.max_retries
+    if (preservedUserType) {
+      config.ZHIPU_USER_TYPE = preservedUserType
+    }
+    if (preservedTimeout) {
+      config.ZHIPU_TIMEOUT = preservedTimeout
+    }
+    if (preservedMaxRetries) {
+      config.ZHIPU_MAX_RETRIES = preservedMaxRetries
     }
   }
   const raw = (selectedChannelValue.value || '').trim()

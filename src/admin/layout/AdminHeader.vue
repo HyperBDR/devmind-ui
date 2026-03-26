@@ -17,16 +17,8 @@
         </div>
 
         <div class="flex items-center space-x-4">
-          <router-link
-            to="/dashboard"
-            class="flex items-center gap-1.5 px-2 py-1.5 text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition-colors"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span class="hidden sm:inline">{{ t('management.backToUserPlatform') }}</span>
-          </router-link>
           <LanguageSwitcher variant="dark" />
+          <PlatformSwitcher button-class="border-slate-600 bg-slate-800 text-slate-200 hover:border-indigo-400 hover:text-white" />
           <div class="relative" ref="userMenuRef">
             <button
               @click="toggleUserMenu"
@@ -100,6 +92,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
+import PlatformSwitcher from '@/components/layout/PlatformSwitcher.vue'
 
 defineEmits(['toggle-menu'])
 
@@ -115,6 +108,7 @@ const pageTitle = computed(() => {
   const routeNames = {
     ManagementUsers: t('management.userManagement'),
     ManagementGroups: t('management.groupManagement'),
+    ManagementRoles: t('management.roleManagement'),
     LLMStats: t('llm.stats.title'),
     LLMUsage: t('llm.usage.title'),
     LLMConfig: t('llm.config.title'),

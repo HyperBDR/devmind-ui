@@ -10,24 +10,15 @@
         </p>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div class="p-6">
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
             <span class="text-sm text-gray-600">{{ t('management.totalUsers', { count: totalCount }) }}</span>
             <div class="flex items-center gap-2">
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :loading="loading"
-                @click="fetchUsers"
-              >
+              <BaseButton variant="outline" size="sm" :loading="loading" @click="fetchUsers">
                 {{ t('common.refresh') }}
               </BaseButton>
-              <BaseButton
-                variant="primary"
-                size="sm"
-                @click="showCreateModal = true; loadGroupOptions()"
-              >
+              <BaseButton variant="primary" size="sm" @click="openCreateModal">
                 {{ t('management.createUser') }}
               </BaseButton>
             </div>
@@ -37,77 +28,64 @@
 
           <div
             v-else-if="error"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
           >
             <p class="text-sm font-medium text-red-600">{{ error }}</p>
           </div>
 
           <div
             v-else-if="!users.length"
-            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
           >
             <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
           </div>
 
           <div
             v-else
-            class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            class="relative overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm"
           >
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    ID
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('dashboard.username') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.displayName') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('dashboard.email') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('dashboard.isStaff') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.isActive') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.language') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.timezone') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.groups') }}
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                    {{ t('management.dateJoined') }}
-                  </th>
+                  <th class="table-head">ID</th>
+                  <th class="table-head">{{ t('dashboard.username') }}</th>
+                  <th class="table-head">{{ t('dashboard.email') }}</th>
+                  <th class="table-head">{{ t('management.groups') }}</th>
+                  <th class="table-head">{{ t('management.roles') }}</th>
+                  <th class="table-head">{{ t('management.defaultPlatform') }}</th>
+                  <th class="table-head">{{ t('dashboard.isStaff') }}</th>
+                  <th class="table-head">{{ t('management.isActive') }}</th>
+                  <th class="table-head">{{ t('management.dateJoined') }}</th>
+                  <th class="table-head">{{ t('common.actions') }}</th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-100">
-                <tr v-for="u in users" :key="u.id" class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-4 py-4 text-sm text-gray-900">{{ u.id }}</td>
-                  <td class="px-4 py-4 text-sm font-medium text-gray-900">{{ u.username }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ u.display_name || '—' }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ u.email || '—' }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">
-                    <span v-if="u.is_staff" class="text-indigo-600">{{ t('common.yes') }}</span>
-                    <span v-else class="text-gray-400">{{ t('common.no') }}</span>
+              <tbody class="divide-y divide-gray-100 bg-white">
+                <tr v-for="user in users" :key="user.id" class="transition-colors duration-150 hover:bg-gray-50">
+                  <td class="table-cell text-gray-900">{{ user.id }}</td>
+                  <td class="table-cell">
+                    <div class="font-medium text-gray-900">{{ user.username }}</div>
+                    <div class="text-xs text-gray-500">{{ user.display_name || '—' }}</div>
                   </td>
-                  <td class="px-4 py-4 text-sm text-gray-500">
-                    <span v-if="u.is_active !== false" class="text-green-600">{{ t('common.yes') }}</span>
-                    <span v-else class="text-gray-400">{{ t('common.no') }}</span>
+                  <td class="table-cell text-gray-500">{{ user.email || '—' }}</td>
+                  <td class="table-cell text-gray-500">{{ joinNames(user.groups) }}</td>
+                  <td class="table-cell text-gray-500">{{ joinNames(user.effective_roles || user.roles) }}</td>
+                  <td class="table-cell text-gray-500">{{ formatPlatform(user.preferred_platform || user.access_profile?.preferred_platform) }}</td>
+                  <td class="table-cell">
+                    <span :class="user.is_staff ? 'text-indigo-600' : 'text-gray-400'">
+                      {{ user.is_staff ? t('common.yes') : t('common.no') }}
+                    </span>
                   </td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ u.language || '—' }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ u.timezone || '—' }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-500">
-                    {{ (u.groups && u.groups.length) ? u.groups.map(g => g.name).join(', ') : '—' }}
+                  <td class="table-cell">
+                    <span :class="user.is_active !== false ? 'text-green-600' : 'text-gray-400'">
+                      {{ user.is_active !== false ? t('common.yes') : t('common.no') }}
+                    </span>
                   </td>
-                  <td class="px-4 py-4 text-sm text-gray-500">{{ formatDate(u.date_joined) }}</td>
+                  <td class="table-cell text-gray-500">{{ formatDate(user.date_joined) }}</td>
+                  <td class="table-cell">
+                    <BaseButton variant="outline" size="sm" @click="openEditModal(user)">
+                      {{ t('common.edit') }}
+                    </BaseButton>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -124,7 +102,7 @@
               <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
               <select
                 v-model.number="pageSize"
-                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 @change="currentPage = 1; fetchUsers()"
               >
                 <option :value="10">10</option>
@@ -132,20 +110,10 @@
                 <option :value="50">50</option>
                 <option :value="100">100</option>
               </select>
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage <= 1"
-                @click="currentPage--; fetchUsers()"
-              >
+              <BaseButton variant="outline" size="sm" :disabled="currentPage <= 1" @click="currentPage--; fetchUsers()">
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage >= totalPages"
-                @click="currentPage++; fetchUsers()"
-              >
+              <BaseButton variant="outline" size="sm" :disabled="currentPage >= totalPages" @click="currentPage++; fetchUsers()">
                 {{ t('common.pagination.next') }}
               </BaseButton>
             </div>
@@ -153,114 +121,69 @@
         </div>
       </div>
 
-      <BaseModal :show="showCreateModal" :title="t('management.createUser')" @close="closeCreateModal">
-        <form @submit.prevent="submitCreateUser" class="space-y-4">
-          <p v-if="createError" class="text-sm text-red-600">{{ createError }}</p>
+      <BaseModal :show="showModal" :title="modalTitle" @close="closeModal">
+        <form @submit.prevent="submitUser" class="space-y-4">
+          <p v-if="submitError" class="text-sm text-red-600">{{ submitError }}</p>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('dashboard.username') }}</label>
-            <input
-              v-model="createForm.username"
-              type="text"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-              :placeholder="t('dashboard.username')"
-            />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('dashboard.username') }}</label>
+            <input v-model="form.username" type="text" class="form-input" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('dashboard.email') }}</label>
-            <input
-              v-model="createForm.email"
-              type="email"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-              :placeholder="t('dashboard.email')"
-            />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('dashboard.email') }}</label>
+            <input v-model="form.email" type="email" class="form-input" />
+          </div>
+          <div v-if="mode === 'create'">
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('password.reset.newPassword') }}</label>
+            <input v-model="form.password" type="password" class="form-input" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('password.reset.newPassword') }}</label>
-            <div class="relative">
-              <input
-                v-model="createForm.password"
-                :type="showPassword ? 'text' : 'password'"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                :placeholder="t('password.reset.newPasswordPlaceholder')"
-              />
-              <button
-                type="button"
-                class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                :aria-label="showPassword ? t('common.hidePassword') : t('common.showPassword')"
-                @click="showPassword = !showPassword"
-              >
-                <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                </svg>
-                <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('management.language') }}</label>
-            <select
-              v-model="createForm.language"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white"
-            >
-              <option value="zh-CN">简体中文</option>
-              <option value="en-US">English</option>
-              <option value="es">Español</option>
-              <option value="ja-JP">日本語</option>
-              <option value="ko-KR">한국어</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('management.timezone') }}</label>
-            <select
-              v-model="createForm.timezone"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white"
-            >
-              <option value="Asia/Shanghai">Asia/Shanghai</option>
-              <option value="UTC">UTC</option>
-              <option value="America/New_York">America/New_York</option>
-              <option value="Europe/London">Europe/London</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('management.selectGroups') }}</label>
-            <div class="max-h-32 overflow-y-auto rounded-md border border-gray-300 bg-white p-2 space-y-2">
-              <label
-                v-for="g in groupOptions"
-                :key="g.id"
-                class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-2 py-1"
-              >
-                <input
-                  v-model="createForm.group_ids"
-                  type="checkbox"
-                  :value="g.id"
-                  class="h-4 w-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                />
-                <span class="text-sm text-gray-700">{{ g.name }}</span>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectGroups') }}</label>
+            <div class="max-h-32 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
+              <label v-for="group in groupOptions" :key="group.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
+                <input v-model="form.group_ids" type="checkbox" :value="group.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                <span class="text-sm text-gray-700">{{ group.name }}</span>
               </label>
-              <p v-if="!groupOptions.length" class="text-sm text-gray-500 py-1">{{ t('common.noData') }}</p>
             </div>
           </div>
-          <div class="flex items-center gap-3 py-1">
-            <input
-              v-model="createForm.is_staff"
-              type="checkbox"
-              id="create-user-is-staff"
-              class="h-4 w-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-            />
-            <label for="create-user-is-staff" class="text-sm font-medium text-gray-700 cursor-pointer">
-              {{ t('dashboard.isStaff') }} ({{ t('management.adminConsole') }})
-            </label>
+          <div>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectRoles') }}</label>
+            <div class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
+              <label v-for="role in roleOptions" :key="role.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
+                <input v-model="form.role_ids" type="checkbox" :value="role.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                <span class="text-sm text-gray-700">{{ role.name }}</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.defaultPlatform') }}</label>
+            <select v-model="form.preferred_platform" class="form-input bg-white">
+              <option value="">{{ t('management.followRolePreference') }}</option>
+              <option v-for="platform in platformOptions" :key="platform.key" :value="platform.key">
+                {{ platform.label }}
+              </option>
+            </select>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="flex items-center gap-3">
+              <input v-model="form.is_staff" type="checkbox" id="user-is-staff" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+              <label for="user-is-staff" class="cursor-pointer text-sm font-medium text-gray-700">
+                {{ t('dashboard.isStaff') }}
+              </label>
+            </div>
+            <div class="flex items-center gap-3">
+              <input v-model="form.is_active" type="checkbox" id="user-is-active" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+              <label for="user-is-active" class="cursor-pointer text-sm font-medium text-gray-700">
+                {{ t('management.isActive') }}
+              </label>
+            </div>
           </div>
         </form>
         <template #footer>
           <div class="flex flex-row-reverse gap-2">
-            <BaseButton variant="primary" :loading="createLoading" @click="submitCreateUser">
+            <BaseButton variant="primary" :loading="submitLoading" @click="submitUser">
               {{ t('common.confirm') }}
             </BaseButton>
-            <BaseButton variant="outline" @click="closeCreateModal">
+            <BaseButton variant="outline" @click="closeModal">
               {{ t('common.cancel') }}
             </BaseButton>
           </div>
@@ -271,35 +194,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AdminLayout from '@/admin/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { managementApi } from '@/admin/api'
+import { FEATURE_DEFINITIONS } from '@/utils/platformAccess'
 
 const { t } = useI18n()
+
 const users = ref([])
 const loading = ref(false)
 const error = ref(null)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const totalCount = ref(0)
-const showCreateModal = ref(false)
-const createLoading = ref(false)
-const createError = ref(null)
-const showPassword = ref(false)
+
+const showModal = ref(false)
+const mode = ref('create')
+const editingUserId = ref(null)
+const submitLoading = ref(false)
+const submitError = ref(null)
+
 const groupOptions = ref([])
-const createForm = ref({
+const roleOptions = ref([])
+
+const createEmptyForm = () => ({
   username: '',
   email: '',
   password: '',
   is_staff: false,
+  is_active: true,
   group_ids: [],
-  language: 'zh-CN',
-  timezone: 'Asia/Shanghai'
+  role_ids: [],
+  preferred_platform: ''
 })
+
+const form = ref(createEmptyForm())
 
 const totalPages = computed(() =>
   totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
@@ -311,76 +244,121 @@ const paginationShowing = computed(() => ({
   total: totalCount.value
 }))
 
-function closeCreateModal() {
-  showCreateModal.value = false
-  showPassword.value = false
-  createError.value = null
-  createForm.value = {
-    username: '',
-    email: '',
-    password: '',
-    is_staff: false,
-    group_ids: [],
-    language: 'zh-CN',
-    timezone: 'Asia/Shanghai'
-  }
-}
+const modalTitle = computed(() =>
+  mode.value === 'create' ? t('management.createUser') : t('management.editUser')
+)
 
-async function loadGroupOptions() {
-  try {
-    const data = await managementApi.getGroups({ page: 1, page_size: 1000 })
-    groupOptions.value = Array.isArray(data) ? data : (data?.results ?? [])
-  } catch {
-    groupOptions.value = []
-  }
-}
+const platformOptions = computed(() =>
+  FEATURE_DEFINITIONS.map((item) => ({
+    key: item.key,
+    label: t(item.labelKey)
+  }))
+)
 
-async function submitCreateUser() {
-  createError.value = null
-  const username = (createForm.value.username || '').trim()
-  const password = (createForm.value.password || '').trim()
-  if (!username) {
-    createError.value = t('management.usernameRequired')
-    return
-  }
-  if (!password) {
-    createError.value = t('management.passwordRequired')
-    return
-  }
-  createLoading.value = true
-  try {
-    await managementApi.createUser({
-      username,
-      email: (createForm.value.email || '').trim(),
-      password,
-      is_staff: createForm.value.is_staff,
-      group_ids: Array.isArray(createForm.value.group_ids) ? createForm.value.group_ids : [],
-      language: (createForm.value.language || '').trim() || 'zh-CN',
-      timezone: (createForm.value.timezone || '').trim() || 'Asia/Shanghai'
-    })
-    closeCreateModal()
-    await fetchUsers()
-  } catch (e) {
-    const detail = e?.response?.data?.detail
-    if (e?.response?.data?.code === 'username_taken') {
-      createError.value = t('management.usernameTaken')
-    } else if (e?.response?.data?.code === 'email_taken') {
-      createError.value = t('management.emailTaken')
-    } else {
-      createError.value = typeof detail === 'string' ? detail : t('common.error')
-    }
-  } finally {
-    createLoading.value = false
-  }
+function joinNames(items) {
+  return Array.isArray(items) && items.length ? items.map((item) => item.name).join(', ') : '—'
 }
 
 function formatDate(value) {
   if (!value) return '—'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+}
+
+function formatPlatform(value) {
+  const match = platformOptions.value.find((item) => item.key === value)
+  return match?.label || '—'
+}
+
+function closeModal() {
+  showModal.value = false
+  submitError.value = null
+  submitLoading.value = false
+  editingUserId.value = null
+  form.value = createEmptyForm()
+}
+
+function openCreateModal() {
+  mode.value = 'create'
+  form.value = createEmptyForm()
+  showModal.value = true
+}
+
+function openEditModal(user) {
+  mode.value = 'edit'
+  editingUserId.value = user.id
+  form.value = {
+    username: user.username || '',
+    email: user.email || '',
+    password: '',
+    is_staff: !!user.is_staff,
+    is_active: user.is_active !== false,
+    group_ids: Array.isArray(user.groups) ? user.groups.map((item) => item.id) : [],
+    role_ids: Array.isArray(user.roles) ? user.roles.map((item) => item.id) : [],
+    preferred_platform: user.preferred_platform || ''
+  }
+  showModal.value = true
+}
+
+async function loadOptions() {
   try {
-    const d = new Date(value)
-    return Number.isNaN(d.getTime()) ? value : d.toLocaleString()
+    const [groupsData, rolesData] = await Promise.all([
+      managementApi.getGroups({ page: 1, page_size: 1000 }),
+      managementApi.getRoles({ page: 1, page_size: 1000 })
+    ])
+    groupOptions.value = Array.isArray(groupsData) ? groupsData : (groupsData?.results ?? [])
+    roleOptions.value = Array.isArray(rolesData) ? rolesData : (rolesData?.results ?? [])
   } catch {
-    return value
+    groupOptions.value = []
+    roleOptions.value = []
+  }
+}
+
+async function submitUser() {
+  submitError.value = null
+  const payload = {
+    username: (form.value.username || '').trim(),
+    email: (form.value.email || '').trim(),
+    is_staff: !!form.value.is_staff,
+    is_active: !!form.value.is_active,
+    group_ids: Array.isArray(form.value.group_ids) ? form.value.group_ids : [],
+    role_ids: Array.isArray(form.value.role_ids) ? form.value.role_ids : [],
+    preferred_platform: form.value.preferred_platform || ''
+  }
+
+  if (!payload.username) {
+    submitError.value = t('management.usernameRequired')
+    return
+  }
+
+  if (mode.value === 'create') {
+    payload.password = (form.value.password || '').trim()
+    if (!payload.password) {
+      submitError.value = t('management.passwordRequired')
+      return
+    }
+  }
+
+  submitLoading.value = true
+  try {
+    if (mode.value === 'create') {
+      await managementApi.createUser(payload)
+    } else {
+      await managementApi.updateUser(editingUserId.value, payload)
+    }
+    closeModal()
+    await fetchUsers()
+  } catch (e) {
+    const detail = e?.response?.data?.detail
+    if (e?.response?.data?.code === 'username_taken') {
+      submitError.value = t('management.usernameTaken')
+    } else if (e?.response?.data?.code === 'email_taken') {
+      submitError.value = t('management.emailTaken')
+    } else {
+      submitError.value = typeof detail === 'string' ? detail : t('common.error')
+    }
+  } finally {
+    submitLoading.value = false
   }
 }
 
@@ -392,13 +370,8 @@ async function fetchUsers() {
       page: currentPage.value,
       page_size: pageSize.value
     })
-    if (Array.isArray(data)) {
-      users.value = data
-      totalCount.value = data.length
-    } else {
-      users.value = data?.results ?? []
-      totalCount.value = Number(data?.count ?? users.value.length)
-    }
+    users.value = Array.isArray(data) ? data : (data?.results ?? [])
+    totalCount.value = Array.isArray(data) ? data.length : Number(data?.count ?? users.value.length)
   } catch (e) {
     users.value = []
     totalCount.value = 0
@@ -408,7 +381,21 @@ async function fetchUsers() {
   }
 }
 
-onMounted(() => {
-  fetchUsers()
+onMounted(async () => {
+  await Promise.all([fetchUsers(), loadOptions()])
 })
 </script>
+
+<style scoped>
+.table-head {
+  @apply border-b border-gray-200 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700;
+}
+
+.table-cell {
+  @apply px-4 py-4 text-sm;
+}
+
+.form-input {
+  @apply w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+}
+</style>
