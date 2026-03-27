@@ -132,6 +132,22 @@
                   {{ alert.increase_percent }}%
                 </dd>
               </div>
+              <div v-if="alert.current_balance !== null && alert.current_balance !== undefined">
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('cloudBilling.alerts.currentBalance') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ formatCurrency(alert.current_balance, alert.currency) }}
+                </dd>
+              </div>
+              <div v-if="alert.balance_threshold !== null && alert.balance_threshold !== undefined">
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('cloudBilling.alerts.balanceThreshold') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ formatCurrency(alert.balance_threshold, alert.currency) }}
+                </dd>
+              </div>
             </dl>
           </div>
 

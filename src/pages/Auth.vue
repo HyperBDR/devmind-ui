@@ -151,7 +151,7 @@ const handleLogin = async () => {
     // Wait for navigation to complete before clearing loading
     // If navigation succeeds, component will unmount, so loading will be cleared automatically
     try {
-      await router.push('/dashboard')
+      await router.push(userStore.getUserLandingPath())
     } catch (navigationError) {
       // Navigation failed (e.g., route doesn't exist), clear loading
       console.error('Navigation error:', navigationError)

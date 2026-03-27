@@ -18,7 +18,10 @@
 
       <!-- Pillars: full width, two equal cards -->
       <section class="w-full mb-6" aria-label="Product pillars">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          class="grid gap-6"
+          :class="userStore.userHasFeature('operations_console') ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'"
+        >
           <div class="bg-white border border-gray-200 rounded-xl p-6 sm:p-8 shadow-sm">
             <h2 class="text-lg font-semibold text-gray-900 mb-2">
               {{ t('dashboard.overview.pillarRnd') }}
@@ -27,7 +30,10 @@
               {{ t('dashboard.overview.pillarRndDesc') }}
             </p>
           </div>
-          <div class="bg-white border border-gray-200 rounded-xl p-6 sm:p-8 shadow-sm">
+          <div
+            v-if="userStore.userHasFeature('operations_console')"
+            class="bg-white border border-gray-200 rounded-xl p-6 sm:p-8 shadow-sm"
+          >
             <h2 class="text-lg font-semibold text-gray-900 mb-2">
               {{ t('dashboard.overview.pillarOps') }}
             </h2>
@@ -88,8 +94,12 @@
         <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
           {{ t('dashboard.overview.modulesTitle') }}
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          class="grid grid-cols-1 gap-6 sm:grid-cols-2"
+          :class="userStore.userHasFeature('operations_console') ? 'lg:grid-cols-4' : 'lg:grid-cols-3'"
+        >
           <router-link
+            v-if="userStore.userHasFeature('operations_console')"
             :to="{ name: 'CloudBillingBilling' }"
             class="flex flex-col bg-white border border-gray-200 rounded-xl p-6 border-l-4 border-l-primary-500 hover:border-gray-300 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
@@ -129,6 +139,8 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import { useUserStore } from '@/store/user'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 </script>

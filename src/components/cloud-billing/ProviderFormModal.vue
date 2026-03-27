@@ -38,6 +38,8 @@
               <option value="alibaba">{{ t('cloudBilling.providers.types.alibaba') }}</option>
               <option value="azure">{{ t('cloudBilling.providers.types.azure') }}</option>
               <option value="volcengine">{{ t('cloudBilling.providers.types.volcengine') }}</option>
+              <option value="baidu">{{ t('cloudBilling.providers.types.baidu') }}</option>
+              <option value="zhipu">{{ t('cloudBilling.providers.types.zhipu') }}</option>
             </select>
           </div>
         </div>
@@ -63,6 +65,112 @@
               :placeholder="t('cloudBilling.providers.notesPlaceholder')"
               class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             ></textarea>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="providerTagInput"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.providers.tags') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.providers.tagsDesc') }}
+            </p>
+          </div>
+          <div ref="tagDropdownRef" class="md:col-span-2 space-y-3">
+            <div v-if="formData.tags.length" class="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <span
+                v-for="tag in formData.tags"
+                :key="`selected-${tag}`"
+                class="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-white px-3 py-1 text-xs font-medium text-primary-700 shadow-sm"
+              >
+                {{ tag }}
+                <button
+                  type="button"
+                  class="rounded-full text-primary-400 transition-colors hover:text-primary-700"
+                  @click="removeTag(tag)"
+                >
+                  <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            </div>
+
+            <div class="relative">
+              <div class="flex items-center gap-2">
+                <div
+                  class="flex min-h-[40px] min-w-0 flex-1 items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
+                  @click="openTagDropdown"
+                >
+                  <input
+                    id="providerTagInput"
+                    v-model="tagInput"
+                    type="text"
+                    :placeholder="t('cloudBilling.providers.tagsPlaceholder')"
+                    class="w-full min-w-0 border-0 bg-transparent p-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                    @focus="openTagDropdown"
+                    @keydown.enter.prevent="handleTagEnter"
+                  >
+                  <button
+                    type="button"
+                    class="shrink-0 text-gray-400 transition-colors hover:text-gray-600"
+                    @click.stop="tagDropdownOpen = !tagDropdownOpen"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+                <BaseButton
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  class="shrink-0 px-4"
+                  @click="addTag()"
+                >
+                  {{ t('common.add') }}
+                </BaseButton>
+              </div>
+
+              <div
+                v-if="tagDropdownOpen"
+                class="absolute z-20 mt-2 w-full rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+              >
+                <div
+                  v-if="filteredAvailableTags.length"
+                  class="max-h-48 space-y-1 overflow-y-auto"
+                >
+                  <button
+                    v-for="tag in filteredAvailableTags"
+                    :key="`available-${tag}`"
+                    type="button"
+                    class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors"
+                    :class="formData.tags.includes(tag)
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-gray-700 hover:bg-gray-50'"
+                    @click="toggleTag(tag)"
+                  >
+                    <span>{{ tag }}</span>
+                    <svg
+                      v-if="formData.tags.includes(tag)"
+                      class="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+                </div>
+                <div v-else class="px-3 py-2 text-sm text-gray-400">
+                  {{ t('cloudBilling.providers.tagsEmpty') }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -426,6 +534,29 @@
               />
             </div>
           </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="azureBillingAccountId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.azureBillingAccountId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.azureBillingAccountIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="azureBillingAccountId"
+                v-model="configFields.azure_billing_account_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.azureBillingAccountIdPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
         </template>
 
         <!-- Alibaba Configuration -->
@@ -668,6 +799,109 @@
               />
             </div>
           </div>
+        </template>
+
+        <!-- Baidu Configuration -->
+        <template v-if="formData.provider_type === 'baidu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduAccessKeyId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduAccessKeyId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduAccessKeyIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduAccessKeyId"
+                v-model="configFields.baidu_access_key_id"
+                type="text"
+                :placeholder="t('cloudBilling.providers.baiduAccessKeyIdPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduSecretAccessKey"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduSecretAccessKey') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduSecretAccessKeyDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduSecretAccessKey"
+                v-model="configFields.baidu_secret_access_key"
+                type="password"
+                :placeholder="t('cloudBilling.providers.baiduSecretAccessKeyPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+        </template>
+
+        <template v-if="formData.provider_type === 'zhipu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuUsername"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuUsername') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuUsernameDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuUsername"
+                v-model="configFields.zhipu_username"
+                type="text"
+                :placeholder="t('cloudBilling.providers.zhipuUsernamePlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuPassword"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuPassword') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuPasswordDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuPassword"
+                v-model="configFields.zhipu_password"
+                type="password"
+                :placeholder="t('cloudBilling.providers.zhipuPasswordPlaceholder')"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
         </template>
       </div>
 
@@ -970,10 +1204,11 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, watch, reactive, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData } from '@/utils/api'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 import { cloudBillingApi } from '@/api/cloudBilling'
 import { notificationsAdminApi } from '@/admin/api'
 import BaseModal from '@/components/ui/BaseModal.vue'
@@ -988,6 +1223,10 @@ const props = defineProps({
   provider: {
     type: Object,
     default: null
+  },
+  providerOptions: {
+    type: Array,
+    default: () => []
   },
   showAlertRule: {
     type: Boolean,
@@ -1011,8 +1250,12 @@ const formData = reactive({
   provider_type: 'aws',
   display_name: '',
   notes: '',
+  tags: [],
   is_active: true,
 })
+const tagInput = ref('')
+const tagDropdownOpen = ref(false)
+const tagDropdownRef = ref(null)
 
 // Auto-generate name based on provider_type and display_name
 const generateName = (providerType, displayName) => {
@@ -1043,6 +1286,7 @@ const configFields = reactive({
   azure_client_secret: '',
   azure_tenant_id: '',
   azure_subscription_id: '',
+  azure_billing_account_id: '',
   alibaba_access_key_id: '',
   alibaba_secret_access_key: '',
   alibaba_region: '',
@@ -1056,6 +1300,10 @@ const configFields = reactive({
   volcengine_payer_id: '',
   volcengine_service: '',
   volcengine_version: '',
+  baidu_access_key_id: '',
+  baidu_secret_access_key: '',
+  zhipu_username: '',
+  zhipu_password: '',
 })
 
 const alertRuleData = reactive({
@@ -1071,6 +1319,87 @@ const channelsLoading = ref(false)
 const selectedChannelValue = ref('')
 const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
+const availableTags = computed(() => {
+  const tagSet = new Set()
+  ;(props.providerOptions || []).forEach((provider) => {
+    ;(provider?.tags || []).forEach((tag) => {
+      const normalized = String(tag || '').trim()
+      if (normalized) {
+        tagSet.add(normalized)
+      }
+    })
+  })
+  formData.tags.forEach((tag) => {
+    const normalized = String(tag || '').trim()
+    if (normalized) {
+      tagSet.add(normalized)
+    }
+  })
+  return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
+})
+
+const normalizeTag = (value) => String(value || '').trim()
+
+const filteredAvailableTags = computed(() => {
+  const keyword = normalizeTag(tagInput.value).toLowerCase()
+  if (!keyword) {
+    return availableTags.value
+  }
+  return availableTags.value.filter((tag) =>
+    String(tag || '').toLowerCase().includes(keyword)
+  )
+})
+
+const toggleTag = (value) => {
+  const tag = normalizeTag(value)
+  if (!tag) {
+    return
+  }
+  if (formData.tags.includes(tag)) {
+    formData.tags = formData.tags.filter((item) => item !== tag)
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagDropdownOpen.value = true
+}
+
+const addTag = (value = tagInput.value) => {
+  const tag = normalizeTag(value)
+  if (!tag || formData.tags.includes(tag)) {
+    tagInput.value = ''
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagInput.value = ''
+  tagDropdownOpen.value = true
+}
+
+const removeTag = (value) => {
+  const tag = normalizeTag(value)
+  formData.tags = formData.tags.filter((item) => item !== tag)
+}
+
+const openTagDropdown = () => {
+  tagDropdownOpen.value = true
+}
+
+const handleTagEnter = () => {
+  const exactMatch = availableTags.value.find(
+    (tag) => tag.toLowerCase() === normalizeTag(tagInput.value).toLowerCase()
+  )
+  if (exactMatch) {
+    toggleTag(exactMatch)
+    tagInput.value = ''
+    return
+  }
+  addTag()
+}
+
+const handleClickOutside = (event) => {
+  if (tagDropdownRef.value && !tagDropdownRef.value.contains(event.target)) {
+    tagDropdownOpen.value = false
+  }
+}
 
 const scrollToValidationErrors = async () => {
   await nextTick()
@@ -1091,7 +1420,9 @@ watch(() => formData.provider_type, (type) => {
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
+      'volcengine': t('cloudBilling.providers.types.volcengine'),
+      'baidu': t('cloudBilling.providers.types.baidu'),
+      'zhipu': t('cloudBilling.providers.types.zhipu')
     }
     formData.display_name = typeLabels[type] || type
     formData.name = generateName(type, formData.display_name)
@@ -1114,6 +1445,7 @@ watch(() => [
   configFields.azure_client_secret,
   configFields.azure_tenant_id,
   configFields.azure_subscription_id,
+  configFields.azure_billing_account_id,
   configFields.alibaba_access_key_id,
   configFields.alibaba_secret_access_key,
   configFields.alibaba_region,
@@ -1127,6 +1459,10 @@ watch(() => [
   configFields.volcengine_payer_id,
   configFields.volcengine_service,
   configFields.volcengine_version,
+  configFields.baidu_access_key_id,
+  configFields.baidu_secret_access_key,
+  configFields.zhipu_username,
+  configFields.zhipu_password,
 ], () => {
   if (!props.provider) {
     isValidated.value = false
@@ -1139,9 +1475,12 @@ watch(() => props.provider, async (newProvider) => {
   if (newProvider) {
     formData.name = newProvider.name || ''
     formData.provider_type = newProvider.provider_type || 'aws'
-    formData.display_name = newProvider.display_name || newProvider.provider_type || 'aws'
+    formData.display_name = getLocalizedProviderDisplayName(newProvider, t) || newProvider.provider_type || 'aws'
     formData.notes = newProvider.notes || ''
+    formData.tags = Array.isArray(newProvider.tags) ? [...newProvider.tags] : []
     formData.is_active = newProvider.is_active ?? true
+    tagInput.value = ''
+    tagDropdownOpen.value = false
 
     const config = newProvider.config || {}
     const notification = config.notification
@@ -1176,6 +1515,7 @@ watch(() => props.provider, async (newProvider) => {
       configFields.azure_client_secret = config.AZURE_CLIENT_SECRET || ''
       configFields.azure_tenant_id = config.AZURE_TENANT_ID || ''
       configFields.azure_subscription_id = config.AZURE_SUBSCRIPTION_ID || ''
+      configFields.azure_billing_account_id = config.AZURE_BILLING_ACCOUNT_ID || ''
     } else if (newProvider.provider_type === 'alibaba') {
       configFields.alibaba_access_key_id = config.ALIBABA_ACCESS_KEY_ID || ''
       configFields.alibaba_secret_access_key = config.ALIBABA_SECRET_ACCESS_KEY || ''
@@ -1192,6 +1532,12 @@ watch(() => props.provider, async (newProvider) => {
       configFields.volcengine_payer_id = config.payer_id || config.VOLCENGINE_PAYER_ID || ''
       configFields.volcengine_service = config.service || config.VOLCENGINE_SERVICE || ''
       configFields.volcengine_version = config.version || config.VOLCENGINE_VERSION || ''
+    } else if (newProvider.provider_type === 'baidu') {
+      configFields.baidu_access_key_id = config.api_key || config.BAIDU_ACCESS_KEY_ID || ''
+      configFields.baidu_secret_access_key = config.api_secret || config.BAIDU_SECRET_ACCESS_KEY || ''
+    } else if (newProvider.provider_type === 'zhipu') {
+      configFields.zhipu_username = config.username || config.ZHIPU_USERNAME || ''
+      configFields.zhipu_password = config.password || config.ZHIPU_PASSWORD || ''
     }
 
     // Load alert rule if exists and showAlertRule is true
@@ -1234,13 +1580,16 @@ watch(() => props.provider, async (newProvider) => {
       'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
       'alibaba': t('cloudBilling.providers.types.alibaba'),
       'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
+      'volcengine': t('cloudBilling.providers.types.volcengine'),
+      'baidu': t('cloudBilling.providers.types.baidu'),
+      'zhipu': t('cloudBilling.providers.types.zhipu')
     }
     Object.assign(formData, {
       name: '',
       provider_type: 'aws',
       display_name: typeLabels['aws'] || 'aws',
       notes: '',
+      tags: [],
       is_active: true,
     })
     Object.assign(configFields, {
@@ -1254,6 +1603,7 @@ watch(() => props.provider, async (newProvider) => {
       azure_client_secret: '',
       azure_tenant_id: '',
       azure_subscription_id: '',
+      azure_billing_account_id: '',
       alibaba_access_key_id: '',
       alibaba_secret_access_key: '',
       alibaba_region: '',
@@ -1267,6 +1617,10 @@ watch(() => props.provider, async (newProvider) => {
       volcengine_payer_id: '',
       volcengine_service: '',
       volcengine_version: '',
+      baidu_access_key_id: '',
+      baidu_secret_access_key: '',
+      zhipu_username: '',
+      zhipu_password: '',
     })
     existingAlertRuleId.value = null
     alertRuleData.is_active = false
@@ -1276,6 +1630,8 @@ watch(() => props.provider, async (newProvider) => {
     selectedChannelValue.value = ''
     pendingChannelUuid.value = ''
     emailToRecipients.value = ['', '', '']
+    tagInput.value = ''
+    tagDropdownOpen.value = false
   }
 }, { immediate: true })
 
@@ -1394,6 +1750,11 @@ onMounted(() => {
   if (props.show) {
     loadChannels()
   }
+  document.addEventListener('pointerdown', handleClickOutside, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleClickOutside, true)
 })
 
 function getChannelOptionLabel(ch) {
@@ -1419,6 +1780,7 @@ function getChannelOptionLabel(ch) {
 
 const buildConfig = () => {
   const config = {}
+  const existingConfig = props.provider?.config || {}
   if (formData.provider_type === 'aws') {
     if (configFields.aws_access_key_id) {
       config.AWS_ACCESS_KEY_ID = configFields.aws_access_key_id
@@ -1454,6 +1816,9 @@ const buildConfig = () => {
     }
     if (configFields.azure_subscription_id) {
       config.AZURE_SUBSCRIPTION_ID = configFields.azure_subscription_id
+    }
+    if (configFields.azure_billing_account_id) {
+      config.AZURE_BILLING_ACCOUNT_ID = configFields.azure_billing_account_id
     }
   } else if (formData.provider_type === 'alibaba') {
     if (configFields.alibaba_access_key_id) {
@@ -1496,6 +1861,32 @@ const buildConfig = () => {
     }
     if (configFields.volcengine_version) {
       config.VOLCENGINE_VERSION = configFields.volcengine_version
+    }
+  } else if (formData.provider_type === 'baidu') {
+    if (configFields.baidu_access_key_id) {
+      config.BAIDU_ACCESS_KEY_ID = configFields.baidu_access_key_id
+    }
+    if (configFields.baidu_secret_access_key) {
+      config.BAIDU_SECRET_ACCESS_KEY = configFields.baidu_secret_access_key
+    }
+  } else if (formData.provider_type === 'zhipu') {
+    if (configFields.zhipu_username) {
+      config.ZHIPU_USERNAME = configFields.zhipu_username
+    }
+    if (configFields.zhipu_password) {
+      config.ZHIPU_PASSWORD = configFields.zhipu_password
+    }
+    const preservedUserType = existingConfig.ZHIPU_USER_TYPE || existingConfig.user_type
+    const preservedTimeout = existingConfig.ZHIPU_TIMEOUT || existingConfig.timeout
+    const preservedMaxRetries = existingConfig.ZHIPU_MAX_RETRIES || existingConfig.max_retries
+    if (preservedUserType) {
+      config.ZHIPU_USER_TYPE = preservedUserType
+    }
+    if (preservedTimeout) {
+      config.ZHIPU_TIMEOUT = preservedTimeout
+    }
+    if (preservedMaxRetries) {
+      config.ZHIPU_MAX_RETRIES = preservedMaxRetries
     }
   }
   const raw = (selectedChannelValue.value || '').trim()
@@ -1640,6 +2031,7 @@ const handleSubmit = async () => {
     if (formData.notes && formData.notes.trim()) {
       data.notes = formData.notes.trim()
     }
+    data.tags = [...formData.tags]
     requestPayload = { ...data }
 
     let providerId

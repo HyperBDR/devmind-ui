@@ -67,7 +67,7 @@
                   {{ t('cloudBilling.billing.provider') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ billing.provider_display_name || billing.provider }}
+                  {{ providerDisplayName }}
                 </dd>
               </div>
               <div>
@@ -86,6 +86,20 @@
                   {{ formatCost(billing.cost) }}
                 </dd>
               </div>
+              <div>
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('cloudBilling.billing.balance') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ billing.balance_supported === false ? formatCost(0, billing.currency) : formatCost(billing.balance, billing.currency) }}
+                </dd>
+                <p
+                  v-if="billing.balance_supported === false"
+                  class="mt-1 text-xs font-medium text-amber-600"
+                >
+                  {{ billing.balance_note || t('cloudBilling.billing.balanceUnsupported') }}
+                </p>
+              </div>
               <div v-if="billing.change_from_last_hour !== null && billing.change_from_last_hour !== undefined">
                 <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
                   {{ t('cloudBilling.billing.changeFromLastHour') }}
@@ -103,7 +117,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getLocalizedBillingProviderName } from '@/utils/providerDisplay'
 import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
 
 const props = defineProps({
@@ -120,6 +136,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const { t } = useI18n()
+const providerDisplayName = computed(() => getLocalizedBillingProviderName(props.billing, t))
 
 const handleClose = () => {
   emit('close')

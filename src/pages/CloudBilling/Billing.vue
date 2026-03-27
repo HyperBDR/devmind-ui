@@ -13,13 +13,13 @@
         <BaseButton
           variant="outline"
           size="sm"
-          :loading="activeTab === 'statistics' ? statsLoading : detailsLoading"
+          :loading="activeTab === 'statistics' ? statsLoading : activeTab === 'details' ? detailsLoading : false"
           @click="handleRefresh"
           :title="t('common.refresh')"
           class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
         >
           <svg
-            v-if="!(activeTab === 'statistics' ? statsLoading : detailsLoading)"
+            v-if="!(activeTab === 'statistics' ? statsLoading : activeTab === 'details' ? detailsLoading : false)"
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
@@ -117,7 +117,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
@@ -164,7 +164,13 @@
                             {{ t('cloudBilling.billing.totalCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.total_cost, 'CNY') }}
+                            {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                           </div>
                         </div>
                       </div>
@@ -179,7 +185,40 @@
                             {{ t('cloudBilling.billing.averageCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.average_cost, 'CNY') }}
+                            {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                          <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z" />
+                          </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-gray-500 mb-1">
+                            {{ t('cloudBilling.billing.balance') }}
+                          </div>
+                          <div class="text-xl font-bold text-gray-900">
+                            {{ formatBalanceSummary(statistics.total_balance, statsSummaryCurrency) }}
+                          </div>
+                          <div
+                            v-if="selectedProviderBalanceUnsupported"
+                            class="mt-1 text-xs font-medium text-amber-600"
+                          >
+                            {{ t('cloudBilling.billing.balanceUnsupported') }}
+                          </div>
+                          <div
+                            v-else-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                           </div>
                         </div>
                       </div>
@@ -208,13 +247,19 @@
                   </div>
 
                   <!-- Summary Cards Only (for Year View) -->
-                  <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.totalCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.total_cost, 'CNY') }}
+                        {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                     <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
@@ -222,7 +267,13 @@
                         {{ t('cloudBilling.billing.averageCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.average_cost, 'CNY') }}
+                        {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                     <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
@@ -231,6 +282,26 @@
                       </div>
                       <div class="text-lg font-bold text-gray-900">
                         {{ statistics.count }}
+                      </div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
+                      <div class="text-xs font-medium text-gray-500 mb-0.5">
+                        {{ t('cloudBilling.billing.balance') }}
+                      </div>
+                      <div class="text-lg font-bold text-gray-900">
+                        {{ formatBalanceSummary(statistics.total_balance, statsSummaryCurrency) }}
+                      </div>
+                      <div
+                        v-if="selectedProviderBalanceUnsupported"
+                        class="mt-1 text-xs font-medium text-amber-600"
+                      >
+                        {{ t('cloudBilling.billing.balanceUnsupported') }}
+                      </div>
+                      <div
+                        v-else-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                   </div>
@@ -304,7 +375,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
@@ -388,6 +459,9 @@
                           {{ t('cloudBilling.billing.cost') }}
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          {{ t('cloudBilling.billing.balance') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {{ t('cloudBilling.billing.changeFromLastHour') }}
                         </th>
                       </tr>
@@ -400,7 +474,7 @@
                         class="cursor-pointer hover:bg-gray-50 transition-colors"
                       >
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {{ billing.provider_display_name || billing.provider }}
+                          {{ getBillingProviderName(billing) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {{ billing.account_id || '-' }}
@@ -410,6 +484,15 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {{ formatCost(billing.cost, billing.currency) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <div>{{ formatBillingBalance(billing) }}</div>
+                          <div
+                            v-if="billing.balance_supported === false"
+                            class="mt-1 text-xs font-medium text-amber-600"
+                          >
+                            {{ billing.balance_note || t('cloudBilling.billing.balanceUnsupported') }}
+                          </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm" :class="getChangeClass(billing.change_from_last_hour, 'text-gray-500', true)">
                           {{ formatChange(billing.change_from_last_hour) }}
@@ -452,8 +535,12 @@ import BillingDetailPanel from '@/components/cloud-billing/BillingDetailPanel.vu
 import BillingChart from '@/components/cloud-billing/BillingChart.vue'
 import BillingPieChart from '@/components/cloud-billing/BillingPieChart.vue'
 import BillingDailyCostChart from '@/components/cloud-billing/BillingDailyCostChart.vue'
+import { getLocalizedBillingProviderName, getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
 const { t, locale } = useI18n()
+
+const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
+const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
 
 const dateFnsLocale = computed(() => {
   return locale.value === 'zh-CN' ? zhCN : enUS
@@ -510,11 +597,51 @@ const availableDetailsAccounts = computed(() => {
   return Array.from(accounts).sort()
 })
 
+const selectedProviderBalanceUnsupported = computed(() => {
+  if (!statsProviderId.value || !statistics.value?.by_provider) {
+    return false
+  }
+  const rows = Object.values(statistics.value.by_provider).filter(
+    (providerData) => providerData.provider_id === parseInt(statsProviderId.value)
+  )
+  return rows.length > 0 && rows.every((providerData) => providerData.balance_supported === false)
+})
+
+const statsSummaryCurrencies = computed(() => {
+  const byProvider = statistics.value?.by_provider
+  if (!byProvider) {
+    return []
+  }
+
+  const rows = Object.values(byProvider).filter((providerData) => {
+    if (!statsProviderId.value) {
+      return true
+    }
+    return providerData.provider_id === parseInt(statsProviderId.value)
+  })
+
+  const currencies = Array.from(
+    new Set(
+      rows
+        .map((providerData) => String(providerData.currency || '').trim())
+        .filter(Boolean)
+    )
+  )
+
+  return currencies
+})
+
+const statsSummaryHasMixedCurrencies = computed(() => statsSummaryCurrencies.value.length > 1)
+
+const statsSummaryCurrency = computed(() => (
+  statsSummaryCurrencies.value.length === 1 ? statsSummaryCurrencies.value[0] : null
+))
+
 const activeTab = ref('statistics')
-const tabs = [
+const tabs = computed(() => [
   { id: 'statistics', label: t('cloudBilling.billing.statistics') },
   { id: 'details', label: t('cloudBilling.billing.details') }
-]
+])
 
 // Statistics tab state
 const statsLoading = ref(false)
@@ -616,6 +743,30 @@ const loadStatistics = async () => {
   } finally {
     statsLoading.value = false
   }
+}
+
+const formatBalanceSummary = (value, currency = 'CNY') => {
+  if (!currency) {
+    return '--'
+  }
+  if (selectedProviderBalanceUnsupported.value) {
+    return formatCost(0, currency)
+  }
+  return formatCost(value ?? 0, currency)
+}
+
+const formatStatsSummaryAmount = (value) => {
+  if (!statsSummaryCurrency.value) {
+    return '--'
+  }
+  return formatCost(value ?? 0, statsSummaryCurrency.value)
+}
+
+const formatBillingBalance = (billing) => {
+  if (billing?.balance_supported === false) {
+    return formatCost(0, billing.currency)
+  }
+  return formatCost(billing?.balance ?? 0, billing?.currency)
 }
 
 // Load daily billing data for chart
@@ -770,9 +921,13 @@ const loadBillings = async (query = '') => {
       return {
         id: billing.id,
         provider: billing.provider,
-        provider_display_name: billing.provider_name || billing.provider,
+        provider_display_name: getBillingProviderName(billing),
+        provider_type: billing.provider_type,
         collection_time: billing.collected_at,
         cost: billing.total_cost,
+        balance: billing.balance,
+        balance_supported: billing.balance_supported,
+        balance_note: billing.balance_note,
         currency: billing.currency,
         change_from_last_hour: changeFromLastHour,
         period: billing.period,
@@ -788,7 +943,7 @@ const loadBillings = async (query = '') => {
     if (query) {
       const lowerQuery = query.toLowerCase()
       billings.value = billings.value.filter(billing =>
-        billing.provider_display_name.toLowerCase().includes(lowerQuery) ||
+        String(billing.provider_display_name || '').toLowerCase().includes(lowerQuery) ||
         (billing.account_id && billing.account_id.toLowerCase().includes(lowerQuery))
       )
     }
@@ -826,7 +981,7 @@ const handlePreview = (billing) => {
 watch(activeTab, (newTab) => {
   if (newTab === 'statistics') {
     loadStatistics()
-  } else {
+  } else if (newTab === 'details') {
     loadBillings()
   }
 })
