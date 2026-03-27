@@ -51,10 +51,23 @@
                   {{ provider.name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ getProviderTypeLabel(provider.provider_type) }}
+                  {{ getProviderTypeText(provider.provider_type) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ provider.display_name }}
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <div class="min-w-[180px]">
+                    <div class="text-sm text-gray-700">
+                      {{ getProviderDisplayName(provider) }}
+                    </div>
+                    <div v-if="provider.tags?.length" class="mt-2 flex flex-wrap gap-1.5">
+                      <span
+                        v-for="tag in provider.tags"
+                        :key="`${provider.id}-${tag}`"
+                        class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700"
+                      >
+                        {{ tag }}
+                      </span>
+                    </div>
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -104,6 +117,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
+      :provider-options="providers"
       @close="closeModal"
       @saved="handleSaved"
     />
@@ -118,6 +132,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import { format } from 'date-fns'
+import { getLocalizedProviderDisplayName, getProviderTypeLabel } from '@/utils/providerDisplay'
 
 const { t } = useI18n()
 const loading = ref(true)
@@ -125,21 +140,8 @@ const providers = ref([])
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
 
-const providerTypes = {
-  aws: t('cloudBilling.providers.types.aws'),
-  huawei: t('cloudBilling.providers.types.huawei'),
-  huawei-intl: t('cloudBilling.providers.types.huaweiIntl'),
-  tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
-  alibaba: t('cloudBilling.providers.types.alibaba'),
-  azure: t('cloudBilling.providers.types.azure'),
-  volcengine: t('cloudBilling.providers.types.volcengine'),
-  baidu: t('cloudBilling.providers.types.baidu'),
-  zhipu: t('cloudBilling.providers.types.zhipu'),
-}
-
-const getProviderTypeLabel = (type) => {
-  return providerTypes[type] || type
-}
+const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
+const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''

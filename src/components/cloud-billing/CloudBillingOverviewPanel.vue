@@ -120,9 +120,6 @@
               <h3 class="text-sm font-semibold text-gray-900">
                 {{ t('cloudBilling.billing.overviewCurrencyDistribution') }}
               </h3>
-              <p class="mt-1 text-xs text-gray-500">
-                {{ t('cloudBilling.billing.overviewCurrencyDistributionHint') }}
-              </p>
             </div>
             <div class="mx-auto h-[200px] max-w-[220px]">
               <Doughnut v-if="currencyChartData" :data="currencyChartData" :options="currencyChartOptions" />
@@ -132,7 +129,7 @@
                 <div class="flex items-center justify-between text-xs">
                   <div class="flex items-center gap-2">
                     <span class="h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: item.color }" />
-                    <span class="font-medium text-gray-600">{{ item.code }} · {{ item.name }}</span>
+                    <span class="font-medium text-gray-600">{{ item.code }} · {{ currencyDisplayName(item) }}</span>
                   </div>
                   <span class="font-mono font-semibold text-gray-900">
                     {{ formatBreakdownValue(item) }}
@@ -204,8 +201,8 @@
         </div>
 
         <div class="flex flex-col gap-8">
-          <div class="grid gap-8 lg:grid-cols-12">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 p-6 lg:col-span-8">
+          <div class="grid items-stretch gap-8 lg:grid-cols-12">
+            <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-gray-50 p-6 lg:col-span-8">
               <div class="mb-6">
                 <h4 class="text-xs font-bold uppercase tracking-[0.16em] text-gray-900">
                   {{ t('cloudBilling.billing.overviewQuotaTrend') }}
@@ -214,7 +211,7 @@
                   {{ t('cloudBilling.billing.overviewQuotaTrendHint') }}
                 </p>
               </div>
-              <div class="h-[320px]">
+              <div class="h-[320px] flex-1">
                 <Line
                   v-if="quotaTrendChartData"
                   :data="quotaTrendChartData"
@@ -223,7 +220,7 @@
               </div>
             </div>
 
-            <div class="rounded-xl border border-gray-200 bg-gray-50 p-6 lg:col-span-4">
+            <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-gray-50 p-6 lg:col-span-4">
               <div class="mb-5">
                 <h4 class="text-xs font-bold uppercase tracking-[0.16em] text-gray-900">
                   {{ t('cloudBilling.billing.overviewRechargeTimeline') }}
@@ -232,9 +229,29 @@
                   {{ t('cloudBilling.billing.overviewRechargeTimelineHint') }}
                 </p>
               </div>
-              <div class="space-y-4">
+              <div class="mb-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors"
+                  :class="selectedRechargeTag === '' ? 'border-primary-200 bg-primary-50 text-primary-700' : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                  @click="selectedRechargeTag = ''"
+                >
+                  {{ t('cloudBilling.billing.overviewAllTags') }}
+                </button>
+                <button
+                  v-for="tag in rechargeTimelineTags"
+                  :key="tag"
+                  type="button"
+                  class="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors"
+                  :class="selectedRechargeTag === tag ? 'border-primary-200 bg-primary-50 text-primary-700' : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:text-gray-700'"
+                  @click="selectedRechargeTag = tag"
+                >
+                  {{ tag }}
+                </button>
+              </div>
+              <div v-if="visibleRechargeAlerts.length" class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 <div
-                  v-for="item in overview.financial_health.recharge_alerts"
+                  v-for="item in visibleRechargeAlerts"
                   :key="`${item.name}-${item.account_id || 'default'}`"
                   class="space-y-2"
                 >
@@ -247,11 +264,18 @@
                       >
                         {{ item.category }}
                       </span>
-                        <span class="truncate font-medium text-gray-700">{{ item.name }}</span>
+                        <span class="truncate font-medium text-gray-700">{{ getLocalizedProviderDisplayName({ provider_type: item.provider_type, display_name: item.name }, t) }}</span>
                       </div>
                       <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-gray-500">
                         <span class="font-mono text-gray-600">
                           {{ item.account_id || t('cloudBilling.billing.defaultAccount') }}
+                        </span>
+                        <span
+                          v-for="tag in item.tags || []"
+                          :key="`${item.account_id || item.name}-${tag}`"
+                          class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-gray-500 ring-1 ring-inset ring-gray-200"
+                        >
+                          {{ tag }}
                         </span>
                         <span
                           v-if="item.notes"
@@ -270,20 +294,23 @@
                   </div>
                 </div>
               </div>
+              <div v-else class="flex flex-1 items-center justify-center rounded-xl border border-dashed border-gray-200 bg-white/70 px-4 text-center text-xs text-gray-500">
+                {{ t('cloudBilling.billing.overviewNoRechargeAlerts') }}
+              </div>
             </div>
           </div>
 
           <div class="grid gap-4 lg:grid-cols-2">
-            <div>
+            <div class="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
               <div class="mb-3 flex items-center justify-between">
                 <h4 class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">
                   {{ t('cloudBilling.billing.overviewPrepaidAccounts') }}
                 </h4>
                 <span class="text-[11px] font-mono text-zinc-400">{{ prepaidAccounts.length }}</span>
               </div>
-              <div class="grid gap-3">
+              <div class="grid gap-3 sm:grid-cols-2">
                 <article
-                  v-for="account in prepaidAccounts"
+                  v-for="account in visiblePrepaidAccounts"
                   :key="account.id"
                   class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
                 >
@@ -293,7 +320,7 @@
                         <img
                           v-if="providerIcon(account)"
                           :src="providerIcon(account)"
-                          :alt="account.provider"
+                          :alt="localizedProviderLabel(account)"
                           class="h-full w-full object-contain"
                         >
                         <div v-else class="text-[11px] font-bold text-zinc-500">
@@ -302,7 +329,7 @@
                       </div>
                       <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                          <h5 class="truncate text-sm font-semibold text-zinc-900">{{ account.name }}</h5>
+                          <h5 class="truncate text-sm font-semibold text-zinc-900">{{ localizedAccountName(account) }}</h5>
                           <span
                             class="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase"
                             :class="account.category === 'LLM' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'"
@@ -310,7 +337,7 @@
                             {{ account.category }}
                           </span>
                         </div>
-                        <p v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ account.provider }}</p>
+                        <p v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ localizedProviderLabel(account) }}</p>
                         <p v-if="account.notes" class="mt-1 truncate text-xs font-medium text-zinc-600">
                           {{ account.notes }}
                         </p>
@@ -330,18 +357,27 @@
                   </div>
                 </article>
               </div>
+              <div v-if="prepaidAccounts.length > accountCardInitialLimit" class="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  class="inline-flex items-center rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-600 transition-colors hover:bg-zinc-100"
+                  @click="showAllPrepaid = !showAllPrepaid"
+                >
+                  {{ showAllPrepaid ? t('common.collapse') : t('common.viewMore') }}
+                </button>
+              </div>
             </div>
 
-            <div>
+            <div class="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
               <div class="mb-3 flex items-center justify-between">
                 <h4 class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">
                   {{ t('cloudBilling.billing.overviewPostpaidAccounts') }}
                 </h4>
                 <span class="text-[11px] font-mono text-zinc-400">{{ postpaidAccounts.length }}</span>
               </div>
-              <div class="grid gap-3">
+              <div class="grid gap-3 sm:grid-cols-2">
                 <article
-                  v-for="account in postpaidAccounts"
+                  v-for="account in visiblePostpaidAccounts"
                   :key="account.id"
                   class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
                 >
@@ -351,7 +387,7 @@
                         <img
                           v-if="providerIcon(account)"
                           :src="providerIcon(account)"
-                          :alt="account.provider"
+                          :alt="localizedProviderLabel(account)"
                           class="h-full w-full object-contain"
                         >
                         <div v-else class="text-[11px] font-bold text-zinc-500">
@@ -360,12 +396,12 @@
                       </div>
                       <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                          <h5 class="truncate text-sm font-semibold text-zinc-900">{{ account.name }}</h5>
+                          <h5 class="truncate text-sm font-semibold text-zinc-900">{{ localizedAccountName(account) }}</h5>
                           <span class="rounded bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-700">
                             {{ account.category }}
                           </span>
                         </div>
-                        <p v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ account.provider }}</p>
+                        <p v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ localizedProviderLabel(account) }}</p>
                         <p v-if="account.notes" class="mt-1 truncate text-xs font-medium text-zinc-600">
                           {{ account.notes }}
                         </p>
@@ -384,6 +420,15 @@
                     </div>
                   </div>
                 </article>
+              </div>
+              <div v-if="postpaidAccounts.length > accountCardInitialLimit" class="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  class="inline-flex items-center rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-600 transition-colors hover:bg-zinc-100"
+                  @click="showAllPostpaid = !showAllPostpaid"
+                >
+                  {{ showAllPostpaid ? t('common.collapse') : t('common.viewMore') }}
+                </button>
               </div>
             </div>
           </div>
@@ -483,7 +528,8 @@
                 <tr
                   v-for="account in visibleGroupRows(group)"
                   :key="account.id"
-                  class="transition-colors hover:bg-zinc-50/60"
+                  class="cursor-pointer transition-colors hover:bg-zinc-50/60"
+                  @click="openAccountDrawer(account)"
                 >
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -491,7 +537,7 @@
                         <img
                           v-if="providerIcon(account)"
                           :src="providerIcon(account)"
-                          :alt="account.provider"
+                          :alt="localizedProviderLabel(account)"
                           class="h-full w-full object-contain"
                         >
                         <div v-else class="text-[11px] font-bold text-zinc-500">
@@ -500,7 +546,7 @@
                       </div>
                       <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                          <div class="truncate text-sm font-semibold text-zinc-900">{{ account.name }}</div>
+                          <div class="truncate text-sm font-semibold text-zinc-900">{{ localizedAccountName(account) }}</div>
                           <span
                             class="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase"
                             :class="account.category === 'LLM' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'"
@@ -510,8 +556,15 @@
                           <span class="rounded bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-600">
                             {{ paymentTypeLabel(account.type) }}
                           </span>
+                          <span
+                            v-for="tag in account.tags || []"
+                            :key="`${account.id}-${tag}`"
+                            class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5 text-[9px] font-medium text-primary-700"
+                          >
+                            {{ tag }}
+                          </span>
                         </div>
-                        <div v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ account.provider }}</div>
+                        <div v-if="showProviderLabel(account)" class="mt-1 truncate text-[11px] text-zinc-500">{{ localizedProviderLabel(account) }}</div>
                         <div v-if="account.notes" class="mt-1 truncate text-xs font-medium text-zinc-600">
                           {{ account.notes }}
                         </div>
@@ -522,26 +575,20 @@
                     <div class="font-mono text-sm font-semibold text-zinc-800">
                       {{ formatValue(account.cost) }}
                     </div>
-                    <div class="mt-1 flex items-center gap-2">
-                      <div class="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-100">
-                        <div class="h-full rounded-full bg-indigo-500" :style="{ width: `${Math.min(account.percentage, 100)}%` }" />
-                      </div>
-                      <span class="text-[11px] font-mono text-zinc-400">{{ account.percentage }}%</span>
-                    </div>
                   </td>
                   <td class="px-6 py-4">
-                    <div class="space-y-1 text-xs">
-                      <div v-if="showBalance(account)" class="flex items-center justify-between gap-4">
-                        <span class="text-zinc-400">{{ t('cloudBilling.billing.balance') }}</span>
-                        <span class="font-mono font-semibold text-zinc-800">
+                    <div class="space-y-3 text-xs">
+                      <div v-if="showBalance(account)" class="rounded-lg bg-zinc-50 px-3 py-2">
+                        <div class="text-zinc-400">{{ t('cloudBilling.billing.balance') }}</div>
+                        <div class="mt-1 font-mono text-sm font-semibold text-zinc-800">
                           {{ formatAccountValue(account.balance, account.balance_currency) }}
-                        </span>
+                        </div>
                       </div>
-                      <div v-if="account.credit_limit" class="flex items-center justify-between gap-4">
-                        <span class="text-zinc-400">{{ t('cloudBilling.billing.overviewCreditLimit') }}</span>
-                        <span class="font-mono font-semibold text-zinc-500">
+                      <div v-if="account.credit_limit" class="rounded-lg bg-zinc-50 px-3 py-2">
+                        <div class="text-zinc-400">{{ t('cloudBilling.billing.overviewCreditLimit') }}</div>
+                        <div class="mt-1 font-mono text-sm font-semibold text-zinc-500">
                           {{ formatAccountValue(account.credit_limit, account.credit_limit_currency) }}
-                        </span>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -574,6 +621,171 @@
           </table>
         </div>
       </section>
+
+      <Teleport to="body">
+        <div
+          v-if="selectedAccount"
+          class="fixed inset-0 z-50 flex justify-end bg-zinc-950/35 backdrop-blur-[1px]"
+          @click="closeAccountDrawer"
+        >
+          <aside
+            class="flex h-full w-full max-w-[840px] flex-col overflow-hidden bg-white shadow-2xl"
+            @click.stop
+          >
+            <div class="flex items-start justify-between border-b border-zinc-200 px-6 py-5">
+              <div class="min-w-0">
+                <div class="text-sm font-semibold text-primary-600">
+                  {{ localizedProviderLabel(selectedAccount) }}
+                </div>
+                <h3 class="mt-1.5 truncate text-3xl font-semibold tracking-tight text-zinc-900">
+                  {{ selectedAccount.account_id || localizedAccountName(selectedAccount) }}
+                </h3>
+                <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-zinc-500">
+                  <span class="rounded-full bg-zinc-100 px-2.5 py-1 font-semibold text-zinc-700">
+                    {{ paymentTypeLabel(selectedAccount.type) }}
+                  </span>
+                  <span
+                    v-for="tag in selectedAccount.tags || []"
+                    :key="`drawer-inline-tag-${selectedAccount.id}-${tag}`"
+                    class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2.5 py-1 font-semibold text-primary-700"
+                  >
+                    {{ tag }}
+                  </span>
+                  <span
+                    class="rounded-full px-2.5 py-1 font-semibold"
+                    :class="recommendationBadgeClass(selectedAccountDetail.recommendation_status)"
+                  >
+                    {{ recommendationLabel(selectedAccountDetail.recommendation_status) }}
+                  </span>
+                  <span v-if="selectedAccount.notes" class="truncate">
+                    {{ selectedAccount.notes }}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="rounded-full p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
+                @click="closeAccountDrawer"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-6 py-5">
+              <div class="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-blue-50 to-emerald-50/70 p-5">
+                <div class="flex items-start gap-3">
+                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                    <svg class="h-5.5 w-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <h4 class="text-xl font-semibold tracking-tight text-zinc-900">
+                        {{ t('cloudBilling.billing.accountDrawerRecommendation') }}
+                      </h4>
+                      <span
+                        class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                        :class="recommendationBadgeClass(selectedAccountDetail.recommendation_status)"
+                      >
+                        {{ recommendationLabel(selectedAccountDetail.recommendation_status) }}
+                      </span>
+                    </div>
+                    <p class="mt-2 max-w-3xl text-sm leading-7 text-blue-700">
+                      {{ recommendationMessage }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-5 grid gap-3 md:grid-cols-4">
+                <article class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4">
+                  <div class="text-xs text-zinc-400">{{ t('cloudBilling.billing.accountDrawerDailyAverage') }}</div>
+                  <div class="mt-2 text-2xl font-semibold tracking-tight text-zinc-900">
+                    {{ formatValue(selectedAccountDetail.daily_average) }}
+                  </div>
+                </article>
+                <article class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4">
+                  <div class="text-xs text-zinc-400">{{ t('cloudBilling.billing.accountDrawerDailyPeak') }}</div>
+                  <div class="mt-2 text-2xl font-semibold tracking-tight text-zinc-900">
+                    {{ formatValue(selectedAccountDetail.daily_peak) }}
+                  </div>
+                </article>
+                <article class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4">
+                  <div class="text-xs text-zinc-400">{{ t('cloudBilling.billing.accountDrawerPrimaryShare') }}</div>
+                  <div class="mt-2 text-2xl font-semibold tracking-tight text-blue-600">
+                    {{ formatPercent(selectedAccountDetail.primary_service_share) }}
+                  </div>
+                  <div class="mt-1 truncate text-[11px] text-zinc-500">
+                    {{ selectedAccountDetail.primary_service_name || '-' }}
+                  </div>
+                </article>
+                <article class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4">
+                  <div class="text-xs text-zinc-400">{{ t('cloudBilling.billing.accountDrawerServiceCount') }}</div>
+                  <div class="mt-2 text-2xl font-semibold tracking-tight text-zinc-900">
+                    {{ selectedAccountDetail.service_count ?? 0 }}
+                  </div>
+                </article>
+              </div>
+
+              <div class="mt-5 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <div class="rounded-2xl bg-blue-50 p-2.5 text-blue-600">
+                      <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 8-8M3 7v10h18" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 class="text-xl font-semibold tracking-tight text-zinc-900">
+                        {{ t('cloudBilling.billing.accountDrawerTrendTitle') }}
+                      </h4>
+                    </div>
+                  </div>
+                  <div class="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                    {{ t('cloudBilling.billing.accountDrawerCurrencyUnit', { currency: selectedCurrency }) }}
+                  </div>
+                </div>
+                <div class="h-[300px]">
+                  <Line
+                    v-if="accountDetailChartData"
+                    :data="accountDetailChartData"
+                    :options="accountDetailChartOptions"
+                  />
+                </div>
+              </div>
+
+              <div v-if="selectedAccountDetail.service_breakdown?.length" class="mt-5 rounded-3xl border border-zinc-200 bg-zinc-50/70 p-5">
+                <div class="mb-3 text-sm font-semibold text-zinc-900">
+                  {{ t('cloudBilling.billing.accountDrawerServiceBreakdown') }}
+                </div>
+                <div class="space-y-2.5">
+                  <div
+                    v-for="item in selectedAccountDetail.service_breakdown"
+                    :key="`${selectedAccount.id}-${item.name}`"
+                    class="rounded-2xl border border-zinc-200 bg-white px-4 py-2.5"
+                  >
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <div class="truncate font-medium text-zinc-700">{{ displayServiceName(item.name) }}</div>
+                      <div class="flex items-center gap-3 text-right">
+                        <div class="font-mono text-[11px] font-semibold text-zinc-500">
+                          {{ formatValue(item.value) }}
+                        </div>
+                        <div class="font-mono font-semibold text-zinc-900">{{ formatPercent(item.percentage) }}</div>
+                      </div>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
+                      <div class="h-full rounded-full bg-blue-500" :style="{ width: `${Math.min(item.percentage || 0, 100)}%` }" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </Teleport>
     </template>
   </div>
 </template>
@@ -616,6 +828,7 @@ import {
   cloudBillingOverviewSummary
 } from '@/mock/cloudBillingOverview'
 import { extractErrorMessage, extractResponseData } from '@/utils/api'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
 const props = defineProps({
   showHeader: {
@@ -683,6 +896,11 @@ const groupByProvider = ref(true)
 const expandedProviders = ref({})
 const defaultTimezone = ref(OPERATIONS_DEFAULT_TIMEZONE)
 const selectedTrendRange = ref('month')
+const showAllPrepaid = ref(false)
+const showAllPostpaid = ref(false)
+const selectedRechargeTag = ref('')
+const selectedAccount = ref(null)
+const accountCardInitialLimit = 4
 
 const selectedCurrency = computed({
   get: () => props.currency || defaultCurrency.value,
@@ -728,6 +946,7 @@ function createFallbackOverview() {
       provider: item.provider,
       provider_type: item.providerType || '',
       notes: item.notes || '',
+      tags: item.tags || [],
       category: item.category,
       cost: item.cost,
       percentage: item.percentage,
@@ -743,13 +962,25 @@ function createFallbackOverview() {
       type: item.type,
       usage_rate: item.usageRate || null,
       account_id: item.accountId || '',
-      trend: item.trend
+      trend: item.trend,
+      detail: item.detail || null,
     })),
     exchange_rate: 7.15,
     rate_source_label: 'Internal baseline rate',
     rate_source_url: '',
-    rate_collected_at: new Date().toISOString()
+    rate_collected_at: ''
   }
+}
+
+function currencyDisplayName(item) {
+  const code = String(item?.code || '').toUpperCase()
+  if (code === 'CNY') {
+    return t('cloudBilling.billing.currencyCny')
+  }
+  if (code === 'USD') {
+    return t('cloudBilling.billing.currencyUsd')
+  }
+  return item?.name || code
 }
 
 const summaryCards = computed(() => [
@@ -871,7 +1102,7 @@ const quotaTrendColors = ['#10b981', '#2563eb', '#f59e0b', '#ef4444', '#8b5cf6']
 const quotaTrendChartData = computed(() => ({
   labels: quotaTrendLabels.value,
   datasets: quotaTrendAccounts.value.map((account, index) => ({
-    label: account.name,
+    label: localizedAccountName(account),
     data: (account.trend || []).map((item) => Number(item.value || 0)),
     borderColor: quotaTrendColors[index % quotaTrendColors.length],
     backgroundColor: 'transparent',
@@ -933,6 +1164,164 @@ const quotaTrendChartOptions = computed(() => ({
   }
 }))
 
+const rechargeTimelineTags = computed(() => {
+  const tagSet = new Set()
+  ;(overview.value.financial_health?.recharge_alerts || []).forEach((item) => {
+    ;(item.tags || []).forEach((tag) => {
+      const normalized = String(tag || '').trim()
+      if (normalized) {
+        tagSet.add(normalized)
+      }
+    })
+  })
+  return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
+})
+
+const filteredRechargeAlerts = computed(() => {
+  const selectedTag = String(selectedRechargeTag.value || '').trim()
+  const alerts = overview.value.financial_health?.recharge_alerts || []
+  if (!selectedTag) {
+    return alerts
+  }
+  return alerts.filter((item) => (item.tags || []).includes(selectedTag))
+})
+
+const visibleRechargeAlerts = computed(() =>
+  filteredRechargeAlerts.value.slice(0, 5)
+)
+
+const selectedAccountDetail = computed(() => {
+  const account = selectedAccount.value
+  if (!account) {
+    return {
+      recommendation_status: 'healthy',
+      daily_average: 0,
+      daily_peak: 0,
+      recommended_recharge: 0,
+      recommended_window_days: 30,
+      primary_service_name: '',
+      primary_service_share: 0,
+      service_count: 0,
+      service_breakdown: [],
+      trend_series: [],
+      trend_30d: [],
+    }
+  }
+  return (
+    account.detail || {
+      recommendation_status: account.risk === 'high' ? 'attention' : 'healthy',
+      daily_average: Number(account.change || 0),
+      daily_peak: Math.max(...(account.trend || []).map((item) => Number(item.value || 0)), 0),
+      recommended_recharge: 0,
+      recommended_window_days: 30,
+      primary_service_name: '',
+      primary_service_share: 0,
+      service_count: 0,
+      service_breakdown: [],
+      trend_series: [],
+      trend_30d: (account.trend || []).map((item) => ({
+        date: item.date,
+        total: Number(item.value || 0),
+        services: {},
+      })),
+    }
+  )
+})
+
+const recommendationMessage = computed(() => {
+  const account = selectedAccount.value
+  if (!account) {
+    return ''
+  }
+  const detail = selectedAccountDetail.value
+  if (!detail.recommended_recharge) {
+    return t('cloudBilling.billing.accountDrawerFallbackRecommendation', {
+      days: account.days_remaining,
+    })
+  }
+  return t('cloudBilling.billing.accountDrawerRecommendationMessage', {
+    daily: formatValue(detail.daily_average),
+    days: account.days_remaining,
+    amount: formatValue(detail.recommended_recharge),
+    window: detail.recommended_window_days || 30,
+  })
+})
+
+const accountDetailChartData = computed(() => {
+  const trend = selectedAccountDetail.value.trend_30d || []
+  if (!trend.length) {
+    return null
+  }
+  const palette = ['#8b5cf6', '#14b8a6', '#f59e0b', '#ef4444', '#6366f1', '#10b981']
+  const serviceDatasets = (selectedAccountDetail.value.trend_series || []).map((series, index) => ({
+    label: displayServiceName(series.name),
+    data: series.values || [],
+    borderColor: series.name === '__other__' ? '#cbd5e1' : palette[index % palette.length],
+    backgroundColor: 'transparent',
+    tension: 0.35,
+    pointRadius: 0,
+    borderWidth: 2,
+    borderDash: series.name === '__other__' ? [6, 6] : undefined,
+  }))
+  return {
+    labels: trend.map((item) => item.date),
+    datasets: [
+      {
+        label: t('cloudBilling.billing.accountDrawerLegendTotal'),
+        data: trend.map((item) => Number(item.total || 0)),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 3,
+        pointHoverRadius: 4,
+      },
+      ...serviceDatasets,
+    ],
+  }
+})
+
+const accountDetailChartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        usePointStyle: true,
+        boxWidth: 10,
+        color: '#52525b',
+      },
+    },
+    tooltip: {
+      backgroundColor: '#ffffff',
+      titleColor: '#18181b',
+      bodyColor: '#3f3f46',
+      borderColor: '#e4e4e7',
+      borderWidth: 1,
+      padding: 12,
+      callbacks: {
+        label: (context) => `${context.dataset.label}: ${formatValue(context.parsed.y)}`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { color: '#a1a1aa', maxTicksLimit: 10 },
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: '#f4f4f5' },
+      ticks: {
+        color: '#a1a1aa',
+        callback: (value) => formatCompactValue(value),
+      },
+    },
+  },
+}))
+
 const currencyChartData = computed(() => ({
   labels: (overview.value.currency_breakdown || []).map((item) => item.code),
   datasets: [
@@ -963,8 +1352,8 @@ const filteredAccounts = computed(() => {
   }
   return (overview.value.accounts || []).filter((item) => {
     return (
-      item.name.toLowerCase().includes(query) ||
-      item.provider.toLowerCase().includes(query) ||
+      localizedAccountName(item).toLowerCase().includes(query) ||
+      localizedProviderLabel(item).toLowerCase().includes(query) ||
       String(item.account_id || '').toLowerCase().includes(query)
     )
   })
@@ -999,11 +1388,23 @@ const groupedRows = computed(() => {
 })
 
 const prepaidAccounts = computed(() =>
-  (overview.value.accounts || []).filter((item) => item.type === 'prepaid').slice(0, 6)
+  (overview.value.accounts || []).filter((item) => item.type === 'prepaid')
 )
 
 const postpaidAccounts = computed(() =>
-  (overview.value.accounts || []).filter((item) => item.type === 'postpaid').slice(0, 6)
+  (overview.value.accounts || []).filter((item) => item.type === 'postpaid')
+)
+
+const visiblePrepaidAccounts = computed(() =>
+  showAllPrepaid.value
+    ? prepaidAccounts.value
+    : prepaidAccounts.value.slice(0, accountCardInitialLimit)
+)
+
+const visiblePostpaidAccounts = computed(() =>
+  showAllPostpaid.value
+    ? postpaidAccounts.value
+    : postpaidAccounts.value.slice(0, accountCardInitialLimit)
 )
 
 const providerIcons = {
@@ -1054,6 +1455,23 @@ function riskBarClass(risk) {
   return 'bg-emerald-500'
 }
 
+function recommendationBadgeClass(status) {
+  if (status === 'attention') return 'bg-amber-100 text-amber-700'
+  return 'bg-emerald-100 text-emerald-700'
+}
+
+function recommendationLabel(status) {
+  if (status === 'attention') return t('cloudBilling.billing.accountDrawerStatusAttention')
+  return t('cloudBilling.billing.accountDrawerStatusHealthy')
+}
+
+function displayServiceName(name) {
+  if (name === '__other__') {
+    return t('cloudBilling.billing.accountDrawerLegendOther')
+  }
+  return name || t('cloudBilling.billing.accountDrawerLegendPrimary')
+}
+
 function formatValue(value) {
   const numericValue = Number(value || 0)
   if (selectedCurrency.value === 'USD') {
@@ -1086,6 +1504,18 @@ function formatAccountValue(value, currency) {
   return formatValue(numericValue)
 }
 
+function formatCompactValue(value) {
+  const numericValue = Number(value || 0)
+  if (selectedCurrency.value === 'USD') {
+    return `$${Math.round(numericValue)}`
+  }
+  return `¥${Math.round(numericValue)}`
+}
+
+function formatPercent(value) {
+  return `${Number(value || 0).toFixed(1)}%`
+}
+
 function showBalance(account) {
   return Number(account.balance || 0) > 0
 }
@@ -1094,6 +1524,26 @@ function paymentTypeLabel(type) {
   if (type === 'prepaid') return t('cloudBilling.billing.overviewTypePrepaid')
   if (type === 'postpaid') return t('cloudBilling.billing.overviewTypePostpaid')
   return type || '-'
+}
+
+function localizedAccountName(account) {
+  return getLocalizedProviderDisplayName(
+    {
+      provider_type: account?.provider_type,
+      display_name: account?.name || account?.provider
+    },
+    t
+  )
+}
+
+function localizedProviderLabel(account) {
+  return getLocalizedProviderDisplayName(
+    {
+      provider_type: account?.provider_type,
+      display_name: account?.provider || account?.name
+    },
+    t
+  )
 }
 
 function providerIcon(account) {
@@ -1115,12 +1565,12 @@ function providerIcon(account) {
 }
 
 function providerFallbackLetter(account) {
-  return String(account.provider || account.name || '?').trim().charAt(0) || '?'
+  return String(localizedProviderLabel(account) || localizedAccountName(account) || '?').trim().charAt(0) || '?'
 }
 
 function showProviderLabel(account) {
-  const provider = String(account.provider || '').trim().toLowerCase()
-  const name = String(account.name || '').trim().toLowerCase()
+  const provider = String(localizedProviderLabel(account) || '').trim().toLowerCase()
+  const name = String(localizedAccountName(account) || '').trim().toLowerCase()
   return Boolean(provider) && provider !== name
 }
 
@@ -1143,7 +1593,7 @@ function exportAccountsCsv() {
   ]
 
   const rows = filteredAccounts.value.map((account) => [
-    account.provider || account.name || '',
+    localizedProviderLabel(account) || localizedAccountName(account) || '',
     account.account_id || '',
     paymentTypeLabel(account.type),
     formatValue(account.cost),
@@ -1183,7 +1633,7 @@ function formatBreakdownValue(item) {
 }
 
 function formatTime(isoString) {
-  if (!isoString) return '-'
+  if (!isoString) return '--'
   try {
     return new Intl.DateTimeFormat('zh-CN', {
       year: 'numeric',
@@ -1231,6 +1681,14 @@ function visibleGroupRows(group) {
   return expandedProviders.value[group.name] === false ? [] : group.rows
 }
 
+function openAccountDrawer(account) {
+  selectedAccount.value = account
+}
+
+function closeAccountDrawer() {
+  selectedAccount.value = null
+}
+
 async function loadOverview() {
   loading.value = true
   error.value = ''
@@ -1275,6 +1733,27 @@ watch(
       return
     }
     loadOverview()
+  }
+)
+
+watch(rechargeTimelineTags, (tags) => {
+  if (selectedRechargeTag.value && !tags.includes(selectedRechargeTag.value)) {
+    selectedRechargeTag.value = ''
+  }
+})
+
+watch(
+  () => overview.value.accounts,
+  (accounts) => {
+    if (!selectedAccount.value) {
+      return
+    }
+    const matched = (accounts || []).find((item) => item.id === selectedAccount.value.id)
+    if (!matched) {
+      selectedAccount.value = null
+      return
+    }
+    selectedAccount.value = matched
   }
 )
 </script>

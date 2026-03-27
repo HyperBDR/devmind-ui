@@ -68,6 +68,112 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="providerTagInput"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.providers.tags') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.providers.tagsDesc') }}
+            </p>
+          </div>
+          <div ref="tagDropdownRef" class="md:col-span-2 space-y-3">
+            <div v-if="formData.tags.length" class="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <span
+                v-for="tag in formData.tags"
+                :key="`selected-${tag}`"
+                class="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-white px-3 py-1 text-xs font-medium text-primary-700 shadow-sm"
+              >
+                {{ tag }}
+                <button
+                  type="button"
+                  class="rounded-full text-primary-400 transition-colors hover:text-primary-700"
+                  @click="removeTag(tag)"
+                >
+                  <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            </div>
+
+            <div class="relative">
+              <div class="flex items-center gap-2">
+                <div
+                  class="flex min-h-[40px] min-w-0 flex-1 items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
+                  @click="openTagDropdown"
+                >
+                  <input
+                    id="providerTagInput"
+                    v-model="tagInput"
+                    type="text"
+                    :placeholder="t('cloudBilling.providers.tagsPlaceholder')"
+                    class="w-full min-w-0 border-0 bg-transparent p-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                    @focus="openTagDropdown"
+                    @keydown.enter.prevent="handleTagEnter"
+                  >
+                  <button
+                    type="button"
+                    class="shrink-0 text-gray-400 transition-colors hover:text-gray-600"
+                    @click.stop="tagDropdownOpen = !tagDropdownOpen"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+                <BaseButton
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  class="shrink-0 px-4"
+                  @click="addTag()"
+                >
+                  {{ t('common.add') }}
+                </BaseButton>
+              </div>
+
+              <div
+                v-if="tagDropdownOpen"
+                class="absolute z-20 mt-2 w-full rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+              >
+                <div
+                  v-if="filteredAvailableTags.length"
+                  class="max-h-48 space-y-1 overflow-y-auto"
+                >
+                  <button
+                    v-for="tag in filteredAvailableTags"
+                    :key="`available-${tag}`"
+                    type="button"
+                    class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors"
+                    :class="formData.tags.includes(tag)
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-gray-700 hover:bg-gray-50'"
+                    @click="toggleTag(tag)"
+                  >
+                    <span>{{ tag }}</span>
+                    <svg
+                      v-if="formData.tags.includes(tag)"
+                      class="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+                </div>
+                <div v-else class="px-3 py-2 text-sm text-gray-400">
+                  {{ t('cloudBilling.providers.tagsEmpty') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Status -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
           <div class="md:col-span-1">
@@ -1098,10 +1204,11 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, watch, reactive, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData } from '@/utils/api'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 import { cloudBillingApi } from '@/api/cloudBilling'
 import { notificationsAdminApi } from '@/admin/api'
 import BaseModal from '@/components/ui/BaseModal.vue'
@@ -1116,6 +1223,10 @@ const props = defineProps({
   provider: {
     type: Object,
     default: null
+  },
+  providerOptions: {
+    type: Array,
+    default: () => []
   },
   showAlertRule: {
     type: Boolean,
@@ -1139,8 +1250,12 @@ const formData = reactive({
   provider_type: 'aws',
   display_name: '',
   notes: '',
+  tags: [],
   is_active: true,
 })
+const tagInput = ref('')
+const tagDropdownOpen = ref(false)
+const tagDropdownRef = ref(null)
 
 // Auto-generate name based on provider_type and display_name
 const generateName = (providerType, displayName) => {
@@ -1204,6 +1319,87 @@ const channelsLoading = ref(false)
 const selectedChannelValue = ref('')
 const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
+const availableTags = computed(() => {
+  const tagSet = new Set()
+  ;(props.providerOptions || []).forEach((provider) => {
+    ;(provider?.tags || []).forEach((tag) => {
+      const normalized = String(tag || '').trim()
+      if (normalized) {
+        tagSet.add(normalized)
+      }
+    })
+  })
+  formData.tags.forEach((tag) => {
+    const normalized = String(tag || '').trim()
+    if (normalized) {
+      tagSet.add(normalized)
+    }
+  })
+  return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
+})
+
+const normalizeTag = (value) => String(value || '').trim()
+
+const filteredAvailableTags = computed(() => {
+  const keyword = normalizeTag(tagInput.value).toLowerCase()
+  if (!keyword) {
+    return availableTags.value
+  }
+  return availableTags.value.filter((tag) =>
+    String(tag || '').toLowerCase().includes(keyword)
+  )
+})
+
+const toggleTag = (value) => {
+  const tag = normalizeTag(value)
+  if (!tag) {
+    return
+  }
+  if (formData.tags.includes(tag)) {
+    formData.tags = formData.tags.filter((item) => item !== tag)
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagDropdownOpen.value = true
+}
+
+const addTag = (value = tagInput.value) => {
+  const tag = normalizeTag(value)
+  if (!tag || formData.tags.includes(tag)) {
+    tagInput.value = ''
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagInput.value = ''
+  tagDropdownOpen.value = true
+}
+
+const removeTag = (value) => {
+  const tag = normalizeTag(value)
+  formData.tags = formData.tags.filter((item) => item !== tag)
+}
+
+const openTagDropdown = () => {
+  tagDropdownOpen.value = true
+}
+
+const handleTagEnter = () => {
+  const exactMatch = availableTags.value.find(
+    (tag) => tag.toLowerCase() === normalizeTag(tagInput.value).toLowerCase()
+  )
+  if (exactMatch) {
+    toggleTag(exactMatch)
+    tagInput.value = ''
+    return
+  }
+  addTag()
+}
+
+const handleClickOutside = (event) => {
+  if (tagDropdownRef.value && !tagDropdownRef.value.contains(event.target)) {
+    tagDropdownOpen.value = false
+  }
+}
 
 const scrollToValidationErrors = async () => {
   await nextTick()
@@ -1279,9 +1475,12 @@ watch(() => props.provider, async (newProvider) => {
   if (newProvider) {
     formData.name = newProvider.name || ''
     formData.provider_type = newProvider.provider_type || 'aws'
-    formData.display_name = newProvider.display_name || newProvider.provider_type || 'aws'
+    formData.display_name = getLocalizedProviderDisplayName(newProvider, t) || newProvider.provider_type || 'aws'
     formData.notes = newProvider.notes || ''
+    formData.tags = Array.isArray(newProvider.tags) ? [...newProvider.tags] : []
     formData.is_active = newProvider.is_active ?? true
+    tagInput.value = ''
+    tagDropdownOpen.value = false
 
     const config = newProvider.config || {}
     const notification = config.notification
@@ -1390,6 +1589,7 @@ watch(() => props.provider, async (newProvider) => {
       provider_type: 'aws',
       display_name: typeLabels['aws'] || 'aws',
       notes: '',
+      tags: [],
       is_active: true,
     })
     Object.assign(configFields, {
@@ -1430,6 +1630,8 @@ watch(() => props.provider, async (newProvider) => {
     selectedChannelValue.value = ''
     pendingChannelUuid.value = ''
     emailToRecipients.value = ['', '', '']
+    tagInput.value = ''
+    tagDropdownOpen.value = false
   }
 }, { immediate: true })
 
@@ -1548,6 +1750,11 @@ onMounted(() => {
   if (props.show) {
     loadChannels()
   }
+  document.addEventListener('pointerdown', handleClickOutside, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleClickOutside, true)
 })
 
 function getChannelOptionLabel(ch) {
@@ -1824,6 +2031,7 @@ const handleSubmit = async () => {
     if (formData.notes && formData.notes.trim()) {
       data.notes = formData.notes.trim()
     }
+    data.tags = [...formData.tags]
     requestPayload = { ...data }
 
     let providerId

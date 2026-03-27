@@ -117,7 +117,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
@@ -375,7 +375,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
@@ -474,7 +474,7 @@
                         class="cursor-pointer hover:bg-gray-50 transition-colors"
                       >
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {{ billing.provider_display_name || billing.provider }}
+                          {{ getBillingProviderName(billing) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {{ billing.account_id || '-' }}
@@ -535,8 +535,12 @@ import BillingDetailPanel from '@/components/cloud-billing/BillingDetailPanel.vu
 import BillingChart from '@/components/cloud-billing/BillingChart.vue'
 import BillingPieChart from '@/components/cloud-billing/BillingPieChart.vue'
 import BillingDailyCostChart from '@/components/cloud-billing/BillingDailyCostChart.vue'
+import { getLocalizedBillingProviderName, getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
 const { t, locale } = useI18n()
+
+const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
+const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
 
 const dateFnsLocale = computed(() => {
   return locale.value === 'zh-CN' ? zhCN : enUS
@@ -917,7 +921,8 @@ const loadBillings = async (query = '') => {
       return {
         id: billing.id,
         provider: billing.provider,
-        provider_display_name: billing.provider_name || billing.provider,
+        provider_display_name: getBillingProviderName(billing),
+        provider_type: billing.provider_type,
         collection_time: billing.collected_at,
         cost: billing.total_cost,
         balance: billing.balance,
@@ -938,7 +943,7 @@ const loadBillings = async (query = '') => {
     if (query) {
       const lowerQuery = query.toLowerCase()
       billings.value = billings.value.filter(billing =>
-        billing.provider_display_name.toLowerCase().includes(lowerQuery) ||
+        String(billing.provider_display_name || '').toLowerCase().includes(lowerQuery) ||
         (billing.account_id && billing.account_id.toLowerCase().includes(lowerQuery))
       )
     }

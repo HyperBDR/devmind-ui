@@ -267,6 +267,7 @@ import { notificationsAdminApi } from '@/admin/api'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
 const props = defineProps({
   show: {
@@ -289,7 +290,7 @@ const { t } = useI18n()
 const { showSuccess, showError } = useToast()
 const saving = ref(false)
 
-const providerName = computed(() => props.provider?.display_name || '')
+const providerName = computed(() => getLocalizedProviderDisplayName(props.provider, t) || '')
 const resolvedProviderId = computed(
   () => props.provider?.id || props.provider?.provider_id || props.alertRule?.provider || null
 )

@@ -7,7 +7,7 @@
       <!-- Provider and Collection Time -->
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold text-gray-900">
-          {{ billing.provider_display_name || billing.provider }}
+          {{ providerDisplayName }}
         </h3>
         <span class="text-xs text-gray-500">
           {{ formatDate(billing.collection_time) }}
@@ -37,8 +37,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
+import { getLocalizedBillingProviderName } from '@/utils/providerDisplay'
 
 const props = defineProps({
   billing: {
@@ -50,6 +52,7 @@ const props = defineProps({
 const emit = defineEmits(['view'])
 
 const { t } = useI18n()
+const providerDisplayName = computed(() => getLocalizedBillingProviderName(props.billing, t))
 
 
 const handleViewDetails = () => {

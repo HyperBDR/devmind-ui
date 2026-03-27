@@ -67,7 +67,7 @@
                   {{ t('cloudBilling.billing.provider') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ billing.provider_display_name || billing.provider }}
+                  {{ providerDisplayName }}
                 </dd>
               </div>
               <div>
@@ -117,7 +117,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getLocalizedBillingProviderName } from '@/utils/providerDisplay'
 import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
 
 const props = defineProps({
@@ -134,6 +136,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const { t } = useI18n()
+const providerDisplayName = computed(() => getLocalizedBillingProviderName(props.billing, t))
 
 const handleClose = () => {
   emit('close')

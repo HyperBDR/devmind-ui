@@ -78,15 +78,24 @@
                 <td class="px-4 py-3">
                   <div class="min-w-[180px]">
                     <div class="text-sm font-medium text-gray-900 break-words">
-                      {{ provider.display_name }}
+                      {{ getProviderDisplayName(provider) }}
                     </div>
                     <div v-if="provider.notes" class="text-xs text-gray-500 mt-1 truncate max-w-[300px]" :title="provider.notes">
                       {{ provider.notes }}
                     </div>
+                    <div v-if="provider.tags?.length" class="mt-2 flex flex-wrap gap-1.5">
+                      <span
+                        v-for="tag in provider.tags"
+                        :key="`${provider.id}-${tag}`"
+                        class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700"
+                      >
+                        {{ tag }}
+                      </span>
+                    </div>
                   </div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                  {{ getProviderTypeLabel(provider.provider_type) }}
+                  {{ getProviderTypeText(provider.provider_type) }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <label class="relative inline-flex items-center cursor-pointer">
@@ -186,11 +195,20 @@
             <div class="flex items-start justify-between mb-3">
               <div class="flex-1">
                 <h3 class="text-sm font-semibold text-gray-900 mb-1">
-                  {{ provider.display_name }}
+                  {{ getProviderDisplayName(provider) }}
                 </h3>
                 <p v-if="provider.notes" class="text-xs text-gray-500 mt-1 truncate" :title="provider.notes">
                   {{ provider.notes }}
                 </p>
+                <div v-if="provider.tags?.length" class="mt-2 flex flex-wrap gap-1.5">
+                  <span
+                    v-for="tag in provider.tags"
+                    :key="`${provider.id}-${tag}`"
+                    class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input
@@ -208,7 +226,7 @@
             <div class="space-y-2 text-sm text-gray-600">
               <div>
                 <span class="font-medium">{{ t('cloudBilling.settings.providers.providerType') }}:</span>
-                {{ getProviderTypeLabel(provider.provider_type) }}
+                {{ getProviderTypeText(provider.provider_type) }}
               </div>
               <div v-if="getAlertRule(provider.id)">
                 <span class="font-medium">{{ t('cloudBilling.settings.alertRule.title') }}:</span>
@@ -280,6 +298,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
+      :provider-options="providers"
       :show-alert-rule="!editingProvider"
       @close="closeModal"
       @saved="handleSaved"
@@ -290,6 +309,7 @@
       v-if="editingNotesProvider"
       :show="!!editingNotesProvider"
       :provider="editingNotesProvider"
+      :provider-options="providers"
       @close="editingNotesProvider = null"
       @saved="handleNotesSaved"
     />
@@ -318,6 +338,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import ProviderNotesModal from '@/components/cloud-billing/ProviderNotesModal.vue'
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
+import { getLocalizedProviderDisplayName, getProviderTypeLabel } from '@/utils/providerDisplay'
 
 const { t } = useI18n()
 const { showSuccess, showError } = useToast()
@@ -331,21 +352,8 @@ const editingNotesProvider = ref(null)
 const editingAlertRuleProvider = ref(null)
 const togglingIds = ref([])
 
-const providerTypes = {
-  aws: t('cloudBilling.providers.types.aws'),
-  huawei: t('cloudBilling.providers.types.huawei'),
-  'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
-  tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
-  alibaba: t('cloudBilling.providers.types.alibaba'),
-  azure: t('cloudBilling.providers.types.azure'),
-  volcengine: t('cloudBilling.providers.types.volcengine'),
-  baidu: t('cloudBilling.providers.types.baidu'),
-  zhipu: t('cloudBilling.providers.types.zhipu'),
-}
-
-const getProviderTypeLabel = (type) => {
-  return providerTypes[type] || type
-}
+const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
+const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
