@@ -91,3 +91,4 @@ temp/
 
 # AI/IDE directories
 .cursor/
+.agents/
