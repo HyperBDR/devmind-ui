@@ -148,6 +148,22 @@
                   {{ formatCurrency(alert.balance_threshold, alert.currency) }}
                 </dd>
               </div>
+              <div v-if="alert.current_days_remaining !== null && alert.current_days_remaining !== undefined">
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('cloudBilling.alerts.currentDaysRemaining') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ alert.current_days_remaining }}
+                </dd>
+              </div>
+              <div v-if="alert.days_remaining_threshold !== null && alert.days_remaining_threshold !== undefined">
+                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                  {{ t('cloudBilling.alerts.daysRemainingThreshold') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ alert.days_remaining_threshold }}
+                </dd>
+              </div>
             </dl>
           </div>
 

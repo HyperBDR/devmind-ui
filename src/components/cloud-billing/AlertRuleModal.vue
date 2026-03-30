@@ -94,6 +94,7 @@
             </p>
           </div>
         </div>
+
         <div
           v-if="isEmailChannelSelected"
           class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start"
@@ -227,6 +228,31 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="daysRemainingThreshold"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.settings.alertRule.daysRemainingThreshold') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.settings.alertRule.daysRemainingThresholdDesc') }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <BaseInput
+              id="daysRemainingThreshold"
+              v-model="formData.days_remaining_threshold"
+              type="number"
+              step="1"
+              min="1"
+              :placeholder="t('cloudBilling.settings.alertRule.daysRemainingThresholdPlaceholder')"
+              class="w-full"
+            />
+          </div>
+        </div>
+
         <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
           <p class="text-xs text-blue-800">
             {{ t('cloudBilling.settings.alertRule.note') }}
@@ -301,6 +327,7 @@ const formData = ref({
   growth_threshold: null,
   growth_amount_threshold: null,
   balance_threshold: null,
+  days_remaining_threshold: null,
 })
 
 const allChannels = ref([])
@@ -529,6 +556,7 @@ watch(() => props.alertRule, (newRule) => {
       growth_threshold: newRule.growth_threshold != null ? String(newRule.growth_threshold) : null,
       growth_amount_threshold: newRule.growth_amount_threshold != null ? String(newRule.growth_amount_threshold) : null,
       balance_threshold: newRule.balance_threshold != null ? String(newRule.balance_threshold) : null,
+      days_remaining_threshold: newRule.days_remaining_threshold != null ? String(newRule.days_remaining_threshold) : null,
     }
   } else {
     formData.value = {
@@ -537,6 +565,7 @@ watch(() => props.alertRule, (newRule) => {
       growth_threshold: null,
       growth_amount_threshold: null,
       balance_threshold: null,
+      days_remaining_threshold: null,
     }
   }
 }, { immediate: true })
@@ -547,11 +576,13 @@ const handleSubmit = async () => {
   const growthThreshold = normalizeThresholdValue(formData.value.growth_threshold)
   const growthAmountThreshold = normalizeThresholdValue(formData.value.growth_amount_threshold)
   const balanceThreshold = normalizeThresholdValue(formData.value.balance_threshold)
+  const daysRemainingThreshold = normalizeThresholdValue(formData.value.days_remaining_threshold)
   const hasAnyThreshold = [
     costThreshold,
     growthThreshold,
     growthAmountThreshold,
     balanceThreshold,
+    daysRemainingThreshold,
   ].some((value) => value !== null)
 
   saving.value = true
@@ -611,6 +642,7 @@ const handleSubmit = async () => {
       growth_threshold: growthThreshold !== null ? parseFloat(growthThreshold) : null,
       growth_amount_threshold: growthAmountThreshold !== null ? parseFloat(growthAmountThreshold) : null,
       balance_threshold: balanceThreshold !== null ? parseFloat(balanceThreshold) : null,
+      days_remaining_threshold: daysRemainingThreshold !== null ? parseInt(daysRemainingThreshold, 10) : null,
     }
 
     const successMessage = existingRuleId

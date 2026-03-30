@@ -539,6 +539,7 @@ import { getLocalizedBillingProviderName, getLocalizedProviderDisplayName } from
 const { t, locale } = useI18n()
 
 const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
+const getProviderSelectLabel = (provider) => getProviderDisplayName(provider)
 const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
 
 // Count configured active providers instead of billing rows in the current period.
