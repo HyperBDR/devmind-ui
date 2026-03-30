@@ -484,6 +484,27 @@ async function hydrateNotificationSelection(providerId) {
   emailToRecipients.value = ['', '', '']
 }
 
+async function fetchExistingAlertRule(providerId) {
+  if (!providerId) {
+    return null
+  }
+
+  try {
+    const response = await cloudBillingApi.getAlertRules({
+      provider_id: providerId,
+      page_size: 1
+    })
+    const data = extractResponseData(response)
+    const rules = Array.isArray(data)
+      ? data
+      : data?.results || data?.list || []
+    return rules[0] || null
+  } catch (error) {
+    console.error('Failed to fetch existing alert rule:', error)
+    return null
+  }
+}
+
 watch(
   () => [props.show, resolvedProviderId.value],
   async ([visible, providerId]) => {
@@ -542,9 +563,12 @@ const handleSubmit = async () => {
       return
     }
 
+    const existingRule = props.alertRule || await fetchExistingAlertRule(providerId)
+    const existingRuleId = existingRule?.id || null
+
     // If all thresholds are empty and rule exists, delete it
-    if (!hasAnyThreshold && props.alertRule) {
-      await cloudBillingApi.deleteAlertRule(props.alertRule.id)
+    if (!hasAnyThreshold && existingRuleId) {
+      await cloudBillingApi.deleteAlertRule(existingRuleId)
       showSuccess(t('cloudBilling.settings.alertRule.deleteSuccess'))
       emit('saved')
       return
@@ -589,11 +613,11 @@ const handleSubmit = async () => {
       balance_threshold: balanceThreshold !== null ? parseFloat(balanceThreshold) : null,
     }
 
-    const successMessage = props.alertRule
+    const successMessage = existingRuleId
       ? t('cloudBilling.settings.alertRule.updateSuccess')
       : t('cloudBilling.settings.alertRule.createSuccess')
-    if (props.alertRule) {
-      await cloudBillingApi.updateAlertRule(props.alertRule.id, data)
+    if (existingRuleId) {
+      await cloudBillingApi.updateAlertRule(existingRuleId, data)
     } else {
       await cloudBillingApi.createAlertRule(data)
     }
