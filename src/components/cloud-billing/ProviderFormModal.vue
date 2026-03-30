@@ -1130,6 +1130,32 @@
             </div>
           </div>
 
+          <!-- Days Remaining Threshold -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="daysRemainingThreshold"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.settings.alertRule.daysRemainingThreshold') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.settings.alertRule.daysRemainingThresholdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="daysRemainingThreshold"
+                v-model="alertRuleData.days_remaining_threshold"
+                type="number"
+                step="1"
+                min="1"
+                :placeholder="t('cloudBilling.settings.alertRule.daysRemainingThresholdPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+
           <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
             <p class="text-xs text-blue-800">
               {{ t('cloudBilling.settings.alertRule.note') }}
@@ -1338,6 +1364,7 @@ const alertRuleData = reactive({
   growth_threshold: '',
   growth_amount_threshold: '',
   balance_threshold: '',
+  days_remaining_threshold: '',
 })
 
 const hasThresholdValue = (value) =>
@@ -1590,6 +1617,7 @@ watch(() => props.provider, async (newProvider) => {
           alertRuleData.growth_threshold = getThresholdFormValue(rule.growth_threshold)
           alertRuleData.growth_amount_threshold = getThresholdFormValue(rule.growth_amount_threshold)
           alertRuleData.balance_threshold = getThresholdFormValue(rule.balance_threshold)
+          alertRuleData.days_remaining_threshold = getThresholdFormValue(rule.days_remaining_threshold)
         } else {
           existingAlertRuleId.value = null
           alertRuleData.is_active = false
@@ -1597,6 +1625,7 @@ watch(() => props.provider, async (newProvider) => {
           alertRuleData.growth_threshold = ''
           alertRuleData.growth_amount_threshold = ''
           alertRuleData.balance_threshold = ''
+          alertRuleData.days_remaining_threshold = ''
         }
       } catch (error) {
         console.error('Failed to load alert rule:', error)
@@ -1606,6 +1635,7 @@ watch(() => props.provider, async (newProvider) => {
         alertRuleData.growth_threshold = ''
         alertRuleData.growth_amount_threshold = ''
         alertRuleData.balance_threshold = ''
+        alertRuleData.days_remaining_threshold = ''
       }
     }
   } else {
@@ -1664,6 +1694,7 @@ watch(() => props.provider, async (newProvider) => {
     alertRuleData.growth_threshold = ''
     alertRuleData.growth_amount_threshold = ''
     alertRuleData.balance_threshold = ''
+    alertRuleData.days_remaining_threshold = ''
     selectedChannelValue.value = ''
     pendingChannelUuid.value = ''
     emailToRecipients.value = ['', '', '']
@@ -2011,7 +2042,8 @@ const handleSubmit = async () => {
       !hasThresholdValue(alertRuleData.cost_threshold) &&
       !hasThresholdValue(alertRuleData.growth_threshold) &&
       !hasThresholdValue(alertRuleData.growth_amount_threshold) &&
-      !hasThresholdValue(alertRuleData.balance_threshold)
+      !hasThresholdValue(alertRuleData.balance_threshold) &&
+      !hasThresholdValue(alertRuleData.days_remaining_threshold)
     ) {
       showError(t('cloudBilling.settings.alertRule.atLeastOneThreshold'))
       return
@@ -2099,6 +2131,7 @@ const handleSubmit = async () => {
           growth_threshold: hasThresholdValue(alertRuleData.growth_threshold) ? parseFloat(alertRuleData.growth_threshold) : null,
           growth_amount_threshold: hasThresholdValue(alertRuleData.growth_amount_threshold) ? parseFloat(alertRuleData.growth_amount_threshold) : null,
           balance_threshold: hasThresholdValue(alertRuleData.balance_threshold) ? parseFloat(alertRuleData.balance_threshold) : null,
+          days_remaining_threshold: hasThresholdValue(alertRuleData.days_remaining_threshold) ? parseInt(alertRuleData.days_remaining_threshold, 10) : null,
         }
 
         if (existingAlertRuleId.value) {
@@ -2115,6 +2148,7 @@ const handleSubmit = async () => {
           growth_threshold: null,
           growth_amount_threshold: null,
           balance_threshold: null,
+          days_remaining_threshold: null,
         })
       }
     }
