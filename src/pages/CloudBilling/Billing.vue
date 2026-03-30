@@ -117,7 +117,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ getProviderDisplayName(provider) }}
+                          {{ getProviderSelectLabel(provider) }}
                         </option>
                       </select>
                     </div>
@@ -375,7 +375,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ getProviderDisplayName(provider) }}
+                          {{ getProviderSelectLabel(provider) }}
                         </option>
                       </select>
                     </div>
@@ -541,6 +541,32 @@ const { t, locale } = useI18n()
 
 const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
 const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
+
+const normalizeProviderLabel = (value) => String(value || '').trim().toLowerCase()
+
+const providerDisplayNameCounts = computed(() => {
+  return providers.value.reduce((counts, provider) => {
+    const label = getProviderDisplayName(provider)
+    const key = normalizeProviderLabel(label)
+    counts.set(key, (counts.get(key) || 0) + 1)
+    return counts
+  }, new Map())
+})
+
+const getProviderSelectLabel = (provider) => {
+  const baseLabel = getProviderDisplayName(provider)
+  const notes = String(provider?.notes || '').trim()
+  if (notes) {
+    return `${baseLabel} · ${notes}`
+  }
+
+  const isDuplicate = (providerDisplayNameCounts.value.get(normalizeProviderLabel(baseLabel)) || 0) > 1
+  if (!isDuplicate) {
+    return baseLabel
+  }
+
+  return `${baseLabel} · #${provider?.id}`
+}
 
 const dateFnsLocale = computed(() => {
   return locale.value === 'zh-CN' ? zhCN : enUS
