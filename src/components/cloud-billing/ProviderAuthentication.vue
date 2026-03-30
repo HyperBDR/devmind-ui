@@ -575,6 +575,12 @@ const getAlertRuleSummary = (providerId) => {
       text: `${t('cloudBilling.settings.alertRule.balanceThreshold')}: ${formatCurrency(rule.balance_threshold)}`
     })
   }
+  if (hasThresholdValue(rule.days_remaining_threshold)) {
+    items.push({
+      key: 'days_remaining_threshold',
+      text: `${t('cloudBilling.settings.alertRule.daysRemainingThreshold')}: ${rule.days_remaining_threshold}`
+    })
+  }
   if (!rule.is_active) {
     items.push({
       key: 'is_active',
