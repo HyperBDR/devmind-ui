@@ -964,6 +964,8 @@
       "accountDrawerLegendPrimary": "Primary Service",
       "accountDrawerLegendOther": "Other Services",
       "accountDrawerServiceBreakdown": "Service Breakdown",
+      "accountDrawerServiceBreakdownFallbackHint": "This breakdown comes from the latest billing snapshot instead of 30-day daily detail, and currently covers about {coverage}% of total consumption. Use it cautiously for fine-grained analysis.",
+      "accountDrawerServiceBreakdownCoverageHint": "This breakdown is based on recent 30-day detail, but it currently covers only about {coverage}% of total consumption, so some services may still be missing.",
       "accountDrawerStatusHealthy": "Healthy",
       "accountDrawerStatusAttention": "Attention",
       "accountDrawerRecommendationMessage": "Based on the recent average burn of {daily}, the current funds are projected to reach the threshold in {days} days. Add {amount} to cover the next {window} days.",

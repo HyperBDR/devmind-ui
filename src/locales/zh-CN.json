@@ -974,6 +974,8 @@
       "accountDrawerLegendPrimary": "主要服务",
       "accountDrawerLegendOther": "其他服务",
       "accountDrawerServiceBreakdown": "服务构成",
+      "accountDrawerServiceBreakdownFallbackHint": "当前服务构成来自最近一条账单快照，不是近 30 天逐日明细，已覆盖约 {coverage}% 的总消耗，请谨慎用于精细分析。",
+      "accountDrawerServiceBreakdownCoverageHint": "当前服务构成基于近 30 天明细统计，但仅覆盖约 {coverage}% 的总消耗，可能仍有部分服务未被采集。",
       "accountDrawerStatusHealthy": "健康",
       "accountDrawerStatusAttention": "关注",
       "accountDrawerRecommendationMessage": "根据近30日均消耗 {daily}，预计当前资金额度将在 {days} 天后临界。建议补充 {amount} 以覆盖未来 {window} 天消耗。",

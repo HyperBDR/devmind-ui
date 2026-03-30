@@ -1104,6 +1104,32 @@
             </div>
           </div>
 
+          <!-- Balance Threshold -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="balanceThreshold"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.settings.alertRule.balanceThreshold') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.settings.alertRule.balanceThresholdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="balanceThreshold"
+                v-model="alertRuleData.balance_threshold"
+                type="number"
+                step="0.01"
+                min="0"
+                :placeholder="t('cloudBilling.settings.alertRule.balanceThresholdPlaceholder')"
+                class="w-full"
+              />
+            </div>
+          </div>
+
           <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
             <p class="text-xs text-blue-800">
               {{ t('cloudBilling.settings.alertRule.note') }}
@@ -1311,7 +1337,14 @@ const alertRuleData = reactive({
   cost_threshold: '',
   growth_threshold: '',
   growth_amount_threshold: '',
+  balance_threshold: '',
 })
+
+const hasThresholdValue = (value) =>
+  value !== null && value !== undefined && String(value).trim() !== ''
+
+const getThresholdFormValue = (value) =>
+  value !== null && value !== undefined ? String(value) : ''
 
 const existingAlertRuleId = ref(null)
 const allChannels = ref([])
@@ -1553,15 +1586,17 @@ watch(() => props.provider, async (newProvider) => {
           const rule = rules[0]
           existingAlertRuleId.value = rule.id
           alertRuleData.is_active = rule.is_active ?? false
-          alertRuleData.cost_threshold = rule.cost_threshold || ''
-          alertRuleData.growth_threshold = rule.growth_threshold || ''
-          alertRuleData.growth_amount_threshold = rule.growth_amount_threshold || ''
+          alertRuleData.cost_threshold = getThresholdFormValue(rule.cost_threshold)
+          alertRuleData.growth_threshold = getThresholdFormValue(rule.growth_threshold)
+          alertRuleData.growth_amount_threshold = getThresholdFormValue(rule.growth_amount_threshold)
+          alertRuleData.balance_threshold = getThresholdFormValue(rule.balance_threshold)
         } else {
           existingAlertRuleId.value = null
           alertRuleData.is_active = false
           alertRuleData.cost_threshold = ''
           alertRuleData.growth_threshold = ''
           alertRuleData.growth_amount_threshold = ''
+          alertRuleData.balance_threshold = ''
         }
       } catch (error) {
         console.error('Failed to load alert rule:', error)
@@ -1570,6 +1605,7 @@ watch(() => props.provider, async (newProvider) => {
         alertRuleData.cost_threshold = ''
         alertRuleData.growth_threshold = ''
         alertRuleData.growth_amount_threshold = ''
+        alertRuleData.balance_threshold = ''
       }
     }
   } else {
@@ -1627,6 +1663,7 @@ watch(() => props.provider, async (newProvider) => {
     alertRuleData.cost_threshold = ''
     alertRuleData.growth_threshold = ''
     alertRuleData.growth_amount_threshold = ''
+    alertRuleData.balance_threshold = ''
     selectedChannelValue.value = ''
     pendingChannelUuid.value = ''
     emailToRecipients.value = ['', '', '']
@@ -1970,7 +2007,12 @@ const handleSubmit = async () => {
 
   // Validate alert rule if enabled and showAlertRule is true
   if (props.showAlertRule && alertRuleData.is_active) {
-    if (!alertRuleData.cost_threshold && !alertRuleData.growth_threshold && !alertRuleData.growth_amount_threshold) {
+    if (
+      !hasThresholdValue(alertRuleData.cost_threshold) &&
+      !hasThresholdValue(alertRuleData.growth_threshold) &&
+      !hasThresholdValue(alertRuleData.growth_amount_threshold) &&
+      !hasThresholdValue(alertRuleData.balance_threshold)
+    ) {
       showError(t('cloudBilling.settings.alertRule.atLeastOneThreshold'))
       return
     }
@@ -2053,9 +2095,10 @@ const handleSubmit = async () => {
         const alertRulePayload = {
           provider: providerId,
           is_active: alertRuleData.is_active,
-          cost_threshold: alertRuleData.cost_threshold ? parseFloat(alertRuleData.cost_threshold) : null,
-          growth_threshold: alertRuleData.growth_threshold ? parseFloat(alertRuleData.growth_threshold) : null,
-          growth_amount_threshold: alertRuleData.growth_amount_threshold ? parseFloat(alertRuleData.growth_amount_threshold) : null,
+          cost_threshold: hasThresholdValue(alertRuleData.cost_threshold) ? parseFloat(alertRuleData.cost_threshold) : null,
+          growth_threshold: hasThresholdValue(alertRuleData.growth_threshold) ? parseFloat(alertRuleData.growth_threshold) : null,
+          growth_amount_threshold: hasThresholdValue(alertRuleData.growth_amount_threshold) ? parseFloat(alertRuleData.growth_amount_threshold) : null,
+          balance_threshold: hasThresholdValue(alertRuleData.balance_threshold) ? parseFloat(alertRuleData.balance_threshold) : null,
         }
 
         if (existingAlertRuleId.value) {
@@ -2071,6 +2114,7 @@ const handleSubmit = async () => {
           cost_threshold: null,
           growth_threshold: null,
           growth_amount_threshold: null,
+          balance_threshold: null,
         })
       }
     }

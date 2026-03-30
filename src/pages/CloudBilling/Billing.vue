@@ -233,7 +233,7 @@
                             {{ t('cloudBilling.billing.accountCount') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ accountCount }}
+                            {{ configuredProviderCount }}
                           </div>
                         </div>
                       </div>
@@ -520,8 +520,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
-import { zhCN, enUS } from 'date-fns/locale'
+import { format } from 'date-fns'
 import { useDebounce } from '@/composables/useDebounce'
 import { extractResponseData } from '@/utils/api'
 import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
@@ -542,24 +541,16 @@ const { t, locale } = useI18n()
 const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
 const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
 
-const dateFnsLocale = computed(() => {
-  return locale.value === 'zh-CN' ? zhCN : enUS
-})
-
-// Calculate total account count from statistics
-const accountCount = computed(() => {
-  if (!statistics.value || !statistics.value.by_provider) {
-    return 0
+// Count configured active providers instead of billing rows in the current period.
+const configuredProviderCount = computed(() => {
+  if (statsProviderId.value) {
+    return providers.value.some(
+      (provider) => provider.id === parseInt(statsProviderId.value)
+    )
+      ? 1
+      : 0
   }
-  
-  // Count unique provider+account_id combinations
-  const accountSet = new Set()
-  Object.values(statistics.value.by_provider).forEach(providerData => {
-    const key = `${providerData.provider_id}_${providerData.account_id || ''}`
-    accountSet.add(key)
-  })
-  
-  return accountSet.size
+  return providerTotalCount.value
 })
 
 // Available accounts for statistics filter (based on selected provider)
@@ -653,6 +644,7 @@ const statsSelectedYear = ref(new Date().getFullYear())
 const statsProviderId = ref('')
 const statsAccountId = ref('')
 const providers = ref([])
+const providerTotalCount = ref(0)
 
 // Details tab state
 const detailsLoading = ref(false)
@@ -664,6 +656,40 @@ const detailsProviderId = ref('')
 const detailsAccountId = ref('')
 const showPreviewModal = ref(false)
 const selectedBilling = ref(null)
+
+const extractProviderListData = (data) => {
+  if (Array.isArray(data)) {
+    return {
+      list: data,
+      total: data.length,
+      paginated: false
+    }
+  }
+
+  if (data?.results && Array.isArray(data.results)) {
+    const total = Number(data.count)
+    return {
+      list: data.results,
+      total: Number.isFinite(total) ? total : data.results.length,
+      paginated: true
+    }
+  }
+
+  if (data?.list && Array.isArray(data.list)) {
+    const total = Number(data?.pagination?.total)
+    return {
+      list: data.list,
+      total: Number.isFinite(total) ? total : data.list.length,
+      paginated: true
+    }
+  }
+
+  return {
+    list: [],
+    total: 0,
+    paginated: false
+  }
+}
 
 // Initialize date range: details tab default is last 3 days (from 3 days ago to today)
 const initDateRange = () => {
@@ -684,16 +710,40 @@ const initDateRange = () => {
 // Load providers list
 const loadProviders = async () => {
   try {
-    const response = await cloudBillingApi.getProviders({ is_active: true })
+    const pageSize = 100
+    const response = await cloudBillingApi.getProviders({
+      is_active: true,
+      page: 1,
+      page_size: pageSize
+    })
     const data = extractResponseData(response)
-    if (Array.isArray(data)) {
-      providers.value = data
-    } else if (data && data.results) {
-      providers.value = data.results
+    const { list, total, paginated } = extractProviderListData(data)
+
+    if (!paginated) {
+      providers.value = list
+      providerTotalCount.value = total
+    } else {
+      const allProviders = [...list]
+      const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
+      for (let page = 2; page <= totalPages; page += 1) {
+        const pageResponse = await cloudBillingApi.getProviders({
+          is_active: true,
+          page,
+          page_size: pageSize
+        })
+        const pageData = extractResponseData(pageResponse)
+        const { list: pageList } = extractProviderListData(pageData)
+        allProviders.push(...pageList)
+      }
+
+      providers.value = allProviders
+      providerTotalCount.value = total
     }
   } catch (error) {
     console.error('Failed to load providers:', error)
     providers.value = []
+    providerTotalCount.value = 0
   }
 }
 

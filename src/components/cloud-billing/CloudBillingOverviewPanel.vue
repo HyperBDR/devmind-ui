@@ -177,7 +177,7 @@
             <div class="hidden h-4 w-px bg-gray-200 md:block" />
             <div class="text-xs text-gray-500">
               {{ t('cloudBilling.billing.overviewTotalFunds') }}
-              <span class="ml-1 font-mono font-semibold text-emerald-600">{{ formatValue(overview.financial_health.total_funds) }}</span>
+              <span class="ml-1 font-mono font-semibold text-emerald-600">{{ formatConvertedValue(convertedTotalFunds) }}</span>
             </div>
             <div class="text-xs text-gray-500">
               {{ t('cloudBilling.billing.overviewMinDays') }}
@@ -348,7 +348,7 @@
                   <div class="mt-3 grid grid-cols-2 gap-3 rounded-xl bg-zinc-50 px-3 py-2.5">
                     <div class="min-w-0">
                       <div class="text-[11px] text-zinc-500">{{ t('cloudBilling.billing.balance') }}</div>
-                      <div class="mt-0.5 truncate font-mono text-sm font-semibold text-zinc-900">{{ formatValue(account.balance) }}</div>
+                      <div class="mt-0.5 truncate font-mono text-sm font-semibold text-zinc-900">{{ formatAccountValue(account.balance, account.balance_currency) }}</div>
                     </div>
                     <div class="min-w-0 text-right">
                       <div class="text-[11px] text-zinc-500">{{ t('cloudBilling.billing.overviewDaysRemaining') }}</div>
@@ -519,7 +519,7 @@
                         </span>
                         <span class="text-zinc-500">
                           {{ t('cloudBilling.billing.overviewGroupBalance') }}
-                          <span class="ml-1 font-mono font-semibold text-emerald-600">{{ formatValue(group.totalBalance) }}</span>
+                          <span class="ml-1 font-mono font-semibold text-emerald-600">{{ formatConvertedValue(group.totalBalance) }}</span>
                         </span>
                       </div>
                     </div>
@@ -761,6 +761,12 @@
                 <div class="mb-3 text-sm font-semibold text-zinc-900">
                   {{ t('cloudBilling.billing.accountDrawerServiceBreakdown') }}
                 </div>
+                <div
+                  v-if="serviceBreakdownHint"
+                  class="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-700"
+                >
+                  {{ serviceBreakdownHint }}
+                </div>
                 <div class="space-y-2.5">
                   <div
                     v-for="item in selectedAccountDetail.service_breakdown"
@@ -771,7 +777,7 @@
                       <div class="truncate font-medium text-zinc-700">{{ displayServiceName(item.name) }}</div>
                       <div class="flex items-center gap-3 text-right">
                         <div class="font-mono text-[11px] font-semibold text-zinc-500">
-                          {{ formatValue(item.value) }}
+                          {{ formatAccountValue(item.value, selectedAccountDetail.service_breakdown_currency) }}
                         </div>
                         <div class="font-mono font-semibold text-zinc-900">{{ formatPercent(item.percentage) }}</div>
                       </div>
@@ -942,6 +948,7 @@ function createFallbackOverview() {
     },
     accounts: cloudBillingOverviewAccounts.map((item) => ({
       id: item.id,
+      provider_id: item.providerId || '',
       name: item.name,
       provider: item.provider,
       provider_type: item.providerType || '',
@@ -1018,23 +1025,47 @@ const currentTrend = computed(() => {
   return trendRangesMap[selectedTrendRange.value] || overview.value.summary?.trend || []
 })
 
+const exchangeRateValue = computed(() => {
+  const rate = Number(overview.value.exchange_rate || 0)
+  return rate > 0 ? rate : 7.15
+})
+
+function convertTrendTotal(item) {
+  const cnyValue = Number(item?.cny || 0)
+  const usdValue = Number(item?.usd || 0)
+
+  if (selectedCurrency.value === 'USD') {
+    return usdValue + cnyValue / exchangeRateValue.value
+  }
+
+  return cnyValue + usdValue * exchangeRateValue.value
+}
+
+const convertedTotalFunds = computed(() => {
+  return sumUniqueProviderBalances(overview.value.accounts || [])
+})
+
+function formatConvertedValue(value) {
+  const numericValue = Number(value || 0)
+  const symbol = selectedCurrency.value === 'USD' ? '$' : '¥'
+  return `${symbol}${numericValue.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`
+}
+
 const trendChartData = computed(() => ({
   labels: currentTrend.value.map((item) => item.date),
   datasets: [
     {
-      label: 'CNY',
-      data: currentTrend.value.map((item) => item.cny),
-      borderColor: '#10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.10)',
-      fill: true,
-      tension: 0.36,
-      pointRadius: 0
-    },
-    {
-      label: 'USD',
-      data: currentTrend.value.map((item) => item.usd),
-      borderColor: '#6366f1',
-      backgroundColor: 'rgba(99, 102, 241, 0.10)',
+      label: selectedCurrency.value,
+      data: currentTrend.value.map((item) => convertTrendTotal(item)),
+      borderColor:
+        selectedCurrency.value === 'USD' ? '#6366f1' : '#10b981',
+      backgroundColor:
+        selectedCurrency.value === 'USD'
+          ? 'rgba(99, 102, 241, 0.10)'
+          : 'rgba(16, 185, 129, 0.10)',
       fill: true,
       tension: 0.36,
       pointRadius: 0
@@ -1044,7 +1075,7 @@ const trendChartData = computed(() => ({
 
 const trendChartRenderKey = computed(() => {
   const labels = currentTrend.value.map((item) => item.date).join('|')
-  return `${selectedTrendRange.value}:${labels}`
+  return `${selectedTrendRange.value}:${selectedCurrency.value}:${labels}`
 })
 
 const trendChartOptions = computed(() => ({
@@ -1053,6 +1084,7 @@ const trendChartOptions = computed(() => ({
   interaction: { mode: 'index', intersect: false },
   plugins: {
     legend: {
+      display: false,
       position: 'top',
       align: 'end',
       labels: {
@@ -1067,7 +1099,11 @@ const trendChartOptions = computed(() => ({
       bodyColor: '#3f3f46',
       borderColor: '#e4e4e7',
       borderWidth: 1,
-      padding: 12
+      padding: 12,
+      callbacks: {
+        label: (context) =>
+          `${context.dataset.label}: ${formatConvertedValue(context.parsed.y)}`
+      }
     }
   },
   scales: {
@@ -1202,6 +1238,11 @@ const selectedAccountDetail = computed(() => {
       primary_service_name: '',
       primary_service_share: 0,
       service_count: 0,
+      service_breakdown_currency: selectedCurrency.value,
+      service_breakdown_source: '',
+      service_breakdown_has_recent_rows: false,
+      service_breakdown_coverage: 0,
+      service_breakdown_complete: false,
       service_breakdown: [],
       trend_series: [],
       trend_30d: [],
@@ -1217,6 +1258,11 @@ const selectedAccountDetail = computed(() => {
       primary_service_name: '',
       primary_service_share: 0,
       service_count: 0,
+      service_breakdown_currency: selectedCurrency.value,
+      service_breakdown_source: '',
+      service_breakdown_has_recent_rows: false,
+      service_breakdown_coverage: 0,
+      service_breakdown_complete: false,
       service_breakdown: [],
       trend_series: [],
       trend_30d: (account.trend || []).map((item) => ({
@@ -1247,6 +1293,28 @@ const recommendationMessage = computed(() => {
   })
 })
 
+const serviceBreakdownHint = computed(() => {
+  const detail = selectedAccountDetail.value
+  if (!(detail.service_breakdown || []).length) {
+    return ''
+  }
+
+  const coverage = Number(detail.service_breakdown_coverage || 0).toFixed(1)
+  if (detail.service_breakdown_source === 'latest_billing') {
+    return t('cloudBilling.billing.accountDrawerServiceBreakdownFallbackHint', {
+      coverage
+    })
+  }
+
+  if (!detail.service_breakdown_complete) {
+    return t('cloudBilling.billing.accountDrawerServiceBreakdownCoverageHint', {
+      coverage
+    })
+  }
+
+  return ''
+})
+
 const accountDetailChartData = computed(() => {
   const trend = selectedAccountDetail.value.trend_30d || []
   if (!trend.length) {
@@ -1263,21 +1331,19 @@ const accountDetailChartData = computed(() => {
     borderWidth: 2,
     borderDash: series.name === '__other__' ? [6, 6] : undefined,
   }))
+  const totalDataset = {
+    label: t('cloudBilling.billing.accountDrawerLegendTotal'),
+    data: trend.map((item) => Number(item.total || 0)),
+    borderColor: '#3b82f6',
+    backgroundColor: 'rgba(59, 130, 246, 0.08)',
+    fill: true,
+    tension: 0.35,
+    pointRadius: 3,
+    pointHoverRadius: 4,
+  }
   return {
     labels: trend.map((item) => item.date),
-    datasets: [
-      {
-        label: t('cloudBilling.billing.accountDrawerLegendTotal'),
-        data: trend.map((item) => Number(item.total || 0)),
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.08)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 3,
-        pointHoverRadius: 4,
-      },
-      ...serviceDatasets,
-    ],
+    datasets: serviceDatasets.length > 0 ? serviceDatasets : [totalDataset],
   }
 })
 
@@ -1316,7 +1382,7 @@ const accountDetailChartOptions = computed(() => ({
       grid: { color: '#f4f4f5' },
       ticks: {
         color: '#a1a1aa',
-        callback: (value) => formatCompactValue(value),
+        callback: (value) => formatAxisTickValue(value),
       },
     },
   },
@@ -1359,6 +1425,31 @@ const filteredAccounts = computed(() => {
   })
 })
 
+function sumUniqueProviderBalances(accounts) {
+  const providerBalances = new Map()
+
+  ;(accounts || []).forEach((account) => {
+    const providerKey = String(
+      account?.provider_id || account?.provider || account?.name || ''
+    )
+    if (!providerKey || providerBalances.has(providerKey)) {
+      return
+    }
+
+    providerBalances.set(providerKey, {
+      balance: Number(account?.balance || 0),
+      currency: String(account?.balance_currency || '').toUpperCase()
+    })
+  })
+
+  return Array.from(providerBalances.values()).reduce((sum, item) => {
+    if (item.balance <= 0) {
+      return sum
+    }
+    return sum + convertAmountByCurrency(item.balance, item.currency)
+  }, 0)
+}
+
 const groupedRows = computed(() => {
   if (!groupByProvider.value) {
     return [
@@ -1366,7 +1457,7 @@ const groupedRows = computed(() => {
         name: t('cloudBilling.billing.overviewAllAccounts'),
         rows: filteredAccounts.value,
         totalCost: filteredAccounts.value.reduce((sum, item) => sum + Number(item.cost || 0), 0),
-        totalBalance: filteredAccounts.value.reduce((sum, item) => sum + Number(item.balance || 0), 0)
+        totalBalance: sumUniqueProviderBalances(filteredAccounts.value)
       }
     ]
   }
@@ -1383,7 +1474,7 @@ const groupedRows = computed(() => {
     name,
     rows,
     totalCost: rows.reduce((sum, item) => sum + Number(item.cost || 0), 0),
-    totalBalance: rows.reduce((sum, item) => sum + Number(item.balance || 0), 0)
+    totalBalance: sumUniqueProviderBalances(rows)
   }))
 })
 
@@ -1486,22 +1577,26 @@ function formatValue(value) {
   })}`
 }
 
-function formatAccountValue(value, currency) {
+function convertAmountByCurrency(value, currency) {
   const numericValue = Number(value || 0)
   const normalizedCurrency = String(currency || '').toUpperCase()
+  const rate = exchangeRateValue.value
+
+  if (selectedCurrency.value === 'USD') {
+    if (normalizedCurrency === 'CNY') {
+      return numericValue / rate
+    }
+    return numericValue
+  }
+
   if (normalizedCurrency === 'USD') {
-    return `$${numericValue.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })}`
+    return numericValue * rate
   }
-  if (normalizedCurrency === 'CNY') {
-    return `¥${numericValue.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })}`
-  }
-  return formatValue(numericValue)
+  return numericValue
+}
+
+function formatAccountValue(value, currency) {
+  return formatConvertedValue(convertAmountByCurrency(value, currency))
 }
 
 function formatCompactValue(value) {
@@ -1510,6 +1605,25 @@ function formatCompactValue(value) {
     return `$${Math.round(numericValue)}`
   }
   return `¥${Math.round(numericValue)}`
+}
+
+function formatAxisTickValue(value) {
+  const numericValue = Number(value || 0)
+  const symbol = selectedCurrency.value === 'USD' ? '$' : '¥'
+
+  if (numericValue === 0) {
+    return `${symbol}0`
+  }
+
+  if (Math.abs(numericValue) < 10) {
+    return `${symbol}${numericValue.toFixed(2)}`
+  }
+
+  if (Math.abs(numericValue) < 100) {
+    return `${symbol}${numericValue.toFixed(1)}`
+  }
+
+  return formatCompactValue(numericValue)
 }
 
 function formatPercent(value) {
