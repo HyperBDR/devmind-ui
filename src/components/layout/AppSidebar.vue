@@ -329,6 +329,108 @@
         </Transition>
       </div>
 
+      <div class="menu-group">
+        <button
+          @click="toggleOneProMonitorMenu"
+          class="nav-item nav-item-parent w-full"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 13h8V3H3v10zm10 8h8V3h-8v18zM3 21h8v-6H3v6z"
+            />
+          </svg>
+          <span class="flex-1 text-left">{{ t('oneproMonitor.menuTitle') }}</span>
+          <svg
+            class="w-4 h-4 transition-transform"
+            :class="oneProMonitorMenuOpen ? 'rotate-90' : ''"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+
+        <Transition
+          enter-active-class="transition-all duration-200 ease-out"
+          enter-from-class="opacity-0 max-h-0"
+          enter-to-class="opacity-100 max-h-96"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 max-h-96"
+          leave-to-class="opacity-0 max-h-0"
+        >
+          <div v-if="oneProMonitorMenuOpen" class="submenu">
+            <router-link
+              to="/onepro-monitor/dashboard"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/dashboard') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/dashboard')"
+            >
+              <span>{{ t('oneproMonitor.dashboard') }}</span>
+            </router-link>
+            <router-link
+              to="/onepro-monitor/tenants"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/tenants') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/tenants')"
+            >
+              <span>{{ t('oneproMonitor.tenants') }}</span>
+            </router-link>
+            <router-link
+              to="/onepro-monitor/licenses"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/licenses') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/licenses')"
+            >
+              <span>{{ t('oneproMonitor.licenses') }}</span>
+            </router-link>
+            <router-link
+              to="/onepro-monitor/hosts"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/hosts') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/hosts')"
+            >
+              <span>{{ t('oneproMonitor.hosts') }}</span>
+            </router-link>
+            <router-link
+              to="/onepro-monitor/tasks"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/tasks') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/tasks')"
+            >
+              <span>{{ t('oneproMonitor.tasks') }}</span>
+            </router-link>
+            <router-link
+              to="/onepro-monitor/settings/data-sources"
+              class="nav-item nav-item-child"
+              :class="isActive('/onepro-monitor/settings') ? 'nav-item-active' : ''"
+              @click="isMobile && $emit('close')"
+              @mouseenter="preloadRoute('/onepro-monitor/settings/data-sources')"
+            >
+              <span>{{ t('oneproMonitor.settings') }}</span>
+            </router-link>
+          </div>
+        </Transition>
+      </div>
+
       </div>
 
       <!-- Settings Menu -->
@@ -386,6 +488,7 @@ const router = useRouter()
 // Menu expand/collapse state - default to expanded
 const cloudBillingMenuOpen = ref(true)
 const dataCollectorMenuOpen = ref(true)
+const oneProMonitorMenuOpen = ref(true)
 
 // Load expanded state from localStorage
 const loadExpandedState = () => {
@@ -406,6 +509,14 @@ const loadExpandedState = () => {
       // Ignore parse errors
     }
   }
+  const savedOnePro = localStorage.getItem('sidebar_onepro_monitor_expanded')
+  if (savedOnePro !== null) {
+    try {
+      oneProMonitorMenuOpen.value = JSON.parse(savedOnePro)
+    } catch (e) {
+      // Ignore parse errors
+    }
+  }
 }
 
 // Save expanded state to localStorage
@@ -413,6 +524,7 @@ const saveExpandedState = () => {
   if (typeof window === 'undefined') return
   localStorage.setItem('sidebar_cloud_billing_expanded', JSON.stringify(cloudBillingMenuOpen.value))
   localStorage.setItem('sidebar_data_collector_expanded', JSON.stringify(dataCollectorMenuOpen.value))
+  localStorage.setItem('sidebar_onepro_monitor_expanded', JSON.stringify(oneProMonitorMenuOpen.value))
 }
 
 const MOBILE_BREAKPOINT = 1024
@@ -440,6 +552,11 @@ const toggleDataCollectorMenu = () => {
   saveExpandedState()
 }
 
+const toggleOneProMonitorMenu = () => {
+  oneProMonitorMenuOpen.value = !oneProMonitorMenuOpen.value
+  saveExpandedState()
+}
+
 // Auto-expand menu if current route is in that section
 watch(() => route.path, (newPath) => {
   if (newPath.startsWith('/cloud-billing')) {
@@ -448,6 +565,10 @@ watch(() => route.path, (newPath) => {
   }
   if (newPath.startsWith('/data-collector')) {
     dataCollectorMenuOpen.value = true
+    saveExpandedState()
+  }
+  if (newPath.startsWith('/onepro-monitor')) {
+    oneProMonitorMenuOpen.value = true
     saveExpandedState()
   }
 }, { immediate: true })

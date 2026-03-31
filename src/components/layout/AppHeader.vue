@@ -235,7 +235,16 @@ const pageTitle = computed(() => {
     Articles: t('articles.title'),
     Tasks: t('tasks.title'),
     ScheduledTasks: t('scheduledTasks.title'),
-    Settings: t('common.settings')
+    Settings: t('common.settings'),
+    OneProMonitorDashboard: t('oneproMonitor.dashboard'),
+    OneProMonitorTenants: t('oneproMonitor.tenants'),
+    OneProMonitorLicenses: t('oneproMonitor.licenses'),
+    OneProMonitorHosts: t('oneproMonitor.hosts'),
+    OneProMonitorTasks: t('oneproMonitor.tasks'),
+    OneProMonitorTaskDetail: t('oneproMonitor.taskDetail'),
+    OneProMonitorSettingsDataSources: t('oneproMonitor.settings'),
+    OneProMonitorSettingsDataSourceCreate: t('oneproMonitor.settings'),
+    OneProMonitorSettingsDataSourceEdit: t('oneproMonitor.settings')
   }
   return routeNames[route.name] || t('common.appName')
 })

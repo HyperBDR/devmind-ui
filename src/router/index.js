@@ -122,6 +122,72 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/onepro-monitor',
+    redirect: '/onepro-monitor/dashboard'
+  },
+  {
+    path: '/onepro-monitor/dashboard',
+    name: 'OneProMonitorDashboard',
+    component: () => import('@/pages/OneProMonitor/Dashboard.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/tenants',
+    name: 'OneProMonitorTenants',
+    component: () => import('@/pages/OneProMonitor/Tenants.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/licenses',
+    name: 'OneProMonitorLicenses',
+    component: () => import('@/pages/OneProMonitor/Licenses.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/hosts',
+    name: 'OneProMonitorHosts',
+    component: () => import('@/pages/OneProMonitor/Hosts.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/tasks',
+    name: 'OneProMonitorTasks',
+    component: () => import('@/pages/OneProMonitor/Tasks.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/tasks/:id',
+    name: 'OneProMonitorTaskDetail',
+    component: () => import('@/pages/OneProMonitor/TaskDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/settings',
+    redirect: '/onepro-monitor/settings/data-sources'
+  },
+  {
+    path: '/onepro-monitor/settings/data-sources',
+    name: 'OneProMonitorSettingsDataSources',
+    component: () => import('@/pages/OneProMonitor/Settings/DataSources.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/settings/data-sources/create',
+    name: 'OneProMonitorSettingsDataSourceCreate',
+    component: () => import('@/pages/OneProMonitor/Settings/DataSourceForm.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/settings/data-sources/edit/:id',
+    name: 'OneProMonitorSettingsDataSourceEdit',
+    component: () => import('@/pages/OneProMonitor/Settings/DataSourceForm.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/onepro-monitor/settings/system',
+    redirect: '/onepro-monitor/settings/data-sources'
+  },
+  {
     path: '/llm',
     redirect: '/management/llm/stats'
   },
