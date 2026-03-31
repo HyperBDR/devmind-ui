@@ -161,9 +161,6 @@
                       <p class="text-sm font-semibold text-gray-900" :title="row.primary_model.name">
                         {{ row.primary_model.name }}
                       </p>
-                      <p class="mt-1 text-xs text-gray-500">
-                        {{ selectedPlatformLabel }}
-                      </p>
                     </td>
                     <td class="border-b border-r border-gray-200 bg-primary-50/30 px-5 py-5">
                       <div class="grid grid-cols-2 gap-3">
@@ -223,9 +220,6 @@
                   <h3 class="text-base font-semibold text-gray-900" :title="row.primary_model.name">
                     {{ row.primary_model.name }}
                   </h3>
-                  <p class="mt-1 text-xs text-gray-500">
-                    {{ selectedPlatformLabel }}
-                  </p>
                 </div>
 
                 <div class="space-y-3">

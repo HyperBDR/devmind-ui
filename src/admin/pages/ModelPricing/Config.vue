@@ -57,6 +57,9 @@
                     {{ t('modelPricing.config.endpointUrl') }}
                   </th>
                   <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                    {{ t('modelPricing.config.parserLlm') }}
+                  </th>
+                  <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                     {{ t('modelPricing.config.pointsPerCurrencyUnit') }}
                   </th>
                   <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
@@ -80,6 +83,14 @@
                   </td>
                   <td class="max-w-[360px] px-4 py-4 text-sm text-gray-700">
                     <div class="truncate" :title="item.endpoint_url">{{ item.endpoint_url }}</div>
+                  </td>
+                  <td class="max-w-[280px] px-4 py-4 text-sm text-gray-700">
+                    <div
+                      class="truncate"
+                      :title="item.parser_llm_config_label || t('modelPricing.config.parserLlmDefault')"
+                    >
+                      {{ item.parser_llm_config_label || t('modelPricing.config.parserLlmDefault') }}
+                    </div>
                   </td>
                   <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
                     {{ item.points_per_currency_unit }}
@@ -120,98 +131,174 @@
         :title="editingId ? t('modelPricing.config.editTitle') : t('modelPricing.config.createTitle')"
         @close="closeModal"
       >
-        <form class="space-y-4" @submit.prevent="saveConfig">
-          <p class="text-sm text-gray-500">
-            {{ editingId
-              ? t('modelPricing.config.editDescription')
-              : t('modelPricing.config.createDescription') }}
-          </p>
+        <form class="space-y-5" @submit.prevent="saveConfig">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+            <p class="text-sm text-gray-600">
+              {{ editingId
+                ? t('modelPricing.config.editDescription')
+                : t('modelPricing.config.createDescription') }}
+            </p>
+          </div>
 
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.platformSlug') }}
-              </label>
-              <input
-                v-model.trim="form.platform_slug"
-                type="text"
-                :disabled="!!editingId"
-                class="block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                :class="editingId
-                  ? 'border-gray-200 bg-gray-50 text-gray-500'
-                  : 'border-gray-300 bg-white text-gray-900'"
-              />
+          <section class="rounded-lg border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-4 py-3">
+              <h3 class="text-sm font-semibold text-gray-900">
+                {{ t('modelPricing.config.platformSectionTitle') }}
+              </h3>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ t('modelPricing.config.platformSectionDescription') }}
+              </p>
             </div>
-
-            <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.vendorName') }}
-              </label>
-              <input
-                v-model.trim="form.vendor_name"
-                type="text"
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
-
-            <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.region') }}
-              </label>
-              <input
-                v-model.trim="form.region"
-                type="text"
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
-
-            <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.currency') }}
-              </label>
-              <input
-                v-model.trim="form.currency"
-                type="text"
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
-
-            <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.pointsPerCurrencyUnit') }}
-              </label>
-              <input
-                v-model.number="form.points_per_currency_unit"
-                type="number"
-                min="0.0001"
-                step="0.0001"
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
-
-            <div class="flex items-end">
-              <label class="inline-flex items-center gap-3 text-sm text-gray-700">
+            <div class="grid grid-cols-1 gap-4 px-4 py-4 md:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.platformSlug') }}
+                </label>
                 <input
-                  v-model="form.is_enabled"
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  v-model.trim="form.platform_slug"
+                  type="text"
+                  :disabled="!!editingId"
+                  class="block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  :class="editingId
+                    ? 'border-gray-200 bg-gray-50 text-gray-500'
+                    : 'border-gray-300 bg-white text-gray-900'"
                 />
-                <span>{{ t('modelPricing.config.enabledLabel') }}</span>
-              </label>
-            </div>
+              </div>
 
-            <div class="md:col-span-2">
-              <label class="mb-1 block text-sm font-medium text-gray-700">
-                {{ t('modelPricing.config.endpointUrl') }}
-              </label>
-              <input
-                v-model.trim="form.endpoint_url"
-                type="url"
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.vendorName') }}
+                </label>
+                <input
+                  v-model.trim="form.vendor_name"
+                  type="text"
+                  class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
 
-            <div class="md:col-span-2">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.region') }}
+                </label>
+                <input
+                  v-model.trim="form.region"
+                  type="text"
+                  class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.currency') }}
+                </label>
+                <input
+                  v-model.trim="form.currency"
+                  type="text"
+                  class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-4 py-3">
+              <h3 class="text-sm font-semibold text-gray-900">
+                {{ t('modelPricing.config.parserSectionTitle') }}
+              </h3>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ t('modelPricing.config.parserSectionDescription') }}
+              </p>
+            </div>
+            <div class="grid grid-cols-1 gap-4 px-4 py-4">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.endpointUrl') }}
+                </label>
+                <input
+                  v-model.trim="form.endpoint_url"
+                  type="url"
+                  class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.parserLlm') }}
+                </label>
+                <select
+                  v-model="form.parser_llm_config_uuid"
+                  class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                >
+                  <option value="">
+                    {{ t('modelPricing.config.parserLlmDefault') }}
+                  </option>
+                  <option
+                    v-for="option in llmOptions"
+                    :key="option.uuid"
+                    :value="option.uuid"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">
+                  {{ t('modelPricing.config.parserLlmHint') }}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-4 py-3">
+              <h3 class="text-sm font-semibold text-gray-900">
+                {{ t('modelPricing.config.billingSectionTitle') }}
+              </h3>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ t('modelPricing.config.billingSectionDescription') }}
+              </p>
+            </div>
+            <div class="grid grid-cols-1 gap-4 px-4 py-4 md:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                  {{ t('modelPricing.config.pointsPerCurrencyUnit') }}
+                </label>
+                <input
+                  v-model.number="form.points_per_currency_unit"
+                  type="number"
+                  min="0.0001"
+                  step="0.0001"
+                  class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+
+              <div class="flex items-end">
+                <div class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                  <label class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-gray-700">
+                        {{ t('modelPricing.config.enabledLabel') }}
+                      </p>
+                      <p class="mt-1 text-xs text-gray-500">
+                        {{ t('modelPricing.config.enabledHint') }}
+                      </p>
+                    </div>
+                    <input
+                      v-model="form.is_enabled"
+                      type="checkbox"
+                      class="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-4 py-3">
+              <h3 class="text-sm font-semibold text-gray-900">
+                {{ t('modelPricing.config.notesSectionTitle') }}
+              </h3>
+            </div>
+            <div class="px-4 py-4">
               <label class="mb-1 block text-sm font-medium text-gray-700">
                 {{ t('modelPricing.config.notes') }}
               </label>
@@ -221,7 +308,7 @@
                 class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
               />
             </div>
-          </div>
+          </section>
         </form>
 
         <template #footer>
@@ -240,7 +327,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { modelPricingAdminApi } from '@/admin/api'
+import { llmAdminApi, modelPricingAdminApi } from '@/admin/api'
 import AdminLayout from '@/admin/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
@@ -257,12 +344,14 @@ const syncingPlatformSlug = ref('')
 const showModal = ref(false)
 const editingId = ref(null)
 const configs = ref([])
+const llmOptions = ref([])
 
 const createEmptyForm = () => ({
   platform_slug: '',
   vendor_name: '',
   region: '',
   endpoint_url: '',
+  parser_llm_config_uuid: '',
   currency: 'CNY',
   points_per_currency_unit: 10,
   is_enabled: true,
@@ -273,6 +362,9 @@ const form = reactive(createEmptyForm())
 
 function resetForm(data = null) {
   const next = { ...createEmptyForm(), ...(data || {}) }
+  if (!next.parser_llm_config_uuid) {
+    next.parser_llm_config_uuid = ''
+  }
   Object.keys(next).forEach((key) => {
     form[key] = next[key]
   })
@@ -287,6 +379,25 @@ async function loadConfigs() {
     showError(extractErrorMessage(error, t('modelPricing.config.loadError')))
   } finally {
     loading.value = false
+  }
+}
+
+async function loadLLMOptions() {
+  try {
+    const payload = await llmAdminApi.getLLMConfigAll({ scope: 'global' })
+    const rows = Array.isArray(payload) ? payload : []
+    llmOptions.value = rows
+      .filter((item) => item?.model_type === 'llm' && item?.is_active)
+      .map((item) => {
+        const model = item?.config?.model || item?.provider || item?.uuid
+        const provider = item?.provider || ''
+        return {
+          uuid: item.uuid,
+          label: provider ? `${model} (${provider})` : model
+        }
+      })
+  } catch (error) {
+    showError(extractErrorMessage(error, t('modelPricing.config.loadLlmError')))
   }
 }
 
@@ -316,6 +427,7 @@ async function saveConfig() {
       vendor_name: form.vendor_name,
       region: form.region,
       endpoint_url: form.endpoint_url,
+      parser_llm_config_uuid: form.parser_llm_config_uuid || null,
       currency: form.currency,
       points_per_currency_unit: form.points_per_currency_unit,
       is_enabled: form.is_enabled,
@@ -348,5 +460,8 @@ async function syncPlatform(item) {
   }
 }
 
-onMounted(loadConfigs)
+onMounted(() => {
+  loadConfigs()
+  loadLLMOptions()
+})
 </script>
