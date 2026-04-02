@@ -381,17 +381,13 @@
                 >
               </div>
               <p class="mt-1 text-[11px] text-slate-400">
-                {{
-                  trendChartType === '新增'
-                    ? t('hyperbdrDashboard.trendDescNew')
-                    : t('hyperbdrDashboard.trendDescCumulative')
-                }}
+                {{ t('hyperbdrDashboard.trendDescCumulative') }}
               </p>
             </div>
             <div class="flex flex-col items-end gap-2">
               <div class="flex gap-1 bg-slate-50 p-1 rounded-lg">
                 <button
-                  v-for="type in ['新增', '累计']"
+                  v-for="type in ['累计']"
                   :key="type"
                   @click="trendChartType = type"
                   class="px-2.5 py-1 text-[10px] font-bold rounded-md transition-all"
@@ -1274,7 +1270,7 @@ const sceneOptions = [
 
 const sceneFilter = ref('all')
 const tableFilter = ref('all')
-const trendChartType = ref('新增')
+const trendChartType = ref('累计')
 
 // Time filter label
 const timeFilterLabel = computed(() => {
@@ -1650,16 +1646,13 @@ const chartLabels = computed(() => ({
 // Build trend chart from monthly data via trends/monthly/ API
 const chartData = computed(() => {
   const months = trendsData.value?.months
-  const isNew = trendChartType.value === '新增'
 
   if (!months || months.length === 0) {
     return {
       labels: [],
       datasets: [
         {
-          label: isNew
-            ? t('hyperbdrDashboard.newPoc')
-            : t('hyperbdrDashboard.poc'),
+          label: t('hyperbdrDashboard.poc'),
           data: [],
           backgroundColor: '#8a4cfc',
           borderRadius: 4,
@@ -1669,9 +1662,7 @@ const chartData = computed(() => {
           stack: 'stack0'
         },
         {
-          label: isNew
-            ? t('hyperbdrDashboard.newOfficial')
-            : t('hyperbdrDashboard.official'),
+          label: t('hyperbdrDashboard.official'),
           data: [],
           backgroundColor: '#2563eb',
           borderRadius: 4,
@@ -1702,26 +1693,14 @@ const chartData = computed(() => {
   const labels = months.map((m) => m.label)
   const convRate = trendsData.value.conversion_rate || 0
 
-  // For new vs cumulative, we calculate based on monthly increments
   const pocData = months.map((m) => {
     const total = m.total_tenants || 0
     const official = Math.round((total * convRate) / 100)
-    const poc = total - official
-    if (isNew) {
-      // For "new" view, use incremental values (mock for now).
-      // Keep zero when no new PoC is expected for the period.
-      return Math.max(0, Math.floor(poc / 12))
-    }
-    return poc
+    return total - official
   })
   const officialData = months.map((m) => {
     const total = m.total_tenants || 0
-    const official = Math.round((total * convRate) / 100)
-    if (isNew) {
-      // For "new" view, use incremental values (mock for now)
-      return Math.max(0, Math.floor(official / 12))
-    }
-    return official
+    return Math.round((total * convRate) / 100)
   })
   const conversionData = months.map((m) => m.conversion_rate || 0)
 
@@ -1729,24 +1708,20 @@ const chartData = computed(() => {
     labels,
     datasets: [
       {
-        label: isNew
-          ? t('hyperbdrDashboard.newPoc')
-          : t('hyperbdrDashboard.poc'),
+        label: t('hyperbdrDashboard.poc'),
         data: pocData,
         backgroundColor: '#8a4cfc',
-        borderRadius: isNew ? [3, 3, 0, 0] : 4,
+        borderRadius: 4,
         borderSkipped: false,
         barPercentage: 0.6,
         categoryPercentage: 0.8,
         stack: 'stack0'
       },
       {
-        label: isNew
-          ? t('hyperbdrDashboard.newOfficial')
-          : t('hyperbdrDashboard.official'),
+        label: t('hyperbdrDashboard.official'),
         data: officialData,
         backgroundColor: '#2563eb',
-        borderRadius: isNew ? 0 : 4,
+        borderRadius: 4,
         borderSkipped: false,
         barPercentage: 0.6,
         categoryPercentage: 0.8,
