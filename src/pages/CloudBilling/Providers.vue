@@ -35,6 +35,9 @@
                   {{ t('cloudBilling.providers.displayName') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ t('cloudBilling.providers.authIdentifier') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {{ t('cloudBilling.providers.status') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -69,6 +72,19 @@
                     </div>
                   </div>
                 </td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <div v-if="provider.auth_identifier" class="min-w-[180px]">
+                    <div class="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                      {{ getProviderAuthLabel(provider) }}
+                    </div>
+                    <div class="mt-1 break-all font-mono text-xs text-gray-700">
+                      {{ provider.auth_identifier }}
+                    </div>
+                  </div>
+                  <span v-else class="text-xs text-gray-400">
+                    {{ t('cloudBilling.providers.authIdentifierEmpty') }}
+                  </span>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     :class="provider.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
@@ -102,7 +118,7 @@
                 </td>
               </tr>
               <tr v-if="providers.length === 0">
-                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
                   {{ t('cloudBilling.providers.noProviders') }}
                 </td>
               </tr>
@@ -117,7 +133,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
-      :provider-options="providers"
+      :tag-options="tagOptions"
       @close="closeModal"
       @saved="handleSaved"
     />
@@ -132,31 +148,73 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import { format } from 'date-fns'
-import { getLocalizedProviderDisplayName, getProviderTypeLabel } from '@/utils/providerDisplay'
+import {
+  getLocalizedProviderDisplayName,
+  getProviderAuthIdentifierLabel,
+  getProviderTypeLabel
+} from '@/utils/providerDisplay'
 
 const { t } = useI18n()
 const loading = ref(true)
 const providers = ref([])
+const tagOptions = ref([])
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
 
 const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
 const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
+const getProviderAuthLabel = (provider) => getProviderAuthIdentifierLabel(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
   return format(new Date(dateString), 'yyyy-MM-dd HH:mm')
 }
 
+const normalizeTagOptionList = (items) => {
+  const seen = new Set()
+  const normalized = []
+
+  ;(items || []).forEach((item) => {
+    const value = String(item || '').trim()
+    if (!value || seen.has(value)) {
+      return
+    }
+    seen.add(value)
+    normalized.push(value)
+  })
+
+  return normalized.sort((a, b) => a.localeCompare(b))
+}
+
+const extractProviderList = (payload) => {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.results)) return payload.results
+  if (Array.isArray(payload?.list)) return payload.list
+  return []
+}
+
 const loadProviders = async () => {
   loading.value = true
   try {
     const response = await cloudBillingApi.getProviders()
-    providers.value = response.data?.list || response.data || []
+    providers.value = extractProviderList(response.data)
   } catch (error) {
     console.error('Failed to load providers:', error)
+    providers.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const loadTagOptions = async () => {
+  try {
+    const response = await cloudBillingApi.getProviderTags()
+    tagOptions.value = normalizeTagOptionList(response.data?.tags || [])
+  } catch (error) {
+    console.error('Failed to load provider tags:', error)
+    tagOptions.value = normalizeTagOptionList(
+      providers.value.flatMap((provider) => provider?.tags || [])
+    )
   }
 }
 
@@ -171,6 +229,7 @@ const closeModal = () => {
 
 const handleSaved = () => {
   closeModal()
+  loadTagOptions()
   loadProviders()
 }
 
@@ -195,6 +254,7 @@ const deleteProvider = async (id) => {
 
   try {
     await cloudBillingApi.deleteProvider(id)
+    loadTagOptions()
     loadProviders()
   } catch (error) {
     console.error('Failed to delete provider:', error)
@@ -203,6 +263,7 @@ const deleteProvider = async (id) => {
 }
 
 onMounted(() => {
+  loadTagOptions()
   loadProviders()
 })
 </script>
