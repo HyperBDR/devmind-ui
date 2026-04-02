@@ -1074,6 +1074,14 @@
       "name": "名称",
       "type": "类型",
       "displayName": "显示名称",
+      "authIdentifier": "AK / 用户名",
+      "authIdentifierEmpty": "未配置",
+      "authIdentifierKinds": {
+        "accessKeyId": "AK",
+        "username": "用户名",
+        "clientId": "Client ID",
+        "identifier": "标识"
+      },
       "status": "状态",
       "createdAt": "创建时间",
       "createProvider": "添加云平台",

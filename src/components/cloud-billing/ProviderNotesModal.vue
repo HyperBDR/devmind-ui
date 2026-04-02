@@ -170,7 +170,7 @@ const props = defineProps({
     type: Object,
     default: null,
   },
-  providerOptions: {
+  tagOptions: {
     type: Array,
     default: () => [],
   },
@@ -194,13 +194,11 @@ const normalizeTag = (value) => String(value || '').trim()
 
 const availableTags = computed(() => {
   const tagSet = new Set()
-  ;(props.providerOptions || []).forEach((item) => {
-    ;(item?.tags || []).forEach((tag) => {
-      const normalized = normalizeTag(tag)
-      if (normalized) {
-        tagSet.add(normalized)
-      }
-    })
+  ;(props.tagOptions || []).forEach((tag) => {
+    const normalized = normalizeTag(tag)
+    if (normalized) {
+      tagSet.add(normalized)
+    }
   })
   formData.tags.forEach((tag) => {
     const normalized = normalizeTag(tag)
