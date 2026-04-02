@@ -27,7 +27,7 @@ const sizes = [
   { name: 'favicon-32x32.png', size: 32 },
   { name: 'apple-touch-icon.png', size: 180 },
   { name: 'android-chrome-192x192.png', size: 192 },
-  { name: 'android-chrome-512x512.png', size: 512 },
+  { name: 'android-chrome-512x512.png', size: 512 }
 ]
 
 function getLogoSource() {
@@ -49,7 +49,11 @@ async function ensureTransparentPng(inputPath) {
     .toBuffer({ resolveWithObject: true })
   const threshold = 250
   for (let i = 0; i < data.length; i += 4) {
-    if (data[i] >= threshold && data[i + 1] >= threshold && data[i + 2] >= threshold) {
+    if (
+      data[i] >= threshold &&
+      data[i + 1] >= threshold &&
+      data[i + 2] >= threshold
+    ) {
       data[i + 3] = 0
     }
   }
@@ -76,7 +80,9 @@ async function main() {
   const cropH = Math.round(h * cropRatio)
   const left = Math.round((w - cropW) / 2)
   const top = Math.round((h - cropH) / 2)
-  const cropped = pipeline.clone().extract({ left, top, width: cropW, height: cropH })
+  const cropped = pipeline
+    .clone()
+    .extract({ left, top, width: cropW, height: cropH })
 
   const png16 = await cropped.clone().resize(16, 16).png().toBuffer()
   const png32 = await cropped.clone().resize(32, 32).png().toBuffer()

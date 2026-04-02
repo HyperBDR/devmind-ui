@@ -1,7 +1,9 @@
 <template>
   <div class="p-6">
     <!-- Toolbar -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+    >
       <!-- Batch Actions (Left) -->
       <div class="flex items-center gap-2 flex-wrap">
         <BaseButton
@@ -33,8 +35,18 @@
           @update:modelValue="handleSearch"
         >
           <template #icon>
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              class="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </template>
         </BaseInput>
@@ -46,8 +58,18 @@
           @click="showFilterDrawer = true"
           class="relative flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+            />
           </svg>
           {{ t('common.filter') }}
           <span
@@ -86,18 +108,34 @@
     </div>
 
     <!-- Active Filter Tags -->
-    <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-2 mb-4">
+    <div
+      v-if="activeFilterCount > 0"
+      class="flex flex-wrap items-center gap-2 mb-4"
+    >
       <span
         v-if="statusFilter"
         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
       >
-        <span>{{ t('articles.filter.status') }}: {{ getStatusLabel(statusFilter) }}</span>
+        <span
+          >{{ t('articles.filter.status') }}:
+          {{ getStatusLabel(statusFilter) }}</span
+        >
         <button
           @click="removeStatusFilter"
           class="text-gray-500 hover:text-gray-700 transition-colors"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </span>
@@ -105,13 +143,26 @@
         v-if="socialAccountFilter"
         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
       >
-        <span>{{ t('articles.filter.storageLocation') }}: {{ socialAccountFilter }}</span>
+        <span
+          >{{ t('articles.filter.storageLocation') }}:
+          {{ socialAccountFilter }}</span
+        >
         <button
           @click="removeSocialAccountFilter"
           class="text-gray-500 hover:text-gray-700 transition-colors"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </span>
@@ -119,7 +170,10 @@
 
     <BaseLoading v-if="props.loading && props.articles.length === 0" />
 
-    <div v-if="!props.loading && props.articles.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+    <div
+      v-if="!props.loading && props.articles.length === 0"
+      class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+    >
       <svg
         class="mx-auto h-12 w-12 text-gray-400 mb-4"
         fill="none"
@@ -133,7 +187,9 @@
           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
         />
       </svg>
-      <p class="text-sm font-medium text-gray-600">{{ t('articles.noArticles') }}</p>
+      <p class="text-sm font-medium text-gray-600">
+        {{ t('articles.noArticles') }}
+      </p>
     </div>
 
     <!-- Mobile Card View with Infinite Scroll -->
@@ -160,12 +216,11 @@
         class="h-20 flex items-center justify-center"
       >
         <!-- Loading More Indicator (Auto-load when scrolling) -->
-        <div
-          v-if="props.loading || props.loadingMore"
-          class="py-6"
-        >
+        <div v-if="props.loading || props.loadingMore" class="py-6">
           <BaseLoading inline size="sm" />
-          <p class="text-sm text-gray-500 mt-2">{{ t('common.loadingMore') }}</p>
+          <p class="text-sm text-gray-500 mt-2">
+            {{ t('common.loadingMore') }}
+          </p>
         </div>
       </div>
 
@@ -179,50 +234,78 @@
     </div>
 
     <!-- Desktop Table View -->
-    <div v-if="!props.loading && props.articles.length > 0" class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div
+      v-if="!props.loading && props.articles.length > 0"
+      class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+    >
       <!-- Loading overlay when data exists but is refreshing -->
-      <div v-if="props.loading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm">
+      <div
+        v-if="props.loading"
+        class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm"
+      >
         <BaseLoading inline size="lg" variant="primary" :show-text="false" />
       </div>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                <input
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
+              <input
                 type="checkbox"
                 :checked="allSelected"
                 @change="handleSelectAll"
                 class="w-4 h-4 rounded border-gray-300 bg-white text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer checked:bg-primary-600 checked:border-primary-600"
               />
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.articleTitle') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.statusLabel') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.storageLocation') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.legality') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.transformStatus') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.uploadStatus') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.publishStatus') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.publishedAt') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('articles.createdAt') }}
             </th>
-            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+            <th
+              class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+            >
               {{ t('common.moreActions') }}
             </th>
           </tr>
@@ -254,14 +337,27 @@
               >
                 {{ article.title }}
               </button>
-              <div v-if="article.source_url" class="text-xs text-gray-500 truncate max-w-md mt-1.5">
+              <div
+                v-if="article.source_url"
+                class="text-xs text-gray-500 truncate max-w-md mt-1.5"
+              >
                 <a
                   :href="article.source_url"
                   target="_blank"
                   class="hover:text-primary-600 hover:underline transition-colors inline-flex items-center gap-1"
                 >
-                  <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  <svg
+                    class="w-3 h-3 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
                   </svg>
                   <span class="truncate">{{ article.source_url }}</span>
                 </a>
@@ -272,7 +368,9 @@
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
               <StorageLocationBadge :location="article.social_account" />
-              <span v-if="!article.social_account" class="text-sm text-gray-500">-</span>
+              <span v-if="!article.social_account" class="text-sm text-gray-500"
+                >-</span
+              >
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
               <span
@@ -324,7 +422,11 @@
                     ? 'bg-purple-100 text-purple-800 border-purple-200'
                     : 'bg-amber-100 text-amber-700 border-amber-200'
                 ]"
-                :title="article.is_transformed === true ? t('articles.transformed') : t('articles.notTransformed')"
+                :title="
+                  article.is_transformed === true
+                    ? t('articles.transformed')
+                    : t('articles.notTransformed')
+                "
               >
                 <svg
                   v-if="article.is_transformed === true"
@@ -354,7 +456,11 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                {{ article.is_transformed === true ? t('articles.transformed') : t('articles.notTransformed') }}
+                {{
+                  article.is_transformed === true
+                    ? t('articles.transformed')
+                    : t('articles.notTransformed')
+                }}
               </span>
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
@@ -365,7 +471,11 @@
                     ? 'bg-teal-100 text-teal-800 border-teal-200'
                     : 'bg-orange-100 text-orange-700 border-orange-200'
                 ]"
-                :title="article.is_uploaded === true ? t('articles.uploaded') : t('articles.notUploaded')"
+                :title="
+                  article.is_uploaded === true
+                    ? t('articles.uploaded')
+                    : t('articles.notUploaded')
+                "
               >
                 <svg
                   v-if="article.is_uploaded === true"
@@ -395,7 +505,11 @@
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                {{ article.is_uploaded === true ? t('articles.uploaded') : t('articles.notUploaded') }}
+                {{
+                  article.is_uploaded === true
+                    ? t('articles.uploaded')
+                    : t('articles.notUploaded')
+                }}
               </span>
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
@@ -406,7 +520,11 @@
                     ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
                     : 'bg-slate-100 text-slate-600 border-slate-200'
                 ]"
-                :title="article.is_published === true ? t('articles.published') : t('articles.notPublished')"
+                :title="
+                  article.is_published === true
+                    ? t('articles.published')
+                    : t('articles.notPublished')
+                "
               >
                 <svg
                   v-if="article.is_published === true"
@@ -436,7 +554,11 @@
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
-                {{ article.is_published === true ? t('articles.published') : t('articles.notPublished') }}
+                {{
+                  article.is_published === true
+                    ? t('articles.published')
+                    : t('articles.notPublished')
+                }}
               </span>
             </td>
             <td class="px-4 py-4 whitespace-nowrap">
@@ -459,10 +581,18 @@
                   :disabled="uploadingIds.includes(article.id)"
                   @click="handleUpload(article)"
                 >
-                  {{ article.is_uploaded ? t('articles.reupload') : t('articles.upload') }}
+                  {{
+                    article.is_uploaded
+                      ? t('articles.reupload')
+                      : t('articles.upload')
+                  }}
                 </BaseButton>
                 <BaseButton
-                  v-if="article.status === 'failed' || article.status === 'processing' || article.status === 'completed'"
+                  v-if="
+                    article.status === 'failed' ||
+                    article.status === 'processing' ||
+                    article.status === 'completed'
+                  "
                   variant="outline"
                   size="sm"
                   :loading="retryingIds.includes(article.id)"
@@ -486,15 +616,19 @@
     </div>
 
     <!-- Pagination (Desktop Only) -->
-    <div class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div
+      class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+    >
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div class="text-sm text-gray-700 font-medium">
           <span v-if="totalCount > 0">
-            {{ t('common.pagination.showing', {
-              from: (currentPage - 1) * pageSize + 1,
-              to: Math.min(currentPage * pageSize, totalCount),
-              total: totalCount
-            }) }}
+            {{
+              t('common.pagination.showing', {
+                from: (currentPage - 1) * pageSize + 1,
+                to: Math.min(currentPage * pageSize, totalCount),
+                total: totalCount
+              })
+            }}
           </span>
           <span v-else class="text-gray-500">
             {{ t('common.noData') }}
@@ -526,8 +660,15 @@
         >
           {{ t('common.previous') }}
         </BaseButton>
-        <span class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200">
-          {{ t('common.pagination.page', { current: currentPage, total: totalPages }) }}
+        <span
+          class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200"
+        >
+          {{
+            t('common.pagination.page', {
+              current: currentPage,
+              total: totalPages
+            })
+          }}
         </span>
         <BaseButton
           variant="outline"
@@ -641,8 +782,12 @@ const hasMore = computed(() => {
 })
 
 const allSelected = computed(() => {
-  return props.articles.length > 0 &&
-    props.articles.every(article => selectedArticles.value.includes(article.id))
+  return (
+    props.articles.length > 0 &&
+    props.articles.every((article) =>
+      selectedArticles.value.includes(article.id)
+    )
+  )
 })
 
 // Use availableSocialAccounts from props (loaded from backend API)
@@ -729,7 +874,7 @@ const handleRefresh = () => {
 
 const handleSelectAll = (event) => {
   if (event.target.checked) {
-    selectedArticles.value = props.articles.map(a => a.id)
+    selectedArticles.value = props.articles.map((a) => a.id)
   } else {
     selectedArticles.value = []
   }
@@ -814,7 +959,12 @@ const setupIntersectionObserver = () => {
     (entries) => {
       const entry = entries[0]
       // Auto-load when sentinel element becomes visible (or is about to)
-      if (entry.isIntersecting && hasMore.value && !props.loadingMore && !props.loading) {
+      if (
+        entry.isIntersecting &&
+        hasMore.value &&
+        !props.loadingMore &&
+        !props.loading
+      ) {
         loadMoreArticles()
       }
     },
@@ -842,10 +992,21 @@ onMounted(() => {
 
 // Watch for changes in articles, hasMore, loading states, or mobile status to re-setup observer
 watch(
-  [() => props.articles.length, hasMore, isMobile, () => props.loading, () => props.loadingMore],
+  [
+    () => props.articles.length,
+    hasMore,
+    isMobile,
+    () => props.loading,
+    () => props.loadingMore
+  ],
   () => {
     // Only setup observer when not loading and has more data
-    if (isMobile.value && hasMore.value && !props.loading && !props.loadingMore) {
+    if (
+      isMobile.value &&
+      hasMore.value &&
+      !props.loading &&
+      !props.loadingMore
+    ) {
       nextTick(() => {
         setupIntersectionObserver()
       })
@@ -866,7 +1027,6 @@ onUnmounted(() => {
   }
 })
 
-
 const formatDate = (dateString) => {
   if (!dateString) return '-'
   try {
@@ -875,5 +1035,4 @@ const formatDate = (dateString) => {
     return dateString
   }
 }
-
 </script>

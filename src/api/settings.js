@@ -84,7 +84,7 @@ export const settingsApi = {
   async getPreferences() {
     try {
       const settings = await this.getSettings()
-      
+
       // Handle different response formats
       let settingsData = []
       if (Array.isArray(settings)) {
@@ -92,7 +92,10 @@ export const settingsApi = {
       } else if (settings?.data) {
         if (Array.isArray(settings.data)) {
           settingsData = settings.data
-        } else if (settings.data?.results && Array.isArray(settings.data.results)) {
+        } else if (
+          settings.data?.results &&
+          Array.isArray(settings.data.results)
+        ) {
           settingsData = settings.data.results
         } else if (settings.data?.list && Array.isArray(settings.data.list)) {
           settingsData = settings.data.list
@@ -158,7 +161,8 @@ export const settingsApi = {
       has_words: Array.isArray(googleNewsConfigSetting?.value?.has_words)
         ? googleNewsConfigSetting.value.has_words
         : [],
-      target_language: googleNewsConfigSetting?.value?.target_language || 'zh-CN',
+      target_language:
+        googleNewsConfigSetting?.value?.target_language || 'zh-CN',
       target_region: googleNewsConfigSetting?.value?.target_region || 'CN'
     }
   },
@@ -174,7 +178,9 @@ export const settingsApi = {
     // Only keep allowed fields (filter_words, has_words, target_language, target_region)
     // This ensures deleted fields are actually removed and allows empty arrays
     const updatedValue = {
-      filter_words: Array.isArray(config.filter_words) ? config.filter_words : [],
+      filter_words: Array.isArray(config.filter_words)
+        ? config.filter_words
+        : [],
       has_words: Array.isArray(config.has_words) ? config.has_words : [],
       target_language: config.target_language || 'zh-CN',
       target_region: config.target_region || 'CN'
@@ -260,7 +266,8 @@ export const settingsApi = {
       bucket_name: socialOssConfigSetting?.value?.bucket_name || '',
       endpoint: socialOssConfigSetting?.value?.endpoint || '',
       region: socialOssConfigSetting?.value?.region || '',
-      use_virtual_style: socialOssConfigSetting?.value?.use_virtual_style || false
+      use_virtual_style:
+        socialOssConfigSetting?.value?.use_virtual_style || false
     }
   },
 
@@ -274,7 +281,7 @@ export const settingsApi = {
 
     if (socialOssConfigSetting) {
       const currentValue = socialOssConfigSetting.value || {}
-      const         updatedValue = {
+      const updatedValue = {
         ...currentValue,
         enable: config.enable ?? false,
         access_key_id: config.access_key_id || '',
@@ -329,13 +336,16 @@ export const settingsApi = {
     )
 
     return {
-      use_same_as_storage: publishOssConfigSetting?.value?.use_same_as_storage ?? true,
+      use_same_as_storage:
+        publishOssConfigSetting?.value?.use_same_as_storage ?? true,
       access_key_id: publishOssConfigSetting?.value?.access_key_id || '',
-      access_key_secret: publishOssConfigSetting?.value?.access_key_secret || '',
+      access_key_secret:
+        publishOssConfigSetting?.value?.access_key_secret || '',
       bucket_name: publishOssConfigSetting?.value?.bucket_name || '',
       endpoint: publishOssConfigSetting?.value?.endpoint || '',
       region: publishOssConfigSetting?.value?.region || '',
-      use_virtual_style: publishOssConfigSetting?.value?.use_virtual_style || false
+      use_virtual_style:
+        publishOssConfigSetting?.value?.use_virtual_style || false
     }
   },
 
@@ -375,7 +385,8 @@ export const settingsApi = {
           region: config.region || '',
           use_virtual_style: config.use_virtual_style || false
         },
-        description: 'Object storage configuration for article publish monitoring'
+        description:
+          'Object storage configuration for article publish monitoring'
       })
     }
   },
@@ -398,13 +409,15 @@ export const settingsApi = {
   async getJiraConfig() {
     try {
       const response = await apiClient.get('/v1/config/key/jira_config/')
-      return response.data?.value || {
-        enable: false,
-        server_url: '',
-        username: '',
-        api_token: '',
-        project_key: ''
-      }
+      return (
+        response.data?.value || {
+          enable: false,
+          server_url: '',
+          username: '',
+          api_token: '',
+          project_key: ''
+        }
+      )
     } catch (error) {
       if (error.response?.status === 404) {
         return {
@@ -458,12 +471,14 @@ export const settingsApi = {
   async getGitLabConfig() {
     try {
       const response = await apiClient.get('/v1/config/key/gitlab_config/')
-      return response.data?.value || {
-        enable: false,
-        server_url: '',
-        access_token: '',
-        project_id: ''
-      }
+      return (
+        response.data?.value || {
+          enable: false,
+          server_url: '',
+          access_token: '',
+          project_id: ''
+        }
+      )
     } catch (error) {
       if (error.response?.status === 404) {
         return {
@@ -514,20 +529,22 @@ export const settingsApi = {
   async getLLMConfig() {
     try {
       const response = await apiClient.get('/v1/config/key/llm_config/')
-      return response.data?.value || {
-        provider: 'openai',
-        openai: {
-          api_key: '',
-          base_url: 'https://api.openai.com/v1',
-          model: 'gpt-4'
-        },
-        azure_openai: {
-          api_key: '',
-          endpoint: '',
-          deployment_name: '',
-          api_version: '2024-02-15-preview'
+      return (
+        response.data?.value || {
+          provider: 'openai',
+          openai: {
+            api_key: '',
+            base_url: 'https://api.openai.com/v1',
+            model: 'gpt-4'
+          },
+          azure_openai: {
+            api_key: '',
+            endpoint: '',
+            deployment_name: '',
+            api_version: '2024-02-15-preview'
+          }
         }
-      }
+      )
     } catch (error) {
       if (error.response?.status === 404) {
         return {
@@ -563,7 +580,8 @@ export const settingsApi = {
             api_key: config.azure_openai?.api_key || '',
             endpoint: config.azure_openai?.endpoint || '',
             deployment_name: config.azure_openai?.deployment_name || '',
-            api_version: config.azure_openai?.api_version || '2024-02-15-preview'
+            api_version:
+              config.azure_openai?.api_version || '2024-02-15-preview'
           }
         },
         value_type: 'object',
@@ -586,7 +604,8 @@ export const settingsApi = {
               api_key: config.azure_openai?.api_key || '',
               endpoint: config.azure_openai?.endpoint || '',
               deployment_name: config.azure_openai?.deployment_name || '',
-              api_version: config.azure_openai?.api_version || '2024-02-15-preview'
+              api_version:
+                config.azure_openai?.api_version || '2024-02-15-preview'
             }
           },
           value_type: 'object',
@@ -602,12 +621,14 @@ export const settingsApi = {
   async getFeishuConfig() {
     try {
       const response = await apiClient.get('/v1/config/key/feishu_config/')
-      return response.data?.value || {
-        enable: false,
-        app_id: '',
-        app_secret: '',
-        webhook_url: ''
-      }
+      return (
+        response.data?.value || {
+          enable: false,
+          app_id: '',
+          app_secret: '',
+          webhook_url: ''
+        }
+      )
     } catch (error) {
       if (error.response?.status === 404) {
         return {
@@ -658,17 +679,19 @@ export const settingsApi = {
   async getSMTPConfig() {
     try {
       const response = await apiClient.get('/v1/config/key/smtp_config/')
-      return response.data?.value || {
-        enable: false,
-        host: '',
-        port: 587,
-        username: '',
-        password: '',
-        use_tls: true,
-        use_ssl: false,
-        from_email: '',
-        from_name: ''
-      }
+      return (
+        response.data?.value || {
+          enable: false,
+          host: '',
+          port: 587,
+          username: '',
+          password: '',
+          use_tls: true,
+          use_ssl: false,
+          from_email: '',
+          from_name: ''
+        }
+      )
     } catch (error) {
       if (error.response?.status === 404) {
         return {

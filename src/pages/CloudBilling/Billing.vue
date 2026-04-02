@@ -13,13 +13,25 @@
         <BaseButton
           variant="outline"
           size="sm"
-          :loading="activeTab === 'statistics' ? statsLoading : detailsLoading"
+          :loading="
+            activeTab === 'statistics'
+              ? statsLoading
+              : activeTab === 'details'
+                ? detailsLoading
+                : false
+          "
           @click="handleRefresh"
           :title="t('common.refresh')"
           class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
         >
           <svg
-            v-if="!(activeTab === 'statistics' ? statsLoading : detailsLoading)"
+            v-if="
+              !(activeTab === 'statistics'
+                ? statsLoading
+                : activeTab === 'details'
+                  ? detailsLoading
+                  : false)
+            "
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
@@ -62,25 +74,38 @@
               <!-- Statistics Tab -->
               <div v-if="activeTab === 'statistics'">
                 <!-- Statistics Filters -->
-                <div class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+                <div
+                  class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4"
+                >
                   <div class="flex flex-wrap items-end gap-4">
                     <!-- Period Type Selection -->
                     <div class="flex-1 min-w-[140px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.periodType') }}:
                       </label>
                       <select
                         v-model="statsPeriodType"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
-                        <option value="month">{{ t('cloudBilling.billing.byMonth') }}</option>
-                        <option value="year">{{ t('cloudBilling.billing.byYear') }}</option>
+                        <option value="month">
+                          {{ t('cloudBilling.billing.byMonth') }}
+                        </option>
+                        <option value="year">
+                          {{ t('cloudBilling.billing.byYear') }}
+                        </option>
                       </select>
                     </div>
 
                     <!-- Period Selection (Month or Year) -->
-                    <div v-if="statsPeriodType === 'month'" class="flex-1 min-w-[180px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <div
+                      v-if="statsPeriodType === 'month'"
+                      class="flex-1 min-w-[180px]"
+                    >
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.month') }}:
                       </label>
                       <BaseMonthPicker
@@ -88,8 +113,13 @@
                         :placeholder="t('cloudBilling.billing.month')"
                       />
                     </div>
-                    <div v-if="statsPeriodType === 'year'" class="flex-1 min-w-[140px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <div
+                      v-if="statsPeriodType === 'year'"
+                      class="flex-1 min-w-[140px]"
+                    >
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.year') }}:
                       </label>
                       <input
@@ -103,7 +133,9 @@
 
                     <!-- Provider Filter -->
                     <div class="flex-1 min-w-[180px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.provider') }}
                       </label>
                       <select
@@ -111,20 +143,24 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         @change="statsAccountId = ''"
                       >
-                        <option value="">{{ t('cloudBilling.billing.allProviders') }}</option>
+                        <option value="">
+                          {{ t('cloudBilling.billing.allProviders') }}
+                        </option>
                         <option
                           v-for="provider in providers"
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
 
                     <!-- Account ID Filter -->
                     <div class="flex-1 min-w-[180px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.accountId') }}
                       </label>
                       <select
@@ -132,13 +168,17 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         :disabled="!statsProviderId"
                       >
-                        <option value="">{{ t('cloudBilling.billing.allAccounts') }}</option>
+                        <option value="">
+                          {{ t('cloudBilling.billing.allAccounts') }}
+                        </option>
                         <option
                           v-for="account in availableAccounts"
                           :key="account"
                           :value="account"
                         >
-                          {{ account || t('cloudBilling.billing.defaultAccount') }}
+                          {{
+                            account || t('cloudBilling.billing.defaultAccount')
+                          }}
                         </option>
                       </select>
                     </div>
@@ -150,13 +190,30 @@
 
                 <div v-if="!statsLoading && statistics" class="space-y-6">
                   <!-- Summary Cards and Pie Chart Row -->
-                  <div v-if="statsPeriodType === 'month'" class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                  <div
+                    v-if="statsPeriodType === 'month'"
+                    class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"
+                  >
                     <!-- Left Column: Summary Cards -->
                     <div class="space-y-3 h-full flex flex-col">
-                      <div class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3">
-                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <div
+                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                      >
+                        <div
+                          class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+                        >
+                          <svg
+                            class="w-6 h-6 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -164,14 +221,38 @@
                             {{ t('cloudBilling.billing.totalCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.total_cost, 'CNY') }}
+                            {{
+                              formatStatsSummaryAmount(statistics.total_cost)
+                            }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{
+                              t('cloudBilling.billing.overviewMixedCurrency')
+                            }}
                           </div>
                         </div>
                       </div>
-                      <div class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3">
-                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      <div
+                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                      >
+                        <div
+                          class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
+                        >
+                          <svg
+                            class="w-6 h-6 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                            />
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -179,14 +260,86 @@
                             {{ t('cloudBilling.billing.averageCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatCost(statistics.average_cost, 'CNY') }}
+                            {{
+                              formatStatsSummaryAmount(statistics.average_cost)
+                            }}
+                          </div>
+                          <div
+                            v-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{
+                              t('cloudBilling.billing.overviewMixedCurrency')
+                            }}
                           </div>
                         </div>
                       </div>
-                      <div class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3">
-                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      <div
+                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                      >
+                        <div
+                          class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center"
+                        >
+                          <svg
+                            class="w-6 h-6 text-amber-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z"
+                            />
+                          </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-xs font-medium text-gray-500 mb-1">
+                            {{ t('cloudBilling.billing.balance') }}
+                          </div>
+                          <div class="text-xl font-bold text-gray-900">
+                            {{
+                              formatBalanceSummary(
+                                statistics.total_balance,
+                                statsSummaryCurrency
+                              )
+                            }}
+                          </div>
+                          <div
+                            v-if="selectedProviderBalanceUnsupported"
+                            class="mt-1 text-xs font-medium text-amber-600"
+                          >
+                            {{ t('cloudBilling.billing.balanceUnsupported') }}
+                          </div>
+                          <div
+                            v-else-if="statsSummaryHasMixedCurrencies"
+                            class="mt-1 text-xs font-medium text-gray-500"
+                          >
+                            {{
+                              t('cloudBilling.billing.overviewMixedCurrency')
+                            }}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                      >
+                        <div
+                          class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+                        >
+                          <svg
+                            class="w-6 h-6 text-purple-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -194,43 +347,86 @@
                             {{ t('cloudBilling.billing.accountCount') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ accountCount }}
+                            {{ configuredProviderCount }}
                           </div>
                         </div>
                       </div>
                     </div>
                     <!-- Right Column: Provider Cost Distribution Pie Chart -->
                     <div class="h-full">
-                      <BillingPieChart
-                        :statistics="statistics"
-                      />
+                      <BillingPieChart :statistics="statistics" />
                     </div>
                   </div>
 
                   <!-- Summary Cards Only (for Year View) -->
-                  <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
+                  <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div
+                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                    >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.totalCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.total_cost, 'CNY') }}
+                        {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
+                    <div
+                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                    >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.averageCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatCost(statistics.average_cost, 'CNY') }}
+                        {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                      </div>
+                      <div
+                        v-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center">
+                    <div
+                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                    >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.recordCount') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
                         {{ statistics.count }}
+                      </div>
+                    </div>
+                    <div
+                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                    >
+                      <div class="text-xs font-medium text-gray-500 mb-0.5">
+                        {{ t('cloudBilling.billing.balance') }}
+                      </div>
+                      <div class="text-lg font-bold text-gray-900">
+                        {{
+                          formatBalanceSummary(
+                            statistics.total_balance,
+                            statsSummaryCurrency
+                          )
+                        }}
+                      </div>
+                      <div
+                        v-if="selectedProviderBalanceUnsupported"
+                        class="mt-1 text-xs font-medium text-amber-600"
+                      >
+                        {{ t('cloudBilling.billing.balanceUnsupported') }}
+                      </div>
+                      <div
+                        v-else-if="statsSummaryHasMixedCurrencies"
+                        class="mt-1 text-xs font-medium text-gray-500"
+                      >
+                        {{ t('cloudBilling.billing.overviewMixedCurrency') }}
                       </div>
                     </div>
                   </div>
@@ -254,19 +450,28 @@
                   />
                 </div>
 
-                <div v-if="!statsLoading && !statistics" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
-                  <p class="text-sm font-medium text-gray-600">{{ t('cloudBilling.billing.noData') }}</p>
+                <div
+                  v-if="!statsLoading && !statistics"
+                  class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+                >
+                  <p class="text-sm font-medium text-gray-600">
+                    {{ t('cloudBilling.billing.noData') }}
+                  </p>
                 </div>
               </div>
 
               <!-- Details Tab -->
               <div v-if="activeTab === 'details'">
                 <!-- Details Filters -->
-                <div class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+                <div
+                  class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4"
+                >
                   <div class="flex flex-wrap items-end gap-4">
                     <!-- Date Range -->
                     <div class="flex-1 min-w-[160px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.startDate') }}
                       </label>
                       <input
@@ -277,7 +482,9 @@
                       />
                     </div>
                     <div class="flex-1 min-w-[160px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.endDate') }}
                       </label>
                       <input
@@ -290,7 +497,9 @@
 
                     <!-- Provider Filter -->
                     <div class="flex-1 min-w-[180px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.provider') }}
                       </label>
                       <select
@@ -298,20 +507,24 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         @change="detailsAccountId = ''"
                       >
-                        <option value="">{{ t('cloudBilling.billing.allProviders') }}</option>
+                        <option value="">
+                          {{ t('cloudBilling.billing.allProviders') }}
+                        </option>
                         <option
                           v-for="provider in providers"
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ provider.display_name }}
+                          {{ getProviderDisplayName(provider) }}
                         </option>
                       </select>
                     </div>
 
                     <!-- Account ID Filter -->
                     <div class="flex-1 min-w-[180px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('cloudBilling.billing.accountId') }}
                       </label>
                       <select
@@ -319,20 +532,26 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         :disabled="!detailsProviderId"
                       >
-                        <option value="">{{ t('cloudBilling.billing.allAccounts') }}</option>
+                        <option value="">
+                          {{ t('cloudBilling.billing.allAccounts') }}
+                        </option>
                         <option
                           v-for="account in availableDetailsAccounts"
                           :key="account"
                           :value="account"
                         >
-                          {{ account || t('cloudBilling.billing.defaultAccount') }}
+                          {{
+                            account || t('cloudBilling.billing.defaultAccount')
+                          }}
                         </option>
                       </select>
                     </div>
 
                     <!-- Search -->
                     <div class="flex-1 min-w-[200px]">
-                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         {{ t('common.search') }}
                       </label>
                       <BaseInput
@@ -341,8 +560,18 @@
                         @update:modelValue="handleSearch"
                       >
                         <template #icon>
-                          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          <svg
+                            class="w-4 h-4 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                            />
                           </svg>
                         </template>
                       </BaseInput>
@@ -353,7 +582,10 @@
                 <!-- Details Content -->
                 <BaseLoading v-if="detailsLoading && billings.length === 0" />
 
-                <div v-if="!detailsLoading && billings.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+                <div
+                  v-if="!detailsLoading && billings.length === 0"
+                  class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+                >
                   <svg
                     class="mx-auto h-12 w-12 text-gray-400 mb-4"
                     fill="none"
@@ -367,27 +599,47 @@
                       d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                     />
                   </svg>
-                  <p class="text-sm font-medium text-gray-600">{{ t('cloudBilling.billing.noData') }}</p>
+                  <p class="text-sm font-medium text-gray-600">
+                    {{ t('cloudBilling.billing.noData') }}
+                  </p>
                 </div>
 
                 <!-- Details Table -->
-                <div v-if="!detailsLoading && billings.length > 0" class="overflow-x-auto rounded-lg border border-gray-200">
+                <div
+                  v-if="!detailsLoading && billings.length > 0"
+                  class="overflow-x-auto rounded-lg border border-gray-200"
+                >
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           {{ t('cloudBilling.billing.provider') }}
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           {{ t('cloudBilling.billing.accountId') }}
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           {{ t('cloudBilling.billing.collectionTime') }}
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           {{ t('cloudBilling.billing.cost') }}
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          {{ t('cloudBilling.billing.balance') }}
+                        </th>
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           {{ t('cloudBilling.billing.changeFromLastHour') }}
                         </th>
                       </tr>
@@ -399,19 +651,50 @@
                         @click="handlePreview(billing)"
                         class="cursor-pointer hover:bg-gray-50 transition-colors"
                       >
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {{ billing.provider_display_name || billing.provider }}
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
+                          {{ getBillingProviderName(billing) }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
                           {{ billing.account_id || '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
                           {{ formatDate(billing.collection_time) }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
                           {{ formatCost(billing.cost, billing.currency) }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm" :class="getChangeClass(billing.change_from_last_hour, 'text-gray-500', true)">
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
+                          <div>{{ formatBillingBalance(billing) }}</div>
+                          <div
+                            v-if="billing.balance_supported === false"
+                            class="mt-1 text-xs font-medium text-amber-600"
+                          >
+                            {{
+                              billing.balance_note ||
+                              t('cloudBilling.billing.balanceUnsupported')
+                            }}
+                          </div>
+                        </td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm"
+                          :class="
+                            getChangeClass(
+                              billing.change_from_last_hour,
+                              'text-gray-500',
+                              true
+                            )
+                          "
+                        >
                           {{ formatChange(billing.change_from_last_hour) }}
                         </td>
                       </tr>
@@ -437,11 +720,15 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
-import { zhCN, enUS } from 'date-fns/locale'
+import { format } from 'date-fns'
 import { useDebounce } from '@/composables/useDebounce'
 import { extractResponseData } from '@/utils/api'
-import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
+import {
+  formatCost,
+  formatChange,
+  formatDate,
+  getChangeClass
+} from '@/utils/formatting'
 import { cloudBillingApi } from '@/api/cloudBilling'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
@@ -452,43 +739,49 @@ import BillingDetailPanel from '@/components/cloud-billing/BillingDetailPanel.vu
 import BillingChart from '@/components/cloud-billing/BillingChart.vue'
 import BillingPieChart from '@/components/cloud-billing/BillingPieChart.vue'
 import BillingDailyCostChart from '@/components/cloud-billing/BillingDailyCostChart.vue'
+import {
+  getLocalizedBillingProviderName,
+  getLocalizedProviderDisplayName
+} from '@/utils/providerDisplay'
 
 const { t, locale } = useI18n()
 
-const dateFnsLocale = computed(() => {
-  return locale.value === 'zh-CN' ? zhCN : enUS
-})
+const getProviderDisplayName = (provider) =>
+  getLocalizedProviderDisplayName(provider, t)
+const getProviderSelectLabel = (provider) => getProviderDisplayName(provider)
+const getBillingProviderName = (billing) =>
+  getLocalizedBillingProviderName(billing, t)
 
-// Calculate total account count from statistics
-const accountCount = computed(() => {
-  if (!statistics.value || !statistics.value.by_provider) {
-    return 0
+// Count configured active providers instead of billing rows in the current period.
+const configuredProviderCount = computed(() => {
+  if (statsProviderId.value) {
+    return providers.value.some(
+      (provider) => provider.id === parseInt(statsProviderId.value)
+    )
+      ? 1
+      : 0
   }
-  
-  // Count unique provider+account_id combinations
-  const accountSet = new Set()
-  Object.values(statistics.value.by_provider).forEach(providerData => {
-    const key = `${providerData.provider_id}_${providerData.account_id || ''}`
-    accountSet.add(key)
-  })
-  
-  return accountSet.size
+  return providerTotalCount.value
 })
 
 // Available accounts for statistics filter (based on selected provider)
 const availableAccounts = computed(() => {
-  if (!statistics.value || !statistics.value.by_provider || !statsProviderId.value) {
+  if (
+    !statistics.value ||
+    !statistics.value.by_provider ||
+    !statsProviderId.value
+  ) {
     return []
   }
-  
+
   const accounts = new Set()
-  Object.values(statistics.value.by_provider).forEach(providerData => {
+  Object.values(statistics.value.by_provider).forEach((providerData) => {
     if (providerData.provider_id === parseInt(statsProviderId.value)) {
       const accountId = providerData.account_id || ''
       accounts.add(accountId)
     }
   })
-  
+
   return Array.from(accounts).sort()
 })
 
@@ -497,24 +790,72 @@ const availableDetailsAccounts = computed(() => {
   if (!detailsProviderId.value) {
     return []
   }
-  
+
   const accounts = new Set()
-  billings.value.forEach(billing => {
+  billings.value.forEach((billing) => {
     const billingProviderId = billing.provider || billing.provider_id
     if (billingProviderId === parseInt(detailsProviderId.value)) {
       const accountId = billing.account_id || ''
       accounts.add(accountId)
     }
   })
-  
+
   return Array.from(accounts).sort()
 })
 
+const selectedProviderBalanceUnsupported = computed(() => {
+  if (!statsProviderId.value || !statistics.value?.by_provider) {
+    return false
+  }
+  const rows = Object.values(statistics.value.by_provider).filter(
+    (providerData) =>
+      providerData.provider_id === parseInt(statsProviderId.value)
+  )
+  return (
+    rows.length > 0 &&
+    rows.every((providerData) => providerData.balance_supported === false)
+  )
+})
+
+const statsSummaryCurrencies = computed(() => {
+  const byProvider = statistics.value?.by_provider
+  if (!byProvider) {
+    return []
+  }
+
+  const rows = Object.values(byProvider).filter((providerData) => {
+    if (!statsProviderId.value) {
+      return true
+    }
+    return providerData.provider_id === parseInt(statsProviderId.value)
+  })
+
+  const currencies = Array.from(
+    new Set(
+      rows
+        .map((providerData) => String(providerData.currency || '').trim())
+        .filter(Boolean)
+    )
+  )
+
+  return currencies
+})
+
+const statsSummaryHasMixedCurrencies = computed(
+  () => statsSummaryCurrencies.value.length > 1
+)
+
+const statsSummaryCurrency = computed(() =>
+  statsSummaryCurrencies.value.length === 1
+    ? statsSummaryCurrencies.value[0]
+    : null
+)
+
 const activeTab = ref('statistics')
-const tabs = [
+const tabs = computed(() => [
   { id: 'statistics', label: t('cloudBilling.billing.statistics') },
   { id: 'details', label: t('cloudBilling.billing.details') }
-]
+])
 
 // Statistics tab state
 const statsLoading = ref(false)
@@ -526,6 +867,7 @@ const statsSelectedYear = ref(new Date().getFullYear())
 const statsProviderId = ref('')
 const statsAccountId = ref('')
 const providers = ref([])
+const providerTotalCount = ref(0)
 
 // Details tab state
 const detailsLoading = ref(false)
@@ -538,14 +880,48 @@ const detailsAccountId = ref('')
 const showPreviewModal = ref(false)
 const selectedBilling = ref(null)
 
+const extractProviderListData = (data) => {
+  if (Array.isArray(data)) {
+    return {
+      list: data,
+      total: data.length,
+      paginated: false
+    }
+  }
+
+  if (data?.results && Array.isArray(data.results)) {
+    const total = Number(data.count)
+    return {
+      list: data.results,
+      total: Number.isFinite(total) ? total : data.results.length,
+      paginated: true
+    }
+  }
+
+  if (data?.list && Array.isArray(data.list)) {
+    const total = Number(data?.pagination?.total)
+    return {
+      list: data.list,
+      total: Number.isFinite(total) ? total : data.list.length,
+      paginated: true
+    }
+  }
+
+  return {
+    list: [],
+    total: 0,
+    paginated: false
+  }
+}
+
 // Initialize date range: details tab default is last 3 days (from 3 days ago to today)
 const initDateRange = () => {
   const now = new Date()
-  
+
   // Initialize period for statistics (current month)
   statsSelectedPeriod.value = format(now, 'yyyy-MM')
   statsSelectedYear.value = now.getFullYear()
-  
+
   const endStr = format(now, 'yyyy-MM-dd')
   const start = new Date(now)
   start.setDate(start.getDate() - 3)
@@ -557,31 +933,53 @@ const initDateRange = () => {
 // Load providers list
 const loadProviders = async () => {
   try {
-    const response = await cloudBillingApi.getProviders({ is_active: true })
+    const pageSize = 100
+    const response = await cloudBillingApi.getProviders({
+      is_active: true,
+      page: 1,
+      page_size: pageSize
+    })
     const data = extractResponseData(response)
-    if (Array.isArray(data)) {
-      providers.value = data
-    } else if (data && data.results) {
-      providers.value = data.results
+    const { list, total, paginated } = extractProviderListData(data)
+
+    if (!paginated) {
+      providers.value = list
+      providerTotalCount.value = total
+    } else {
+      const allProviders = [...list]
+      const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
+      for (let page = 2; page <= totalPages; page += 1) {
+        const pageResponse = await cloudBillingApi.getProviders({
+          is_active: true,
+          page,
+          page_size: pageSize
+        })
+        const pageData = extractResponseData(pageResponse)
+        const { list: pageList } = extractProviderListData(pageData)
+        allProviders.push(...pageList)
+      }
+
+      providers.value = allProviders
+      providerTotalCount.value = total
     }
   } catch (error) {
     console.error('Failed to load providers:', error)
     providers.value = []
+    providerTotalCount.value = 0
   }
 }
-
-
 
 // Load statistics
 const loadStatistics = async () => {
   statsLoading.value = true
   try {
     const params = {}
-    
+
     if (statsPeriodType.value === 'month' && statsSelectedPeriod.value) {
       params.start_period = statsSelectedPeriod.value
       params.end_period = statsSelectedPeriod.value
-      
+
       // Load daily data for monthly view
       await loadDailyBillingData()
     } else if (statsPeriodType.value === 'year' && statsSelectedYear.value) {
@@ -589,7 +987,7 @@ const loadStatistics = async () => {
       const now = new Date()
       const currentYear = now.getFullYear()
       const currentMonth = now.getMonth() + 1
-      
+
       params.start_period = `${year}-01`
       // Use current month as end_period to avoid backend grouping by year
       // This allows us to get monthly breakdown data
@@ -602,7 +1000,7 @@ const loadStatistics = async () => {
       // Clear daily data for year view
       dailyBillingData.value = []
     }
-    
+
     if (statsProviderId.value) {
       params.provider_id = statsProviderId.value
     }
@@ -618,36 +1016,60 @@ const loadStatistics = async () => {
   }
 }
 
+const formatBalanceSummary = (value, currency = 'CNY') => {
+  if (!currency) {
+    return '--'
+  }
+  if (selectedProviderBalanceUnsupported.value) {
+    return formatCost(0, currency)
+  }
+  return formatCost(value ?? 0, currency)
+}
+
+const formatStatsSummaryAmount = (value) => {
+  if (!statsSummaryCurrency.value) {
+    return '--'
+  }
+  return formatCost(value ?? 0, statsSummaryCurrency.value)
+}
+
+const formatBillingBalance = (billing) => {
+  if (billing?.balance_supported === false) {
+    return formatCost(0, billing.currency)
+  }
+  return formatCost(billing?.balance ?? 0, billing?.currency)
+}
+
 // Load daily billing data for chart
 const loadDailyBillingData = async () => {
   if (!statsSelectedPeriod.value) return
-  
+
   try {
     const [year, month] = statsSelectedPeriod.value.split('-')
     const startDate = new Date(parseInt(year), parseInt(month) - 1, 1)
     const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59)
-    
+
     const params = {
       start_date: format(startDate, 'yyyy-MM-dd'),
       end_date: format(endDate, 'yyyy-MM-dd')
     }
-    
+
     if (statsProviderId.value) {
       params.provider_id = statsProviderId.value
     }
-    
+
     if (statsAccountId.value) {
       params.account_id = statsAccountId.value
     }
-    
+
     // Fetch all pages of data
     let allBillings = []
     let nextPage = null
-    
+
     do {
       const response = await cloudBillingApi.getBillingData(params)
       const data = extractResponseData(response)
-      
+
       let billingList = []
       if (Array.isArray(data)) {
         billingList = data
@@ -655,9 +1077,9 @@ const loadDailyBillingData = async () => {
         billingList = data.results
         nextPage = data.next || null
       }
-      
+
       allBillings = allBillings.concat(billingList)
-      
+
       // If there's a next page, update params to fetch it
       if (nextPage) {
         // Parse next URL to get the page parameter
@@ -668,7 +1090,7 @@ const loadDailyBillingData = async () => {
         }
       }
     } while (nextPage)
-    
+
     dailyBillingData.value = allBillings
   } catch (error) {
     console.error('Failed to load daily billing data:', error)
@@ -681,23 +1103,23 @@ const loadBillings = async (query = '') => {
   detailsLoading.value = true
   try {
     const params = {}
-    
+
     if (query) {
       params.search = query
     }
-    
+
     if (detailsStartDate.value) {
       params.start_date = detailsStartDate.value
     }
-    
+
     if (detailsEndDate.value) {
       params.end_date = detailsEndDate.value
     }
-    
+
     if (detailsProviderId.value) {
       params.provider_id = detailsProviderId.value
     }
-    
+
     if (detailsAccountId.value) {
       params.account_id = detailsAccountId.value
     }
@@ -705,7 +1127,7 @@ const loadBillings = async (query = '') => {
     // Fetch all pages of data
     let allBillings = []
     let nextPage = null
-    
+
     do {
       const response = await cloudBillingApi.getBillingData(params)
       const data = extractResponseData(response)
@@ -717,9 +1139,9 @@ const loadBillings = async (query = '') => {
         billingList = data.results
         nextPage = data.next || null
       }
-      
+
       allBillings = allBillings.concat(billingList)
-      
+
       // If there's a next page, update params to fetch it
       if (nextPage) {
         // Parse next URL to get the page parameter
@@ -733,63 +1155,73 @@ const loadBillings = async (query = '') => {
 
     // Map backend fields to frontend format and calculate changes
     const billingMap = new Map()
-    allBillings.forEach(billing => {
+    allBillings.forEach((billing) => {
       const key = `${billing.provider}_${billing.period}_${billing.hour}_${billing.account_id || ''}`
       billingMap.set(key, billing)
     })
 
     // Calculate change from last hour for each billing record
-    billings.value = allBillings.map(billing => {
-      const currentHour = billing.hour
-      let prevHour = currentHour === 0 ? 23 : currentHour - 1
-      let prevPeriod = billing.period
+    billings.value = allBillings
+      .map((billing) => {
+        const currentHour = billing.hour
+        let prevHour = currentHour === 0 ? 23 : currentHour - 1
+        let prevPeriod = billing.period
 
-      // Handle cross-month case (hour 0 -> previous month hour 23)
-      if (currentHour === 0) {
-        const [year, month] = billing.period.split('-')
-        const prevDate = new Date(parseInt(year), parseInt(month) - 2, 1)
-        const prevYear = prevDate.getFullYear()
-        const prevMonth = String(prevDate.getMonth() + 1).padStart(2, '0')
-        prevPeriod = `${prevYear}-${prevMonth}`
-      }
-
-      const prevKey = `${billing.provider}_${prevPeriod}_${prevHour}_${billing.account_id || ''}`
-      const prevBilling = billingMap.get(prevKey)
-
-      let changeFromLastHour = null
-      if (prevBilling && prevBilling.total_cost) {
-        const currentCost = parseFloat(billing.total_cost) || 0
-        const prevCost = parseFloat(prevBilling.total_cost) || 0
-        if (prevCost > 0) {
-          changeFromLastHour = ((currentCost - prevCost) / prevCost) * 100
-        } else if (currentCost > 0) {
-          changeFromLastHour = 100
+        // Handle cross-month case (hour 0 -> previous month hour 23)
+        if (currentHour === 0) {
+          const [year, month] = billing.period.split('-')
+          const prevDate = new Date(parseInt(year), parseInt(month) - 2, 1)
+          const prevYear = prevDate.getFullYear()
+          const prevMonth = String(prevDate.getMonth() + 1).padStart(2, '0')
+          prevPeriod = `${prevYear}-${prevMonth}`
         }
-      }
 
-      return {
-        id: billing.id,
-        provider: billing.provider,
-        provider_display_name: billing.provider_name || billing.provider,
-        collection_time: billing.collected_at,
-        cost: billing.total_cost,
-        currency: billing.currency,
-        change_from_last_hour: changeFromLastHour,
-        period: billing.period,
-        hour: billing.hour,
-        service_costs: billing.service_costs,
-        account_id: billing.account_id
-      }
-    }).sort((a, b) => {
-      return new Date(b.collection_time) - new Date(a.collection_time)
-    })
+        const prevKey = `${billing.provider}_${prevPeriod}_${prevHour}_${billing.account_id || ''}`
+        const prevBilling = billingMap.get(prevKey)
+
+        let changeFromLastHour = null
+        if (prevBilling && prevBilling.total_cost) {
+          const currentCost = parseFloat(billing.total_cost) || 0
+          const prevCost = parseFloat(prevBilling.total_cost) || 0
+          if (prevCost > 0) {
+            changeFromLastHour = ((currentCost - prevCost) / prevCost) * 100
+          } else if (currentCost > 0) {
+            changeFromLastHour = 100
+          }
+        }
+
+        return {
+          id: billing.id,
+          provider: billing.provider,
+          provider_display_name: getBillingProviderName(billing),
+          provider_type: billing.provider_type,
+          collection_time: billing.collected_at,
+          cost: billing.total_cost,
+          balance: billing.balance,
+          balance_supported: billing.balance_supported,
+          balance_note: billing.balance_note,
+          currency: billing.currency,
+          change_from_last_hour: changeFromLastHour,
+          period: billing.period,
+          hour: billing.hour,
+          service_costs: billing.service_costs,
+          account_id: billing.account_id
+        }
+      })
+      .sort((a, b) => {
+        return new Date(b.collection_time) - new Date(a.collection_time)
+      })
 
     // Apply search filter
     if (query) {
       const lowerQuery = query.toLowerCase()
-      billings.value = billings.value.filter(billing =>
-        billing.provider_display_name.toLowerCase().includes(lowerQuery) ||
-        (billing.account_id && billing.account_id.toLowerCase().includes(lowerQuery))
+      billings.value = billings.value.filter(
+        (billing) =>
+          String(billing.provider_display_name || '')
+            .toLowerCase()
+            .includes(lowerQuery) ||
+          (billing.account_id &&
+            billing.account_id.toLowerCase().includes(lowerQuery))
       )
     }
   } catch (error) {
@@ -826,24 +1258,36 @@ const handlePreview = (billing) => {
 watch(activeTab, (newTab) => {
   if (newTab === 'statistics') {
     loadStatistics()
-  } else {
+  } else if (newTab === 'details') {
     loadBillings()
   }
 })
 
 // Watch statistics filter changes for real-time updates
-watch([statsPeriodType, statsSelectedPeriod, statsSelectedYear, statsProviderId, statsAccountId], () => {
-  if (activeTab.value === 'statistics') {
-    loadStatistics()
+watch(
+  [
+    statsPeriodType,
+    statsSelectedPeriod,
+    statsSelectedYear,
+    statsProviderId,
+    statsAccountId
+  ],
+  () => {
+    if (activeTab.value === 'statistics') {
+      loadStatistics()
+    }
   }
-})
+)
 
 // Watch details filter changes
-watch([detailsStartDate, detailsEndDate, detailsProviderId, detailsAccountId], () => {
-  if (activeTab.value === 'details') {
-    loadBillings(searchQuery.value)
+watch(
+  [detailsStartDate, detailsEndDate, detailsProviderId, detailsAccountId],
+  () => {
+    if (activeTab.value === 'details') {
+      loadBillings(searchQuery.value)
+    }
   }
-})
+)
 
 onMounted(() => {
   initDateRange()

@@ -10,7 +10,9 @@
         </p>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <div
+        class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+      >
         <div class="p-6">
           <BaseLoading v-if="loading" />
           <template v-else>
@@ -18,7 +20,9 @@
               {{ t('notificationManagement.settings.scheduleSection') }}
             </h2>
 
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start pb-6">
+            <section
+              class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start pb-6"
+            >
               <div class="md:col-span-2">
                 <h3 class="text-sm font-semibold text-gray-900 mb-1">
                   {{ t('notificationManagement.settings.retentionTitle') }}
@@ -34,7 +38,11 @@
                     type="number"
                     min="1"
                     max="3650"
-                    :placeholder="t('notificationManagement.settings.retentionDaysPlaceholder')"
+                    :placeholder="
+                      t(
+                        'notificationManagement.settings.retentionDaysPlaceholder'
+                      )
+                    "
                     class="rounded-md border border-gray-300 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                   />
                   <span class="text-sm text-gray-500 w-14">
@@ -56,7 +64,9 @@
                 </div>
                 <div class="md:col-span-1 flex justify-end">
                   <div class="w-full md:w-64 flex justify-end">
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label
+                      class="relative inline-flex items-center cursor-pointer"
+                    >
                       <input
                         v-model="form.cleanup_enabled"
                         type="checkbox"
@@ -69,7 +79,9 @@
                   </div>
                 </div>
               </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4">
+              <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4"
+              >
                 <div class="md:col-span-2">
                   <label class="text-sm font-medium text-gray-700">
                     {{ t('notificationManagement.settings.cleanupCrontab') }}
@@ -83,7 +95,11 @@
                     <input
                       v-model="form.cleanup_crontab"
                       type="text"
-                      :placeholder="t('notificationManagement.settings.cleanupCrontabPlaceholder')"
+                      :placeholder="
+                        t(
+                          'notificationManagement.settings.cleanupCrontabPlaceholder'
+                        )
+                      "
                       :disabled="!form.cleanup_enabled"
                       class="rounded-md border border-gray-300 px-3 py-2 text-sm w-full font-mono focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     />
@@ -92,7 +108,9 @@
               </div>
             </section>
 
-            <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
+            <div
+              class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6"
+            >
               <BaseButton
                 variant="secondary"
                 size="sm"
@@ -110,7 +128,9 @@
                 {{ t('notificationManagement.settings.saveChanges') }}
               </BaseButton>
             </div>
-            <p v-if="saveError" class="text-sm text-red-600 mt-2">{{ saveError }}</p>
+            <p v-if="saveError" class="text-sm text-red-600 mt-2">
+              {{ saveError }}
+            </p>
             <p v-if="saveSuccess" class="text-sm text-green-600 mt-2">
               {{ t('notificationManagement.settings.saveSuccess') }}
             </p>
@@ -190,7 +210,10 @@ async function saveConfig() {
   saveError.value = ''
   saveSuccess.value = false
   const value = {
-    retention_days: Math.max(1, Math.min(3650, Number(form.retention_days) || 180)),
+    retention_days: Math.max(
+      1,
+      Math.min(3650, Number(form.retention_days) || 180)
+    ),
     cleanup_enabled: !!form.cleanup_enabled,
     cleanup_crontab: (form.cleanup_crontab || '').trim() || '0 2 * * *'
   }
@@ -202,15 +225,20 @@ async function saveConfig() {
     initialValues.cleanup_crontab = value.cleanup_crontab
     saveSuccess.value = true
     showSuccess(t('notificationManagement.settings.saveSuccess'))
-    setTimeout(() => { saveSuccess.value = false }, 3000)
+    setTimeout(() => {
+      saveSuccess.value = false
+    }, 3000)
   } catch (e) {
     const detail = e?.response?.data?.data?.detail ?? e?.response?.data?.detail
-    saveError.value = detail || e?.message || t('notificationManagement.settings.saveFailed')
+    saveError.value =
+      detail || e?.message || t('notificationManagement.settings.saveFailed')
     showError(saveError.value)
   } finally {
     saving.value = false
   }
 }
 
-onMounted(() => { load() })
+onMounted(() => {
+  load()
+})
 </script>

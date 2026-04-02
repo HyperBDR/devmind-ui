@@ -16,7 +16,9 @@
       >
         <div class="flex flex-wrap items-end gap-6 flex-1 min-w-0">
           <div class="flex flex-col gap-1.5">
-            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1"
+            >
               {{ t('notificationManagement.stats.userScope') }}
             </label>
             <select
@@ -24,7 +26,9 @@
               class="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 min-w-[140px] hover:border-gray-300 transition-colors"
               @change="fetchStats"
             >
-              <option value="">{{ t('notificationManagement.stats.allUsers') }}</option>
+              <option value="">
+                {{ t('notificationManagement.stats.allUsers') }}
+              </option>
               <option
                 v-for="u in userOptions"
                 :key="u.user_id"
@@ -35,7 +39,9 @@
             </select>
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1"
+            >
               {{ t('notificationManagement.stats.granularity') }}
             </label>
             <div class="flex rounded-lg bg-gray-100 p-1">
@@ -56,8 +62,16 @@
             </div>
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {{ granularity === 'day' ? t('notificationManagement.stats.selectDay') : granularity === 'month' ? t('notificationManagement.stats.selectYearMonth') : t('notificationManagement.stats.selectYear') }}
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1"
+            >
+              {{
+                granularity === 'day'
+                  ? t('notificationManagement.stats.selectDay')
+                  : granularity === 'month'
+                    ? t('notificationManagement.stats.selectYearMonth')
+                    : t('notificationManagement.stats.selectYear')
+              }}
             </label>
             <div v-if="granularity === 'day'" class="flex items-center gap-2">
               <input
@@ -67,20 +81,27 @@
                 @change="onDayChange"
               />
             </div>
-            <div v-else-if="granularity === 'month'" class="flex items-center gap-2">
+            <div
+              v-else-if="granularity === 'month'"
+              class="flex items-center gap-2"
+            >
               <select
                 v-model="selectedYear"
                 class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="onMonthYearChange"
               >
-                <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+                <option v-for="y in yearOptions" :key="y" :value="y">
+                  {{ y }}
+                </option>
               </select>
               <select
                 v-model="selectedMonth"
                 class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-28 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="onMonthYearChange"
               >
-                <option v-for="m in 12" :key="m" :value="m">{{ String(m).padStart(2, '0') }}</option>
+                <option v-for="m in 12" :key="m" :value="m">
+                  {{ String(m).padStart(2, '0') }}
+                </option>
               </select>
             </div>
             <div v-else class="flex items-center gap-2">
@@ -89,7 +110,9 @@
                 class="rounded-lg border border-gray-200 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 hover:border-gray-300 transition-colors"
                 @change="onYearChange"
               >
-                <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+                <option v-for="y in yearOptions" :key="y" :value="y">
+                  {{ y }}
+                </option>
               </select>
             </div>
           </div>
@@ -101,8 +124,18 @@
             class="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium"
             @click="fetchStats"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
             {{ t('notificationManagement.stats.refreshData') }}
           </BaseButton>
@@ -112,133 +145,237 @@
       <div class="w-full">
         <BaseLoading v-if="loading && !statsData" />
 
-          <div
-            v-if="!loading && !statsData"
-            class="py-16 text-center rounded-2xl border border-gray-200 bg-white shadow-sm"
+        <div
+          v-if="!loading && !statsData"
+          class="py-16 text-center rounded-2xl border border-gray-200 bg-white shadow-sm"
+        >
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              class="mx-auto h-12 w-12 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+          <p class="text-sm font-medium text-gray-600">
+            {{ t('notificationManagement.stats.noData') }}
+          </p>
+        </div>
+
+        <template v-else-if="statsData">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div
+              class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('notificationManagement.stats.noData') }}</p>
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 text-blue-600 shrink-0"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-blue-600"
+                  >TOTAL</span
+                >
+              </div>
+              <div class="text-2xl font-semibold text-gray-900">
+                {{ formatNum(statsData.summary?.total) }}
+              </div>
+              <div class="text-sm text-gray-500 mt-0.5">
+                {{ t('notificationManagement.stats.totalDesc') }}
+              </div>
+            </div>
+            <div
+              class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 shrink-0"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-green-600"
+                  >SUCCESS</span
+                >
+              </div>
+              <div class="text-2xl font-semibold text-green-600">
+                {{ formatNum(statsData.summary?.total_sent) }}
+              </div>
+              <div class="text-sm text-gray-500 mt-0.5">
+                {{ t('notificationManagement.stats.sentDesc') }}
+              </div>
+              <div
+                v-if="successRatePct !== null"
+                class="mt-1 text-sm font-medium text-green-600"
+              >
+                {{ successRatePct }}%
+                {{ t('notificationManagement.stats.successRate') }}
+              </div>
+            </div>
+            <div
+              class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 shrink-0"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </span>
+                <span class="text-xs font-medium uppercase text-red-600"
+                  >FAILURE</span
+                >
+              </div>
+              <div class="text-2xl font-semibold text-red-600">
+                {{ formatNum(statsData.summary?.total_failed) }}
+              </div>
+              <div class="text-sm text-gray-500 mt-0.5">
+                {{ t('notificationManagement.stats.failedDesc') }}
+              </div>
+              <div
+                v-if="failedRatePct !== null"
+                class="mt-1 text-sm font-medium text-red-600"
+              >
+                {{ failedRatePct }}%
+                {{ t('notificationManagement.stats.failureRate') }}
+              </div>
+            </div>
           </div>
 
-          <template v-else-if="statsData">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 text-blue-600 shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </span>
-                  <span class="text-xs font-medium uppercase text-blue-600">TOTAL</span>
-                </div>
-                <div class="text-2xl font-semibold text-gray-900">{{ formatNum(statsData.summary?.total) }}</div>
-                <div class="text-sm text-gray-500 mt-0.5">{{ t('notificationManagement.stats.totalDesc') }}</div>
+          <div
+            class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[360px] mb-6"
+          >
+            <h3 class="text-base font-semibold text-gray-900 mb-1">
+              {{ t('notificationManagement.stats.seriesTitle') }}
+            </h3>
+            <p class="text-sm text-gray-500 mb-4">
+              {{ t('notificationManagement.stats.seriesSubtitle') }}
+            </p>
+            <div class="flex-1 min-h-0 flex flex-col">
+              <div
+                v-if="seriesChartData && seriesChartData.labels.length > 0"
+                class="flex-1 min-h-[280px]"
+              >
+                <Line :data="seriesChartData" :options="seriesChartOptions" />
               </div>
-              <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </span>
-                  <span class="text-xs font-medium uppercase text-green-600">SUCCESS</span>
-                </div>
-                <div class="text-2xl font-semibold text-green-600">{{ formatNum(statsData.summary?.total_sent) }}</div>
-                <div class="text-sm text-gray-500 mt-0.5">{{ t('notificationManagement.stats.sentDesc') }}</div>
-                <div v-if="successRatePct !== null" class="mt-1 text-sm font-medium text-green-600">
-                  {{ successRatePct }}% {{ t('notificationManagement.stats.successRate') }}
-                </div>
-              </div>
-              <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </span>
-                  <span class="text-xs font-medium uppercase text-red-600">FAILURE</span>
-                </div>
-                <div class="text-2xl font-semibold text-red-600">{{ formatNum(statsData.summary?.total_failed) }}</div>
-                <div class="text-sm text-gray-500 mt-0.5">{{ t('notificationManagement.stats.failedDesc') }}</div>
-                <div v-if="failedRatePct !== null" class="mt-1 text-sm font-medium text-red-600">
-                  {{ failedRatePct }}% {{ t('notificationManagement.stats.failureRate') }}
-                </div>
+              <div
+                v-else
+                class="flex-1 min-h-[280px] flex items-center justify-center text-gray-400 text-sm"
+              >
+                {{ t('notificationManagement.stats.noData') }}
               </div>
             </div>
+          </div>
 
-            <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[360px] mb-6">
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-stretch">
+            <div
+              class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]"
+            >
               <h3 class="text-base font-semibold text-gray-900 mb-1">
-                {{ t('notificationManagement.stats.seriesTitle') }}
+                {{ t('notificationManagement.stats.channelTitle') }}
               </h3>
-              <p class="text-sm text-gray-500 mb-4">{{ t('notificationManagement.stats.seriesSubtitle') }}</p>
-              <div class="flex-1 min-h-0 flex flex-col">
-                <div v-if="seriesChartData && seriesChartData.labels.length > 0" class="flex-1 min-h-[280px]">
-                  <Line :data="seriesChartData" :options="seriesChartOptions" />
-                </div>
-                <div v-else class="flex-1 min-h-[280px] flex items-center justify-center text-gray-400 text-sm">
-                  {{ t('notificationManagement.stats.noData') }}
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-stretch">
-              <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]">
-                <h3 class="text-base font-semibold text-gray-900 mb-1">
-                  {{ t('notificationManagement.stats.channelTitle') }}
-                </h3>
-                <p class="text-sm text-gray-500 mb-3">
-                  {{ t('notificationManagement.stats.channelSubtitle') }}
-                </p>
-                <div class="flex-1 min-h-0 overflow-y-auto space-y-5 pr-1">
-                  <div
-                    v-for="(row, idx) in channelBarData"
-                    :key="row.provider_type"
-                    class="space-y-1.5"
-                  >
-                    <div class="flex items-center justify-between gap-3">
-                      <span class="text-sm font-medium text-gray-700 shrink-0">{{ row.label }}</span>
-                      <span class="flex items-center gap-2 shrink-0">
-                        <span class="text-xs font-medium text-gray-500">{{ row.percent }}%</span>
-                        <span class="text-xs font-medium text-gray-900">{{ formatNum(row.count) }}</span>
-                      </span>
-                    </div>
-                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        :style="{ width: row.percent + '%', backgroundColor: row.color }"
-                        class="h-full rounded-full transition-all"
-                      />
-                    </div>
+              <p class="text-sm text-gray-500 mb-3">
+                {{ t('notificationManagement.stats.channelSubtitle') }}
+              </p>
+              <div class="flex-1 min-h-0 overflow-y-auto space-y-5 pr-1">
+                <div
+                  v-for="(row, idx) in channelBarData"
+                  :key="row.provider_type"
+                  class="space-y-1.5"
+                >
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="text-sm font-medium text-gray-700 shrink-0">{{
+                      row.label
+                    }}</span>
+                    <span class="flex items-center gap-2 shrink-0">
+                      <span class="text-xs font-medium text-gray-500"
+                        >{{ row.percent }}%</span
+                      >
+                      <span class="text-xs font-medium text-gray-900">{{
+                        formatNum(row.count)
+                      }}</span>
+                    </span>
+                  </div>
+                  <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      :style="{
+                        width: row.percent + '%',
+                        backgroundColor: row.color
+                      }"
+                      class="h-full rounded-full transition-all"
+                    />
                   </div>
                 </div>
-                <BaseButton
-                  variant="outline"
-                  size="sm"
-                  class="flex-shrink-0 w-full mt-4 flex items-center justify-center py-2.5"
-                  @click="goToRecords"
-                >
-                  {{ t('notificationManagement.stats.viewReport') }}
-                </BaseButton>
               </div>
-              <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]">
-                <h3 class="text-base font-semibold text-gray-900 mb-3">
-                  {{ t('notificationManagement.stats.bySource') }}
-                </h3>
-                <div v-if="sourcePieData?.datasets?.[0]?.data?.some((v) => v > 0)" class="flex-1 min-h-[260px]">
-                  <Doughnut :data="sourcePieData" :options="sourcePieOptions" />
-                </div>
-                <div v-else class="flex-1 min-h-[260px] flex items-center justify-center text-gray-500 text-sm rounded-lg border border-gray-200 bg-gray-50">
-                  {{ t('notificationManagement.stats.noData') }}
-                </div>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                class="flex-shrink-0 w-full mt-4 flex items-center justify-center py-2.5"
+                @click="goToRecords"
+              >
+                {{ t('notificationManagement.stats.viewReport') }}
+              </BaseButton>
+            </div>
+            <div
+              class="rounded-2xl bg-white border border-gray-200 shadow-sm p-5 flex flex-col min-h-[320px]"
+            >
+              <h3 class="text-base font-semibold text-gray-900 mb-3">
+                {{ t('notificationManagement.stats.bySource') }}
+              </h3>
+              <div
+                v-if="sourcePieData?.datasets?.[0]?.data?.some((v) => v > 0)"
+                class="flex-1 min-h-[260px]"
+              >
+                <Doughnut :data="sourcePieData" :options="sourcePieOptions" />
+              </div>
+              <div
+                v-else
+                class="flex-1 min-h-[260px] flex items-center justify-center text-gray-500 text-sm rounded-lg border border-gray-200 bg-gray-50"
+              >
+                {{ t('notificationManagement.stats.noData') }}
               </div>
             </div>
-      </template>
+          </div>
+        </template>
       </div>
     </div>
   </AdminLayout>
@@ -435,7 +572,10 @@ const channelBarData = computed(() => {
     ? Object.fromEntries(
         list.map((r) => [
           r.provider_type,
-          { count: Number(r.count ?? 0), label: r.provider_display_name || r.provider_type }
+          {
+            count: Number(r.count ?? 0),
+            label: r.provider_display_name || r.provider_type
+          }
         ])
       )
     : {}
@@ -455,8 +595,16 @@ const channelBarData = computed(() => {
 })
 
 const SOURCE_PIE_COLORS = [
-  '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899',
-  '#06b6d4', '#f97316', '#84cc16', '#6366f1', '#14b8a6'
+  '#3b82f6',
+  '#22c55e',
+  '#eab308',
+  '#a855f7',
+  '#ec4899',
+  '#06b6d4',
+  '#f97316',
+  '#84cc16',
+  '#6366f1',
+  '#14b8a6'
 ]
 
 const sourcePieData = computed(() => {
@@ -471,7 +619,9 @@ const sourcePieData = computed(() => {
     datasets: [
       {
         data: list.map((r) => Number(r.count ?? 0)),
-        backgroundColor: list.map((_, i) => SOURCE_PIE_COLORS[i % SOURCE_PIE_COLORS.length]),
+        backgroundColor: list.map(
+          (_, i) => SOURCE_PIE_COLORS[i % SOURCE_PIE_COLORS.length]
+        ),
         borderWidth: 1,
         borderColor: '#fff'
       }
@@ -512,7 +662,11 @@ async function fetchUserOptions() {
     if (Array.isArray(list) && list.length > 0) {
       userOptions.value = list.map((u) => ({
         user_id: u.user_id ?? u.id,
-        display: (u.display ?? u.username ?? (u.user_id != null ? `#${u.user_id}` : u.id != null ? `#${u.id}` : '')).toString()
+        display: (
+          u.display ??
+          u.username ??
+          (u.user_id != null ? `#${u.user_id}` : u.id != null ? `#${u.id}` : '')
+        ).toString()
       }))
       return
     }
@@ -521,10 +675,19 @@ async function fetchUserOptions() {
   }
   try {
     const data = await llmAdminApi.getUsers({ page_size: 200 })
-    const raw = Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : [])
+    const raw = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.results)
+        ? data.results
+        : []
     userOptions.value = raw.map((u) => ({
       user_id: u.id ?? u.user_id,
-      display: (u.username ?? u.display ?? u.email ?? (u.id != null ? `#${u.id}` : '')).toString()
+      display: (
+        u.username ??
+        u.display ??
+        u.email ??
+        (u.id != null ? `#${u.id}` : '')
+      ).toString()
     }))
   } catch {
     userOptions.value = []

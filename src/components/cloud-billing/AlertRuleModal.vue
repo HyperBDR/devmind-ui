@@ -6,7 +6,11 @@
   >
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <p class="text-xs text-gray-600 mb-4">
-        {{ t('cloudBilling.settings.alertRule.subtitle', { provider: providerName }) }}
+        {{
+          t('cloudBilling.settings.alertRule.subtitle', {
+            provider: providerName
+          })
+        }}
       </p>
 
       <!-- Enable Alert Rule -->
@@ -34,7 +38,9 @@
               class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
             ></div>
             <span class="ml-3 text-sm text-gray-700">
-              {{ formData.is_active ? t('common.enabled') : t('common.disabled') }}
+              {{
+                formData.is_active ? t('common.enabled') : t('common.disabled')
+              }}
             </span>
           </label>
         </div>
@@ -80,10 +86,7 @@
                 {{ getChannelOptionLabel(ch) }}
               </option>
             </select>
-            <p
-              v-if="channelsLoading"
-              class="text-xs text-gray-500 mt-1"
-            >
+            <p v-if="channelsLoading" class="text-xs text-gray-500 mt-1">
               {{ t('common.loading') }}
             </p>
             <p
@@ -94,6 +97,7 @@
             </p>
           </div>
         </div>
+
         <div
           v-if="isEmailChannelSelected"
           class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start"
@@ -112,7 +116,9 @@
               :key="i"
               v-model="emailToRecipients[i - 1]"
               type="email"
-              :placeholder="t('cloudBilling.providers.alertEmailRecipientsPlaceholder')"
+              :placeholder="
+                t('cloudBilling.providers.alertEmailRecipientsPlaceholder')
+              "
               class="w-full"
             />
           </div>
@@ -140,7 +146,9 @@
               type="number"
               step="0.01"
               min="0"
-              :placeholder="t('cloudBilling.settings.alertRule.costThresholdPlaceholder')"
+              :placeholder="
+                t('cloudBilling.settings.alertRule.costThresholdPlaceholder')
+              "
               class="w-full"
             />
           </div>
@@ -167,7 +175,9 @@
               step="0.01"
               min="0"
               max="100"
-              :placeholder="t('cloudBilling.settings.alertRule.growthThresholdPlaceholder')"
+              :placeholder="
+                t('cloudBilling.settings.alertRule.growthThresholdPlaceholder')
+              "
               class="w-full"
             />
             <p class="text-xs text-gray-500 mt-1">
@@ -186,7 +196,9 @@
               {{ t('cloudBilling.settings.alertRule.growthAmountThreshold') }}
             </label>
             <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('cloudBilling.settings.alertRule.growthAmountThresholdDesc') }}
+              {{
+                t('cloudBilling.settings.alertRule.growthAmountThresholdDesc')
+              }}
             </p>
           </div>
           <div class="md:col-span-2">
@@ -196,7 +208,69 @@
               type="number"
               step="0.01"
               min="0"
-              :placeholder="t('cloudBilling.settings.alertRule.growthAmountThresholdPlaceholder')"
+              :placeholder="
+                t(
+                  'cloudBilling.settings.alertRule.growthAmountThresholdPlaceholder'
+                )
+              "
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="balanceThreshold"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.settings.alertRule.balanceThreshold') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.settings.alertRule.balanceThresholdDesc') }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <BaseInput
+              id="balanceThreshold"
+              v-model="formData.balance_threshold"
+              type="number"
+              step="0.01"
+              min="0"
+              :placeholder="
+                t('cloudBilling.settings.alertRule.balanceThresholdPlaceholder')
+              "
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="daysRemainingThreshold"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.settings.alertRule.daysRemainingThreshold') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{
+                t('cloudBilling.settings.alertRule.daysRemainingThresholdDesc')
+              }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <BaseInput
+              id="daysRemainingThreshold"
+              v-model="formData.days_remaining_threshold"
+              type="number"
+              step="1"
+              min="1"
+              :placeholder="
+                t(
+                  'cloudBilling.settings.alertRule.daysRemainingThresholdPlaceholder'
+                )
+              "
               class="w-full"
             />
           </div>
@@ -242,6 +316,7 @@ import { notificationsAdminApi } from '@/admin/api'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
 const props = defineProps({
   show: {
@@ -264,9 +339,15 @@ const { t } = useI18n()
 const { showSuccess, showError } = useToast()
 const saving = ref(false)
 
-const providerName = computed(() => props.provider?.display_name || '')
+const providerName = computed(
+  () => getLocalizedProviderDisplayName(props.provider, t) || ''
+)
 const resolvedProviderId = computed(
-  () => props.provider?.id || props.provider?.provider_id || props.alertRule?.provider || null
+  () =>
+    props.provider?.id ||
+    props.provider?.provider_id ||
+    props.alertRule?.provider ||
+    null
 )
 
 const formData = ref({
@@ -274,6 +355,8 @@ const formData = ref({
   cost_threshold: null,
   growth_threshold: null,
   growth_amount_threshold: null,
+  balance_threshold: null,
+  days_remaining_threshold: null
 })
 
 const allChannels = ref([])
@@ -286,12 +369,22 @@ const canSave = computed(() => {
   return true
 })
 
+function normalizeThresholdValue(value) {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+  const text = String(value).trim()
+  return text === '' ? null : text
+}
+
 const isEmailChannelSelected = computed(() =>
   (selectedChannelValue.value || '').startsWith('email:')
 )
 
 function normalizeChannelType(value) {
-  const type = String(value || '').trim().toLowerCase()
+  const type = String(value || '')
+    .trim()
+    .toLowerCase()
   if (type === 'email' || type === 'webhook') {
     return type
   }
@@ -313,7 +406,9 @@ function resolveChannelType(channel) {
 function applyNotificationSelection(notification) {
   const n = notification && typeof notification === 'object' ? notification : {}
   const channelUuid = getNotificationChannelUuid(n)
-  const channelType = normalizeChannelType(n.type || n.channel_type || n.notification_type)
+  const channelType = normalizeChannelType(
+    n.type || n.channel_type || n.notification_type
+  )
 
   if (!channelUuid) {
     selectedChannelValue.value = ''
@@ -327,7 +422,9 @@ function applyNotificationSelection(notification) {
     return
   }
 
-  const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === channelUuid)
+  const matched = allChannels.value.find(
+    (ch) => String(ch?.uuid || '') === channelUuid
+  )
   if (matched) {
     selectedChannelValue.value = `${resolveChannelType(matched)}:${channelUuid}`
     pendingChannelUuid.value = ''
@@ -342,28 +439,34 @@ function getNotificationChannelUuid(notification) {
   const n = notification && typeof notification === 'object' ? notification : {}
   return String(
     n.channel_uuid ||
-    n.channelUuid ||
-    n.channel_id ||
-    n.channelId ||
-    n.uuid ||
-    n.id ||
-    ''
+      n.channelUuid ||
+      n.channel_id ||
+      n.channelId ||
+      n.uuid ||
+      n.id ||
+      ''
   ).trim()
 }
 
 function getChannelOptionLabel(ch) {
-  const name = (ch.name || '').trim() || t('cloudBilling.providers.channelUnnamed')
+  const name =
+    (ch.name || '').trim() || t('cloudBilling.providers.channelUnnamed')
   const channelType = resolveChannelType(ch)
-  const typeLabel = channelType === 'email'
-    ? t('cloudBilling.providers.channelTypeEmail')
-    : t('cloudBilling.providers.channelTypeWebhook')
+  const typeLabel =
+    channelType === 'email'
+      ? t('cloudBilling.providers.channelTypeEmail')
+      : t('cloudBilling.providers.channelTypeWebhook')
   const cfg = ch.config || {}
   if (channelType === 'email') {
     const host = (cfg.smtp_host || '').trim()
     const hint = host ? ` · ${host}` : ''
     return `${name} (${typeLabel})${hint}`
   }
-  const provider = (cfg.provider || cfg.provider_type || 'webhook').toLowerCase()
+  const provider = (
+    cfg.provider ||
+    cfg.provider_type ||
+    'webhook'
+  ).toLowerCase()
   const url = (cfg.url || '').trim()
   const urlHint = url ? (url.length > 40 ? url.slice(0, 37) + '...' : url) : ''
   if (urlHint) {
@@ -399,7 +502,9 @@ async function loadChannels() {
       return type === 'webhook' || type === 'email'
     })
     if (pendingChannelUuid.value) {
-      const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === pendingChannelUuid.value)
+      const matched = allChannels.value.find(
+        (ch) => String(ch?.uuid || '') === pendingChannelUuid.value
+      )
       if (matched) {
         selectedChannelValue.value = `${resolveChannelType(matched)}:${pendingChannelUuid.value}`
         pendingChannelUuid.value = ''
@@ -433,7 +538,7 @@ async function hydrateNotificationSelection(providerId) {
         emailToRecipients.value = [
           (to[0] || '').trim(),
           (to[1] || '').trim(),
-          (to[2] || '').trim(),
+          (to[2] || '').trim()
         ]
       } else {
         emailToRecipients.value = ['', '', '']
@@ -449,6 +554,25 @@ async function hydrateNotificationSelection(providerId) {
   emailToRecipients.value = ['', '', '']
 }
 
+async function fetchExistingAlertRule(providerId) {
+  if (!providerId) {
+    return null
+  }
+
+  try {
+    const response = await cloudBillingApi.getAlertRules({
+      provider_id: providerId,
+      page_size: 1
+    })
+    const data = extractResponseData(response)
+    const rules = Array.isArray(data) ? data : data?.results || data?.list || []
+    return rules[0] || null
+  } catch (error) {
+    console.error('Failed to fetch existing alert rule:', error)
+    return null
+  }
+}
+
 watch(
   () => [props.show, resolvedProviderId.value],
   async ([visible, providerId]) => {
@@ -461,34 +585,75 @@ watch(
 )
 onMounted(() => {
   if (props.show) {
-    loadChannels().then(() => hydrateNotificationSelection(resolvedProviderId.value))
+    loadChannels().then(() =>
+      hydrateNotificationSelection(resolvedProviderId.value)
+    )
   }
 })
 
-watch(() => props.alertRule, (newRule) => {
-  if (newRule) {
-    formData.value = {
-      is_active: newRule.is_active ?? true,
-      cost_threshold: newRule.cost_threshold ? String(newRule.cost_threshold) : null,
-      growth_threshold: newRule.growth_threshold ? String(newRule.growth_threshold) : null,
-      growth_amount_threshold: newRule.growth_amount_threshold ? String(newRule.growth_amount_threshold) : null,
+watch(
+  () => props.alertRule,
+  (newRule) => {
+    if (newRule) {
+      formData.value = {
+        is_active: newRule.is_active ?? true,
+        cost_threshold:
+          newRule.cost_threshold != null
+            ? String(newRule.cost_threshold)
+            : null,
+        growth_threshold:
+          newRule.growth_threshold != null
+            ? String(newRule.growth_threshold)
+            : null,
+        growth_amount_threshold:
+          newRule.growth_amount_threshold != null
+            ? String(newRule.growth_amount_threshold)
+            : null,
+        balance_threshold:
+          newRule.balance_threshold != null
+            ? String(newRule.balance_threshold)
+            : null,
+        days_remaining_threshold:
+          newRule.days_remaining_threshold != null
+            ? String(newRule.days_remaining_threshold)
+            : null
+      }
+    } else {
+      formData.value = {
+        is_active: true,
+        cost_threshold: null,
+        growth_threshold: null,
+        growth_amount_threshold: null,
+        balance_threshold: null,
+        days_remaining_threshold: null
+      }
     }
-  } else {
-    formData.value = {
-      is_active: true,
-      cost_threshold: null,
-      growth_threshold: null,
-      growth_amount_threshold: null,
-    }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 const handleSubmit = async () => {
   // Check if any threshold has a value (handle both null and empty string)
-  const costThreshold = formData.value.cost_threshold && String(formData.value.cost_threshold).trim()
-  const growthThreshold = formData.value.growth_threshold && String(formData.value.growth_threshold).trim()
-  const growthAmountThreshold = formData.value.growth_amount_threshold && String(formData.value.growth_amount_threshold).trim()
-  const hasAnyThreshold = !!(costThreshold || growthThreshold || growthAmountThreshold)
+  const costThreshold = normalizeThresholdValue(formData.value.cost_threshold)
+  const growthThreshold = normalizeThresholdValue(
+    formData.value.growth_threshold
+  )
+  const growthAmountThreshold = normalizeThresholdValue(
+    formData.value.growth_amount_threshold
+  )
+  const balanceThreshold = normalizeThresholdValue(
+    formData.value.balance_threshold
+  )
+  const daysRemainingThreshold = normalizeThresholdValue(
+    formData.value.days_remaining_threshold
+  )
+  const hasAnyThreshold = [
+    costThreshold,
+    growthThreshold,
+    growthAmountThreshold,
+    balanceThreshold,
+    daysRemainingThreshold
+  ].some((value) => value !== null)
 
   saving.value = true
   try {
@@ -499,9 +664,13 @@ const handleSubmit = async () => {
       return
     }
 
+    const existingRule =
+      props.alertRule || (await fetchExistingAlertRule(providerId))
+    const existingRuleId = existingRule?.id || null
+
     // If all thresholds are empty and rule exists, delete it
-    if (!hasAnyThreshold && props.alertRule) {
-      await cloudBillingApi.deleteAlertRule(props.alertRule.id)
+    if (!hasAnyThreshold && existingRuleId) {
+      await cloudBillingApi.deleteAlertRule(existingRuleId)
       showSuccess(t('cloudBilling.settings.alertRule.deleteSuccess'))
       emit('saved')
       return
@@ -514,7 +683,10 @@ const handleSubmit = async () => {
       return
     }
 
-    if (formData.value.is_active && !(selectedChannelValue.value || '').trim()) {
+    if (
+      formData.value.is_active &&
+      !(selectedChannelValue.value || '').trim()
+    ) {
       showError(t('cloudBilling.providers.alertChannelRequired'))
       saving.value = false
       return
@@ -531,7 +703,11 @@ const handleSubmit = async () => {
       }
       const invalid = list.find((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
       if (invalid) {
-        showError(t('cloudBilling.providers.alertEmailRecipientsInvalid', { email: invalid }))
+        showError(
+          t('cloudBilling.providers.alertEmailRecipientsInvalid', {
+            email: invalid
+          })
+        )
         saving.value = false
         return
       }
@@ -540,16 +716,26 @@ const handleSubmit = async () => {
     const data = {
       provider: providerId,
       is_active: formData.value.is_active,
-      cost_threshold: costThreshold ? parseFloat(costThreshold) : null,
-      growth_threshold: growthThreshold ? parseFloat(growthThreshold) : null,
-      growth_amount_threshold: growthAmountThreshold ? parseFloat(growthAmountThreshold) : null,
+      cost_threshold: costThreshold !== null ? parseFloat(costThreshold) : null,
+      growth_threshold:
+        growthThreshold !== null ? parseFloat(growthThreshold) : null,
+      growth_amount_threshold:
+        growthAmountThreshold !== null
+          ? parseFloat(growthAmountThreshold)
+          : null,
+      balance_threshold:
+        balanceThreshold !== null ? parseFloat(balanceThreshold) : null,
+      days_remaining_threshold:
+        daysRemainingThreshold !== null
+          ? parseInt(daysRemainingThreshold, 10)
+          : null
     }
 
-    const successMessage = props.alertRule
+    const successMessage = existingRuleId
       ? t('cloudBilling.settings.alertRule.updateSuccess')
       : t('cloudBilling.settings.alertRule.createSuccess')
-    if (props.alertRule) {
-      await cloudBillingApi.updateAlertRule(props.alertRule.id, data)
+    if (existingRuleId) {
+      await cloudBillingApi.updateAlertRule(existingRuleId, data)
     } else {
       await cloudBillingApi.createAlertRule(data)
     }
@@ -564,7 +750,7 @@ const handleSubmit = async () => {
       const notifUuid = colonIndex >= 0 ? raw.slice(colonIndex + 1) : raw
       providerConfig.notification = {
         type: notifType,
-        channel_uuid: notifUuid,
+        channel_uuid: notifUuid
       }
       if (notifType === 'email') {
         const list = (emailToRecipients.value || [])

@@ -314,8 +314,8 @@
       "comingSoon": "Próximamente",
       "moduleCloudBilling": "Facturación en la nube",
       "moduleCloudBillingDesc": "Agregación multi-nube, análisis y alertas inteligentes",
-      "moduleOneProMonitor": "Monitor OnePro",
-      "moduleOneProMonitorDesc": "Visibilidad unificada de inquilinos, hosts, tareas y salud de licencias en entornos OnePro",
+      "moduleHyperBDRMonitor": "Monitor HyperBDR",
+      "moduleHyperBDRMonitorDesc": "Visibilidad unificada de inquilinos, hosts, tareas y salud de licencias en entornos HyperBDR",
       "moduleRndAnalytics": "Análisis de I+D",
       "moduleRndAnalyticsDesc": "Métricas de entrega y calidad, mejora continua basada en datos",
       "moduleHyperMotion": "HyperMotion / HyperBDR diagnóstico",
@@ -457,8 +457,8 @@
     "linkCopied": "Enlace compartido copiado",
     "shareCreatedAndCopied": "Enlace compartido creado y copiado"
   },
-  "oneproMonitor": {
-    "menuTitle": "Monitor OnePro",
+  "hyperbdrMonitor": {
+    "menuTitle": "Monitor HyperBDR",
     "dashboard": "Panel",
     "tenants": "Inquilinos",
     "licenses": "Licencias",
@@ -602,7 +602,7 @@
       "invalidLicenseHostsTitle": "Hosts con licencia inválida",
       "invalidLicenseHostsSubtitle": "Revisa primero la vigencia y sincronización de la licencia",
       "emptyTasks": "Sin datos de tareas",
-      "loadError": "No se pudo cargar el panel de OnePro"
+      "loadError": "No se pudo cargar el panel de HyperBDR"
     },
     "tenantsPage": {
       "eyebrow": "Flota de inquilinos",
@@ -740,15 +740,15 @@
     },
     "settingsPage": {
       "title": "Gestión de fuentes de datos",
-      "dataSourcesSubtitle": "Gestiona endpoints, estado activo e inicio manual de recolección para OnePro.",
+      "dataSourcesSubtitle": "Gestiona endpoints, estado activo e inicio manual de recolección para HyperBDR.",
       "systemSubtitle": "Mantén estrategia de recolección, reintentos y SMTP.",
       "dataSourceSectionTitle": "Gestión de fuentes",
-      "dataSourceSectionSubtitle": "Crear, editar o desactivar fuentes OnePro. La recolección y el filtrado parten de estas conexiones.",
+      "dataSourceSectionSubtitle": "Crear, editar o desactivar fuentes HyperBDR. La recolección y el filtrado parten de estas conexiones.",
       "systemSectionTitle": "Configuración del sistema",
       "systemSectionSubtitle": "Los cambios se aplican a nuevas tareas y correos.",
       "newDataSourceTitle": "Crear fuente",
       "editDataSourceTitle": "Editar fuente",
-      "newDataSourceSubtitle": "Conecta una nueva fuente OnePro.",
+      "newDataSourceSubtitle": "Conecta una nueva fuente HyperBDR.",
       "editDataSourceSubtitle": "Actualiza una fuente existente.",
       "passwordHintEdit": "Déjalo vacío para conservar la contraseña actual",
       "enableSource": "Habilitar esta fuente",

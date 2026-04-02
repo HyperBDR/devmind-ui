@@ -15,10 +15,11 @@
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          >
             <!-- Batch Actions (Left) -->
-            <div class="flex items-center gap-2 flex-wrap">
-            </div>
+            <div class="flex items-center gap-2 flex-wrap"></div>
 
             <!-- Search and Filter (Right) -->
             <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -29,8 +30,18 @@
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </template>
               </BaseInput>
@@ -64,7 +75,10 @@
 
           <BaseLoading v-if="loading && alerts.length === 0" />
 
-          <div v-if="!loading && alerts.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-if="!loading && alerts.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -78,14 +92,13 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('cloudBilling.alerts.noAlerts') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('cloudBilling.alerts.noAlerts') }}
+            </p>
           </div>
 
           <!-- Mobile Card View -->
-          <div
-            v-if="!loading && alerts.length > 0"
-            class="md:hidden space-y-3"
-          >
+          <div v-if="!loading && alerts.length > 0" class="md:hidden space-y-3">
             <AlertCard
               v-for="alert in alerts"
               :key="alert.id"
@@ -102,19 +115,29 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('cloudBilling.alerts.alertTime') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('cloudBilling.alerts.provider') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('cloudBilling.alerts.costInfo') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('cloudBilling.alerts.webhookStatus') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('cloudBilling.alerts.message') }}
                   </th>
                 </tr>
@@ -129,16 +152,27 @@
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(alert.created_at) }}
                   </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {{ alert.provider_label || alert.provider_name || alert.provider }}
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+                  >
+                    {{
+                      alert.provider_label ||
+                      alert.provider_name ||
+                      alert.provider
+                    }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                     <div class="space-y-1">
                       <div class="text-xs">
-                        {{ t('cloudBilling.alerts.currentCost') }}: {{ formatCurrency(alert.current_cost, alert.currency) }}
+                        {{ t('cloudBilling.alerts.currentCost') }}:
+                        {{ formatCurrency(alert.current_cost, alert.currency) }}
                       </div>
                       <div class="text-xs">
-                        {{ t('cloudBilling.alerts.increase') }}: {{ formatCurrency(alert.increase_cost, alert.currency) }} ({{ alert.increase_percent }}%)
+                        {{ t('cloudBilling.alerts.increase') }}:
+                        {{
+                          formatCurrency(alert.increase_cost, alert.currency)
+                        }}
+                        ({{ alert.increase_percent }}%)
                       </div>
                     </div>
                   </td>
@@ -168,7 +202,9 @@
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
             <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <label class="text-sm text-gray-600"
+                >{{ t('common.pagination.itemsPerPage') }}:</label
+              >
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
@@ -240,7 +276,8 @@ const totalPages = computed(() =>
 )
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from:
+    totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
@@ -257,9 +294,9 @@ const formatDate = (dateString) => {
 const formatCurrency = (value, currency = 'CNY') => {
   if (!value && value !== 0) return '-'
   const currencySymbols = {
-    'CNY': '¥',
-    'USD': '$',
-    'EUR': '€'
+    CNY: '¥',
+    USD: '$',
+    EUR: '€'
   }
   const symbol = currencySymbols[currency] || currency
   return `${symbol}${Number(value).toFixed(2)}`
@@ -327,7 +364,8 @@ const loadAlerts = async (query = '', page = currentPage.value) => {
     const response = await cloudBillingApi.getAlertRecords(params)
     const data = extractResponseData(response)
 
-    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    const list =
+      data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
     const serverTotal = data?.count ?? data?.pagination?.total
     const hasServerPagination = Number.isFinite(Number(serverTotal))
     const total = hasServerPagination ? Number(serverTotal) : list.length

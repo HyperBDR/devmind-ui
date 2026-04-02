@@ -24,7 +24,7 @@ export const articlesApi = {
 
   // Batch retry articles
   batchRetryArticles(ids) {
-    return Promise.all(ids.map(id => this.retryArticle(id)))
+    return Promise.all(ids.map((id) => this.retryArticle(id)))
   },
 
   // Delete article (if supported by backend)
@@ -34,7 +34,7 @@ export const articlesApi = {
 
   // Batch delete articles
   batchDeleteArticles(ids) {
-    return Promise.all(ids.map(id => this.deleteArticle(id)))
+    return Promise.all(ids.map((id) => this.deleteArticle(id)))
   },
 
   // Get article statistics (counts only, optimized for dashboard)

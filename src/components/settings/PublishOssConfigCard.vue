@@ -51,7 +51,11 @@
                 class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
               ></div>
               <span class="ml-3 text-sm text-gray-700">
-                {{ config.use_same_as_storage ? t('settings.yes') : t('settings.no') }}
+                {{
+                  config.use_same_as_storage
+                    ? t('settings.yes')
+                    : t('settings.no')
+                }}
               </span>
             </label>
           </div>
@@ -78,7 +82,11 @@
                 v-model="config.access_key_id"
                 type="text"
                 :placeholder="t('settings.accessKeyIdPlaceholder')"
-                :class="{ 'border-red-300': validationErrors.includes('Access Key ID is required') }"
+                :class="{
+                  'border-red-300': validationErrors.includes(
+                    'Access Key ID is required'
+                  )
+                }"
               />
             </div>
           </div>
@@ -103,7 +111,11 @@
                 v-model="config.access_key_secret"
                 type="password"
                 :placeholder="t('settings.accessKeySecretPlaceholder')"
-                :class="{ 'border-red-300': validationErrors.includes('Access Key Secret is required') }"
+                :class="{
+                  'border-red-300': validationErrors.includes(
+                    'Access Key Secret is required'
+                  )
+                }"
               />
             </div>
           </div>
@@ -128,7 +140,11 @@
                 v-model="config.bucket_name"
                 type="text"
                 :placeholder="t('settings.bucketNamePlaceholder')"
-                :class="{ 'border-red-300': validationErrors.includes('Bucket Name is required') }"
+                :class="{
+                  'border-red-300': validationErrors.includes(
+                    'Bucket Name is required'
+                  )
+                }"
               />
             </div>
           </div>
@@ -153,7 +169,11 @@
                 v-model="config.endpoint"
                 type="text"
                 :placeholder="t('settings.endpointPlaceholder')"
-                :class="{ 'border-red-300': validationErrors.includes('Endpoint is required') }"
+                :class="{
+                  'border-red-300': validationErrors.includes(
+                    'Endpoint is required'
+                  )
+                }"
               />
             </div>
           </div>
@@ -206,14 +226,21 @@
                   class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
                 ></div>
                 <span class="ml-3 text-sm text-gray-700">
-                  {{ config.use_virtual_style ? t('common.enabled') : t('common.disabled') }}
+                  {{
+                    config.use_virtual_style
+                      ? t('common.enabled')
+                      : t('common.disabled')
+                  }}
                 </span>
               </label>
             </div>
           </div>
         </template>
 
-        <div v-if="validationErrors.length > 0" class="rounded-md bg-red-50 p-2.5">
+        <div
+          v-if="validationErrors.length > 0"
+          class="rounded-md bg-red-50 p-2.5"
+        >
           <div class="flex gap-2">
             <div class="flex-shrink-0 pt-0.5">
               <svg
@@ -297,7 +324,13 @@
 
         <div class="flex justify-end gap-2 mt-4">
           <BaseButton
-            v-if="!config.use_same_as_storage && (config.access_key_id || config.access_key_secret || config.bucket_name || config.endpoint)"
+            v-if="
+              !config.use_same_as_storage &&
+              (config.access_key_id ||
+                config.access_key_secret ||
+                config.bucket_name ||
+                config.endpoint)
+            "
             type="button"
             variant="secondary"
             class="w-full sm:w-auto"
@@ -305,15 +338,25 @@
             :disabled="validating || saving"
             @click="handleValidate"
           >
-            {{ validating ? t('common.loading') : t('settings.validateConfig') }}
+            {{
+              validating ? t('common.loading') : t('settings.validateConfig')
+            }}
           </BaseButton>
           <BaseButton
             type="submit"
             variant="primary"
             class="w-full sm:w-auto"
             :loading="saving"
-            :disabled="saving || validating || (!config.use_same_as_storage && !isValidated)"
-            :title="!config.use_same_as_storage && !isValidated ? t('settings.pleaseValidateConfigFirst') : ''"
+            :disabled="
+              saving ||
+              validating ||
+              (!config.use_same_as_storage && !isValidated)
+            "
+            :title="
+              !config.use_same_as_storage && !isValidated
+                ? t('settings.pleaseValidateConfigFirst')
+                : ''
+            "
           >
             {{ saving ? t('common.loading') : t('settings.saveSettings') }}
           </BaseButton>
@@ -437,9 +480,9 @@ const handleValidate = async () => {
         response.message || t('settings.publishOssConfigError')
       ]
       const expandedErrors = []
-      errors.forEach(error => {
+      errors.forEach((error) => {
         if (typeof error === 'string' && error.includes('\n')) {
-          const lines = error.split('\n').filter(line => line.trim())
+          const lines = error.split('\n').filter((line) => line.trim())
           expandedErrors.push(...lines)
         } else if (typeof error === 'string' && error.trim()) {
           expandedErrors.push(error)
@@ -460,9 +503,9 @@ const handleValidate = async () => {
     if (errorData?.data?.errors) {
       const errors = errorData.data.errors
       const expandedErrors = []
-      errors.forEach(err => {
+      errors.forEach((err) => {
         if (typeof err === 'string' && err.includes('\n')) {
-          const lines = err.split('\n').filter(line => line.trim())
+          const lines = err.split('\n').filter((line) => line.trim())
           expandedErrors.push(...lines)
         } else if (typeof err === 'string' && err.trim()) {
           expandedErrors.push(err)
@@ -471,7 +514,9 @@ const handleValidate = async () => {
       validationErrors.value = expandedErrors
     } else {
       validationErrors.value = [
-        errorData?.message || error.message || t('settings.publishOssConfigError')
+        errorData?.message ||
+          error.message ||
+          t('settings.publishOssConfigError')
       ]
     }
     isValidated.value = false
@@ -482,9 +527,7 @@ const handleValidate = async () => {
 
 const handleSave = async () => {
   if (!config.use_same_as_storage && !isValidated.value) {
-    validationErrors.value = [
-      t('settings.pleaseValidateConfigFirst')
-    ]
+    validationErrors.value = [t('settings.pleaseValidateConfigFirst')]
     return
   }
 
@@ -495,9 +538,8 @@ const handleSave = async () => {
 
   try {
     if (!config.use_same_as_storage) {
-      const validationResponse = await settingsApi.validatePublishOssConfig(
-        config
-      )
+      const validationResponse =
+        await settingsApi.validatePublishOssConfig(config)
       const validation = validationResponse.data || validationResponse
 
       if (!validation.valid && !validation.skipped) {
@@ -505,9 +547,9 @@ const handleSave = async () => {
           validation.message || t('settings.publishOssConfigError')
         ]
         const expandedErrors = []
-        errors.forEach(error => {
+        errors.forEach((error) => {
           if (typeof error === 'string' && error.includes('\n')) {
-            const lines = error.split('\n').filter(line => line.trim())
+            const lines = error.split('\n').filter((line) => line.trim())
             expandedErrors.push(...lines)
           } else if (typeof error === 'string' && error.trim()) {
             expandedErrors.push(error)
@@ -536,9 +578,9 @@ const handleSave = async () => {
     if (errorData?.data?.errors) {
       const errors = errorData.data.errors
       const expandedErrors = []
-      errors.forEach(err => {
+      errors.forEach((err) => {
         if (typeof err === 'string' && err.includes('\n')) {
-          const lines = err.split('\n').filter(line => line.trim())
+          const lines = err.split('\n').filter((line) => line.trim())
           expandedErrors.push(...lines)
         } else if (typeof err === 'string' && err.trim()) {
           expandedErrors.push(err)
@@ -547,7 +589,9 @@ const handleSave = async () => {
       validationErrors.value = expandedErrors
     } else {
       validationErrors.value = [
-        errorData?.message || error.message || t('settings.publishOssConfigError')
+        errorData?.message ||
+          error.message ||
+          t('settings.publishOssConfigError')
       ]
     }
     isValidated.value = false

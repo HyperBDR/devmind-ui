@@ -161,10 +161,7 @@
         </div>
 
         <!-- Password Reset Button -->
-        <div
-          v-if="authInfo?.can_change_password"
-          class="flex justify-end mt-4"
-        >
+        <div v-if="authInfo?.can_change_password" class="flex justify-end mt-4">
           <BaseButton
             variant="primary"
             class="w-full sm:w-auto"

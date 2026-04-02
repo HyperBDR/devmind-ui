@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
+import {
+  getAvailablePlatforms,
+  getLandingPath,
+  hasFeature
+} from '@/utils/platformAccess'
 
 export const useUserStore = defineStore('user', () => {
   // State
@@ -12,6 +17,8 @@ export const useUserStore = defineStore('user', () => {
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const userInfo = computed(() => user.value)
+  const availablePlatforms = computed(() => getAvailablePlatforms(user.value))
+  const landingPath = computed(() => getLandingPath(user.value))
 
   // No-op: UI language is managed separately (localStorage); Profile.language is for
   // backend/AI only. Kept for future use if we need to load other preferences here.
@@ -46,6 +53,7 @@ export const useUserStore = defineStore('user', () => {
       }
 
       await loadUserPreferences()
+      await checkAuthStatus()
 
       return data
     } catch (err) {
@@ -162,6 +170,9 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const userHasFeature = (featureKey) => hasFeature(user.value, featureKey)
+  const getUserLandingPath = () => getLandingPath(user.value)
+
   return {
     // State
     user,
@@ -171,6 +182,8 @@ export const useUserStore = defineStore('user', () => {
     // Getters
     isAuthenticated,
     userInfo,
+    availablePlatforms,
+    landingPath,
     // Actions
     login,
     logout,
@@ -179,6 +192,8 @@ export const useUserStore = defineStore('user', () => {
     updateProfile,
     setUser,
     setToken,
+    userHasFeature,
+    getUserLandingPath,
     // Helper functions
     loadUserPreferences
   }

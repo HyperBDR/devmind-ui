@@ -1,7 +1,9 @@
 <template>
   <div :class="containerClasses">
     <div :class="spinnerClasses"></div>
-    <p v-if="showText" :class="textClasses">{{ text || t('common.loading') }}</p>
+    <p v-if="showText" :class="textClasses">
+      {{ text || t('common.loading') }}
+    </p>
   </div>
 </template>
 

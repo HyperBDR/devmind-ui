@@ -43,11 +43,15 @@ export function extractErrorMessage(
     const inner = data.data && typeof data.data === 'object' ? data.data : data
 
     if (inner !== data && inner.detail) {
-      return typeof inner.detail === 'string' ? inner.detail : (inner.detail[0] || String(inner.detail))
+      return typeof inner.detail === 'string'
+        ? inner.detail
+        : inner.detail[0] || String(inner.detail)
     }
 
     if (inner.detail) {
-      return typeof inner.detail === 'string' ? inner.detail : (inner.detail[0] || String(inner.detail))
+      return typeof inner.detail === 'string'
+        ? inner.detail
+        : inner.detail[0] || String(inner.detail)
     }
 
     if (inner.non_field_errors && Array.isArray(inner.non_field_errors)) {

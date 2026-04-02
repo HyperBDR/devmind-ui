@@ -61,7 +61,9 @@
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <p class="text-sm font-medium text-gray-600">{{ t('llm.config.noConfigs') }}</p>
+              <p class="text-sm font-medium text-gray-600">
+                {{ t('llm.config.noConfigs') }}
+              </p>
             </div>
 
             <div
@@ -71,62 +73,111 @@
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.scopeLabel') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.user') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.provider') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.model') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.apiBase') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.apiKey') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.capabilities') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.default') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.active') }}
                     </th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('llm.config.actions') }}
                     </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                  <tr v-for="row in configList" :key="row.uuid || row.id" class="hover:bg-gray-50 transition-colors duration-150">
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {{ row.scope === 'global' ? t('llm.config.scopeGlobal') : t('llm.config.scopeUser') }}
+                  <tr
+                    v-for="row in configList"
+                    :key="row.uuid || row.id"
+                    class="hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-900"
+                    >
+                      {{
+                        row.scope === 'global'
+                          ? t('llm.config.scopeGlobal')
+                          : t('llm.config.scopeUser')
+                      }}
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {{ row.scope === 'user' ? (row.username || row.user_id || '–') : '–' }}
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{
+                        row.scope === 'user'
+                          ? row.username || row.user_id || '–'
+                          : '–'
+                      }}
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-900"
+                    >
                       <ProviderIcon :provider="row.provider" size="sm">
-                        <span class="text-gray-900">{{ providerLabel(row.provider) }}</span>
+                        <span class="text-gray-900">{{
+                          providerLabel(row.provider)
+                        }}</span>
                       </ProviderIcon>
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-700"
+                    >
                       {{ row.config?.model || '–' }}
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-700"
+                    >
                       {{ row.config?.api_base || '–' }}
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-700"
+                    >
                       {{ maskApiKey(row.config?.api_key || row.config?.key) }}
                     </td>
                     <td class="px-4 py-4 text-sm">
-                      <span v-if="getRowCapabilities(row).length" class="flex flex-wrap gap-1">
+                      <span
+                        v-if="getRowCapabilities(row).length"
+                        class="flex flex-wrap gap-1"
+                      >
                         <span
                           v-for="cap in getRowCapabilities(row)"
                           :key="cap"
@@ -143,8 +194,17 @@
                         class="inline-flex items-center text-primary-600"
                         :title="t('llm.config.testUseDefault')"
                       >
-                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        <svg
+                          class="h-5 w-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"
+                          />
                         </svg>
                       </span>
                       <button
@@ -154,8 +214,19 @@
                         :title="t('llm.config.setAsDefault')"
                         @click="setAsDefault(row)"
                       >
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        <svg
+                          class="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                          />
                         </svg>
                       </button>
                       <span v-else class="text-gray-300">–</span>
@@ -166,8 +237,19 @@
                         class="inline-flex items-center text-green-600"
                         :title="t('common.yes')"
                       >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg
+                          class="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
                         </svg>
                       </span>
                       <span
@@ -175,8 +257,19 @@
                         class="inline-flex items-center text-gray-400"
                         :title="t('common.no')"
                       >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg
+                          class="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
                         </svg>
                       </span>
                     </td>
@@ -188,25 +281,75 @@
                           class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-sky-50 hover:text-sky-600"
                           @click="openTestModal(row)"
                         >
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 8h8" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M8 8h8"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 8v8"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                           </svg>
                         </button>
                         <button
                           type="button"
-                          :title="row.is_active ? t('llm.config.disable') : t('llm.config.enable')"
-                          :class="row.is_active
-                            ? 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600'
-                            : 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-green-50 hover:text-green-600'"
+                          :title="
+                            row.is_active
+                              ? t('llm.config.disable')
+                              : t('llm.config.enable')
+                          "
+                          :class="
+                            row.is_active
+                              ? 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600'
+                              : 'inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-green-50 hover:text-green-600'
+                          "
                           @click="setActive(row, !row.is_active)"
                         >
-                          <svg v-if="row.is_active" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+                          <svg
+                            v-if="row.is_active"
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"
+                            />
                           </svg>
-                          <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                          <svg
+                            v-else
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
                         </button>
                         <button
@@ -215,8 +358,19 @@
                           class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                           @click="editConfig(row)"
                         >
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                            />
                           </svg>
                         </button>
                         <button
@@ -225,8 +379,19 @@
                           class="inline-flex items-center justify-center rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600"
                           @click="deleteConfig(row)"
                         >
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -276,12 +441,25 @@
                 type="checkbox"
                 class="h-4 w-4 shrink-0 rounded border-2 border-gray-400 text-primary-600 focus:ring-2 focus:ring-primary-500 cursor-pointer"
               />
-              <label for="test-streaming" class="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                {{ t('llm.config.streamingOutput') === 'llm.config.streamingOutput' ? '流式输出' : t('llm.config.streamingOutput') }}
+              <label
+                for="test-streaming"
+                class="text-sm font-medium text-gray-700 cursor-pointer select-none"
+              >
+                {{
+                  t('llm.config.streamingOutput') ===
+                  'llm.config.streamingOutput'
+                    ? '流式输出'
+                    : t('llm.config.streamingOutput')
+                }}
               </label>
             </div>
             <p class="text-xs text-gray-500">
-              {{ t('llm.config.streamingParamHint') === 'llm.config.streamingParamHint' ? '请求参数 stream：控制是否以 SSE 流式返回' : t('llm.config.streamingParamHint') }}
+              {{
+                t('llm.config.streamingParamHint') ===
+                'llm.config.streamingParamHint'
+                  ? '请求参数 stream：控制是否以 SSE 流式返回'
+                  : t('llm.config.streamingParamHint')
+              }}
             </p>
           </div>
           <div class="flex justify-end gap-2">
@@ -293,13 +471,13 @@
               :disabled="!testCallAbortController"
               @click="stopTestCallStream"
             >
-              {{ t('llm.config.streamStop') === 'llm.config.streamStop' ? '停止' : t('llm.config.streamStop') }}
+              {{
+                t('llm.config.streamStop') === 'llm.config.streamStop'
+                  ? '停止'
+                  : t('llm.config.streamStop')
+              }}
             </BaseButton>
-            <BaseButton
-              type="button"
-              variant="outline"
-              @click="closeTestModal"
-            >
+            <BaseButton type="button" variant="outline" @click="closeTestModal">
               {{ t('common.cancel') }}
             </BaseButton>
             <BaseButton
@@ -315,28 +493,75 @@
           <div
             v-if="testCallResult !== null || (testCallLoading && testStreaming)"
             class="rounded-lg border p-4"
-            :class="testCallLoading && testStreaming ? 'border-gray-200 bg-gray-50' : (testCallOk ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50')"
+            :class="
+              testCallLoading && testStreaming
+                ? 'border-gray-200 bg-gray-50'
+                : testCallOk
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-red-200 bg-red-50'
+            "
           >
-            <div v-if="testCallLoading && testStreaming" class="flex items-center gap-2 mb-2">
-              <svg class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            <div
+              v-if="testCallLoading && testStreaming"
+              class="flex items-center gap-2 mb-2"
+            >
+              <svg
+                class="animate-spin h-4 w-4 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
             </div>
             <p v-else class="text-sm font-medium text-gray-700 mb-2">
-              {{ testCallOk ? t('llm.config.testResponse') : t('llm.config.testError') }}
+              {{
+                testCallOk
+                  ? t('llm.config.testResponse')
+                  : t('llm.config.testError')
+              }}
             </p>
             <div
-              v-if="(testCallLoading && testStreaming && streamingThinking) || (testCallResult && (testCallResult.thinking || '').trim())"
+              v-if="
+                (testCallLoading && testStreaming && streamingThinking) ||
+                (testCallResult && (testCallResult.thinking || '').trim())
+              "
               class="mb-3 rounded-lg border border-amber-200 bg-amber-50/80"
             >
-              <div class="flex items-center gap-2 px-3 py-2 border-b border-amber-200 bg-amber-100/60">
-                <span class="text-xs font-semibold uppercase tracking-wide text-amber-800">
-                  {{ t('llm.config.thinkingBlock') === 'llm.config.thinkingBlock' ? '思考过程' : t('llm.config.thinkingBlock') }}
+              <div
+                class="flex items-center gap-2 px-3 py-2 border-b border-amber-200 bg-amber-100/60"
+              >
+                <span
+                  class="text-xs font-semibold uppercase tracking-wide text-amber-800"
+                >
+                  {{
+                    t('llm.config.thinkingBlock') === 'llm.config.thinkingBlock'
+                      ? '思考过程'
+                      : t('llm.config.thinkingBlock')
+                  }}
                 </span>
               </div>
-              <p class="px-3 py-2 text-xs text-amber-900/90 whitespace-pre-wrap break-words font-mono leading-relaxed max-h-48 overflow-y-auto">
-                {{ testCallLoading && testStreaming ? streamingThinking : (testCallResult && testCallResult.thinking) }}
+              <p
+                class="px-3 py-2 text-xs text-amber-900/90 whitespace-pre-wrap break-words font-mono leading-relaxed max-h-48 overflow-y-auto"
+              >
+                {{
+                  testCallLoading && testStreaming
+                    ? streamingThinking
+                    : testCallResult && testCallResult.thinking
+                }}
               </p>
             </div>
             <div
@@ -360,27 +585,44 @@
               {{ testCallUsage.completion_tokens }} out /
               {{ testCallUsage.total_tokens }} total
               <span v-if="testCallUsage.cost != null">
-                · {{ testCallUsage.cost_currency || 'USD' }} {{ testCallUsage.cost }}
+                · {{ testCallUsage.cost_currency || 'USD' }}
+                {{ testCallUsage.cost }}
               </span>
             </div>
             <div
               v-if="testCallResult && testCallResult.streaming !== undefined"
               class="mt-2 pt-2 border-t border-gray-200 text-xs text-gray-600"
             >
-              <span class="font-medium">{{ t('llm.config.streamingReturn') || '返回方式' }}:</span>
-              {{ testCallResult.streaming ? (t('llm.config.streamingMode') || '流式') : (t('llm.config.nonStreamingMode') || '非流式') }}
+              <span class="font-medium"
+                >{{ t('llm.config.streamingReturn') || '返回方式' }}:</span
+              >
+              {{
+                testCallResult.streaming
+                  ? t('llm.config.streamingMode') || '流式'
+                  : t('llm.config.nonStreamingMode') || '非流式'
+              }}
               <span v-if="testCallResult.stopped" class="ml-2 text-amber-600">
-                ({{ t('llm.config.streamStopped') === 'llm.config.streamStopped' ? '已停止' : t('llm.config.streamStopped') }})
+                ({{
+                  t('llm.config.streamStopped') === 'llm.config.streamStopped'
+                    ? '已停止'
+                    : t('llm.config.streamStopped')
+                }})
               </span>
             </div>
           </div>
         </div>
       </BaseModal>
 
-      <BaseModal :show="showConfigModal" :title="editingId ? t('common.edit') : t('llm.config.addConfig')" @close="closeConfigModal">
+      <BaseModal
+        :show="showConfigModal"
+        :title="editingId ? t('common.edit') : t('llm.config.addConfig')"
+        @close="closeConfigModal"
+      >
         <form @submit.prevent="submitConfigForm" class="space-y-4">
           <div v-if="!editingId">
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.scopeLabel') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.scopeLabel')
+            }}</label>
             <select
               v-model="form.scope"
               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
@@ -390,7 +632,9 @@
             </select>
           </div>
           <div v-if="!editingId && form.scope === 'user'">
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.user') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.user')
+            }}</label>
             <select
               v-model="form.user_id"
               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
@@ -406,31 +650,53 @@
             </p>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.provider') }}</label>
-            <div class="flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.provider')
+            }}</label>
+            <div
+              class="flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm"
+            >
               <ProviderIcon :provider="form.provider" size="sm" />
               <select
                 v-model="form.provider"
                 class="min-w-0 flex-1 border-0 bg-transparent p-0 focus:ring-0"
                 @change="onProviderChange"
               >
-                <option v-for="p in providersFromModels" :key="p.id" :value="p.id">
+                <option
+                  v-for="p in providersFromModels"
+                  :key="p.id"
+                  :value="p.id"
+                >
                   {{ p.label }}
                 </option>
               </select>
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.model') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.model')
+            }}</label>
             <div class="relative" ref="modelDropdownRef">
               <button
                 type="button"
                 class="w-full flex items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 @click="modelDropdownOpen = !modelDropdownOpen"
               >
-                <span class="truncate text-gray-900">{{ modelSelectTriggerLabel }}</span>
-                <svg class="h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <span class="truncate text-gray-900">{{
+                  modelSelectTriggerLabel
+                }}</span>
+                <svg
+                  class="h-4 w-4 shrink-0 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div
@@ -446,9 +712,12 @@
                   @click="selectModel(m.id)"
                 >
                   <div class="font-medium text-gray-900">{{ m.label }}</div>
-                  <div v-if="(m.capabilities || []).length" class="mt-1 flex flex-wrap gap-1">
+                  <div
+                    v-if="(m.capabilities || []).length"
+                    class="mt-1 flex flex-wrap gap-1"
+                  >
                     <span
-                      v-for="cap in (m.capabilities || [])"
+                      v-for="cap in m.capabilities || []"
                       :key="cap"
                       class="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
                       :class="capabilityTagClass(cap)"
@@ -456,7 +725,10 @@
                       {{ capabilityLabel(cap) }}
                     </span>
                   </div>
-                  <div v-if="refPriceLine(m.reference_pricing)" class="mt-1 text-xs text-gray-500">
+                  <div
+                    v-if="refPriceLine(m.reference_pricing)"
+                    class="mt-1 text-xs text-gray-500"
+                  >
                     {{ refPriceLine(m.reference_pricing) }}
                   </div>
                 </button>
@@ -481,8 +753,13 @@
               />
             </div>
           </div>
-          <div v-if="selectedModelInfo" class="rounded-lg border border-gray-200 bg-gray-50 p-3">
-            <p class="text-xs font-medium text-gray-600 mb-2">{{ t('llm.config.capabilities') }}</p>
+          <div
+            v-if="selectedModelInfo"
+            class="rounded-lg border border-gray-200 bg-gray-50 p-3"
+          >
+            <p class="text-xs font-medium text-gray-600 mb-2">
+              {{ t('llm.config.capabilities') }}
+            </p>
             <div class="flex flex-wrap gap-1 mb-2">
               <span
                 v-for="cap in selectedModelInfo.capabilities"
@@ -492,21 +769,36 @@
                 {{ capabilityLabel(cap) }}
               </span>
             </div>
-            <div v-if="selectedModelInfo.max_input_tokens || selectedModelInfo.max_output_tokens" class="flex flex-wrap gap-3 text-xs text-gray-600">
+            <div
+              v-if="
+                selectedModelInfo.max_input_tokens ||
+                selectedModelInfo.max_output_tokens
+              "
+              class="flex flex-wrap gap-3 text-xs text-gray-600"
+            >
               <span v-if="selectedModelInfo.max_input_tokens">
-                {{ t('llm.config.maxInputTokens') }}: {{ selectedModelInfo.max_input_tokens.toLocaleString() }}
+                {{ t('llm.config.maxInputTokens') }}:
+                {{ selectedModelInfo.max_input_tokens.toLocaleString() }}
               </span>
               <span v-if="selectedModelInfo.max_output_tokens">
-                {{ t('llm.config.maxOutputTokens') }}: {{ selectedModelInfo.max_output_tokens.toLocaleString() }}
+                {{ t('llm.config.maxOutputTokens') }}:
+                {{ selectedModelInfo.max_output_tokens.toLocaleString() }}
               </span>
             </div>
-            <div v-if="refPriceLine(selectedModelInfo.reference_pricing)" class="mt-2 text-xs text-gray-600">
-              <span class="font-medium text-gray-700">{{ t('llm.config.referencePrice') }}</span>
+            <div
+              v-if="refPriceLine(selectedModelInfo.reference_pricing)"
+              class="mt-2 text-xs text-gray-600"
+            >
+              <span class="font-medium text-gray-700">{{
+                t('llm.config.referencePrice')
+              }}</span>
               {{ refPriceLine(selectedModelInfo.reference_pricing) }}
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.apiBase') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.apiBase')
+            }}</label>
             <input
               v-model="form.config.api_base"
               type="url"
@@ -515,7 +807,9 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('llm.config.apiKey') }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('llm.config.apiKey')
+            }}</label>
             <input
               v-model="form.config.api_key"
               type="password"
@@ -525,16 +819,30 @@
           </div>
 
           <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
-            <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            <h3
+              class="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700"
+            >
+              <svg
+                class="h-4 w-4 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                />
               </svg>
               {{ t('llm.config.advancedOptions') }}
             </h3>
             <div class="space-y-3">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.maxOutputTokens') }} (max_tokens)</label>
+                  <label class="block text-xs font-medium text-gray-600 mb-1"
+                    >{{ t('llm.config.maxOutputTokens') }} (max_tokens)</label
+                  >
                   <input
                     v-model.number="form.config.max_tokens"
                     type="number"
@@ -544,7 +852,9 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.temperature') }}</label>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{
+                    t('llm.config.temperature')
+                  }}</label>
                   <input
                     v-model.number="form.config.temperature"
                     type="number"
@@ -555,7 +865,9 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.topP') }}</label>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{
+                    t('llm.config.topP')
+                  }}</label>
                   <input
                     v-model.number="form.config.top_p"
                     type="number"
@@ -567,9 +879,14 @@
                 </div>
               </div>
               <template v-if="form.provider === 'azure_openai'">
-                <div class="grid grid-cols-2 gap-3 border-t border-gray-200 pt-3">
+                <div
+                  class="grid grid-cols-2 gap-3 border-t border-gray-200 pt-3"
+                >
                   <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.deployment') }}</label>
+                    <label
+                      class="block text-xs font-medium text-gray-600 mb-1"
+                      >{{ t('llm.config.deployment') }}</label
+                    >
                     <input
                       v-model="form.config.deployment"
                       type="text"
@@ -577,7 +894,10 @@
                     />
                   </div>
                   <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('llm.config.apiVersion') }}</label>
+                    <label
+                      class="block text-xs font-medium text-gray-600 mb-1"
+                      >{{ t('llm.config.apiVersion') }}</label
+                    >
                     <input
                       v-model="form.config.api_version"
                       type="text"
@@ -589,14 +909,30 @@
             </div>
           </div>
 
-          <div v-if="formMessage" :class="formMessageSuccess ? 'text-green-600 text-sm' : 'text-red-600 text-sm'">
+          <div
+            v-if="formMessage"
+            :class="
+              formMessageSuccess
+                ? 'text-green-600 text-sm'
+                : 'text-red-600 text-sm'
+            "
+          >
             {{ formMessage }}
           </div>
           <div class="flex flex-wrap items-center justify-end gap-3">
-            <BaseButton type="button" variant="outline" :loading="testLoading" @click="testConnection">
+            <BaseButton
+              type="button"
+              variant="outline"
+              :loading="testLoading"
+              @click="testConnection"
+            >
               {{ t('llm.config.testConnection') }}
             </BaseButton>
-            <BaseButton type="button" variant="outline" @click="closeConfigModal">
+            <BaseButton
+              type="button"
+              variant="outline"
+              @click="closeConfigModal"
+            >
               {{ t('common.cancel') }}
             </BaseButton>
             <BaseButton
@@ -703,19 +1039,22 @@ const form = reactive({
 })
 
 const providersFromModels = computed(() => {
-  return (modelsData.value?.providers || []).map(p => ({ id: p.id, label: p.label }))
+  return (modelsData.value?.providers || []).map((p) => ({
+    id: p.id,
+    label: p.label
+  }))
 })
 
 const currentProviderModels = computed(() => {
   const list = (modelsData.value?.providers || []).find(
-    p => (p.id || '').toLowerCase() === (form.provider || '').toLowerCase()
+    (p) => (p.id || '').toLowerCase() === (form.provider || '').toLowerCase()
   )
   return list?.models || []
 })
 
 const defaultApiBaseForProvider = computed(() => {
   const p = (modelsData.value?.providers || []).find(
-    x => (x.id || '').toLowerCase() === (form.provider || '').toLowerCase()
+    (x) => (x.id || '').toLowerCase() === (form.provider || '').toLowerCase()
   )
   return p?.default_api_base || ''
 })
@@ -727,7 +1066,7 @@ const defaultApiBasePlaceholder = computed(() => {
 const isCurrentModelInList = computed(() => {
   const id = (form.config.model || '').trim()
   if (!id) return false
-  return currentProviderModels.value.some(m => (m.id || '').trim() === id)
+  return currentProviderModels.value.some((m) => (m.id || '').trim() === id)
 })
 
 const isCustomModel = computed(() => {
@@ -743,13 +1082,17 @@ const modelSelectTriggerLabel = computed(() => {
       : t('llm.config.modelCustom')
   }
   const m = currentProviderModels.value.find(
-    x => (x.id || '').trim() === (form.config.model || '').trim()
+    (x) => (x.id || '').trim() === (form.config.model || '').trim()
   )
   return m ? m.label : t('llm.config.modelSelect')
 })
 
 const submitDisabled = computed(() => {
-  if (!editingId.value && form.scope === 'user' && userList.value.length === 0) {
+  if (
+    !editingId.value &&
+    form.scope === 'user' &&
+    userList.value.length === 0
+  ) {
     return true
   }
   if (!editingId.value && !connectionTestedSuccess.value) {
@@ -776,14 +1119,23 @@ function unwrapMarkdownIfCodeBlock(raw) {
   const trimmed = raw.trim()
   const openMatch = trimmed.match(/^```(?:markdown|md)?\s*\n?/i)
   const closeMatch = trimmed.match(/\n?```\s*$/)
-  if (openMatch && closeMatch && trimmed.length > openMatch[0].length + closeMatch[0].length) {
-    return trimmed.slice(openMatch[0].length, trimmed.length - closeMatch[0].length).trim()
+  if (
+    openMatch &&
+    closeMatch &&
+    trimmed.length > openMatch[0].length + closeMatch[0].length
+  ) {
+    return trimmed
+      .slice(openMatch[0].length, trimmed.length - closeMatch[0].length)
+      .trim()
   }
   return raw
 }
 
 const markdownContentForTest = computed(() => {
-  const src = (testCallLoading.value && testStreaming.value) ? streamingContent.value : testCallContent.value
+  const src =
+    testCallLoading.value && testStreaming.value
+      ? streamingContent.value
+      : testCallContent.value
   return unwrapMarkdownIfCodeBlock(src || '')
 })
 
@@ -791,7 +1143,7 @@ const selectedModelInfo = computed(() => {
   const modelId = (form.config.model || '').trim()
   if (!modelId) return null
   const m = currentProviderModels.value.find(
-    x => (x.id || '').trim() === modelId
+    (x) => (x.id || '').trim() === modelId
   )
   if (!m) return null
   return {
@@ -809,14 +1161,14 @@ function capabilityLabel(capKey) {
 
 const CAP_TAG_CLASSES = {
   'text-to-text': 'bg-sky-100 text-sky-800',
-  'code': 'bg-emerald-100 text-emerald-800',
-  'vision': 'bg-violet-100 text-violet-800',
-  'multimodal': 'bg-indigo-100 text-indigo-800',
+  code: 'bg-emerald-100 text-emerald-800',
+  vision: 'bg-violet-100 text-violet-800',
+  multimodal: 'bg-indigo-100 text-indigo-800',
   'text-to-image': 'bg-amber-100 text-amber-800',
   'long-context': 'bg-orange-100 text-orange-800',
   'low-cost': 'bg-slate-100 text-slate-600',
-  'embedding': 'bg-teal-100 text-teal-800',
-  'reasoning': 'bg-rose-100 text-rose-800'
+  embedding: 'bg-teal-100 text-teal-800',
+  reasoning: 'bg-rose-100 text-rose-800'
 }
 
 function capabilityTagClass(capKey) {
@@ -829,9 +1181,16 @@ function formatRefPrice(num) {
 }
 
 function refPriceLine(rp) {
-  if (!rp || (rp.input_usd_per_1m == null && rp.output_usd_per_1m == null)) return ''
-  const inStr = rp.input_usd_per_1m != null ? `$${formatRefPrice(rp.input_usd_per_1m)}/1M in` : ''
-  const outStr = rp.output_usd_per_1m != null ? `$${formatRefPrice(rp.output_usd_per_1m)}/1M out` : ''
+  if (!rp || (rp.input_usd_per_1m == null && rp.output_usd_per_1m == null))
+    return ''
+  const inStr =
+    rp.input_usd_per_1m != null
+      ? `$${formatRefPrice(rp.input_usd_per_1m)}/1M in`
+      : ''
+  const outStr =
+    rp.output_usd_per_1m != null
+      ? `$${formatRefPrice(rp.output_usd_per_1m)}/1M out`
+      : ''
   return [inStr, outStr].filter(Boolean).join(' · ')
 }
 
@@ -864,9 +1223,9 @@ function getRowCapabilities(row) {
   const modelId = (row.config?.model || '').trim()
   if (!modelId) return []
   const prov = (modelsData.value?.providers || []).find(
-    p => (p.id || '').toLowerCase() === provider
+    (p) => (p.id || '').toLowerCase() === provider
   )
-  const model = prov?.models?.find(m => (m.id || '').trim() === modelId)
+  const model = prov?.models?.find((m) => (m.id || '').trim() === modelId)
   return model?.capabilities || []
 }
 
@@ -956,7 +1315,8 @@ async function editConfig(row) {
     }
     form.is_active = data?.is_active !== false
   } catch (e) {
-    formMessage.value = e?.response?.data?.detail || e?.message || 'Failed to load'
+    formMessage.value =
+      e?.response?.data?.detail || e?.message || 'Failed to load'
     formMessageSuccess.value = false
   }
   showConfigModal.value = true
@@ -1007,44 +1367,48 @@ async function sendTestCall() {
     if (testStreaming.value) {
       const controller = new AbortController()
       testCallAbortController.value = controller
-      await llmAdminApi.postLLMConfigTestCallStream(body, {
-        onChunk(content) {
-          streamingContent.value += content
-        },
-        onReasoning(content) {
-          streamingThinking.value += content
-        },
-        onDone(usage) {
-          testCallResult.value = {
-            ok: true,
-            content: streamingContent.value,
-            usage,
-            streaming: true,
-            thinking: streamingThinking.value
-          }
-          testCallLoading.value = false
-          testCallAbortController.value = null
-        },
-        onError(detail) {
-          if (detail === 'aborted') {
+      await llmAdminApi.postLLMConfigTestCallStream(
+        body,
+        {
+          onChunk(content) {
+            streamingContent.value += content
+          },
+          onReasoning(content) {
+            streamingThinking.value += content
+          },
+          onDone(usage) {
             testCallResult.value = {
               ok: true,
               content: streamingContent.value,
+              usage,
               streaming: true,
-              stopped: true,
               thinking: streamingThinking.value
             }
-          } else {
-            testCallResult.value = {
-              ok: false,
-              detail: detail || t('llm.config.testFailed'),
-              streaming: true
+            testCallLoading.value = false
+            testCallAbortController.value = null
+          },
+          onError(detail) {
+            if (detail === 'aborted') {
+              testCallResult.value = {
+                ok: true,
+                content: streamingContent.value,
+                streaming: true,
+                stopped: true,
+                thinking: streamingThinking.value
+              }
+            } else {
+              testCallResult.value = {
+                ok: false,
+                detail: detail || t('llm.config.testFailed'),
+                streaming: true
+              }
             }
+            testCallLoading.value = false
+            testCallAbortController.value = null
           }
-          testCallLoading.value = false
-          testCallAbortController.value = null
-        }
-      }, controller.signal)
+        },
+        controller.signal
+      )
       if (testCallResult.value === null) {
         testCallLoading.value = false
         testCallAbortController.value = null
@@ -1068,7 +1432,11 @@ async function sendTestCall() {
     } else {
       testCallResult.value = {
         ok: false,
-        detail: e?.response?.data?.detail || e?.detail || e?.message || t('llm.config.testFailed'),
+        detail:
+          e?.response?.data?.detail ||
+          e?.detail ||
+          e?.message ||
+          t('llm.config.testFailed'),
         streaming: testStreaming.value
       }
     }
@@ -1108,7 +1476,8 @@ async function testConnection() {
       formMessageSuccess.value = false
     }
   } catch (e) {
-    formMessage.value = e?.response?.data?.detail || e?.message || t('llm.config.testFailed')
+    formMessage.value =
+      e?.response?.data?.detail || e?.message || t('llm.config.testFailed')
     formMessageSuccess.value = false
   } finally {
     testLoading.value = false
@@ -1152,7 +1521,8 @@ async function submitConfigForm() {
     closeConfigModal()
     await loadAll()
   } catch (e) {
-    formMessage.value = e?.response?.data?.detail || e?.message || t('llm.config.saveError')
+    formMessage.value =
+      e?.response?.data?.detail || e?.message || t('llm.config.saveError')
     formMessageSuccess.value = false
   } finally {
     formSaving.value = false
@@ -1213,7 +1583,8 @@ async function setAsDefault(row) {
 }
 
 async function deleteConfig(row) {
-  if (!(row?.uuid || row?.id) || !confirm(t('llm.config.confirmDeleteConfig'))) return
+  if (!(row?.uuid || row?.id) || !confirm(t('llm.config.confirmDeleteConfig')))
+    return
   try {
     await llmAdminApi.deleteLLMConfigDetail(row.uuid || row.id)
     await loadAll()

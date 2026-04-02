@@ -42,32 +42,60 @@
           <div v-else-if="stats" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <p class="text-sm font-medium text-gray-500">{{ t('dataCollector.stats.totalRecords') || '总记录数' }}</p>
-                <p class="mt-1 text-2xl font-semibold text-gray-900">{{ stats.total }}</p>
+                <p class="text-sm font-medium text-gray-500">
+                  {{ t('dataCollector.stats.totalRecords') || '总记录数' }}
+                </p>
+                <p class="mt-1 text-2xl font-semibold text-gray-900">
+                  {{ stats.total }}
+                </p>
               </div>
               <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <p class="text-sm font-medium text-gray-500">{{ t('dataCollector.stats.deletedRecords') || '已删除' }}</p>
-                <p class="mt-1 text-2xl font-semibold text-gray-900">{{ stats.deleted }}</p>
+                <p class="text-sm font-medium text-gray-500">
+                  {{ t('dataCollector.stats.deletedRecords') || '已删除' }}
+                </p>
+                <p class="mt-1 text-2xl font-semibold text-gray-900">
+                  {{ stats.deleted }}
+                </p>
               </div>
               <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <p class="text-sm font-medium text-gray-500">{{ t('dataCollector.stats.platforms') || '平台数' }}</p>
-                <p class="mt-1 text-2xl font-semibold text-gray-900">{{ (stats.by_platform || []).length }}</p>
+                <p class="text-sm font-medium text-gray-500">
+                  {{ t('dataCollector.stats.platforms') || '平台数' }}
+                </p>
+                <p class="mt-1 text-2xl font-semibold text-gray-900">
+                  {{ (stats.by_platform || []).length }}
+                </p>
               </div>
             </div>
             <div v-if="(stats.by_platform || []).length > 0">
-              <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ t('dataCollector.stats.byPlatform') || '按平台' }}</h2>
+              <h2 class="text-sm font-semibold text-gray-700 mb-3">
+                {{ t('dataCollector.stats.byPlatform') || '按平台' }}
+              </h2>
               <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.stats.platform') || '平台' }}</th>
-                      <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">{{ t('dataCollector.stats.count') || '数量' }}</th>
+                      <th
+                        scope="col"
+                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        {{ t('dataCollector.stats.platform') || '平台' }}
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase"
+                      >
+                        {{ t('dataCollector.stats.count') || '数量' }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="row in stats.by_platform" :key="row.platform">
-                      <td class="px-4 py-2 text-sm text-gray-900">{{ row.platform }}</td>
-                      <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ row.count }}</td>
+                      <td class="px-4 py-2 text-sm text-gray-900">
+                        {{ row.platform }}
+                      </td>
+                      <td class="px-4 py-2 text-sm text-gray-900 text-right">
+                        {{ row.count }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>

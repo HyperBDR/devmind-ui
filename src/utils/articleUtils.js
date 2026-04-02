@@ -25,12 +25,12 @@ export const mapArticleStatus = (status) => {
  */
 export const getFormatLabel = (format, t) => {
   const formatLabels = {
-    'markdown_json': t('articles.formatMarkdownJson'),
-    'douyin_markdown': t('articles.formatDouyinMarkdown'),
-    'wechat_html': t('articles.formatWechatHtml'),
-    'wechat_markdown': t('articles.formatWechatMarkdown'),
-    'toutiao': t('articles.formatToutiao'),
-    'csdn': t('articles.formatCsdn')
+    markdown_json: t('articles.formatMarkdownJson'),
+    douyin_markdown: t('articles.formatDouyinMarkdown'),
+    wechat_html: t('articles.formatWechatHtml'),
+    wechat_markdown: t('articles.formatWechatMarkdown'),
+    toutiao: t('articles.formatToutiao'),
+    csdn: t('articles.formatCsdn')
   }
   return formatLabels[format] || format
 }

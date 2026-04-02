@@ -10,7 +10,9 @@
         </p>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <div
+        class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+      >
         <div class="p-6">
           <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div class="flex flex-wrap items-center gap-3">
@@ -33,12 +35,24 @@
                 class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-36 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500"
                 @change="onFiltersChanged"
               >
-                <option value="">{{ t('notificationManagement.records.statusAll') }}</option>
-                <option value="success">{{ t('notificationManagement.records.statusSuccess') }}</option>
-                <option value="failed">{{ t('notificationManagement.records.statusFailed') }}</option>
-                <option value="merged">{{ t('notificationManagement.records.statusMerged') }}</option>
-                <option value="silenced">{{ t('notificationManagement.records.statusSilenced') }}</option>
-                <option value="pending">{{ t('notificationManagement.records.statusPending') }}</option>
+                <option value="">
+                  {{ t('notificationManagement.records.statusAll') }}
+                </option>
+                <option value="success">
+                  {{ t('notificationManagement.records.statusSuccess') }}
+                </option>
+                <option value="failed">
+                  {{ t('notificationManagement.records.statusFailed') }}
+                </option>
+                <option value="merged">
+                  {{ t('notificationManagement.records.statusMerged') }}
+                </option>
+                <option value="silenced">
+                  {{ t('notificationManagement.records.statusSilenced') }}
+                </option>
+                <option value="pending">
+                  {{ t('notificationManagement.records.statusPending') }}
+                </option>
               </select>
               <input
                 v-model="filters.start_date"
@@ -87,8 +101,18 @@
                 class="flex items-center gap-1"
                 @click="resetFilters"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
                 {{ t('notificationManagement.records.resetFilters') }}
               </BaseButton>
@@ -114,7 +138,9 @@
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('notificationManagement.records.noRecords') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('notificationManagement.records.noRecords') }}
+            </p>
           </div>
 
           <template v-else>
@@ -122,14 +148,46 @@
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                   <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.sourceApp') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.sourceType') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.sourceId') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.provider') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.status') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.createdAt') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.sentAt') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ t('notificationManagement.records.user') }}</th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sourceApp') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sourceType') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sourceId') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.provider') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.status') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.createdAt') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sentAt') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.user') }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
@@ -139,16 +197,46 @@
                     class="hover:bg-gray-50 cursor-pointer transition-colors"
                     @click="openDetail(r.uuid)"
                   >
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ r.source_app || '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ r.source_type || '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 font-mono">{{ r.source_id || '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ r.provider_display_name || r.provider_type || '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                      <span :class="statusClass(r.status)">{{ r.status || '-' }}</span>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"
+                    >
+                      {{ r.source_app || '-' }}
                     </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ formatDate(r.created_at) }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ formatDate(r.sent_at) }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ r.user_display ?? r.user_id ?? '-' }}</td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ r.source_type || '-' }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 font-mono"
+                    >
+                      {{ r.source_id || '-' }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ r.provider_display_name || r.provider_type || '-' }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span :class="statusClass(r.status)">{{
+                        r.status || '-'
+                      }}</span>
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ formatDate(r.created_at) }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ formatDate(r.sent_at) }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ r.user_display ?? r.user_id ?? '-' }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -159,7 +247,13 @@
               class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
             >
               <p class="text-sm text-gray-600">
-                {{ t('common.pagination.showing', { from: (page - 1) * pageSize + 1, to: Math.min(page * pageSize, total), total }) }}
+                {{
+                  t('common.pagination.showing', {
+                    from: (page - 1) * pageSize + 1,
+                    to: Math.min(page * pageSize, total),
+                    total
+                  })
+                }}
               </p>
               <div class="flex items-center gap-2">
                 <select
@@ -172,19 +266,33 @@
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm text-gray-500">{{ t('notificationManagement.records.pageSize') }}</span>
+                <span class="text-sm text-gray-500">{{
+                  t('notificationManagement.records.pageSize')
+                }}</span>
                 <BaseButton
                   variant="outline"
                   size="sm"
                   :disabled="page <= 1"
                   :title="t('common.pagination.previous')"
                   class="flex items-center gap-1"
-                  @click="page--; fetchRecords()"
+                  @click="page -= 1; fetchRecords()"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
-                  <span class="sr-only">{{ t('common.pagination.previous') }}</span>
+                  <span class="sr-only">{{
+                    t('common.pagination.previous')
+                  }}</span>
                 </BaseButton>
                 <BaseButton
                   variant="outline"
@@ -192,10 +300,20 @@
                   :disabled="page >= totalPages"
                   :title="t('common.pagination.next')"
                   class="flex items-center gap-1"
-                  @click="page++; fetchRecords()"
+                  @click="page += 1; fetchRecords()"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                   <span class="sr-only">{{ t('common.pagination.next') }}</span>
                 </BaseButton>
@@ -236,7 +354,9 @@
           aria-modal="true"
           :aria-label="t('notificationManagement.records.detailTitle')"
         >
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+          <div
+            class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+          >
             <h2 class="text-lg font-semibold text-gray-900">
               {{ t('notificationManagement.records.detailTitle') }}
             </h2>
@@ -246,8 +366,18 @@
               :aria-label="t('common.close')"
               @click="closeDetail"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -255,58 +385,151 @@
             <BaseLoading v-if="detailLoading" />
             <template v-else-if="detailRecord">
               <div>
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('notificationManagement.records.basicInfo') }}</h3>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('notificationManagement.records.basicInfo') }}
+                </h3>
                 <dl class="grid grid-cols-1 gap-4">
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.sourceApp') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ detailRecord.source_app || '-' }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sourceApp') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{ detailRecord.source_app || '-' }}
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.sourceType') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ detailRecord.source_type || '-' }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sourceType') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{ detailRecord.source_type || '-' }}
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.provider') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ detailRecord.provider_display_name || detailRecord.provider_type || '-' }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.provider') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{
+                        detailRecord.provider_display_name ||
+                        detailRecord.provider_type ||
+                        '-'
+                      }}
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.status') }}</dt>
-                    <dd><span :class="statusClass(detailRecord.status)" class="text-sm font-medium">{{ detailRecord.status || '-' }}</span></dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.status') }}
+                    </dt>
+                    <dd>
+                      <span
+                        :class="statusClass(detailRecord.status)"
+                        class="text-sm font-medium"
+                        >{{ detailRecord.status || '-' }}</span
+                      >
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.user') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ detailRecord.user_display ?? detailRecord.user_id ?? '-' }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.user') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{
+                        detailRecord.user_display ?? detailRecord.user_id ?? '-'
+                      }}
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.createdAt') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ formatDate(detailRecord.created_at) }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.createdAt') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{ formatDate(detailRecord.created_at) }}
+                    </dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('notificationManagement.records.sentAt') }}</dt>
-                    <dd class="text-sm font-medium text-gray-900">{{ formatDate(detailRecord.sent_at) }}</dd>
+                    <dt
+                      class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                    >
+                      {{ t('notificationManagement.records.sentAt') }}
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900">
+                      {{ formatDate(detailRecord.sent_at) }}
+                    </dd>
                   </div>
                 </dl>
               </div>
-              <div v-if="detailRecord.error_message" class="border-t border-gray-200 pt-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('notificationManagement.records.errorMessage') }}</h3>
-                <div class="rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm">
-                  <pre class="text-xs font-mono text-red-800 whitespace-pre-wrap break-words">{{ detailRecord.error_message }}</pre>
+              <div
+                v-if="detailRecord.error_message"
+                class="border-t border-gray-200 pt-6"
+              >
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('notificationManagement.records.errorMessage') }}
+                </h3>
+                <div
+                  class="rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm"
+                >
+                  <pre
+                    class="text-xs font-mono text-red-800 whitespace-pre-wrap break-words"
+                    >{{ detailRecord.error_message }}</pre
+                  >
                 </div>
               </div>
-              <div v-if="detailRecord.payload && Object.keys(detailRecord.payload).length" class="border-t border-gray-200 pt-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('notificationManagement.records.payload') }}</h3>
-                <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-                  <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words">{{ JSON.stringify(detailRecord.payload, null, 2) }}</pre>
+              <div
+                v-if="
+                  detailRecord.payload &&
+                  Object.keys(detailRecord.payload).length
+                "
+                class="border-t border-gray-200 pt-6"
+              >
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('notificationManagement.records.payload') }}
+                </h3>
+                <div
+                  class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm"
+                >
+                  <pre
+                    class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words"
+                    >{{ JSON.stringify(detailRecord.payload, null, 2) }}</pre
+                  >
                 </div>
               </div>
-              <div v-if="detailRecord.response != null" class="border-t border-gray-200 pt-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('notificationManagement.records.response') }}</h3>
-                <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-                  <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words">{{ typeof detailRecord.response === 'object' ? JSON.stringify(detailRecord.response, null, 2) : detailRecord.response }}</pre>
+              <div
+                v-if="detailRecord.response != null"
+                class="border-t border-gray-200 pt-6"
+              >
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('notificationManagement.records.response') }}
+                </h3>
+                <div
+                  class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm"
+                >
+                  <pre
+                    class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words"
+                    >{{
+                      typeof detailRecord.response === 'object'
+                        ? JSON.stringify(detailRecord.response, null, 2)
+                        : detailRecord.response
+                    }}</pre
+                  >
                 </div>
               </div>
             </template>
-            <p v-else class="text-sm text-gray-500">{{ t('notificationManagement.records.detailNotFound') }}</p>
+            <p v-else class="text-sm text-gray-500">
+              {{ t('notificationManagement.records.detailNotFound') }}
+            </p>
           </div>
         </div>
       </Transition>
@@ -356,7 +579,9 @@ const filters = ref({
   end_date: defaultDateRange.end_date
 })
 
-const totalPages = computed(() => (total.value > 0 ? Math.ceil(total.value / pageSize.value) : 1))
+const totalPages = computed(() =>
+  total.value > 0 ? Math.ceil(total.value / pageSize.value) : 1
+)
 
 function formatDate(val) {
   if (!val) return '-'
@@ -373,7 +598,8 @@ function statusClass(status) {
   if (s === 'success') return `${base} bg-green-100 text-green-800`
   if (s === 'failed') return `${base} bg-red-100 text-red-800`
   if (s === 'pending') return `${base} bg-blue-100 text-blue-800`
-  if (s === 'merged' || s === 'silenced') return `${base} bg-gray-100 text-gray-700`
+  if (s === 'merged' || s === 'silenced')
+    return `${base} bg-gray-100 text-gray-700`
   return `${base} bg-gray-100 text-gray-600`
 }
 
@@ -430,7 +656,8 @@ async function fetchRecords() {
   try {
     const params = { page: page.value, page_size: pageSize.value }
     if (filters.value.source_app) params.source_app = filters.value.source_app
-    if (filters.value.source_type) params.source_type = filters.value.source_type
+    if (filters.value.source_type)
+      params.source_type = filters.value.source_type
     if (filters.value.status) params.status = filters.value.status
     if (filters.value.start_date) params.start_date = filters.value.start_date
     if (filters.value.end_date) params.end_date = filters.value.end_date

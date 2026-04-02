@@ -39,7 +39,10 @@ export const dataCollectorApi = {
   },
 
   async triggerCollect(uuid, payload = {}) {
-    const response = await apiClient.post(`${BASE}/configs/${uuid}/collect/`, payload)
+    const response = await apiClient.post(
+      `${BASE}/configs/${uuid}/collect/`,
+      payload
+    )
     return response
   },
 
@@ -52,7 +55,9 @@ export const dataCollectorApi = {
   },
 
   async validateConfig(uuid) {
-    const response = await apiClient.post(`${BASE}/configs/${uuid}/validate-config/`)
+    const response = await apiClient.post(
+      `${BASE}/configs/${uuid}/validate-config/`
+    )
     return response
   },
 
@@ -63,12 +68,18 @@ export const dataCollectorApi = {
     } else {
       payload.value = value
     }
-    const response = await apiClient.post(`${BASE}/configs/fetch-projects/`, payload)
+    const response = await apiClient.post(
+      `${BASE}/configs/fetch-projects/`,
+      payload
+    )
     return response
   },
 
   async triggerValidate(uuid, payload = {}) {
-    const response = await apiClient.post(`${BASE}/configs/${uuid}/validate/`, payload)
+    const response = await apiClient.post(
+      `${BASE}/configs/${uuid}/validate/`,
+      payload
+    )
     return response
   },
 
@@ -97,11 +108,14 @@ export const dataCollectorApi = {
   },
 
   async getAttachmentBlob(uuid) {
-    const response = await apiClient.get(`${BASE}/attachments/${uuid}/download/`, {
-      responseType: 'blob'
-    })
+    const response = await apiClient.get(
+      `${BASE}/attachments/${uuid}/download/`,
+      {
+        responseType: 'blob'
+      }
+    )
     if (response.status !== 200) {
-      const text = await response.data.text?.() || response.data
+      const text = (await response.data.text?.()) || response.data
       throw new Error(text || `Request failed: ${response.status}`)
     }
     return response.data
@@ -127,7 +141,9 @@ export const dataCollectorApi = {
   },
 
   async getExecution(id, params = {}) {
-    const response = await apiClient.get(`/v1/tasks/executions/${id}/`, { params })
+    const response = await apiClient.get(`/v1/tasks/executions/${id}/`, {
+      params
+    })
     return response
   }
 }

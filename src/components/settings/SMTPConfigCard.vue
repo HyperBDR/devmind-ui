@@ -116,7 +116,9 @@
                 id="smtpUsername"
                 v-model="localConfig.username"
                 type="text"
-                :placeholder="t('settings.notifications.smtpUsernamePlaceholder')"
+                :placeholder="
+                  t('settings.notifications.smtpUsernamePlaceholder')
+                "
                 class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -140,7 +142,9 @@
                 id="smtpPassword"
                 v-model="localConfig.password"
                 type="password"
-                :placeholder="t('settings.notifications.smtpPasswordPlaceholder')"
+                :placeholder="
+                  t('settings.notifications.smtpPasswordPlaceholder')
+                "
                 class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -210,7 +214,9 @@
                 id="smtpFromEmail"
                 v-model="localConfig.from_email"
                 type="email"
-                :placeholder="t('settings.notifications.smtpFromEmailPlaceholder')"
+                :placeholder="
+                  t('settings.notifications.smtpFromEmailPlaceholder')
+                "
                 class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -234,7 +240,9 @@
                 id="smtpFromName"
                 v-model="localConfig.from_name"
                 type="text"
-                :placeholder="t('settings.notifications.smtpFromNamePlaceholder')"
+                :placeholder="
+                  t('settings.notifications.smtpFromNamePlaceholder')
+                "
                 class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -342,10 +350,16 @@
             class="w-full sm:w-auto"
             :loading="validating"
             :disabled="validating || saving || !hasRequiredFields"
-            :title="!hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''"
+            :title="
+              !hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''
+            "
             @click="handleValidate"
           >
-            {{ validating ? t('common.loading') : t('settings.notifications.smtpValidate') }}
+            {{
+              validating
+                ? t('common.loading')
+                : t('settings.notifications.smtpValidate')
+            }}
           </BaseButton>
           <BaseButton
             type="submit"
@@ -399,7 +413,13 @@ const validationError = ref('')
 const validationSuccess = ref('')
 
 const hasRequiredFields = computed(() => {
-  return localConfig.host && localConfig.port && localConfig.username && localConfig.password && localConfig.from_email
+  return (
+    localConfig.host &&
+    localConfig.port &&
+    localConfig.username &&
+    localConfig.password &&
+    localConfig.from_email
+  )
 })
 
 watch(
@@ -422,9 +442,13 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(localConfig, (newValue) => {
-  emit('update:modelValue', { ...newValue })
-}, { deep: true })
+watch(
+  localConfig,
+  (newValue) => {
+    emit('update:modelValue', { ...newValue })
+  },
+  { deep: true }
+)
 
 const handleValidate = async () => {
   validating.value = true
@@ -436,7 +460,9 @@ const handleValidate = async () => {
     const validation = response.data || response
 
     if (!validation.valid) {
-      const errors = validation.errors || [validation.message || t('settings.notifications.smtpValidateError')]
+      const errors = validation.errors || [
+        validation.message || t('settings.notifications.smtpValidateError')
+      ]
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
       validationSuccess.value = t('settings.notifications.smtpValidateSuccess')
@@ -451,7 +477,10 @@ const handleValidate = async () => {
       const errors = errorData.data.errors
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
-      validationError.value = errorData?.message || err.message || t('settings.notifications.smtpValidateError')
+      validationError.value =
+        errorData?.message ||
+        err.message ||
+        t('settings.notifications.smtpValidateError')
     }
   } finally {
     validating.value = false

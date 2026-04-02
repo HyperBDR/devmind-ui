@@ -72,53 +72,53 @@
             </div>
           </div>
 
-        <!-- Access Token -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="accessToken"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.gitlab.accessToken') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.gitlab.accessTokenDesc') }}
-            </p>
+          <!-- Access Token -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="accessToken"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.gitlab.accessToken') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.gitlab.accessTokenDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="accessToken"
+                v-model="localConfig.access_token"
+                type="password"
+                :placeholder="t('settings.gitlab.accessTokenPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="accessToken"
-              v-model="localConfig.access_token"
-              type="password"
-              :placeholder="t('settings.gitlab.accessTokenPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
 
-        <!-- Project ID -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="projectId"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.gitlab.projectId') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.gitlab.projectIdDesc') }}
-            </p>
+          <!-- Project ID -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="projectId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.gitlab.projectId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.gitlab.projectIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="projectId"
+                v-model="localConfig.project_id"
+                type="text"
+                :placeholder="t('settings.gitlab.projectIdPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="projectId"
-              v-model="localConfig.project_id"
-              type="text"
-              :placeholder="t('settings.gitlab.projectIdPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
         </template>
 
         <div v-if="error" class="rounded-md bg-red-50 p-2.5">
@@ -222,10 +222,14 @@
             class="w-full sm:w-auto"
             :loading="validating"
             :disabled="validating || saving || !hasRequiredFields"
-            :title="!hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''"
+            :title="
+              !hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''
+            "
             @click="handleValidate"
           >
-            {{ validating ? t('common.loading') : t('settings.gitlab.validate') }}
+            {{
+              validating ? t('common.loading') : t('settings.gitlab.validate')
+            }}
           </BaseButton>
           <BaseButton
             type="submit"
@@ -274,7 +278,9 @@ const validationError = ref('')
 const validationSuccess = ref('')
 
 const hasRequiredFields = computed(() => {
-  return localConfig.server_url && localConfig.access_token && localConfig.project_id
+  return (
+    localConfig.server_url && localConfig.access_token && localConfig.project_id
+  )
 })
 
 watch(
@@ -287,9 +293,13 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(localConfig, (newValue) => {
-  emit('update:modelValue', { ...newValue })
-}, { deep: true })
+watch(
+  localConfig,
+  (newValue) => {
+    emit('update:modelValue', { ...newValue })
+  },
+  { deep: true }
+)
 
 const handleValidate = async () => {
   validating.value = true
@@ -301,7 +311,9 @@ const handleValidate = async () => {
     const validation = response.data || response
 
     if (!validation.valid) {
-      const errors = validation.errors || [validation.message || t('settings.gitlab.validateError')]
+      const errors = validation.errors || [
+        validation.message || t('settings.gitlab.validateError')
+      ]
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
       validationSuccess.value = t('settings.gitlab.validateSuccess')
@@ -316,7 +328,8 @@ const handleValidate = async () => {
       const errors = errorData.data.errors
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
-      validationError.value = errorData?.message || err.message || t('settings.gitlab.validateError')
+      validationError.value =
+        errorData?.message || err.message || t('settings.gitlab.validateError')
     }
   } finally {
     validating.value = false
@@ -336,8 +349,7 @@ const saveConfig = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save GitLab config:', err)
-    error.value =
-      err.response?.data?.message || t('settings.gitlab.saveError')
+    error.value = err.response?.data?.message || t('settings.gitlab.saveError')
   } finally {
     saving.value = false
   }

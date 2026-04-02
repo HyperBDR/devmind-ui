@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('cloudBilling.alerts.details') }}
         </h2>
@@ -63,7 +65,9 @@
             </h3>
             <dl class="grid grid-cols-1 gap-4">
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.alertTime') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -71,15 +75,23 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.provider') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ alert.provider_label || alert.provider_name || alert.provider }}
+                  {{
+                    alert.provider_label ||
+                    alert.provider_name ||
+                    alert.provider
+                  }}
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.webhookStatus') }}
                 </dt>
                 <dd>
@@ -101,7 +113,9 @@
             </h3>
             <dl class="grid grid-cols-1 gap-4">
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.currentCost') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -109,7 +123,9 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.previousCost') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -117,7 +133,9 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.increaseCost') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -125,11 +143,73 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.alerts.increasePercent') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
                   {{ alert.increase_percent }}%
+                </dd>
+              </div>
+              <div
+                v-if="
+                  alert.current_balance !== null &&
+                  alert.current_balance !== undefined
+                "
+              >
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
+                  {{ t('cloudBilling.alerts.currentBalance') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ formatCurrency(alert.current_balance, alert.currency) }}
+                </dd>
+              </div>
+              <div
+                v-if="
+                  alert.balance_threshold !== null &&
+                  alert.balance_threshold !== undefined
+                "
+              >
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
+                  {{ t('cloudBilling.alerts.balanceThreshold') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ formatCurrency(alert.balance_threshold, alert.currency) }}
+                </dd>
+              </div>
+              <div
+                v-if="
+                  alert.current_days_remaining !== null &&
+                  alert.current_days_remaining !== undefined
+                "
+              >
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
+                  {{ t('cloudBilling.alerts.currentDaysRemaining') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ alert.current_days_remaining }}
+                </dd>
+              </div>
+              <div
+                v-if="
+                  alert.days_remaining_threshold !== null &&
+                  alert.days_remaining_threshold !== undefined
+                "
+              >
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
+                  {{ t('cloudBilling.alerts.daysRemainingThreshold') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{ alert.days_remaining_threshold }}
                 </dd>
               </div>
             </dl>
@@ -150,7 +230,10 @@
             <h3 class="text-sm font-semibold text-gray-900 mb-4">
               {{ t('cloudBilling.alerts.webhookResponse') }}
             </h3>
-            <pre class="text-xs text-gray-700 bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto">{{ JSON.stringify(alert.webhook_response, null, 2) }}</pre>
+            <pre
+              class="text-xs text-gray-700 bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto"
+              >{{ JSON.stringify(alert.webhook_response, null, 2) }}</pre
+            >
           </div>
 
           <!-- Webhook Error -->
@@ -199,9 +282,9 @@ const formatDate = (dateString) => {
 const formatCurrency = (value, currency = 'CNY') => {
   if (!value && value !== 0) return '-'
   const currencySymbols = {
-    'CNY': '¥',
-    'USD': '$',
-    'EUR': '€'
+    CNY: '¥',
+    USD: '$',
+    EUR: '€'
   }
   const symbol = currencySymbols[currency] || currency
   return `${symbol}${Number(value).toFixed(2)}`

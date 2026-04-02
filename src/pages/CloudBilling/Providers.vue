@@ -25,49 +25,89 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.name') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.type') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.displayName') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.status') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.createdAt') }}
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('common.actions') }}
                 </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="provider in providers" :key="provider.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
                   {{ provider.name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ getProviderTypeLabel(provider.provider_type) }}
+                  {{ getProviderTypeText(provider.provider_type) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ provider.display_name }}
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <div class="min-w-[180px]">
+                    <div class="text-sm text-gray-700">
+                      {{ getProviderDisplayName(provider) }}
+                    </div>
+                    <div
+                      v-if="provider.tags?.length"
+                      class="mt-2 flex flex-wrap gap-1.5"
+                    >
+                      <span
+                        v-for="tag in provider.tags"
+                        :key="`${provider.id}-${tag}`"
+                        class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700"
+                      >
+                        {{ tag }}
+                      </span>
+                    </div>
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    :class="provider.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
+                    :class="
+                      provider.is_active
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    "
                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                   >
-                    {{ provider.is_active ? t('common.active') : t('common.inactive') }}
+                    {{
+                      provider.is_active
+                        ? t('common.active')
+                        : t('common.inactive')
+                    }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatDate(provider.created_at) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                >
                   <button
                     @click="editProvider(provider)"
                     class="text-blue-600 hover:text-blue-900 mr-4"
@@ -89,7 +129,10 @@
                 </td>
               </tr>
               <tr v-if="providers.length === 0">
-                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                <td
+                  colspan="6"
+                  class="px-6 py-4 text-center text-sm text-gray-500"
+                >
                   {{ t('cloudBilling.providers.noProviders') }}
                 </td>
               </tr>
@@ -104,6 +147,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
+      :provider-options="providers"
       @close="closeModal"
       @saved="handleSaved"
     />
@@ -118,6 +162,10 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import { format } from 'date-fns'
+import {
+  getLocalizedProviderDisplayName,
+  getProviderTypeLabel
+} from '@/utils/providerDisplay'
 
 const { t } = useI18n()
 const loading = ref(true)
@@ -125,19 +173,9 @@ const providers = ref([])
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
 
-const providerTypes = {
-  aws: t('cloudBilling.providers.types.aws'),
-  huawei: t('cloudBilling.providers.types.huawei'),
-  huawei-intl: t('cloudBilling.providers.types.huaweiIntl'),
-  tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
-  alibaba: t('cloudBilling.providers.types.alibaba'),
-  azure: t('cloudBilling.providers.types.azure'),
-  volcengine: t('cloudBilling.providers.types.volcengine'),
-}
-
-const getProviderTypeLabel = (type) => {
-  return providerTypes[type] || type
-}
+const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
+const getProviderDisplayName = (provider) =>
+  getLocalizedProviderDisplayName(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -176,7 +214,11 @@ const validateProvider = async (id) => {
     if (response.data?.valid) {
       alert(t('cloudBilling.providers.validationSuccess'))
     } else {
-      alert(t('cloudBilling.providers.validationFailed') + ': ' + (response.data?.message || ''))
+      alert(
+        t('cloudBilling.providers.validationFailed') +
+          ': ' +
+          (response.data?.message || '')
+      )
     }
   } catch (error) {
     console.error('Failed to validate provider:', error)

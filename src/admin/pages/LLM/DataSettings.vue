@@ -18,7 +18,9 @@
               {{ t('llm.dataSettings.sectionTitle') }}
             </h2>
 
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start pb-6">
+            <section
+              class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start pb-6"
+            >
               <div class="md:col-span-2">
                 <h3 class="text-sm font-semibold text-gray-900 mb-1">
                   {{ t('llm.dataSettings.retentionTitle') }}
@@ -34,10 +36,14 @@
                     type="number"
                     min="1"
                     max="3650"
-                    :placeholder="t('llm.dataSettings.retentionDaysPlaceholder')"
+                    :placeholder="
+                      t('llm.dataSettings.retentionDaysPlaceholder')
+                    "
                     class="rounded-md border border-gray-300 px-3 py-2 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                   />
-                  <span class="text-sm text-gray-500 w-14">{{ t('llm.dataSettings.daysUnit') }}</span>
+                  <span class="text-sm text-gray-500 w-14">{{
+                    t('llm.dataSettings.daysUnit')
+                  }}</span>
                 </div>
               </div>
             </section>
@@ -54,7 +60,9 @@
                 </div>
                 <div class="md:col-span-1 flex justify-end">
                   <div class="w-full md:w-64 flex justify-end">
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label
+                      class="relative inline-flex items-center cursor-pointer"
+                    >
                       <input
                         v-model="cleanupEnabled"
                         type="checkbox"
@@ -67,17 +75,25 @@
                   </div>
                 </div>
               </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4">
+              <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4"
+              >
                 <div class="md:col-span-2">
-                  <label class="text-sm font-medium text-gray-700">{{ t('llm.dataSettings.cleanupCrontab') }}</label>
-                  <p class="text-xs text-gray-500 mt-0.5">{{ t('llm.dataSettings.crontabHelp') }}</p>
+                  <label class="text-sm font-medium text-gray-700">{{
+                    t('llm.dataSettings.cleanupCrontab')
+                  }}</label>
+                  <p class="text-xs text-gray-500 mt-0.5">
+                    {{ t('llm.dataSettings.crontabHelp') }}
+                  </p>
                 </div>
                 <div class="md:col-span-1 flex justify-end">
                   <div class="w-full md:w-64">
                     <input
                       v-model="form.cleanup_crontab"
                       type="text"
-                      :placeholder="t('llm.dataSettings.cleanupCrontabPlaceholder')"
+                      :placeholder="
+                        t('llm.dataSettings.cleanupCrontabPlaceholder')
+                      "
                       :disabled="!cleanupEnabled"
                       class="rounded-md border border-gray-300 px-3 py-2 text-sm w-full font-mono focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                     />
@@ -95,14 +111,18 @@
                   <p class="text-sm text-gray-600">
                     {{ t('llm.dataSettings.aggregationCrontabDesc') }}
                   </p>
-                  <p class="text-xs text-gray-500 mt-0.5">{{ t('llm.dataSettings.crontabHelp') }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">
+                    {{ t('llm.dataSettings.crontabHelp') }}
+                  </p>
                 </div>
                 <div class="md:col-span-1 flex justify-end">
                   <div class="w-full md:w-64">
                     <input
                       v-model="form.aggregation_crontab"
                       type="text"
-                      :placeholder="t('llm.dataSettings.aggregationCrontabPlaceholder')"
+                      :placeholder="
+                        t('llm.dataSettings.aggregationCrontabPlaceholder')
+                      "
                       class="rounded-md border border-gray-300 px-3 py-2 text-sm w-full font-mono focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                     />
                   </div>
@@ -110,7 +130,9 @@
               </div>
             </section>
 
-            <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
+            <div
+              class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6"
+            >
               <BaseButton
                 variant="secondary"
                 size="sm"
@@ -206,7 +228,10 @@ async function saveConfig() {
   if (typeof form.cleanup_crontab === 'string' && form.cleanup_crontab.trim()) {
     payload.cleanup_crontab = form.cleanup_crontab.trim()
   }
-  if (typeof form.aggregation_crontab === 'string' && form.aggregation_crontab.trim()) {
+  if (
+    typeof form.aggregation_crontab === 'string' &&
+    form.aggregation_crontab.trim()
+  ) {
     payload.aggregation_crontab = form.aggregation_crontab.trim()
   }
   if (Object.keys(payload).length === 0) {
@@ -225,7 +250,8 @@ async function saveConfig() {
         form.cleanup_crontab = raw.cleanup_crontab
         initialValues.cleanup_crontab = raw.cleanup_crontab
       }
-      if (typeof raw.cleanup_enabled === 'boolean') cleanupEnabled.value = raw.cleanup_enabled
+      if (typeof raw.cleanup_enabled === 'boolean')
+        cleanupEnabled.value = raw.cleanup_enabled
       if (typeof raw.aggregation_crontab === 'string') {
         form.aggregation_crontab = raw.aggregation_crontab
         initialValues.aggregation_crontab = raw.aggregation_crontab

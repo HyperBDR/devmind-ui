@@ -72,53 +72,53 @@
             </div>
           </div>
 
-        <!-- App Secret -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="appSecret"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.feishu.appSecret') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.feishu.appSecretDesc') }}
-            </p>
+          <!-- App Secret -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="appSecret"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.feishu.appSecret') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.feishu.appSecretDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="appSecret"
+                v-model="localConfig.app_secret"
+                type="password"
+                :placeholder="t('settings.feishu.appSecretPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="appSecret"
-              v-model="localConfig.app_secret"
-              type="password"
-              :placeholder="t('settings.feishu.appSecretPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
 
-        <!-- Webhook URL -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="webhookUrl"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.feishu.webhookUrl') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.feishu.webhookUrlDesc') }}
-            </p>
+          <!-- Webhook URL -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="webhookUrl"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.feishu.webhookUrl') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.feishu.webhookUrlDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="webhookUrl"
+                v-model="localConfig.webhook_url"
+                type="url"
+                :placeholder="t('settings.feishu.webhookUrlPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="webhookUrl"
-              v-model="localConfig.webhook_url"
-              type="url"
-              :placeholder="t('settings.feishu.webhookUrlPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
         </template>
 
         <div v-if="error" class="rounded-md bg-red-50 p-2.5">
@@ -222,10 +222,14 @@
             class="w-full sm:w-auto"
             :loading="validating"
             :disabled="validating || saving || !hasRequiredFields"
-            :title="!hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''"
+            :title="
+              !hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''
+            "
             @click="handleValidate"
           >
-            {{ validating ? t('common.loading') : t('settings.feishu.validate') }}
+            {{
+              validating ? t('common.loading') : t('settings.feishu.validate')
+            }}
           </BaseButton>
           <BaseButton
             type="submit"
@@ -287,9 +291,13 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(localConfig, (newValue) => {
-  emit('update:modelValue', { ...newValue })
-}, { deep: true })
+watch(
+  localConfig,
+  (newValue) => {
+    emit('update:modelValue', { ...newValue })
+  },
+  { deep: true }
+)
 
 const handleValidate = async () => {
   validating.value = true
@@ -301,7 +309,9 @@ const handleValidate = async () => {
     const validation = response.data || response
 
     if (!validation.valid) {
-      const errors = validation.errors || [validation.message || t('settings.feishu.validateError')]
+      const errors = validation.errors || [
+        validation.message || t('settings.feishu.validateError')
+      ]
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
       validationSuccess.value = t('settings.feishu.validateSuccess')
@@ -316,7 +326,8 @@ const handleValidate = async () => {
       const errors = errorData.data.errors
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
-      validationError.value = errorData?.message || err.message || t('settings.feishu.validateError')
+      validationError.value =
+        errorData?.message || err.message || t('settings.feishu.validateError')
     }
   } finally {
     validating.value = false
@@ -336,8 +347,7 @@ const saveConfig = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save Feishu config:', err)
-    error.value =
-      err.response?.data?.message || t('settings.feishu.saveError')
+    error.value = err.response?.data?.message || t('settings.feishu.saveError')
   } finally {
     saving.value = false
   }

@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-3xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('githubProjectDetail.title') }}
         </h2>
@@ -86,7 +88,9 @@
                     <h4 class="text-sm font-semibold text-gray-900 mb-4">
                       {{ t('githubProjectDetail.basicInfo') }}
                     </h4>
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4 shadow-sm">
+                    <div
+                      class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4 shadow-sm"
+                    >
                       <div class="flex items-center justify-between">
                         <span class="text-sm font-semibold text-gray-700">
                           {{ t('githubProjectDetail.fullName') }}:
@@ -104,13 +108,20 @@
                         <span class="text-sm font-semibold text-gray-700 mb-2">
                           {{ t('githubProjectDetail.description') }}:
                         </span>
-                        <p class="text-sm font-medium text-gray-900">{{ project.description }}</p>
+                        <p class="text-sm font-medium text-gray-900">
+                          {{ project.description }}
+                        </p>
                       </div>
-                      <div v-if="project.language" class="flex items-center justify-between">
+                      <div
+                        v-if="project.language"
+                        class="flex items-center justify-between"
+                      >
                         <span class="text-sm font-semibold text-gray-700">
                           {{ t('githubProjectDetail.language') }}:
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                        <span
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm"
+                        >
                           {{ project.language }}
                         </span>
                       </div>
@@ -138,7 +149,10 @@
                           {{ formatNumber(project.watchers_count) }}
                         </span>
                       </div>
-                      <div v-if="project.homepage" class="flex items-center justify-between">
+                      <div
+                        v-if="project.homepage"
+                        class="flex items-center justify-between"
+                      >
                         <span class="text-sm font-semibold text-gray-700">
                           {{ t('githubProjectDetail.homepage') }}:
                         </span>
@@ -164,7 +178,12 @@
                       {{ t('githubProjectDetail.snapshots') }}
                       ({{ project.snapshots?.length || 0 }})
                     </h4>
-                    <div v-if="!project.snapshots || project.snapshots.length === 0" class="text-sm font-medium text-gray-500 py-8 text-center rounded-lg border border-gray-200 bg-gray-50">
+                    <div
+                      v-if="
+                        !project.snapshots || project.snapshots.length === 0
+                      "
+                      class="text-sm font-medium text-gray-500 py-8 text-center rounded-lg border border-gray-200 bg-gray-50"
+                    >
                       {{ t('githubProjectDetail.noSnapshots') }}
                     </div>
                     <div v-else class="space-y-4">
@@ -177,13 +196,28 @@
                           <span class="text-sm font-semibold text-gray-900">
                             {{ formatDate(snapshot.snapshot_date) }}
                           </span>
-                          <div class="flex items-center gap-4 text-sm font-medium text-gray-700">
-                            <span>⭐ {{ formatNumber(snapshot.stargazers_count) }}</span>
-                            <span>🍴 {{ formatNumber(snapshot.forks_count) }}</span>
-                            <span>👁️ {{ formatNumber(snapshot.watchers_count) }}</span>
+                          <div
+                            class="flex items-center gap-4 text-sm font-medium text-gray-700"
+                          >
+                            <span
+                              >⭐
+                              {{
+                                formatNumber(snapshot.stargazers_count)
+                              }}</span
+                            >
+                            <span
+                              >🍴 {{ formatNumber(snapshot.forks_count) }}</span
+                            >
+                            <span
+                              >👁️
+                              {{ formatNumber(snapshot.watchers_count) }}</span
+                            >
                           </div>
                         </div>
-                        <div v-if="snapshot.description" class="text-sm font-medium text-gray-700 line-clamp-2 mb-3">
+                        <div
+                          v-if="snapshot.description"
+                          class="text-sm font-medium text-gray-700 line-clamp-2 mb-3"
+                        >
                           {{ snapshot.description }}
                         </div>
                         <!-- Images Gallery -->
@@ -192,14 +226,22 @@
                           class="mt-3 image-gallery"
                         >
                           <div class="text-xs font-medium text-gray-700 mb-2">
-                            {{ t('githubProjectDetail.images') }} ({{ getSnapshotImages(snapshot).length }})
+                            {{ t('githubProjectDetail.images') }} ({{
+                              getSnapshotImages(snapshot).length
+                            }})
                           </div>
                           <div class="grid grid-cols-2 gap-2">
                             <div
-                              v-for="(imageUrl, idx) in getSnapshotImages(snapshot)"
+                              v-for="(imageUrl, idx) in getSnapshotImages(
+                                snapshot
+                              )"
                               :key="idx"
                               class="relative group cursor-pointer image-container"
-                              @click="openImageModal(getImageUrl(imageUrl, project.uuid))"
+                              @click="
+                                openImageModal(
+                                  getImageUrl(imageUrl, project.uuid)
+                                )
+                              "
                             >
                               <img
                                 :src="getImageUrl(imageUrl, project.uuid)"
@@ -208,7 +250,9 @@
                                 @error="(e) => handleImageError(e, snapshot)"
                                 @load="(e) => handleImageLoad(e, snapshot)"
                               />
-                              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded"></div>
+                              <div
+                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded"
+                              ></div>
                             </div>
                           </div>
                         </div>
@@ -226,26 +270,47 @@
                       {{ t('githubProjectDetail.trendingRecords') }}
                       ({{ project.trending_records?.length || 0 }})
                     </h4>
-                    <div v-if="!project.trending_records || project.trending_records.length === 0" class="text-sm font-medium text-gray-500 py-8 text-center rounded-lg border border-gray-200 bg-gray-50">
+                    <div
+                      v-if="
+                        !project.trending_records ||
+                        project.trending_records.length === 0
+                      "
+                      class="text-sm font-medium text-gray-500 py-8 text-center rounded-lg border border-gray-200 bg-gray-50"
+                    >
                       {{ t('githubProjectDetail.noTrendingRecords') }}
                     </div>
-                    <div v-else class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+                    <div
+                      v-else
+                      class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm"
+                    >
                       <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <thead
+                          class="bg-gradient-to-r from-gray-50 to-gray-100"
+                        >
                           <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                            <th
+                              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                            >
                               {{ t('githubProjectDetail.date') }}
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                            <th
+                              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                            >
                               {{ t('githubProjectDetail.period') }}
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                            <th
+                              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                            >
                               {{ t('githubProjectDetail.rank') }}
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                            <th
+                              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                            >
                               {{ t('githubProjectDetail.starGrowth') }}
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                            <th
+                              class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                            >
                               {{ t('githubProjectDetail.rankChange') }}
                             </th>
                           </tr>
@@ -274,17 +339,48 @@
                             <td class="px-4 py-4 whitespace-nowrap">
                               <span
                                 class="text-sm font-semibold"
-                                :class="record.star_growth !== null && record.star_growth >= 0 ? 'text-green-600' : record.star_growth !== null ? 'text-red-600' : 'text-gray-400'"
+                                :class="
+                                  record.star_growth !== null &&
+                                  record.star_growth >= 0
+                                    ? 'text-green-600'
+                                    : record.star_growth !== null
+                                      ? 'text-red-600'
+                                      : 'text-gray-400'
+                                "
                               >
-                                {{ record.star_growth !== null ? (record.star_growth >= 0 ? '+' : '') + formatNumber(record.star_growth) : '-' }}
+                                {{
+                                  record.star_growth !== null
+                                    ? (record.star_growth >= 0 ? '+' : '') +
+                                      formatNumber(record.star_growth)
+                                    : '-'
+                                }}
                               </span>
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap">
                               <span
                                 class="text-sm font-semibold"
-                                :class="record.rank_change !== null && record.rank_change > 0 ? 'text-green-600' : record.rank_change !== null && record.rank_change < 0 ? 'text-red-600' : 'text-gray-400'"
+                                :class="
+                                  record.rank_change !== null &&
+                                  record.rank_change > 0
+                                    ? 'text-green-600'
+                                    : record.rank_change !== null &&
+                                        record.rank_change < 0
+                                      ? 'text-red-600'
+                                      : 'text-gray-400'
+                                "
                               >
-                                {{ record.rank_change !== null ? (record.rank_change > 0 ? '↑' : record.rank_change < 0 ? '↓' : '→') + (record.rank_change !== 0 ? Math.abs(record.rank_change) : '') : '-' }}
+                                {{
+                                  record.rank_change !== null
+                                    ? (record.rank_change > 0
+                                        ? '↑'
+                                        : record.rank_change < 0
+                                          ? '↓'
+                                          : '→') +
+                                      (record.rank_change !== 0
+                                        ? Math.abs(record.rank_change)
+                                        : '')
+                                    : '-'
+                                }}
                               </span>
                             </td>
                           </tr>
@@ -413,7 +509,7 @@ const getSnapshotImages = (snapshot) => {
 
   // Handle different data types
   if (Array.isArray(snapshot.readme_images)) {
-    return snapshot.readme_images.filter(img => img && img.trim())
+    return snapshot.readme_images.filter((img) => img && img.trim())
   }
 
   // If it's a string, try to parse it
@@ -421,7 +517,7 @@ const getSnapshotImages = (snapshot) => {
     try {
       const parsed = JSON.parse(snapshot.readme_images)
       if (Array.isArray(parsed)) {
-        return parsed.filter(img => img && img.trim())
+        return parsed.filter((img) => img && img.trim())
       }
     } catch (e) {
       // If parsing fails, treat as single image URL
@@ -523,16 +619,22 @@ const handleClose = () => {
   emit('close')
 }
 
-watch(() => props.show, (newVal) => {
-  if (newVal && props.projectId) {
-    activeTab.value = 'basic'
-    loadProject()
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal && props.projectId) {
+      activeTab.value = 'basic'
+      loadProject()
+    }
   }
-})
+)
 
-watch(() => props.projectId, () => {
-  if (props.show && props.projectId) {
-    loadProject()
+watch(
+  () => props.projectId,
+  () => {
+    if (props.show && props.projectId) {
+      loadProject()
+    }
   }
-})
+)
 </script>

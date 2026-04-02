@@ -42,20 +42,28 @@ export const llmAdminApi = {
   },
   /** GET all LLM configs (global + user). Params: scope=all|global|user, user_id (optional). */
   getLLMConfigAll(params = {}) {
-    return apiClient.get('/v1/admin/llm-config/all/', { params }).then(extractData)
+    return apiClient
+      .get('/v1/admin/llm-config/all/', { params })
+      .then(extractData)
   },
   /** POST add config. Body: { provider, config?, is_active?, order?, scope?, user_id? }. */
   postLLMConfig(body) {
     return apiClient.post('/v1/admin/llm-config/', body).then(extractData)
   },
   getLLMConfigDetail(configUuid) {
-    return apiClient.get(`/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`).then(extractData)
+    return apiClient
+      .get(`/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`)
+      .then(extractData)
   },
   putLLMConfigDetail(configUuid, body) {
-    return apiClient.put(`/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`, body).then(extractData)
+    return apiClient
+      .put(`/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`, body)
+      .then(extractData)
   },
   deleteLLMConfigDetail(configUuid) {
-    return apiClient.delete(`/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`)
+    return apiClient.delete(
+      `/v1/admin/llm-config/${encodeURIComponent(configUuid)}/`
+    )
   },
 
   /** GET provider schema for dynamic forms. Returns { providers: { [name]: { required, optional, editable_params, default_model, default_api_base } } }. */
@@ -89,7 +97,10 @@ export const llmAdminApi = {
   async postLLMConfigTestCallStream(body, callbacks = {}, signal = null) {
     const baseURL = apiClient.defaults.baseURL || ''
     const url = `${baseURL.replace(/\/$/, '')}/v1/admin/llm-config/test-call/`
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null
+    const token =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('access_token')
+        : null
     const csrf = getCookie('csrftoken')
     const headers = { 'Content-Type': 'application/json' }
     if (token) headers.Authorization = `Bearer ${token}`
@@ -123,28 +134,44 @@ export const llmAdminApi = {
         const parts = buffer.split('\n\n')
         buffer = parts.pop() || ''
         for (const part of parts) {
-          const line = part.split('\n').find(l => l.startsWith('data:'))
+          const line = part.split('\n').find((l) => l.startsWith('data:'))
           if (!line) continue
           try {
             const payload = JSON.parse(line.slice(5).trim())
-            if (payload.type === 'reasoning' && payload.content != null && callbacks.onReasoning) {
+            if (
+              payload.type === 'reasoning' &&
+              payload.content != null &&
+              callbacks.onReasoning
+            ) {
               callbacks.onReasoning(payload.content)
-            } else if ((payload.type === 'chunk' || payload.type === 'content') && payload.content != null && callbacks.onChunk) {
+            } else if (
+              (payload.type === 'chunk' || payload.type === 'content') &&
+              payload.content != null &&
+              callbacks.onChunk
+            ) {
               callbacks.onChunk(payload.content)
             } else if (payload.type === 'done') {
-              if (payload.ok && callbacks.onDone) callbacks.onDone(payload.usage || {})
-              else if (!payload.ok && callbacks.onError) callbacks.onError(payload.detail || 'Unknown error')
+              if (payload.ok && callbacks.onDone)
+                callbacks.onDone(payload.usage || {})
+              else if (!payload.ok && callbacks.onError)
+                callbacks.onError(payload.detail || 'Unknown error')
             }
           } catch (_) {}
         }
       }
       if (buffer.trim()) {
-        const line = buffer.split('\n').find(l => l.startsWith('data:'))
+        const line = buffer.split('\n').find((l) => l.startsWith('data:'))
         if (line) {
           try {
             const payload = JSON.parse(line.slice(5).trim())
-            if (payload.type === 'done' && payload.ok && callbacks.onDone) callbacks.onDone(payload.usage || {})
-            else if (payload.type === 'done' && !payload.ok && callbacks.onError) callbacks.onError(payload.detail || 'Unknown error')
+            if (payload.type === 'done' && payload.ok && callbacks.onDone)
+              callbacks.onDone(payload.usage || {})
+            else if (
+              payload.type === 'done' &&
+              !payload.ok &&
+              callbacks.onError
+            )
+              callbacks.onError(payload.detail || 'Unknown error')
           } catch (_) {}
         }
       }
@@ -158,16 +185,24 @@ export const llmAdminApi = {
   },
 
   getLLMConfigUsers(params = {}) {
-    return apiClient.get('/v1/admin/llm-config/users/', { params }).then(extractData)
+    return apiClient
+      .get('/v1/admin/llm-config/users/', { params })
+      .then(extractData)
   },
   getLLMConfigUser(userId) {
-    return apiClient.get(`/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`).then(extractData)
+    return apiClient
+      .get(`/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`)
+      .then(extractData)
   },
   putLLMConfigUser(userId, body) {
-    return apiClient.put(`/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`, body).then(extractData)
+    return apiClient
+      .put(`/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`, body)
+      .then(extractData)
   },
   deleteLLMConfigUser(userId) {
-    return apiClient.delete(`/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`)
+    return apiClient.delete(
+      `/v1/admin/llm-config/users/${encodeURIComponent(userId)}/`
+    )
   },
   getUsers(params = {}) {
     return apiClient.get('/v1/admin/users/', { params }).then(extractData)

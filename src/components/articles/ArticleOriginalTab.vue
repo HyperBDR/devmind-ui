@@ -1,7 +1,11 @@
 <template>
-  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-[calc(100vh-200px)] overflow-y-auto shadow-sm">
+  <div
+    class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-[calc(100vh-200px)] overflow-y-auto shadow-sm"
+  >
     <!-- Title with underline -->
-    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-300">
+    <h2
+      class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-300"
+    >
       {{ originalTitle }}
     </h2>
     <!-- Content -->

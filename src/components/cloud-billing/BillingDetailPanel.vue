@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('cloudBilling.billing.title') }}
         </h2>
@@ -63,34 +65,80 @@
             </h3>
             <dl class="grid grid-cols-1 gap-4">
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.billing.provider') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ billing.provider_display_name || billing.provider }}
+                  {{ providerDisplayName }}
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.billing.collectionTime') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ formatDate(billing.collection_time, 'yyyy-MM-dd HH:mm:ss') }}
+                  {{
+                    formatDate(billing.collection_time, 'yyyy-MM-dd HH:mm:ss')
+                  }}
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.billing.cost') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
                   {{ formatCost(billing.cost) }}
                 </dd>
               </div>
-              <div v-if="billing.change_from_last_hour !== null && billing.change_from_last_hour !== undefined">
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+              <div>
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
+                  {{ t('cloudBilling.billing.balance') }}
+                </dt>
+                <dd class="text-sm font-medium text-gray-900">
+                  {{
+                    billing.balance_supported === false
+                      ? formatCost(0, billing.currency)
+                      : formatCost(billing.balance, billing.currency)
+                  }}
+                </dd>
+                <p
+                  v-if="billing.balance_supported === false"
+                  class="mt-1 text-xs font-medium text-amber-600"
+                >
+                  {{
+                    billing.balance_note ||
+                    t('cloudBilling.billing.balanceUnsupported')
+                  }}
+                </p>
+              </div>
+              <div
+                v-if="
+                  billing.change_from_last_hour !== null &&
+                  billing.change_from_last_hour !== undefined
+                "
+              >
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.billing.changeFromLastHour') }}
                 </dt>
-                <dd class="text-sm font-medium" :class="getChangeClass(billing.change_from_last_hour, 'text-gray-900')">
+                <dd
+                  class="text-sm font-medium"
+                  :class="
+                    getChangeClass(
+                      billing.change_from_last_hour,
+                      'text-gray-900'
+                    )
+                  "
+                >
                   {{ formatChange(billing.change_from_last_hour) }}
                 </dd>
               </div>
@@ -103,8 +151,15 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatCost, formatChange, formatDate, getChangeClass } from '@/utils/formatting'
+import { getLocalizedBillingProviderName } from '@/utils/providerDisplay'
+import {
+  formatCost,
+  formatChange,
+  formatDate,
+  getChangeClass
+} from '@/utils/formatting'
 
 const props = defineProps({
   show: {
@@ -120,6 +175,9 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const { t } = useI18n()
+const providerDisplayName = computed(() =>
+  getLocalizedBillingProviderName(props.billing, t)
+)
 
 const handleClose = () => {
   emit('close')

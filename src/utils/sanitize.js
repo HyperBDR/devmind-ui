@@ -14,11 +14,35 @@ export function sanitizeHtml(dirty) {
   if (typeof dirty !== 'string') return ''
   return DOMPurify.sanitize(dirty, {
     ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 's', 'code', 'pre', 'blockquote',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li', 'hr',
-      'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
-      'span', 'div'
+      'p',
+      'br',
+      'strong',
+      'em',
+      'u',
+      's',
+      'code',
+      'pre',
+      'blockquote',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'ul',
+      'ol',
+      'li',
+      'hr',
+      'a',
+      'img',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'span',
+      'div'
     ],
     ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel']
   })

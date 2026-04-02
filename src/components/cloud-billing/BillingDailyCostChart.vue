@@ -3,15 +3,16 @@
     <h3 class="text-sm font-semibold text-gray-900 mb-4">
       {{ t('cloudBilling.billing.dailyCostBreakdown') }}
     </h3>
-    <div v-if="!chartData || chartData.labels.length === 0" class="py-16 text-center">
-      <p class="text-sm font-medium text-gray-600">{{ t('cloudBilling.billing.noData') }}</p>
+    <div
+      v-if="!chartData || chartData.labels.length === 0"
+      class="py-16 text-center"
+    >
+      <p class="text-sm font-medium text-gray-600">
+        {{ t('cloudBilling.billing.noData') }}
+      </p>
     </div>
     <div v-else class="relative" style="height: 400px">
-      <Chart
-        type="bar"
-        :data="chartData"
-        :options="chartOptions"
-      />
+      <Chart type="bar" :data="chartData" :options="chartOptions" />
     </div>
   </div>
 </template>
@@ -82,13 +83,15 @@ const chartData = computed(() => {
     // Return empty chart structure
     try {
       const [year, month] = props.selectedPeriod.split('-')
-      const start = startOfMonth(new Date(parseInt(year), parseInt(month) - 1, 1))
+      const start = startOfMonth(
+        new Date(parseInt(year), parseInt(month) - 1, 1)
+      )
       const end = endOfMonth(start)
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      
+
       const days = eachDayOfInterval({ start, end })
-      const labels = days.map(day => {
+      const labels = days.map((day) => {
         if (locale.value === 'zh-CN') {
           return format(day, 'M月d日', { locale: dateFnsLocale.value })
         } else {
@@ -126,7 +129,7 @@ const chartData = computed(() => {
       providerList.forEach((provider, index) => {
         const color = colors[index % colors.length]
         const data = new Array(labels.length).fill(null)
-        
+
         let label = provider.name
         if (provider.accountId) {
           label = `${label} ${provider.accountId}`
@@ -177,9 +180,9 @@ const chartData = computed(() => {
     const end = endOfMonth(start)
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
+
     const days = eachDayOfInterval({ start, end })
-    const labels = days.map(day => {
+    const labels = days.map((day) => {
       if (locale.value === 'zh-CN') {
         return format(day, 'M月d日', { locale: dateFnsLocale.value })
       } else {
@@ -204,7 +207,7 @@ const chartData = computed(() => {
     // Group billing data by date and provider+account
     const dailyProviderMap = {}
 
-    props.dailyData.forEach(billing => {
+    props.dailyData.forEach((billing) => {
       const date = new Date(billing.collected_at)
       const dateKey = format(date, 'yyyy-MM-dd')
       const providerId = billing.provider || billing.provider_id
@@ -234,7 +237,9 @@ const chartData = computed(() => {
         }
       } else if (hour === dailyProviderMap[dateKey][providerAccountKey].hour) {
         const currentTime = new Date(billing.collected_at).getTime()
-        const existingTime = new Date(dailyProviderMap[dateKey][providerAccountKey].collected_at || 0).getTime()
+        const existingTime = new Date(
+          dailyProviderMap[dateKey][providerAccountKey].collected_at || 0
+        ).getTime()
         if (currentTime > existingTime) {
           dailyProviderMap[dateKey][providerAccountKey] = {
             hour: hour,
@@ -247,16 +252,16 @@ const chartData = computed(() => {
 
     // Modern, professional color palette
     const colors = [
-      { border: '#6366f1', background: 'rgba(99, 102, 241, 0.1)' },   // Indigo
-      { border: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' },   // Purple
-      { border: '#ec4899', background: 'rgba(236, 72, 153, 0.1)' },   // Pink
-      { border: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' },   // Amber
-      { border: '#10b981', background: 'rgba(16, 185, 129, 0.1)' },   // Emerald
-      { border: '#06b6d4', background: 'rgba(6, 182, 212, 0.1)' },   // Cyan
-      { border: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)' },   // Blue
-      { border: '#84cc16', background: 'rgba(132, 204, 22, 0.1)' },  // Lime
-      { border: '#f97316', background: 'rgba(249, 115, 22, 0.1)' },  // Orange
-      { border: '#14b8a6', background: 'rgba(20, 184, 166, 0.1)' }    // Teal
+      { border: '#6366f1', background: 'rgba(99, 102, 241, 0.1)' }, // Indigo
+      { border: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }, // Purple
+      { border: '#ec4899', background: 'rgba(236, 72, 153, 0.1)' }, // Pink
+      { border: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }, // Amber
+      { border: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }, // Emerald
+      { border: '#06b6d4', background: 'rgba(6, 182, 212, 0.1)' }, // Cyan
+      { border: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)' }, // Blue
+      { border: '#84cc16', background: 'rgba(132, 204, 22, 0.1)' }, // Lime
+      { border: '#f97316', background: 'rgba(249, 115, 22, 0.1)' }, // Orange
+      { border: '#14b8a6', background: 'rgba(20, 184, 166, 0.1)' } // Teal
     ]
 
     const datasets = []
@@ -280,7 +285,7 @@ const chartData = computed(() => {
         const dateKey = format(day, 'yyyy-MM-dd')
         const dateOnly = new Date(day)
         dateOnly.setHours(0, 0, 0, 0)
-        
+
         // If date is in the future, set data as null
         if (dateOnly > today) {
           data.push(null)
@@ -288,15 +293,15 @@ const chartData = computed(() => {
         }
 
         const dayData = dailyProviderMap[dateKey]?.[providerAccountKey]
-        
+
         if (dayData) {
           // Calculate daily cost: current day's total_cost - previous day's total_cost
           const prevCost = providerPrevDayCosts[providerAccountKey] || 0
           const dailyCost = dayData.total_cost - prevCost
-          
+
           // Only show positive costs
           data.push(dailyCost >= 0 ? dailyCost : 0)
-          
+
           // Update previous day's cost for next iteration
           providerPrevDayCosts[providerAccountKey] = dayData.total_cost
         } else {
@@ -320,13 +325,17 @@ const chartData = computed(() => {
         tension: 0.4,
         pointRadius: (value) => {
           // Show points for actual data values, hide for null/undefined
-          return value.raw !== null && value.raw !== undefined && value.raw !== 0 ? 4 : 0
+          return value.raw !== null &&
+            value.raw !== undefined &&
+            value.raw !== 0
+            ? 4
+            : 0
         },
         pointHoverRadius: 6,
         pointBackgroundColor: color.border,
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
-        spanGaps: false  // Don't connect lines across null gaps
+        spanGaps: false // Don't connect lines across null gaps
       })
     })
 
@@ -346,7 +355,7 @@ const chartData = computed(() => {
 
       // Calculate total cost for the day (sum of all provider+account combinations' daily costs)
       let dayTotal = 0
-      providerList.forEach(provider => {
+      providerList.forEach((provider) => {
         const providerAccountKey = `${String(provider.id)}_${provider.accountId}`
         const dayData = dailyProviderMap[dateKey]?.[providerAccountKey]
         if (dayData) {
@@ -402,7 +411,7 @@ const chartOptions = computed(() => {
         mode: 'index',
         intersect: false,
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             const value = context.parsed.y
             if (value === null || value === undefined) {
               return null
@@ -432,7 +441,7 @@ const chartOptions = computed(() => {
           color: 'rgba(0, 0, 0, 0.05)'
         },
         ticks: {
-          callback: function(value) {
+          callback: function (value) {
             return '¥' + Number(value).toFixed(0)
           },
           font: {

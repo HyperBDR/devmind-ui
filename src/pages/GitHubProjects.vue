@@ -17,7 +17,9 @@
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          >
             <!-- Left spacer for alignment -->
             <div class="flex items-center gap-2 flex-wrap"></div>
 
@@ -30,8 +32,18 @@
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </template>
               </BaseInput>
@@ -43,8 +55,18 @@
                 @click="showFilterDrawer = true"
                 class="relative flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
                 </svg>
                 {{ t('common.filter') }}
                 <span
@@ -83,18 +105,34 @@
           </div>
 
           <!-- Active Filter Tags -->
-          <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-2 mb-4">
+          <div
+            v-if="activeFilterCount > 0"
+            class="flex flex-wrap items-center gap-2 mb-4"
+          >
             <span
               v-if="filters.language"
               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
             >
-              <span>{{ t('githubProjects.filter.language') }}: {{ filters.language }}</span>
+              <span
+                >{{ t('githubProjects.filter.language') }}:
+                {{ filters.language }}</span
+              >
               <button
                 @click="removeLanguageFilter"
                 class="text-gray-500 hover:text-gray-700 transition-colors"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </span>
@@ -102,7 +140,10 @@
 
           <BaseLoading v-if="loading && (!projects || projects.length === 0)" />
 
-          <div v-else-if="!projects || projects.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-else-if="!projects || projects.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -116,7 +157,9 @@
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('githubProjects.noProjects') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('githubProjects.noProjects') }}
+            </p>
           </div>
 
           <!-- Mobile Card View -->
@@ -141,129 +184,170 @@
           />
 
           <!-- Loading More Indicator (Mobile Only) -->
-          <div v-if="isMobile && loadingMore" class="mt-4 flex items-center justify-center py-4 md:hidden">
+          <div
+            v-if="isMobile && loadingMore"
+            class="mt-4 flex items-center justify-center py-4 md:hidden"
+          >
             <BaseLoading inline size="sm" />
-            <span class="ml-2 text-sm text-gray-500">{{ t('common.loadingMore') }}</span>
+            <span class="ml-2 text-sm text-gray-500">{{
+              t('common.loadingMore')
+            }}</span>
           </div>
 
           <!-- No More Data (Mobile Only) -->
-          <div v-if="isMobile && !hasMore && projects && projects.length > 0" class="mt-4 text-center py-4 md:hidden">
-            <span class="text-sm text-gray-500">{{ t('common.noMoreData') }}</span>
+          <div
+            v-if="isMobile && !hasMore && projects && projects.length > 0"
+            class="mt-4 text-center py-4 md:hidden"
+          >
+            <span class="text-sm text-gray-500">{{
+              t('common.noMoreData')
+            }}</span>
           </div>
 
           <!-- Desktop Table View -->
-          <div v-if="projects && projects.length > 0" class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
-          <!-- Loading overlay when data exists but is refreshing -->
-          <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm">
-            <BaseLoading inline size="lg" variant="primary" :show-text="false" />
-          </div>
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.project') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.language') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.stars') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.forks') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.watchers') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.updated') }}
-                </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                  {{ t('githubProjects.table.actions') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
-              <tr
-                v-for="project in projects"
-                :key="project.id"
-                class="transition-colors duration-150 hover:bg-gray-50"
-              >
-                <td class="px-4 py-4">
-                  <div class="flex flex-col">
-                    <button
-                      @click="handleViewProject(project.id)"
-                      class="text-sm font-semibold text-primary-600 hover:text-primary-800 text-left transition-colors"
-                    >
-                      {{ project.full_name }}
-                    </button>
-                    <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">
-                      {{ project.description }}
-                    </p>
-                  </div>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <span
-                    v-if="project.language"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm"
+          <div
+            v-if="projects && projects.length > 0"
+            class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+          >
+            <!-- Loading overlay when data exists but is refreshing -->
+            <div
+              v-if="loading"
+              class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm"
+            >
+              <BaseLoading
+                inline
+                size="lg"
+                variant="primary"
+                :show-text="false"
+              />
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
                   >
-                    {{ project.language }}
-                  </span>
-                  <span v-else class="text-sm text-gray-400">-</span>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <span class="text-sm text-gray-900 font-medium">
-                    {{ formatNumber(project.stargazers_count) }}
-                  </span>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <span class="text-sm text-gray-900 font-medium">
-                    {{ formatNumber(project.forks_count) }}
-                  </span>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <span class="text-sm text-gray-900 font-medium">
-                    {{ formatNumber(project.watchers_count) }}
-                  </span>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <span class="text-sm text-gray-600 font-medium">
-                    {{ formatDate(project.updated_at) }}
-                  </span>
-                </td>
-                <td class="px-4 py-4 whitespace-nowrap">
-                  <div class="flex items-center gap-2">
-                    <BaseButton
-                      variant="outline"
-                      size="sm"
-                      @click="handleViewProject(project.id)"
+                    {{ t('githubProjects.table.project') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.language') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.stars') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.forks') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.watchers') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.updated') }}
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
+                    {{ t('githubProjects.table.actions') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-100">
+                <tr
+                  v-for="project in projects"
+                  :key="project.id"
+                  class="transition-colors duration-150 hover:bg-gray-50"
+                >
+                  <td class="px-4 py-4">
+                    <div class="flex flex-col">
+                      <button
+                        @click="handleViewProject(project.id)"
+                        class="text-sm font-semibold text-primary-600 hover:text-primary-800 text-left transition-colors"
+                      >
+                        {{ project.full_name }}
+                      </button>
+                      <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">
+                        {{ project.description }}
+                      </p>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span
+                      v-if="project.language"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm"
                     >
-                      {{ t('githubProjects.viewProject') }}
-                    </BaseButton>
-                    <BaseButton
-                      variant="outline"
-                      size="sm"
-                      @click="handleViewTrending(project.id)"
-                    >
-                      {{ t('githubProjects.viewTrending') }}
-                    </BaseButton>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                      {{ project.language }}
+                    </span>
+                    <span v-else class="text-sm text-gray-400">-</span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="text-sm text-gray-900 font-medium">
+                      {{ formatNumber(project.stargazers_count) }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="text-sm text-gray-900 font-medium">
+                      {{ formatNumber(project.forks_count) }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="text-sm text-gray-900 font-medium">
+                      {{ formatNumber(project.watchers_count) }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="text-sm text-gray-600 font-medium">
+                      {{ formatDate(project.updated_at) }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                      <BaseButton
+                        variant="outline"
+                        size="sm"
+                        @click="handleViewProject(project.id)"
+                      >
+                        {{ t('githubProjects.viewProject') }}
+                      </BaseButton>
+                      <BaseButton
+                        variant="outline"
+                        size="sm"
+                        @click="handleViewTrending(project.id)"
+                      >
+                        {{ t('githubProjects.viewTrending') }}
+                      </BaseButton>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- Pagination (Desktop Only) -->
-          <div class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div
+            class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            >
               <div class="text-sm text-gray-700 font-medium">
                 <span v-if="totalCount > 0">
-                  {{ t('common.pagination.showing', {
-                    from: (currentPage - 1) * pageSize + 1,
-                    to: Math.min(currentPage * pageSize, totalCount),
-                    total: totalCount
-                  }) }}
+                  {{
+                    t('common.pagination.showing', {
+                      from: (currentPage - 1) * pageSize + 1,
+                      to: Math.min(currentPage * pageSize, totalCount),
+                      total: totalCount
+                    })
+                  }}
                 </span>
                 <span v-else class="text-gray-500">
                   {{ t('common.noData') }}
@@ -295,8 +379,15 @@
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <span class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200">
-                {{ t('common.pagination.page', { current: currentPage, total: totalPages }) }}
+              <span
+                class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200"
+              >
+                {{
+                  t('common.pagination.page', {
+                    current: currentPage,
+                    total: totalPages
+                  })
+                }}
               </span>
               <BaseButton
                 variant="outline"
@@ -511,7 +602,12 @@ const handleViewTrending = (projectId) => {
 }
 
 const handleLoadMore = async () => {
-  if (currentPage.value >= totalPages.value || loadingMore.value || loading.value) return
+  if (
+    currentPage.value >= totalPages.value ||
+    loadingMore.value ||
+    loading.value
+  )
+    return
   await loadProjects(true)
 }
 
@@ -560,7 +656,13 @@ const setupIntersectionObserver = () => {
       (entries) => {
         if (!entries || entries.length === 0) return
         const entry = entries[0]
-        if (entry && entry.isIntersecting && hasMore.value && !loadingMore.value && !loading.value) {
+        if (
+          entry &&
+          entry.isIntersecting &&
+          hasMore.value &&
+          !loadingMore.value &&
+          !loading.value
+        ) {
           handleLoadMore()
         }
       },
@@ -600,14 +702,32 @@ const formatDate = (dateStr) => {
 }
 
 watch(
-  [() => projects.value?.length || 0, hasMore, isMobile, () => loading.value, () => loadingMore.value],
+  [
+    () => projects.value?.length || 0,
+    hasMore,
+    isMobile,
+    () => loading.value,
+    () => loadingMore.value
+  ],
   () => {
     try {
-      if (isMobile.value && hasMore.value && !loading.value && !loadingMore.value && !observer) {
+      if (
+        isMobile.value &&
+        hasMore.value &&
+        !loading.value &&
+        !loadingMore.value &&
+        !observer
+      ) {
         nextTick(() => {
           setupIntersectionObserver()
         })
-      } else if (observer && (!hasMore.value || loading.value || loadingMore.value || !isMobile.value)) {
+      } else if (
+        observer &&
+        (!hasMore.value ||
+          loading.value ||
+          loadingMore.value ||
+          !isMobile.value)
+      ) {
         try {
           observer.disconnect()
         } catch (e) {
@@ -650,9 +770,12 @@ onUnmounted(() => {
   }
 })
 
-watch(() => route.query.id, () => {
-  if (route.query.id) {
-    loadProjects()
+watch(
+  () => route.query.id,
+  () => {
+    if (route.query.id) {
+      loadProjects()
+    }
   }
-})
+)
 </script>

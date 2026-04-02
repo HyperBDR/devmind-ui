@@ -14,14 +14,18 @@
         <div class="p-6">
           <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div class="flex flex-wrap items-center gap-3">
-              <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('llm.usage.filterByUser') }}</span>
+              <span class="text-sm text-gray-600 whitespace-nowrap">{{
+                t('llm.usage.filterByUser')
+              }}</span>
               <select
                 v-model="selectedUserId"
                 class="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm w-56 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                 @change="onFiltersChanged"
               >
                 <option value="">{{ t('llm.usage.allUsers') }}</option>
-                <option v-for="u in userOptions" :key="u.id" :value="u.id">{{ u.label }}</option>
+                <option v-for="u in userOptions" :key="u.id" :value="u.id">
+                  {{ u.label }}
+                </option>
               </select>
               <input
                 v-model="filters.model"
@@ -39,7 +43,9 @@
                 <option value="true">{{ t('common.yes') }}</option>
                 <option value="false">{{ t('common.no') }}</option>
               </select>
-              <span class="text-sm text-gray-600 whitespace-nowrap">{{ t('llm.usage.dateRange') }}</span>
+              <span class="text-sm text-gray-600 whitespace-nowrap">{{
+                t('llm.usage.dateRange')
+              }}</span>
               <input
                 v-model="filters.startDate"
                 type="date"
@@ -82,26 +88,77 @@
 
           <BaseLoading v-if="loading && !items.length" />
 
-          <div v-if="!loading && !items.length" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
-            <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
+          <div
+            v-if="!loading && !items.length"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('common.noData') }}
+            </p>
           </div>
 
           <template v-if="!loading && items.length > 0">
-            <div class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div
+              class="overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            >
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.time') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.user') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.model') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.promptTokens') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.completionTokens') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.totalTokens') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.e2eLatency') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.ttftSec') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.outputTps') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.costUsd') }}</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">{{ t('llm.usage.success') }}</th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.time') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.user') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.model') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.promptTokens') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.completionTokens') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.totalTokens') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.e2eLatency') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.ttftSec') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.outputTps') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.costUsd') }}
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
+                      {{ t('llm.usage.success') }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
@@ -111,19 +168,63 @@
                     class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                     @click="openDetail(u)"
                   >
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(u.created_at) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ u.username || u.user_id || '-' }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ u.model || '–' }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.prompt_tokens) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.completion_tokens) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatNum(u.total_tokens) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatE2eLatency(u.e2e_latency_sec) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatTtft(u.ttft_sec) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatOutputTps(u.output_tps) }}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-amber-600 font-medium">{{ formatCost(u.cost, u.cost_currency) }}</td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-500"
+                    >
+                      {{ formatDate(u.created_at) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-500"
+                    >
+                      {{ u.username || u.user_id || '-' }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                    >
+                      {{ u.model || '–' }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-500"
+                    >
+                      {{ formatNum(u.prompt_tokens) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-500"
+                    >
+                      {{ formatNum(u.completion_tokens) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-500"
+                    >
+                      {{ formatNum(u.total_tokens) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ formatE2eLatency(u.e2e_latency_sec) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ formatTtft(u.ttft_sec) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-gray-600"
+                    >
+                      {{ formatOutputTps(u.output_tps) }}
+                    </td>
+                    <td
+                      class="px-4 py-4 whitespace-nowrap text-sm text-amber-600 font-medium"
+                    >
+                      {{ formatCost(u.cost, u.cost_currency) }}
+                    </td>
                     <td class="px-4 py-4 whitespace-nowrap">
                       <span
-                        :class="u.success ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800' : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800'"
+                        :class="
+                          u.success
+                            ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'
+                            : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800'
+                        "
                       >
                         {{ u.success ? t('common.yes') : t('common.no') }}
                       </span>
@@ -138,10 +239,18 @@
               class="mt-6 pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
             >
               <div class="text-sm text-gray-700 font-medium">
-                {{ t('common.pagination.showing', { from: formatNum((page - 1) * pageSize + 1), to: formatNum(Math.min(page * pageSize, total)), total: formatNum(total) }) }}
+                {{
+                  t('common.pagination.showing', {
+                    from: formatNum((page - 1) * pageSize + 1),
+                    to: formatNum(Math.min(page * pageSize, total)),
+                    total: formatNum(total)
+                  })
+                }}
               </div>
               <div class="flex items-center gap-3 flex-wrap">
-                <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+                <label class="text-sm text-gray-600"
+                  >{{ t('common.pagination.itemsPerPage') }}:</label
+                >
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
@@ -152,11 +261,30 @@
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <BaseButton variant="outline" size="sm" :disabled="page <= 1" @click="goPrevPage">{{ t('common.pagination.previous') }}</BaseButton>
-                <span class="text-sm text-gray-700 font-semibold px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200">
-                  {{ t('common.pagination.page', { current: page, total: totalPages }) }}
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  :disabled="page <= 1"
+                  @click="goPrevPage"
+                  >{{ t('common.pagination.previous') }}</BaseButton
+                >
+                <span
+                  class="text-sm text-gray-700 font-semibold px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200"
+                >
+                  {{
+                    t('common.pagination.page', {
+                      current: page,
+                      total: totalPages
+                    })
+                  }}
                 </span>
-                <BaseButton variant="outline" size="sm" :disabled="page >= totalPages" @click="goNextPage">{{ t('common.pagination.next') }}</BaseButton>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  :disabled="page >= totalPages"
+                  @click="goNextPage"
+                  >{{ t('common.pagination.next') }}</BaseButton
+                >
               </div>
             </div>
           </template>
@@ -194,7 +322,9 @@
           aria-modal="true"
           :aria-label="t('llm.usage.detailTitle')"
         >
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+          <div
+            class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+          >
             <h2 class="text-lg font-semibold text-gray-900">
               {{ t('llm.usage.detailTitle') }}
             </h2>
@@ -204,79 +334,213 @@
               :aria-label="t('common.close')"
               @click="closeDetail"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
-          <div v-if="selectedDetail" class="flex-1 overflow-y-auto p-6 space-y-6">
+          <div
+            v-if="selectedDetail"
+            class="flex-1 overflow-y-auto p-6 space-y-6"
+          >
             <div>
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.basicInfo') }}</h3>
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('llm.usage.basicInfo') }}
+              </h3>
               <dl class="grid grid-cols-1 gap-4">
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.time') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatDate(selectedDetail.created_at) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.time') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatDate(selectedDetail.created_at) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.startedAt') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.started_at ? formatDate(selectedDetail.started_at) : '–' }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.startedAt') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{
+                      selectedDetail.started_at
+                        ? formatDate(selectedDetail.started_at)
+                        : '–'
+                    }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.user') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.username || selectedDetail.user_id || '–' }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.user') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{
+                      selectedDetail.username || selectedDetail.user_id || '–'
+                    }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.configModel') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.model || '–' }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.configModel') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ selectedDetail.model || '–' }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.responseModel') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ (selectedDetail.metadata && selectedDetail.metadata.response_model) ? selectedDetail.metadata.response_model : '–' }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.responseModel') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{
+                      selectedDetail.metadata &&
+                      selectedDetail.metadata.response_model
+                        ? selectedDetail.metadata.response_model
+                        : '–'
+                    }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.promptTokens') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.prompt_tokens) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.promptTokens') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatNum(selectedDetail.prompt_tokens) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.completionTokens') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.completion_tokens) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.completionTokens') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatNum(selectedDetail.completion_tokens) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.totalTokens') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatNum(selectedDetail.total_tokens) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.totalTokens') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatNum(selectedDetail.total_tokens) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.e2eLatency') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatE2eLatency(selectedDetail.e2e_latency_sec) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.e2eLatency') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatE2eLatency(selectedDetail.e2e_latency_sec) }}
+                  </dd>
                 </div>
                 <div v-if="selectedDetail.ttft_sec != null">
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.ttftSec') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatTtft(selectedDetail.ttft_sec) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.ttftSec') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatTtft(selectedDetail.ttft_sec) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.outputTps') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatOutputTps(selectedDetail.output_tps) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.outputTps') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatOutputTps(selectedDetail.output_tps) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.costUsd') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ formatCost(selectedDetail.cost, selectedDetail.cost_currency) }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.costUsd') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{
+                      formatCost(
+                        selectedDetail.cost,
+                        selectedDetail.cost_currency
+                      )
+                    }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">{{ t('llm.usage.success') }}</dt>
-                  <dd class="text-sm font-medium text-gray-900">{{ selectedDetail.success ? t('common.yes') : t('common.no') }}</dd>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('llm.usage.success') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{
+                      selectedDetail.success ? t('common.yes') : t('common.no')
+                    }}
+                  </dd>
                 </div>
               </dl>
             </div>
-            <div v-if="selectedDetail.error" class="border-t border-gray-200 pt-6">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.error') }}</h3>
-              <div class="rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm">
-                <pre class="text-xs font-mono text-red-800 whitespace-pre-wrap break-words">{{ selectedDetail.error }}</pre>
+            <div
+              v-if="selectedDetail.error"
+              class="border-t border-gray-200 pt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('llm.usage.error') }}
+              </h3>
+              <div
+                class="rounded-lg border border-red-200 bg-red-50 p-4 shadow-sm"
+              >
+                <pre
+                  class="text-xs font-mono text-red-800 whitespace-pre-wrap break-words"
+                  >{{ selectedDetail.error }}</pre
+                >
               </div>
             </div>
-            <div v-if="selectedDetail.metadata && Object.keys(selectedDetail.metadata).length" class="border-t border-gray-200 pt-6">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('llm.usage.metadata') }}</h3>
-              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-                <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words">{{ JSON.stringify(selectedDetail.metadata, null, 2) }}</pre>
+            <div
+              v-if="
+                selectedDetail.metadata &&
+                Object.keys(selectedDetail.metadata).length
+              "
+              class="border-t border-gray-200 pt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('llm.usage.metadata') }}
+              </h3>
+              <div
+                class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm"
+              >
+                <pre
+                  class="text-xs font-mono text-gray-800 whitespace-pre-wrap break-words"
+                  >{{ JSON.stringify(selectedDetail.metadata, null, 2) }}</pre
+                >
               </div>
             </div>
           </div>
@@ -292,7 +556,11 @@ import { useI18n } from 'vue-i18n'
 import { useDebounce } from '@/composables/useDebounce'
 import { useToast } from '@/composables/useToast'
 import { extractErrorMessage } from '@/utils/api'
-import { formatNumLocale, formatCostLocale, formatDateIsoLocale } from '@/utils/formatting'
+import {
+  formatNumLocale,
+  formatCostLocale,
+  formatDateIsoLocale
+} from '@/utils/formatting'
 import { llmAdminApi } from '@/admin/api'
 import AdminLayout from '@/admin/layout/AdminLayout.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -365,7 +633,9 @@ async function fetchUserOptions() {
     const data = await llmAdminApi.getUsers({ page_size: 200 })
     const list = Array.isArray(data)
       ? data
-      : (Array.isArray(data?.results) ? data.results : [])
+      : Array.isArray(data?.results)
+        ? data.results
+        : []
     userOptions.value = list.map((u) => ({ id: u.id, label: toUserLabel(u) }))
   } catch {
     userOptions.value = []
@@ -382,9 +652,14 @@ function applyModelFilter() {
   fetchList()
 }
 
-const { debouncedFn: onModelInput, cancel: cancelDebounce } = useDebounce(applyModelFilter, 300)
+const { debouncedFn: onModelInput, cancel: cancelDebounce } = useDebounce(
+  applyModelFilter,
+  300
+)
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(total.value / pageSize.value))
+)
 
 function goPrevPage() {
   if (page.value <= 1) return

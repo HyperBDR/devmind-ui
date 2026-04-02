@@ -2,25 +2,39 @@
   <BaseModal :show="show" :title="t('articles.preview')" @close="handleClose">
     <div v-if="article" class="space-y-6">
       <div>
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ t('articles.basicInfo') }}</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
+          {{ t('articles.basicInfo') }}
+        </h3>
         <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <dt class="text-sm font-medium text-gray-500">{{ t('articles.statusLabel') }}</dt>
+            <dt class="text-sm font-medium text-gray-500">
+              {{ t('articles.statusLabel') }}
+            </dt>
             <dd class="mt-1">
               <StatusBadge :status="mapArticleStatus(article.status)" />
             </dd>
           </div>
           <div v-if="article.source_url">
-            <dt class="text-sm font-medium text-gray-500">{{ t('articles.sourceUrl') }}</dt>
+            <dt class="text-sm font-medium text-gray-500">
+              {{ t('articles.sourceUrl') }}
+            </dt>
             <dd class="mt-1 text-sm">
-              <a :href="article.source_url" target="_blank" class="text-blue-600 hover:underline">
+              <a
+                :href="article.source_url"
+                target="_blank"
+                class="text-blue-600 hover:underline"
+              >
                 {{ article.source_url }}
               </a>
             </dd>
           </div>
           <div v-if="article.published_at">
-            <dt class="text-sm font-medium text-gray-500">{{ t('articles.publishedAt') }}</dt>
-            <dd class="mt-1 text-sm text-gray-900">{{ formatDate(article.published_at) }}</dd>
+            <dt class="text-sm font-medium text-gray-500">
+              {{ t('articles.publishedAt') }}
+            </dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              {{ formatDate(article.published_at) }}
+            </dd>
           </div>
         </dl>
       </div>
@@ -50,14 +64,20 @@
           <div v-show="activeTab === 'original'">
             <div class="space-y-4">
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.originalTitle') }}</h4>
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.originalTitle') }}
+                </h4>
                 <div class="bg-gray-50 border border-gray-200 rounded p-4">
                   <p class="text-gray-900">{{ getOriginalTitle() }}</p>
                 </div>
               </div>
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.originalContent') }}</h4>
-                <div class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto">
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.originalContent') }}
+                </h4>
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto"
+                >
                   <MarkdownRenderer :content="getOriginalContent()" />
                 </div>
               </div>
@@ -68,14 +88,20 @@
           <div v-show="activeTab === 'translated'">
             <div class="space-y-4">
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.translatedTitle') }}</h4>
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.translatedTitle') }}
+                </h4>
                 <div class="bg-gray-50 border border-gray-200 rounded p-4">
                   <p class="text-gray-900">{{ article.title }}</p>
                 </div>
               </div>
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.translatedContent') }}</h4>
-                <div class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto">
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.translatedContent') }}
+                </h4>
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto"
+                >
                   <MarkdownRenderer :content="article.content" />
                 </div>
               </div>
@@ -86,9 +112,15 @@
           <div v-show="activeTab === 'summary'">
             <div class="space-y-4">
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.summary') }}</h4>
-                <div class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto">
-                  <MarkdownRenderer :content="article.summary || t('articles.noSummary')" />
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.summary') }}
+                </h4>
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto"
+                >
+                  <MarkdownRenderer
+                    :content="article.summary || t('articles.noSummary')"
+                  />
                 </div>
               </div>
             </div>
@@ -98,14 +130,22 @@
           <div v-show="activeTab === 'comparison'">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.original') }}</h4>
-                <div class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto">
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.original') }}
+                </h4>
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto"
+                >
                   <MarkdownRenderer :content="getOriginalContent()" />
                 </div>
               </div>
               <div>
-                <h4 class="font-medium text-gray-900 mb-2">{{ t('articles.translated') }}</h4>
-                <div class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto">
+                <h4 class="font-medium text-gray-900 mb-2">
+                  {{ t('articles.translated') }}
+                </h4>
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded p-4 max-h-96 overflow-y-auto"
+                >
                   <MarkdownRenderer :content="article.content" />
                 </div>
               </div>
@@ -133,9 +173,13 @@
       </div>
 
       <div v-if="article.processing_error">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ t('articles.error') }}</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
+          {{ t('articles.error') }}
+        </h3>
         <div class="bg-red-50 border border-red-200 rounded p-4">
-          <pre class="text-sm text-red-800 whitespace-pre-wrap">{{ article.processing_error }}</pre>
+          <pre class="text-sm text-red-800 whitespace-pre-wrap">{{
+            article.processing_error
+          }}</pre>
         </div>
       </div>
     </div>
@@ -183,11 +227,14 @@ const tabs = [
   { id: 'keywords', label: t('articles.keywords') }
 ]
 
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    activeTab.value = 'translated'
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      activeTab.value = 'translated'
+    }
   }
-})
+)
 
 const getOriginalTitle = () => {
   return props.article?.article_source?.title || props.article?.title || ''

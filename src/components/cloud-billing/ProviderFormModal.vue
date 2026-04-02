@@ -1,7 +1,11 @@
 <template>
   <BaseModal
     :show="show"
-    :title="provider ? t('cloudBilling.providers.editProvider') : t('cloudBilling.providers.createProvider')"
+    :title="
+      provider
+        ? t('cloudBilling.providers.editProvider')
+        : t('cloudBilling.providers.createProvider')
+    "
     @close="$emit('close')"
   >
     <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -31,13 +35,33 @@
               required
               class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
-              <option value="aws">{{ t('cloudBilling.providers.types.aws') }}</option>
-              <option value="huawei">{{ t('cloudBilling.providers.types.huawei') }}</option>
-              <option value="huawei-intl">{{ t('cloudBilling.providers.types.huaweiIntl') }}</option>
-              <option value="tencentcloud">{{ t('cloudBilling.providers.types.tencentcloud') }}</option>
-              <option value="alibaba">{{ t('cloudBilling.providers.types.alibaba') }}</option>
-              <option value="azure">{{ t('cloudBilling.providers.types.azure') }}</option>
-              <option value="volcengine">{{ t('cloudBilling.providers.types.volcengine') }}</option>
+              <option value="aws">
+                {{ t('cloudBilling.providers.types.aws') }}
+              </option>
+              <option value="huawei">
+                {{ t('cloudBilling.providers.types.huawei') }}
+              </option>
+              <option value="huawei-intl">
+                {{ t('cloudBilling.providers.types.huaweiIntl') }}
+              </option>
+              <option value="tencentcloud">
+                {{ t('cloudBilling.providers.types.tencentcloud') }}
+              </option>
+              <option value="alibaba">
+                {{ t('cloudBilling.providers.types.alibaba') }}
+              </option>
+              <option value="azure">
+                {{ t('cloudBilling.providers.types.azure') }}
+              </option>
+              <option value="volcengine">
+                {{ t('cloudBilling.providers.types.volcengine') }}
+              </option>
+              <option value="baidu">
+                {{ t('cloudBilling.providers.types.baidu') }}
+              </option>
+              <option value="zhipu">
+                {{ t('cloudBilling.providers.types.zhipu') }}
+              </option>
             </select>
           </div>
         </div>
@@ -66,6 +90,142 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="providerTagInput"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.providers.tags') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.providers.tagsDesc') }}
+            </p>
+          </div>
+          <div ref="tagDropdownRef" class="md:col-span-2 space-y-3">
+            <div
+              v-if="formData.tags.length"
+              class="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3"
+            >
+              <span
+                v-for="tag in formData.tags"
+                :key="`selected-${tag}`"
+                class="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-white px-3 py-1 text-xs font-medium text-primary-700 shadow-sm"
+              >
+                {{ tag }}
+                <button
+                  type="button"
+                  class="rounded-full text-primary-400 transition-colors hover:text-primary-700"
+                  @click="removeTag(tag)"
+                >
+                  <svg
+                    class="h-3.5 w-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </span>
+            </div>
+
+            <div class="relative">
+              <div class="flex items-center gap-2">
+                <div
+                  class="flex min-h-[40px] min-w-0 flex-1 items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500"
+                  @click="openTagDropdown"
+                >
+                  <input
+                    id="providerTagInput"
+                    v-model="tagInput"
+                    type="text"
+                    :placeholder="t('cloudBilling.providers.tagsPlaceholder')"
+                    class="w-full min-w-0 border-0 bg-transparent p-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                    @focus="openTagDropdown"
+                    @keydown.enter.prevent="handleTagEnter"
+                  />
+                  <button
+                    type="button"
+                    class="shrink-0 text-gray-400 transition-colors hover:text-gray-600"
+                    @click.stop="tagDropdownOpen = !tagDropdownOpen"
+                  >
+                    <svg
+                      class="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <BaseButton
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  class="shrink-0 px-4"
+                  @click="addTag()"
+                >
+                  {{ t('common.add') }}
+                </BaseButton>
+              </div>
+
+              <div
+                v-if="tagDropdownOpen"
+                class="absolute z-20 mt-2 w-full rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+              >
+                <div
+                  v-if="filteredAvailableTags.length"
+                  class="max-h-48 space-y-1 overflow-y-auto"
+                >
+                  <button
+                    v-for="tag in filteredAvailableTags"
+                    :key="`available-${tag}`"
+                    type="button"
+                    class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors"
+                    :class="
+                      formData.tags.includes(tag)
+                        ? 'bg-primary-50 text-primary-700'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    "
+                    @click="toggleTag(tag)"
+                  >
+                    <span>{{ tag }}</span>
+                    <svg
+                      v-if="formData.tags.includes(tag)"
+                      class="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div v-else class="px-3 py-2 text-sm text-gray-400">
+                  {{ t('cloudBilling.providers.tagsEmpty') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Status -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
           <div class="md:col-span-1">
@@ -91,7 +251,11 @@
                 class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
               ></div>
               <span class="ml-3 text-sm text-gray-700">
-                {{ formData.is_active ? t('common.enabled') : t('common.disabled') }}
+                {{
+                  formData.is_active
+                    ? t('common.enabled')
+                    : t('common.disabled')
+                }}
               </span>
             </label>
           </div>
@@ -123,7 +287,9 @@
                 id="awsAccessKeyId"
                 v-model="configFields.aws_access_key_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.awsAccessKeyIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.awsAccessKeyIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -147,7 +313,9 @@
                 id="awsSecretAccessKey"
                 v-model="configFields.aws_secret_access_key"
                 type="password"
-                :placeholder="t('cloudBilling.providers.awsSecretAccessKeyPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.awsSecretAccessKeyPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -180,7 +348,12 @@
         </template>
 
         <!-- Huawei Configuration -->
-        <template v-if="formData.provider_type === 'huawei' || formData.provider_type === 'huawei-intl'">
+        <template
+          v-if="
+            formData.provider_type === 'huawei' ||
+            formData.provider_type === 'huawei-intl'
+          "
+        >
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
             <div class="md:col-span-1">
               <label
@@ -198,7 +371,9 @@
                 id="huaweiAccessKeyId"
                 v-model="configFields.huawei_access_key_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.huaweiAccessKeyIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.huaweiAccessKeyIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -222,7 +397,9 @@
                 id="huaweiSecretAccessKey"
                 v-model="configFields.huawei_secret_access_key"
                 type="password"
-                :placeholder="t('cloudBilling.providers.huaweiSecretAccessKeyPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.huaweiSecretAccessKeyPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -246,7 +423,9 @@
                 id="huaweiRegion"
                 v-model="configFields.huawei_region"
                 type="text"
-                :placeholder="t('cloudBilling.providers.huaweiRegionPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.huaweiRegionPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -273,7 +452,9 @@
                 id="tencentAccessKeyId"
                 v-model="configFields.tencent_access_key_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.tencentAccessKeyIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.tencentAccessKeyIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -297,7 +478,9 @@
                 id="tencentAccessKeySecret"
                 v-model="configFields.tencent_access_key_secret"
                 type="password"
-                :placeholder="t('cloudBilling.providers.tencentAccessKeySecretPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.tencentAccessKeySecretPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -321,7 +504,9 @@
                 id="tencentAppId"
                 v-model="configFields.tencent_app_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.tencentAppIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.tencentAppIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -348,7 +533,9 @@
                 id="azureClientId"
                 v-model="configFields.azure_client_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.azureClientIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.azureClientIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -372,7 +559,9 @@
                 id="azureClientSecret"
                 v-model="configFields.azure_client_secret"
                 type="password"
-                :placeholder="t('cloudBilling.providers.azureClientSecretPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.azureClientSecretPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -396,7 +585,9 @@
                 id="azureTenantId"
                 v-model="configFields.azure_tenant_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.azureTenantIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.azureTenantIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -420,8 +611,35 @@
                 id="azureSubscriptionId"
                 v-model="configFields.azure_subscription_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.azureSubscriptionIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.azureSubscriptionIdPlaceholder')
+                "
                 required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="azureBillingAccountId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.azureBillingAccountId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.azureBillingAccountIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="azureBillingAccountId"
+                v-model="configFields.azure_billing_account_id"
+                type="text"
+                :placeholder="
+                  t('cloudBilling.providers.azureBillingAccountIdPlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -447,7 +665,9 @@
                 id="alibabaAccessKeyId"
                 v-model="configFields.alibaba_access_key_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.alibabaAccessKeyIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.alibabaAccessKeyIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -471,7 +691,9 @@
                 id="alibabaSecretAccessKey"
                 v-model="configFields.alibaba_secret_access_key"
                 type="password"
-                :placeholder="t('cloudBilling.providers.alibabaSecretAccessKeyPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.alibabaSecretAccessKeyPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -495,7 +717,9 @@
                 id="alibabaRegion"
                 v-model="configFields.alibaba_region"
                 type="text"
-                :placeholder="t('cloudBilling.providers.alibabaRegionPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.alibabaRegionPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -522,7 +746,9 @@
                 id="volcengineAccessKeyId"
                 v-model="configFields.volcengine_access_key_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcengineAccessKeyIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcengineAccessKeyIdPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -546,7 +772,11 @@
                 id="volcengineSecretAccessKey"
                 v-model="configFields.volcengine_secret_access_key"
                 type="password"
-                :placeholder="t('cloudBilling.providers.volcengineSecretAccessKeyPlaceholder')"
+                :placeholder="
+                  t(
+                    'cloudBilling.providers.volcengineSecretAccessKeyPlaceholder'
+                  )
+                "
                 required
                 class="w-full"
               />
@@ -570,7 +800,9 @@
                 id="volcengineRegion"
                 v-model="configFields.volcengine_region"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcengineRegionPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcengineRegionPlaceholder')
+                "
                 required
                 class="w-full"
               />
@@ -594,7 +826,9 @@
                 id="volcengineEndpoint"
                 v-model="configFields.volcengine_endpoint"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcengineEndpointPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcengineEndpointPlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -617,7 +851,9 @@
                 id="volcenginePayerId"
                 v-model="configFields.volcengine_payer_id"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcenginePayerIdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcenginePayerIdPlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -640,7 +876,9 @@
                 id="volcengineService"
                 v-model="configFields.volcengine_service"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcengineServicePlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcengineServicePlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -663,7 +901,118 @@
                 id="volcengineVersion"
                 v-model="configFields.volcengine_version"
                 type="text"
-                :placeholder="t('cloudBilling.providers.volcengineVersionPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.volcengineVersionPlaceholder')
+                "
+                class="w-full"
+              />
+            </div>
+          </div>
+        </template>
+
+        <!-- Baidu Configuration -->
+        <template v-if="formData.provider_type === 'baidu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduAccessKeyId"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduAccessKeyId') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduAccessKeyIdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduAccessKeyId"
+                v-model="configFields.baidu_access_key_id"
+                type="text"
+                :placeholder="
+                  t('cloudBilling.providers.baiduAccessKeyIdPlaceholder')
+                "
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="baiduSecretAccessKey"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.baiduSecretAccessKey') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.baiduSecretAccessKeyDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="baiduSecretAccessKey"
+                v-model="configFields.baidu_secret_access_key"
+                type="password"
+                :placeholder="
+                  t('cloudBilling.providers.baiduSecretAccessKeyPlaceholder')
+                "
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+        </template>
+
+        <template v-if="formData.provider_type === 'zhipu'">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuUsername"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuUsername') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuUsernameDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuUsername"
+                v-model="configFields.zhipu_username"
+                type="text"
+                :placeholder="
+                  t('cloudBilling.providers.zhipuUsernamePlaceholder')
+                "
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="zhipuPassword"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.providers.zhipuPassword') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.providers.zhipuPasswordDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="zhipuPassword"
+                v-model="configFields.zhipu_password"
+                type="password"
+                :placeholder="
+                  t('cloudBilling.providers.zhipuPasswordPlaceholder')
+                "
+                required
                 class="w-full"
               />
             </div>
@@ -702,17 +1051,18 @@
                 class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
               ></div>
               <span class="ml-3 text-sm text-gray-700">
-                {{ alertRuleData.is_active ? t('common.enabled') : t('common.disabled') }}
+                {{
+                  alertRuleData.is_active
+                    ? t('common.enabled')
+                    : t('common.disabled')
+                }}
               </span>
             </label>
           </div>
         </div>
 
         <!-- Alert Notification Channel (only when alert is enabled) -->
-        <div
-          v-if="alertRuleData.is_active"
-          class="space-y-3"
-        >
+        <div v-if="alertRuleData.is_active" class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
             <div class="md:col-span-1">
               <label
@@ -748,10 +1098,7 @@
                   {{ getChannelOptionLabel(ch) }}
                 </option>
               </select>
-              <p
-                v-if="channelsLoading"
-                class="text-xs text-gray-500 mt-1"
-              >
+              <p v-if="channelsLoading" class="text-xs text-gray-500 mt-1">
                 {{ t('common.loading') }}
               </p>
               <p
@@ -780,7 +1127,9 @@
                 :key="i"
                 v-model="emailToRecipients[i - 1]"
                 type="email"
-                :placeholder="t('cloudBilling.providers.alertEmailRecipientsPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.providers.alertEmailRecipientsPlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -808,7 +1157,9 @@
                 type="number"
                 step="0.01"
                 min="0"
-                :placeholder="t('cloudBilling.settings.alertRule.costThresholdPlaceholder')"
+                :placeholder="
+                  t('cloudBilling.settings.alertRule.costThresholdPlaceholder')
+                "
                 class="w-full"
               />
             </div>
@@ -835,7 +1186,11 @@
                 step="0.01"
                 min="0"
                 max="100"
-                :placeholder="t('cloudBilling.settings.alertRule.growthThresholdPlaceholder')"
+                :placeholder="
+                  t(
+                    'cloudBilling.settings.alertRule.growthThresholdPlaceholder'
+                  )
+                "
                 class="w-full"
               />
               <p class="text-xs text-gray-500 mt-1">
@@ -854,7 +1209,9 @@
                 {{ t('cloudBilling.settings.alertRule.growthAmountThreshold') }}
               </label>
               <p class="text-xs text-gray-500 mb-2 md:mb-0">
-                {{ t('cloudBilling.settings.alertRule.growthAmountThresholdDesc') }}
+                {{
+                  t('cloudBilling.settings.alertRule.growthAmountThresholdDesc')
+                }}
               </p>
             </div>
             <div class="md:col-span-2">
@@ -864,7 +1221,77 @@
                 type="number"
                 step="0.01"
                 min="0"
-                :placeholder="t('cloudBilling.settings.alertRule.growthAmountThresholdPlaceholder')"
+                :placeholder="
+                  t(
+                    'cloudBilling.settings.alertRule.growthAmountThresholdPlaceholder'
+                  )
+                "
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <!-- Balance Threshold -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="balanceThreshold"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('cloudBilling.settings.alertRule.balanceThreshold') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('cloudBilling.settings.alertRule.balanceThresholdDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="balanceThreshold"
+                v-model="alertRuleData.balance_threshold"
+                type="number"
+                step="0.01"
+                min="0"
+                :placeholder="
+                  t(
+                    'cloudBilling.settings.alertRule.balanceThresholdPlaceholder'
+                  )
+                "
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <!-- Days Remaining Threshold -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="daysRemainingThreshold"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{
+                  t('cloudBilling.settings.alertRule.daysRemainingThreshold')
+                }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{
+                  t(
+                    'cloudBilling.settings.alertRule.daysRemainingThresholdDesc'
+                  )
+                }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <BaseInput
+                id="daysRemainingThreshold"
+                v-model="alertRuleData.days_remaining_threshold"
+                type="number"
+                step="1"
+                min="1"
+                :placeholder="
+                  t(
+                    'cloudBilling.settings.alertRule.daysRemainingThresholdPlaceholder'
+                  )
+                "
                 class="w-full"
               />
             </div>
@@ -953,13 +1380,21 @@
           @click="handleValidate"
           class="w-full sm:w-auto"
         >
-          {{ validating ? t('common.loading') : t('cloudBilling.providers.validateConfig') }}
+          {{
+            validating
+              ? t('common.loading')
+              : t('cloudBilling.providers.validateConfig')
+          }}
         </BaseButton>
         <BaseButton
           :loading="saving"
           :disabled="saving || validating || (!props.provider && !isValidated)"
           @click="handleSubmit"
-          :title="!props.provider && !isValidated ? t('cloudBilling.providers.pleaseValidateConfigFirst') : ''"
+          :title="
+            !props.provider && !isValidated
+              ? t('cloudBilling.providers.pleaseValidateConfigFirst')
+              : ''
+          "
           class="w-full sm:w-auto"
         >
           {{ saving ? t('common.saving') : t('common.save') }}
@@ -970,10 +1405,19 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, onMounted, computed, nextTick } from 'vue'
+import {
+  ref,
+  watch,
+  reactive,
+  onMounted,
+  onBeforeUnmount,
+  computed,
+  nextTick
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { extractResponseData } from '@/utils/api'
+import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 import { cloudBillingApi } from '@/api/cloudBilling'
 import { notificationsAdminApi } from '@/admin/api'
 import BaseModal from '@/components/ui/BaseModal.vue'
@@ -988,6 +1432,10 @@ const props = defineProps({
   provider: {
     type: Object,
     default: null
+  },
+  providerOptions: {
+    type: Array,
+    default: () => []
   },
   showAlertRule: {
     type: Boolean,
@@ -1011,19 +1459,23 @@ const formData = reactive({
   provider_type: 'aws',
   display_name: '',
   notes: '',
-  is_active: true,
+  tags: [],
+  is_active: true
 })
+const tagInput = ref('')
+const tagDropdownOpen = ref(false)
+const tagDropdownRef = ref(null)
 
 // Auto-generate name based on provider_type and display_name
 const generateName = (providerType, displayName) => {
   if (!displayName) return ''
-  
+
   // Convert display name to lowercase and replace spaces/special chars with underscores
   const baseName = displayName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
-  
+
   // Add provider type prefix if not already present
   const typePrefix = providerType.replace('-', '_')
   if (baseName.startsWith(typePrefix)) {
@@ -1043,6 +1495,7 @@ const configFields = reactive({
   azure_client_secret: '',
   azure_tenant_id: '',
   azure_subscription_id: '',
+  azure_billing_account_id: '',
   alibaba_access_key_id: '',
   alibaba_secret_access_key: '',
   alibaba_region: '',
@@ -1056,6 +1509,10 @@ const configFields = reactive({
   volcengine_payer_id: '',
   volcengine_service: '',
   volcengine_version: '',
+  baidu_access_key_id: '',
+  baidu_secret_access_key: '',
+  zhipu_username: '',
+  zhipu_password: ''
 })
 
 const alertRuleData = reactive({
@@ -1063,7 +1520,15 @@ const alertRuleData = reactive({
   cost_threshold: '',
   growth_threshold: '',
   growth_amount_threshold: '',
+  balance_threshold: '',
+  days_remaining_threshold: ''
 })
+
+const hasThresholdValue = (value) =>
+  value !== null && value !== undefined && String(value).trim() !== ''
+
+const getThresholdFormValue = (value) =>
+  value !== null && value !== undefined ? String(value) : ''
 
 const existingAlertRuleId = ref(null)
 const allChannels = ref([])
@@ -1071,220 +1536,392 @@ const channelsLoading = ref(false)
 const selectedChannelValue = ref('')
 const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
+const availableTags = computed(() => {
+  const tagSet = new Set()
+  ;(props.providerOptions || []).forEach((provider) => {
+    ;(provider?.tags || []).forEach((tag) => {
+      const normalized = String(tag || '').trim()
+      if (normalized) {
+        tagSet.add(normalized)
+      }
+    })
+  })
+  formData.tags.forEach((tag) => {
+    const normalized = String(tag || '').trim()
+    if (normalized) {
+      tagSet.add(normalized)
+    }
+  })
+  return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
+})
+
+const normalizeTag = (value) => String(value || '').trim()
+
+const filteredAvailableTags = computed(() => {
+  const keyword = normalizeTag(tagInput.value).toLowerCase()
+  if (!keyword) {
+    return availableTags.value
+  }
+  return availableTags.value.filter((tag) =>
+    String(tag || '')
+      .toLowerCase()
+      .includes(keyword)
+  )
+})
+
+const toggleTag = (value) => {
+  const tag = normalizeTag(value)
+  if (!tag) {
+    return
+  }
+  if (formData.tags.includes(tag)) {
+    formData.tags = formData.tags.filter((item) => item !== tag)
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagDropdownOpen.value = true
+}
+
+const addTag = (value = tagInput.value) => {
+  const tag = normalizeTag(value)
+  if (!tag || formData.tags.includes(tag)) {
+    tagInput.value = ''
+    return
+  }
+  formData.tags = [...formData.tags, tag]
+  tagInput.value = ''
+  tagDropdownOpen.value = true
+}
+
+const removeTag = (value) => {
+  const tag = normalizeTag(value)
+  formData.tags = formData.tags.filter((item) => item !== tag)
+}
+
+const openTagDropdown = () => {
+  tagDropdownOpen.value = true
+}
+
+const handleTagEnter = () => {
+  const exactMatch = availableTags.value.find(
+    (tag) => tag.toLowerCase() === normalizeTag(tagInput.value).toLowerCase()
+  )
+  if (exactMatch) {
+    toggleTag(exactMatch)
+    tagInput.value = ''
+    return
+  }
+  addTag()
+}
+
+const handleClickOutside = (event) => {
+  if (tagDropdownRef.value && !tagDropdownRef.value.contains(event.target)) {
+    tagDropdownOpen.value = false
+  }
+}
 
 const scrollToValidationErrors = async () => {
   await nextTick()
   validationErrorsRef.value?.scrollIntoView({
     behavior: 'smooth',
-    block: 'center',
+    block: 'center'
   })
 }
 
 // Watch provider_type to auto-generate display_name and name
-watch(() => formData.provider_type, (type) => {
-  if (!props.provider) {
-    // Auto-generate display_name based on provider_type
-    const typeLabels = {
-      'aws': t('cloudBilling.providers.types.aws'),
-      'huawei': t('cloudBilling.providers.types.huawei'),
-      'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
-      'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
-      'alibaba': t('cloudBilling.providers.types.alibaba'),
-      'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
+watch(
+  () => formData.provider_type,
+  (type) => {
+    if (!props.provider) {
+      // Auto-generate display_name based on provider_type
+      const typeLabels = {
+        aws: t('cloudBilling.providers.types.aws'),
+        huawei: t('cloudBilling.providers.types.huawei'),
+        'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+        tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
+        alibaba: t('cloudBilling.providers.types.alibaba'),
+        azure: t('cloudBilling.providers.types.azure'),
+        volcengine: t('cloudBilling.providers.types.volcengine'),
+        baidu: t('cloudBilling.providers.types.baidu'),
+        zhipu: t('cloudBilling.providers.types.zhipu')
+      }
+      formData.display_name = typeLabels[type] || type
+      formData.name = generateName(type, formData.display_name)
     }
-    formData.display_name = typeLabels[type] || type
-    formData.name = generateName(type, formData.display_name)
-  }
-  // Reset validation when provider type changes
-  isValidated.value = false
-  validationErrors.value = []
-  validationSuccess.value = ''
-}, { immediate: false })
-
-// Reset validation when config fields change
-watch(() => [
-  configFields.aws_access_key_id,
-  configFields.aws_secret_access_key,
-  configFields.aws_region,
-  configFields.huawei_access_key_id,
-  configFields.huawei_secret_access_key,
-  configFields.huawei_region,
-  configFields.azure_client_id,
-  configFields.azure_client_secret,
-  configFields.azure_tenant_id,
-  configFields.azure_subscription_id,
-  configFields.alibaba_access_key_id,
-  configFields.alibaba_secret_access_key,
-  configFields.alibaba_region,
-  configFields.tencent_access_key_id,
-  configFields.tencent_access_key_secret,
-  configFields.tencent_app_id,
-  configFields.volcengine_access_key_id,
-  configFields.volcengine_secret_access_key,
-  configFields.volcengine_region,
-  configFields.volcengine_endpoint,
-  configFields.volcengine_payer_id,
-  configFields.volcengine_service,
-  configFields.volcengine_version,
-], () => {
-  if (!props.provider) {
+    // Reset validation when provider type changes
     isValidated.value = false
     validationErrors.value = []
     validationSuccess.value = ''
+  },
+  { immediate: false }
+)
+
+// Reset validation when config fields change
+watch(
+  () => [
+    configFields.aws_access_key_id,
+    configFields.aws_secret_access_key,
+    configFields.aws_region,
+    configFields.huawei_access_key_id,
+    configFields.huawei_secret_access_key,
+    configFields.huawei_region,
+    configFields.azure_client_id,
+    configFields.azure_client_secret,
+    configFields.azure_tenant_id,
+    configFields.azure_subscription_id,
+    configFields.azure_billing_account_id,
+    configFields.alibaba_access_key_id,
+    configFields.alibaba_secret_access_key,
+    configFields.alibaba_region,
+    configFields.tencent_access_key_id,
+    configFields.tencent_access_key_secret,
+    configFields.tencent_app_id,
+    configFields.volcengine_access_key_id,
+    configFields.volcengine_secret_access_key,
+    configFields.volcengine_region,
+    configFields.volcengine_endpoint,
+    configFields.volcengine_payer_id,
+    configFields.volcengine_service,
+    configFields.volcengine_version,
+    configFields.baidu_access_key_id,
+    configFields.baidu_secret_access_key,
+    configFields.zhipu_username,
+    configFields.zhipu_password
+  ],
+  () => {
+    if (!props.provider) {
+      isValidated.value = false
+      validationErrors.value = []
+      validationSuccess.value = ''
+    }
   }
-})
+)
 
-watch(() => props.provider, async (newProvider) => {
-  if (newProvider) {
-    formData.name = newProvider.name || ''
-    formData.provider_type = newProvider.provider_type || 'aws'
-    formData.display_name = newProvider.display_name || newProvider.provider_type || 'aws'
-    formData.notes = newProvider.notes || ''
-    formData.is_active = newProvider.is_active ?? true
+watch(
+  () => props.provider,
+  async (newProvider) => {
+    if (newProvider) {
+      formData.name = newProvider.name || ''
+      formData.provider_type = newProvider.provider_type || 'aws'
+      formData.display_name =
+        getLocalizedProviderDisplayName(newProvider, t) ||
+        newProvider.provider_type ||
+        'aws'
+      formData.notes = newProvider.notes || ''
+      formData.tags = Array.isArray(newProvider.tags)
+        ? [...newProvider.tags]
+        : []
+      formData.is_active = newProvider.is_active ?? true
+      tagInput.value = ''
+      tagDropdownOpen.value = false
 
-    const config = newProvider.config || {}
-    const notification = config.notification
-    const channelUuid = getNotificationChannelUuid(notification)
-    if (channelUuid) {
-      applyNotificationSelection(notification)
-      const to = notification.email_to
-      if (Array.isArray(to) && to.length) {
-        emailToRecipients.value = [
-          (to[0] || '').trim(),
-          (to[1] || '').trim(),
-          (to[2] || '').trim(),
-        ]
+      const config = newProvider.config || {}
+      const notification = config.notification
+      const channelUuid = getNotificationChannelUuid(notification)
+      if (channelUuid) {
+        applyNotificationSelection(notification)
+        const to = notification.email_to
+        if (Array.isArray(to) && to.length) {
+          emailToRecipients.value = [
+            (to[0] || '').trim(),
+            (to[1] || '').trim(),
+            (to[2] || '').trim()
+          ]
+        } else {
+          emailToRecipients.value = ['', '', '']
+        }
       } else {
+        selectedChannelValue.value = ''
+        pendingChannelUuid.value = ''
         emailToRecipients.value = ['', '', '']
       }
-    } else {
-      selectedChannelValue.value = ''
-      pendingChannelUuid.value = ''
-      emailToRecipients.value = ['', '', '']
-    }
-    if (newProvider.provider_type === 'aws') {
-      configFields.aws_access_key_id = config.AWS_ACCESS_KEY_ID || ''
-      configFields.aws_secret_access_key = config.AWS_SECRET_ACCESS_KEY || ''
-      configFields.aws_region = config.AWS_REGION || ''
-    } else if (newProvider.provider_type === 'huawei' || newProvider.provider_type === 'huawei-intl') {
-      configFields.huawei_access_key_id = config.HUAWEI_ACCESS_KEY_ID || ''
-      configFields.huawei_secret_access_key = config.HUAWEI_SECRET_ACCESS_KEY || ''
-      configFields.huawei_region = config.HUAWEI_REGION || ''
-    } else if (newProvider.provider_type === 'azure') {
-      configFields.azure_client_id = config.AZURE_CLIENT_ID || ''
-      configFields.azure_client_secret = config.AZURE_CLIENT_SECRET || ''
-      configFields.azure_tenant_id = config.AZURE_TENANT_ID || ''
-      configFields.azure_subscription_id = config.AZURE_SUBSCRIPTION_ID || ''
-    } else if (newProvider.provider_type === 'alibaba') {
-      configFields.alibaba_access_key_id = config.ALIBABA_ACCESS_KEY_ID || ''
-      configFields.alibaba_secret_access_key = config.ALIBABA_SECRET_ACCESS_KEY || ''
-      configFields.alibaba_region = config.ALIBABA_REGION || config.alibaba_region || ''
-    } else if (newProvider.provider_type === 'tencentcloud') {
-      configFields.tencent_access_key_id = config.access_key_id || config.TENCENT_ACCESS_KEY_ID || ''
-      configFields.tencent_access_key_secret = config.access_key_secret || config.TENCENT_ACCESS_KEY_SECRET || ''
-      configFields.tencent_app_id = config.app_id || config.TENCENT_APP_ID || ''
-    } else if (newProvider.provider_type === 'volcengine') {
-      configFields.volcengine_access_key_id = config.api_key || config.VOLCENGINE_ACCESS_KEY_ID || ''
-      configFields.volcengine_secret_access_key = config.api_secret || config.VOLCENGINE_SECRET_ACCESS_KEY || config.VOLCENGINE_ACCESS_KEY_SECRET || ''
-      configFields.volcengine_region = config.region || config.VOLCENGINE_REGION || ''
-      configFields.volcengine_endpoint = config.endpoint || config.VOLCENGINE_ENDPOINT || ''
-      configFields.volcengine_payer_id = config.payer_id || config.VOLCENGINE_PAYER_ID || ''
-      configFields.volcengine_service = config.service || config.VOLCENGINE_SERVICE || ''
-      configFields.volcengine_version = config.version || config.VOLCENGINE_VERSION || ''
-    }
+      if (newProvider.provider_type === 'aws') {
+        configFields.aws_access_key_id = config.AWS_ACCESS_KEY_ID || ''
+        configFields.aws_secret_access_key = config.AWS_SECRET_ACCESS_KEY || ''
+        configFields.aws_region = config.AWS_REGION || ''
+      } else if (
+        newProvider.provider_type === 'huawei' ||
+        newProvider.provider_type === 'huawei-intl'
+      ) {
+        configFields.huawei_access_key_id = config.HUAWEI_ACCESS_KEY_ID || ''
+        configFields.huawei_secret_access_key =
+          config.HUAWEI_SECRET_ACCESS_KEY || ''
+        configFields.huawei_region = config.HUAWEI_REGION || ''
+      } else if (newProvider.provider_type === 'azure') {
+        configFields.azure_client_id = config.AZURE_CLIENT_ID || ''
+        configFields.azure_client_secret = config.AZURE_CLIENT_SECRET || ''
+        configFields.azure_tenant_id = config.AZURE_TENANT_ID || ''
+        configFields.azure_subscription_id = config.AZURE_SUBSCRIPTION_ID || ''
+        configFields.azure_billing_account_id =
+          config.AZURE_BILLING_ACCOUNT_ID || ''
+      } else if (newProvider.provider_type === 'alibaba') {
+        configFields.alibaba_access_key_id = config.ALIBABA_ACCESS_KEY_ID || ''
+        configFields.alibaba_secret_access_key =
+          config.ALIBABA_SECRET_ACCESS_KEY || ''
+        configFields.alibaba_region =
+          config.ALIBABA_REGION || config.alibaba_region || ''
+      } else if (newProvider.provider_type === 'tencentcloud') {
+        configFields.tencent_access_key_id =
+          config.access_key_id || config.TENCENT_ACCESS_KEY_ID || ''
+        configFields.tencent_access_key_secret =
+          config.access_key_secret || config.TENCENT_ACCESS_KEY_SECRET || ''
+        configFields.tencent_app_id =
+          config.app_id || config.TENCENT_APP_ID || ''
+      } else if (newProvider.provider_type === 'volcengine') {
+        configFields.volcengine_access_key_id =
+          config.api_key || config.VOLCENGINE_ACCESS_KEY_ID || ''
+        configFields.volcengine_secret_access_key =
+          config.api_secret ||
+          config.VOLCENGINE_SECRET_ACCESS_KEY ||
+          config.VOLCENGINE_ACCESS_KEY_SECRET ||
+          ''
+        configFields.volcengine_region =
+          config.region || config.VOLCENGINE_REGION || ''
+        configFields.volcengine_endpoint =
+          config.endpoint || config.VOLCENGINE_ENDPOINT || ''
+        configFields.volcengine_payer_id =
+          config.payer_id || config.VOLCENGINE_PAYER_ID || ''
+        configFields.volcengine_service =
+          config.service || config.VOLCENGINE_SERVICE || ''
+        configFields.volcengine_version =
+          config.version || config.VOLCENGINE_VERSION || ''
+      } else if (newProvider.provider_type === 'baidu') {
+        configFields.baidu_access_key_id =
+          config.api_key || config.BAIDU_ACCESS_KEY_ID || ''
+        configFields.baidu_secret_access_key =
+          config.api_secret || config.BAIDU_SECRET_ACCESS_KEY || ''
+      } else if (newProvider.provider_type === 'zhipu') {
+        configFields.zhipu_username =
+          config.username || config.ZHIPU_USERNAME || ''
+        configFields.zhipu_password =
+          config.password || config.ZHIPU_PASSWORD || ''
+      }
 
-    // Load alert rule if exists and showAlertRule is true
-    if (props.showAlertRule) {
-      try {
-        const alertRulesResponse = await cloudBillingApi.getAlertRules({ provider_id: newProvider.id })
-        const alertRulesData = extractResponseData(alertRulesResponse)
-        const rules = Array.isArray(alertRulesData) 
-          ? alertRulesData 
-          : (alertRulesData?.results || alertRulesData?.list || [])
-        
-        if (rules.length > 0) {
-          const rule = rules[0]
-          existingAlertRuleId.value = rule.id
-          alertRuleData.is_active = rule.is_active ?? false
-          alertRuleData.cost_threshold = rule.cost_threshold || ''
-          alertRuleData.growth_threshold = rule.growth_threshold || ''
-          alertRuleData.growth_amount_threshold = rule.growth_amount_threshold || ''
-        } else {
+      // Load alert rule if exists and showAlertRule is true
+      if (props.showAlertRule) {
+        try {
+          const alertRulesResponse = await cloudBillingApi.getAlertRules({
+            provider_id: newProvider.id
+          })
+          const alertRulesData = extractResponseData(alertRulesResponse)
+          const rules = Array.isArray(alertRulesData)
+            ? alertRulesData
+            : alertRulesData?.results || alertRulesData?.list || []
+
+          if (rules.length > 0) {
+            const rule = rules[0]
+            existingAlertRuleId.value = rule.id
+            alertRuleData.is_active = rule.is_active ?? false
+            alertRuleData.cost_threshold = getThresholdFormValue(
+              rule.cost_threshold
+            )
+            alertRuleData.growth_threshold = getThresholdFormValue(
+              rule.growth_threshold
+            )
+            alertRuleData.growth_amount_threshold = getThresholdFormValue(
+              rule.growth_amount_threshold
+            )
+            alertRuleData.balance_threshold = getThresholdFormValue(
+              rule.balance_threshold
+            )
+            alertRuleData.days_remaining_threshold = getThresholdFormValue(
+              rule.days_remaining_threshold
+            )
+          } else {
+            existingAlertRuleId.value = null
+            alertRuleData.is_active = false
+            alertRuleData.cost_threshold = ''
+            alertRuleData.growth_threshold = ''
+            alertRuleData.growth_amount_threshold = ''
+            alertRuleData.balance_threshold = ''
+            alertRuleData.days_remaining_threshold = ''
+          }
+        } catch (error) {
+          console.error('Failed to load alert rule:', error)
           existingAlertRuleId.value = null
           alertRuleData.is_active = false
           alertRuleData.cost_threshold = ''
           alertRuleData.growth_threshold = ''
           alertRuleData.growth_amount_threshold = ''
+          alertRuleData.balance_threshold = ''
+          alertRuleData.days_remaining_threshold = ''
         }
-      } catch (error) {
-        console.error('Failed to load alert rule:', error)
-        existingAlertRuleId.value = null
-        alertRuleData.is_active = false
-        alertRuleData.cost_threshold = ''
-        alertRuleData.growth_threshold = ''
-        alertRuleData.growth_amount_threshold = ''
       }
+    } else {
+      const typeLabels = {
+        aws: t('cloudBilling.providers.types.aws'),
+        huawei: t('cloudBilling.providers.types.huawei'),
+        'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
+        tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
+        alibaba: t('cloudBilling.providers.types.alibaba'),
+        azure: t('cloudBilling.providers.types.azure'),
+        volcengine: t('cloudBilling.providers.types.volcengine'),
+        baidu: t('cloudBilling.providers.types.baidu'),
+        zhipu: t('cloudBilling.providers.types.zhipu')
+      }
+      Object.assign(formData, {
+        name: '',
+        provider_type: 'aws',
+        display_name: typeLabels['aws'] || 'aws',
+        notes: '',
+        tags: [],
+        is_active: true
+      })
+      Object.assign(configFields, {
+        aws_access_key_id: '',
+        aws_secret_access_key: '',
+        aws_region: '',
+        huawei_access_key_id: '',
+        huawei_secret_access_key: '',
+        huawei_region: '',
+        azure_client_id: '',
+        azure_client_secret: '',
+        azure_tenant_id: '',
+        azure_subscription_id: '',
+        azure_billing_account_id: '',
+        alibaba_access_key_id: '',
+        alibaba_secret_access_key: '',
+        alibaba_region: '',
+        tencent_access_key_id: '',
+        tencent_access_key_secret: '',
+        tencent_app_id: '',
+        volcengine_access_key_id: '',
+        volcengine_secret_access_key: '',
+        volcengine_region: '',
+        volcengine_endpoint: '',
+        volcengine_payer_id: '',
+        volcengine_service: '',
+        volcengine_version: '',
+        baidu_access_key_id: '',
+        baidu_secret_access_key: '',
+        zhipu_username: '',
+        zhipu_password: ''
+      })
+      existingAlertRuleId.value = null
+      alertRuleData.is_active = false
+      alertRuleData.cost_threshold = ''
+      alertRuleData.growth_threshold = ''
+      alertRuleData.growth_amount_threshold = ''
+      alertRuleData.balance_threshold = ''
+      alertRuleData.days_remaining_threshold = ''
+      selectedChannelValue.value = ''
+      pendingChannelUuid.value = ''
+      emailToRecipients.value = ['', '', '']
+      tagInput.value = ''
+      tagDropdownOpen.value = false
     }
-  } else {
-    const typeLabels = {
-      'aws': t('cloudBilling.providers.types.aws'),
-      'huawei': t('cloudBilling.providers.types.huawei'),
-      'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
-      'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
-      'alibaba': t('cloudBilling.providers.types.alibaba'),
-      'azure': t('cloudBilling.providers.types.azure'),
-      'volcengine': t('cloudBilling.providers.types.volcengine')
-    }
-    Object.assign(formData, {
-      name: '',
-      provider_type: 'aws',
-      display_name: typeLabels['aws'] || 'aws',
-      notes: '',
-      is_active: true,
-    })
-    Object.assign(configFields, {
-      aws_access_key_id: '',
-      aws_secret_access_key: '',
-      aws_region: '',
-      huawei_access_key_id: '',
-      huawei_secret_access_key: '',
-      huawei_region: '',
-      azure_client_id: '',
-      azure_client_secret: '',
-      azure_tenant_id: '',
-      azure_subscription_id: '',
-      alibaba_access_key_id: '',
-      alibaba_secret_access_key: '',
-      alibaba_region: '',
-      tencent_access_key_id: '',
-      tencent_access_key_secret: '',
-      tencent_app_id: '',
-      volcengine_access_key_id: '',
-      volcengine_secret_access_key: '',
-      volcengine_region: '',
-      volcengine_endpoint: '',
-      volcengine_payer_id: '',
-      volcengine_service: '',
-      volcengine_version: '',
-    })
-    existingAlertRuleId.value = null
-    alertRuleData.is_active = false
-    alertRuleData.cost_threshold = ''
-    alertRuleData.growth_threshold = ''
-    alertRuleData.growth_amount_threshold = ''
-    selectedChannelValue.value = ''
-    pendingChannelUuid.value = ''
-    emailToRecipients.value = ['', '', '']
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 const isEmailChannelSelected = computed(() =>
   (selectedChannelValue.value || '').startsWith('email:')
 )
 
 function normalizeChannelType(value) {
-  const type = String(value || '').trim().toLowerCase()
+  const type = String(value || '')
+    .trim()
+    .toLowerCase()
   if (type === 'email' || type === 'webhook') {
     return type
   }
@@ -1306,7 +1943,9 @@ function resolveChannelType(channel) {
 function applyNotificationSelection(notification) {
   const n = notification && typeof notification === 'object' ? notification : {}
   const channelUuid = getNotificationChannelUuid(n)
-  const channelType = normalizeChannelType(n.type || n.channel_type || n.notification_type)
+  const channelType = normalizeChannelType(
+    n.type || n.channel_type || n.notification_type
+  )
 
   if (!channelUuid) {
     selectedChannelValue.value = ''
@@ -1320,7 +1959,9 @@ function applyNotificationSelection(notification) {
     return
   }
 
-  const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === channelUuid)
+  const matched = allChannels.value.find(
+    (ch) => String(ch?.uuid || '') === channelUuid
+  )
   if (matched) {
     selectedChannelValue.value = `${resolveChannelType(matched)}:${channelUuid}`
     pendingChannelUuid.value = ''
@@ -1335,12 +1976,12 @@ function getNotificationChannelUuid(notification) {
   const n = notification && typeof notification === 'object' ? notification : {}
   return String(
     n.channel_uuid ||
-    n.channelUuid ||
-    n.channel_id ||
-    n.channelId ||
-    n.uuid ||
-    n.id ||
-    ''
+      n.channelUuid ||
+      n.channel_id ||
+      n.channelId ||
+      n.uuid ||
+      n.id ||
+      ''
   ).trim()
 }
 
@@ -1371,7 +2012,9 @@ async function loadChannels() {
       return type === 'webhook' || type === 'email'
     })
     if (pendingChannelUuid.value) {
-      const matched = allChannels.value.find((ch) => String(ch?.uuid || '') === pendingChannelUuid.value)
+      const matched = allChannels.value.find(
+        (ch) => String(ch?.uuid || '') === pendingChannelUuid.value
+      )
       if (matched) {
         selectedChannelValue.value = `${resolveChannelType(matched)}:${pendingChannelUuid.value}`
         pendingChannelUuid.value = ''
@@ -1385,30 +2028,44 @@ async function loadChannels() {
   }
 }
 
-watch(() => props.show, (visible) => {
-  if (visible) {
-    loadChannels()
+watch(
+  () => props.show,
+  (visible) => {
+    if (visible) {
+      loadChannels()
+    }
   }
-})
+)
 onMounted(() => {
   if (props.show) {
     loadChannels()
   }
+  document.addEventListener('pointerdown', handleClickOutside, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleClickOutside, true)
 })
 
 function getChannelOptionLabel(ch) {
-  const name = (ch.name || '').trim() || t('cloudBilling.providers.channelUnnamed')
+  const name =
+    (ch.name || '').trim() || t('cloudBilling.providers.channelUnnamed')
   const channelType = resolveChannelType(ch)
-  const typeLabel = channelType === 'email'
-    ? t('cloudBilling.providers.channelTypeEmail')
-    : t('cloudBilling.providers.channelTypeWebhook')
+  const typeLabel =
+    channelType === 'email'
+      ? t('cloudBilling.providers.channelTypeEmail')
+      : t('cloudBilling.providers.channelTypeWebhook')
   const cfg = ch.config || {}
   if (channelType === 'email') {
     const host = (cfg.smtp_host || '').trim()
     const hint = host ? ` · ${host}` : ''
     return `${name} (${typeLabel})${hint}`
   }
-  const provider = (cfg.provider || cfg.provider_type || 'webhook').toLowerCase()
+  const provider = (
+    cfg.provider ||
+    cfg.provider_type ||
+    'webhook'
+  ).toLowerCase()
   const url = (cfg.url || '').trim()
   const urlHint = url ? (url.length > 40 ? url.slice(0, 37) + '...' : url) : ''
   if (urlHint) {
@@ -1419,6 +2076,7 @@ function getChannelOptionLabel(ch) {
 
 const buildConfig = () => {
   const config = {}
+  const existingConfig = props.provider?.config || {}
   if (formData.provider_type === 'aws') {
     if (configFields.aws_access_key_id) {
       config.AWS_ACCESS_KEY_ID = configFields.aws_access_key_id
@@ -1429,7 +2087,10 @@ const buildConfig = () => {
     if (configFields.aws_region) {
       config.AWS_REGION = configFields.aws_region
     }
-  } else if (formData.provider_type === 'huawei' || formData.provider_type === 'huawei-intl') {
+  } else if (
+    formData.provider_type === 'huawei' ||
+    formData.provider_type === 'huawei-intl'
+  ) {
     if (configFields.huawei_access_key_id) {
       config.HUAWEI_ACCESS_KEY_ID = configFields.huawei_access_key_id
     }
@@ -1454,6 +2115,9 @@ const buildConfig = () => {
     }
     if (configFields.azure_subscription_id) {
       config.AZURE_SUBSCRIPTION_ID = configFields.azure_subscription_id
+    }
+    if (configFields.azure_billing_account_id) {
+      config.AZURE_BILLING_ACCOUNT_ID = configFields.azure_billing_account_id
     }
   } else if (formData.provider_type === 'alibaba') {
     if (configFields.alibaba_access_key_id) {
@@ -1480,7 +2144,8 @@ const buildConfig = () => {
       config.VOLCENGINE_ACCESS_KEY_ID = configFields.volcengine_access_key_id
     }
     if (configFields.volcengine_secret_access_key) {
-      config.VOLCENGINE_SECRET_ACCESS_KEY = configFields.volcengine_secret_access_key
+      config.VOLCENGINE_SECRET_ACCESS_KEY =
+        configFields.volcengine_secret_access_key
     }
     if (configFields.volcengine_region) {
       config.VOLCENGINE_REGION = configFields.volcengine_region
@@ -1497,6 +2162,35 @@ const buildConfig = () => {
     if (configFields.volcengine_version) {
       config.VOLCENGINE_VERSION = configFields.volcengine_version
     }
+  } else if (formData.provider_type === 'baidu') {
+    if (configFields.baidu_access_key_id) {
+      config.BAIDU_ACCESS_KEY_ID = configFields.baidu_access_key_id
+    }
+    if (configFields.baidu_secret_access_key) {
+      config.BAIDU_SECRET_ACCESS_KEY = configFields.baidu_secret_access_key
+    }
+  } else if (formData.provider_type === 'zhipu') {
+    if (configFields.zhipu_username) {
+      config.ZHIPU_USERNAME = configFields.zhipu_username
+    }
+    if (configFields.zhipu_password) {
+      config.ZHIPU_PASSWORD = configFields.zhipu_password
+    }
+    const preservedUserType =
+      existingConfig.ZHIPU_USER_TYPE || existingConfig.user_type
+    const preservedTimeout =
+      existingConfig.ZHIPU_TIMEOUT || existingConfig.timeout
+    const preservedMaxRetries =
+      existingConfig.ZHIPU_MAX_RETRIES || existingConfig.max_retries
+    if (preservedUserType) {
+      config.ZHIPU_USER_TYPE = preservedUserType
+    }
+    if (preservedTimeout) {
+      config.ZHIPU_TIMEOUT = preservedTimeout
+    }
+    if (preservedMaxRetries) {
+      config.ZHIPU_MAX_RETRIES = preservedMaxRetries
+    }
   }
   const raw = (selectedChannelValue.value || '').trim()
   if (raw) {
@@ -1505,7 +2199,7 @@ const buildConfig = () => {
     const notifUuid = colonIndex >= 0 ? raw.slice(colonIndex + 1) : raw
     config.notification = {
       type: notifType,
-      channel_uuid: notifUuid,
+      channel_uuid: notifUuid
     }
     if (notifType === 'email') {
       const list = (emailToRecipients.value || [])
@@ -1544,9 +2238,12 @@ const handleValidate = async () => {
       }, 5000)
     } else {
       const errorCode = validation.error_code || 'validation_failed'
-      const errorMessage = validation.message ||
-        t(`cloudBilling.providers.validationErrorCodes.${errorCode}`,
-          t('cloudBilling.providers.validationFailed'))
+      const errorMessage =
+        validation.message ||
+        t(
+          `cloudBilling.providers.validationErrorCodes.${errorCode}`,
+          t('cloudBilling.providers.validationFailed')
+        )
       validationErrors.value = [errorMessage]
       isValidated.value = false
       await scrollToValidationErrors()
@@ -1573,13 +2270,21 @@ const handleValidate = async () => {
 const handleSubmit = async () => {
   // Check validation for new providers
   if (!props.provider && !isValidated.value) {
-    validationErrors.value = [t('cloudBilling.providers.pleaseValidateConfigFirst')]
+    validationErrors.value = [
+      t('cloudBilling.providers.pleaseValidateConfigFirst')
+    ]
     return
   }
 
   // Validate alert rule if enabled and showAlertRule is true
   if (props.showAlertRule && alertRuleData.is_active) {
-    if (!alertRuleData.cost_threshold && !alertRuleData.growth_threshold && !alertRuleData.growth_amount_threshold) {
+    if (
+      !hasThresholdValue(alertRuleData.cost_threshold) &&
+      !hasThresholdValue(alertRuleData.growth_threshold) &&
+      !hasThresholdValue(alertRuleData.growth_amount_threshold) &&
+      !hasThresholdValue(alertRuleData.balance_threshold) &&
+      !hasThresholdValue(alertRuleData.days_remaining_threshold)
+    ) {
       showError(t('cloudBilling.settings.alertRule.atLeastOneThreshold'))
       return
     }
@@ -1597,7 +2302,11 @@ const handleSubmit = async () => {
       }
       const invalid = list.find((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
       if (invalid) {
-        showError(t('cloudBilling.providers.alertEmailRecipientsInvalid', { email: invalid }))
+        showError(
+          t('cloudBilling.providers.alertEmailRecipientsInvalid', {
+            email: invalid
+          })
+        )
         return
       }
     }
@@ -1609,25 +2318,29 @@ const handleSubmit = async () => {
     // Auto-generate display_name and name if not editing existing provider
     if (!props.provider) {
       const typeLabels = {
-        'aws': t('cloudBilling.providers.types.aws'),
-        'huawei': t('cloudBilling.providers.types.huawei'),
+        aws: t('cloudBilling.providers.types.aws'),
+        huawei: t('cloudBilling.providers.types.huawei'),
         'huawei-intl': t('cloudBilling.providers.types.huaweiIntl'),
-        'tencentcloud': t('cloudBilling.providers.types.tencentcloud'),
-        'alibaba': t('cloudBilling.providers.types.alibaba'),
-        'azure': t('cloudBilling.providers.types.azure')
+        tencentcloud: t('cloudBilling.providers.types.tencentcloud'),
+        alibaba: t('cloudBilling.providers.types.alibaba'),
+        azure: t('cloudBilling.providers.types.azure')
       }
       if (!formData.display_name) {
-        formData.display_name = typeLabels[formData.provider_type] || formData.provider_type
+        formData.display_name =
+          typeLabels[formData.provider_type] || formData.provider_type
       }
-      formData.name = generateName(formData.provider_type, formData.display_name)
+      formData.name = generateName(
+        formData.provider_type,
+        formData.display_name
+      )
     }
-    
+
     // Clean up data before sending
     const data = {
       provider_type: formData.provider_type,
       display_name: formData.display_name,
       is_active: formData.is_active,
-      config: buildConfig(),
+      config: buildConfig()
     }
 
     // Only include name for update operations
@@ -1640,6 +2353,7 @@ const handleSubmit = async () => {
     if (formData.notes && formData.notes.trim()) {
       data.notes = formData.notes.trim()
     }
+    data.tags = [...formData.tags]
     requestPayload = { ...data }
 
     let providerId
@@ -1661,13 +2375,32 @@ const handleSubmit = async () => {
         const alertRulePayload = {
           provider: providerId,
           is_active: alertRuleData.is_active,
-          cost_threshold: alertRuleData.cost_threshold ? parseFloat(alertRuleData.cost_threshold) : null,
-          growth_threshold: alertRuleData.growth_threshold ? parseFloat(alertRuleData.growth_threshold) : null,
-          growth_amount_threshold: alertRuleData.growth_amount_threshold ? parseFloat(alertRuleData.growth_amount_threshold) : null,
+          cost_threshold: hasThresholdValue(alertRuleData.cost_threshold)
+            ? parseFloat(alertRuleData.cost_threshold)
+            : null,
+          growth_threshold: hasThresholdValue(alertRuleData.growth_threshold)
+            ? parseFloat(alertRuleData.growth_threshold)
+            : null,
+          growth_amount_threshold: hasThresholdValue(
+            alertRuleData.growth_amount_threshold
+          )
+            ? parseFloat(alertRuleData.growth_amount_threshold)
+            : null,
+          balance_threshold: hasThresholdValue(alertRuleData.balance_threshold)
+            ? parseFloat(alertRuleData.balance_threshold)
+            : null,
+          days_remaining_threshold: hasThresholdValue(
+            alertRuleData.days_remaining_threshold
+          )
+            ? parseInt(alertRuleData.days_remaining_threshold, 10)
+            : null
         }
 
         if (existingAlertRuleId.value) {
-          await cloudBillingApi.updateAlertRule(existingAlertRuleId.value, alertRulePayload)
+          await cloudBillingApi.updateAlertRule(
+            existingAlertRuleId.value,
+            alertRulePayload
+          )
         } else {
           await cloudBillingApi.createAlertRule(alertRulePayload)
         }
@@ -1679,6 +2412,8 @@ const handleSubmit = async () => {
           cost_threshold: null,
           growth_threshold: null,
           growth_amount_threshold: null,
+          balance_threshold: null,
+          days_remaining_threshold: null
         })
       }
     }
@@ -1689,12 +2424,12 @@ const handleSubmit = async () => {
     console.error('Failed to save provider:', error)
     console.error('Error response data:', error.response?.data)
     console.error('Request data sent:', requestPayload)
-    
+
     // Show more detailed error message
     let errorMessage = t('cloudBilling.providers.saveError')
     if (error.response?.data) {
       const errorData = error.response.data
-      
+
       // Handle DRF validation errors format
       if (errorData.data) {
         // Custom JSON renderer format
@@ -1733,7 +2468,7 @@ const handleSubmit = async () => {
         }
       }
     }
-    
+
     showError(errorMessage)
   } finally {
     saving.value = false

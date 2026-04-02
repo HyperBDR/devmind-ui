@@ -13,7 +13,9 @@
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar: same as CloudBilling/Tasks -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          >
             <div class="flex items-center gap-3 flex-wrap">
               <!-- Optional left actions (e.g. trigger) can go here -->
             </div>
@@ -26,41 +28,64 @@
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </template>
               </BaseInput>
 
               <span class="flex items-center gap-1.5 shrink-0">
-                <span class="text-sm text-gray-600">{{ t('dataCollector.tasks.filterPlatform') }}：</span>
+                <span class="text-sm text-gray-600"
+                  >{{ t('dataCollector.tasks.filterPlatform') }}：</span
+                >
                 <select
                   v-model="platformFilter"
                   :aria-label="t('dataCollector.tasks.filterPlatform')"
                   class="block px-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[100px]"
                   @change="onFilterChange"
                 >
-                  <option value="">{{ t('dataCollector.tasks.filterAll') }}</option>
-                  <option value="jira">{{ t('dataCollector.platforms.jira') }}</option>
-                  <option value="feishu">{{ t('dataCollector.platforms.feishu') }}</option>
-                  <option value="license">{{ t('dataCollector.platforms.license') }}</option>
+                  <option value="">
+                    {{ t('dataCollector.tasks.filterAll') }}
+                  </option>
+                  <option value="jira">
+                    {{ t('dataCollector.platforms.jira') }}
+                  </option>
+                  <option value="feishu">
+                    {{ t('dataCollector.platforms.feishu') }}
+                  </option>
+                  <option value="license">
+                    {{ t('dataCollector.platforms.license') }}
+                  </option>
+                  <option value="hyperbdr">
+                    {{ t('dataCollector.platforms.hyperbdr') }}
+                  </option>
                 </select>
               </span>
 
               <span class="flex items-center gap-1.5 shrink-0">
-                <span class="text-sm text-gray-600">{{ t('dataCollector.tasks.filterConfigName') }}：</span>
+                <span class="text-sm text-gray-600"
+                  >{{ t('dataCollector.tasks.filterConfigName') }}：</span
+                >
                 <select
                   v-model="configKeyFilter"
                   :aria-label="t('dataCollector.tasks.filterConfigName')"
                   class="block px-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[120px]"
                   @change="onFilterChange"
                 >
-                  <option value="">{{ t('dataCollector.tasks.filterAll') }}</option>
-                  <option
-                    v-for="c in configList"
-                    :key="c.uuid"
-                    :value="c.key"
-                  >
+                  <option value="">
+                    {{ t('dataCollector.tasks.filterAll') }}
+                  </option>
+                  <option v-for="c in configList" :key="c.uuid" :value="c.key">
                     {{ c.key }}
                   </option>
                 </select>
@@ -95,7 +120,10 @@
 
           <BaseLoading v-if="loading && tasks.length === 0" />
 
-          <div v-if="!loading && tasks.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-if="!loading && tasks.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -109,14 +137,13 @@
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('dataCollector.tasks.noTasks') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('dataCollector.tasks.noTasks') }}
+            </p>
           </div>
 
           <!-- Mobile Card View -->
-          <div
-            v-if="tasks.length > 0"
-            class="md:hidden space-y-3 relative"
-          >
+          <div v-if="tasks.length > 0" class="md:hidden space-y-3 relative">
             <div
               v-if="loading"
               class="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-lg"
@@ -145,25 +172,39 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.tasks.taskName') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.records.platform') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.settings.key') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.tasks.status') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.tasks.startTime') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.tasks.endTime') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('dataCollector.tasks.duration') }}
                   </th>
                 </tr>
@@ -175,7 +216,9 @@
                   @click="handlePreview(task)"
                   class="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
                 >
-                  <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+                  >
                     {{ task.name }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
@@ -209,7 +252,9 @@
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
             <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <label class="text-sm text-gray-600"
+                >{{ t('common.pagination.itemsPerPage') }}:</label
+              >
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
@@ -279,6 +324,7 @@ function getPlatformLabel(platform) {
   if (!platform) return ''
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'hyperbdr') return t('dataCollector.platforms.hyperbdr')
   return platformLabels[platform] || platform
 }
 
@@ -299,7 +345,8 @@ const totalPages = computed(() =>
 )
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from:
+    totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
@@ -384,70 +431,95 @@ const hasRunningTasks = computed(() =>
   tasks.value.some((t) => t.status === 'processing' || t.status === 'pending')
 )
 
-const pollListWhenRunning = useIntervalFn(() => {
-  if (!hasRunningTasks.value) return
-  loadTasks(currentPage.value)
-}, 4000, { immediate: false })
-
-watch(hasRunningTasks, (running) => {
-  if (running) pollListWhenRunning.resume()
-  else pollListWhenRunning.pause()
-}, { immediate: true })
-
-const pollDetailExecution = useIntervalFn(async () => {
-  const task = selectedTask.value
-  if (!showPreviewModal.value || !task?.id || !isDetailTaskRunning(task)) return
-  try {
-    const res = await dataCollectorApi.getExecution(task.id)
-    const data = extractData(res)
-    if (data) {
-      const updated = {
-        id: data.id,
-        task_id: data.task_id ?? task.task_id,
-        task_name: data.task_name ?? task.name,
-        name: data.task_name ?? task.name,
-        status: data.status ?? task.status,
-        created_at: data.created_at ?? task.created_at,
-        started_at: data.started_at ?? task.started_at,
-        finished_at: data.finished_at ?? task.finished_at,
-        duration: data.duration ?? task.duration,
-        result: data.result,
-        error: data.error ?? task.error,
-        traceback: data.traceback,
-        metadata: data.metadata ?? task.metadata
-      }
-      selectedTask.value = updated
-      const idx = tasks.value.findIndex((t) => t.id === task.id)
-      if (idx !== -1) {
-        const meta = updated.metadata || {}
-        tasks.value = [
-          ...tasks.value.slice(0, idx),
-          {
-            ...tasks.value[idx],
-            name: updated.task_name ?? updated.name ?? tasks.value[idx].name,
-            status: mapTaskStatus(updated.status),
-            finished_at: updated.finished_at,
-            duration:
-              updated.duration ?? calculateDuration(updated.started_at ?? updated.created_at, updated.finished_at),
-            result: updated.result,
-            error: updated.error,
-            metadata: updated.metadata,
-            platform: meta.config_platform,
-            config_key: meta.config_key
-          },
-          ...tasks.value.slice(idx + 1)
-        ]
-      }
-    }
-  } catch {
-    // Ignore poll errors
-  }
-}, 4000, { immediate: false })
+const pollListWhenRunning = useIntervalFn(
+  () => {
+    if (!hasRunningTasks.value) return
+    loadTasks(currentPage.value)
+  },
+  4000,
+  { immediate: false }
+)
 
 watch(
-  [showPreviewModal, () => selectedTask.value?.id, () => selectedTask.value?.status],
+  hasRunningTasks,
+  (running) => {
+    if (running) pollListWhenRunning.resume()
+    else pollListWhenRunning.pause()
+  },
+  { immediate: true }
+)
+
+const pollDetailExecution = useIntervalFn(
+  async () => {
+    const task = selectedTask.value
+    if (!showPreviewModal.value || !task?.id || !isDetailTaskRunning(task))
+      return
+    try {
+      const res = await dataCollectorApi.getExecution(task.id)
+      const data = extractData(res)
+      if (data) {
+        const updated = {
+          id: data.id,
+          task_id: data.task_id ?? task.task_id,
+          task_name: data.task_name ?? task.name,
+          name: data.task_name ?? task.name,
+          status: data.status ?? task.status,
+          created_at: data.created_at ?? task.created_at,
+          started_at: data.started_at ?? task.started_at,
+          finished_at: data.finished_at ?? task.finished_at,
+          duration: data.duration ?? task.duration,
+          result: data.result,
+          error: data.error ?? task.error,
+          traceback: data.traceback,
+          metadata: data.metadata ?? task.metadata
+        }
+        selectedTask.value = updated
+        const idx = tasks.value.findIndex((t) => t.id === task.id)
+        if (idx !== -1) {
+          const meta = updated.metadata || {}
+          tasks.value = [
+            ...tasks.value.slice(0, idx),
+            {
+              ...tasks.value[idx],
+              name: updated.task_name ?? updated.name ?? tasks.value[idx].name,
+              status: mapTaskStatus(updated.status),
+              finished_at: updated.finished_at,
+              duration:
+                updated.duration ??
+                calculateDuration(
+                  updated.started_at ?? updated.created_at,
+                  updated.finished_at
+                ),
+              result: updated.result,
+              error: updated.error,
+              metadata: updated.metadata,
+              platform: meta.config_platform,
+              config_key: meta.config_key
+            },
+            ...tasks.value.slice(idx + 1)
+          ]
+        }
+      }
+    } catch {
+      // Ignore poll errors
+    }
+  },
+  4000,
+  { immediate: false }
+)
+
+watch(
+  [
+    showPreviewModal,
+    () => selectedTask.value?.id,
+    () => selectedTask.value?.status
+  ],
   () => {
-    if (showPreviewModal.value && selectedTask.value?.id && isDetailTaskRunning(selectedTask.value)) {
+    if (
+      showPreviewModal.value &&
+      selectedTask.value?.id &&
+      isDetailTaskRunning(selectedTask.value)
+    ) {
       pollDetailExecution.resume()
     } else {
       pollDetailExecution.pause()
@@ -490,7 +562,8 @@ async function loadTasks(page = currentPage.value) {
       page,
       page_size: pageSize.value
     }
-    const searchTerm = searchQuery.value != null ? String(searchQuery.value).trim() : ''
+    const searchTerm =
+      searchQuery.value != null ? String(searchQuery.value).trim() : ''
     if (searchTerm) {
       params.search = searchTerm
     }
@@ -502,7 +575,8 @@ async function loadTasks(page = currentPage.value) {
     }
     const res = await dataCollectorApi.getExecutions(params)
     const data = extractData(res)
-    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    const list =
+      data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
     const serverTotal = data?.count ?? data?.pagination?.total
     const hasServerPagination = Number.isFinite(Number(serverTotal))
     const total = hasServerPagination ? Number(serverTotal) : list.length
@@ -519,7 +593,9 @@ async function loadTasks(page = currentPage.value) {
       status: mapTaskStatus(task.status),
       started_at: task.started_at || task.created_at,
       finished_at: task.finished_at,
-      duration: task.duration ?? calculateDuration(task.started_at || task.created_at, task.finished_at),
+      duration:
+        task.duration ??
+        calculateDuration(task.started_at || task.created_at, task.finished_at),
       task_id: task.task_id,
       result: task.result,
       error: task.error,
@@ -559,8 +635,11 @@ async function loadConfigs() {
   try {
     const res = await dataCollectorApi.getConfigs()
     const data = extractData(res)
-    const list = data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
-    configList.value = list.map((c) => ({ uuid: c.uuid, key: c.key || '' })).filter((c) => c.key)
+    const list =
+      data?.results ?? data?.list ?? (Array.isArray(data) ? data : [])
+    configList.value = list
+      .map((c) => ({ uuid: c.uuid, key: c.key || '' }))
+      .filter((c) => c.key)
   } catch {
     configList.value = []
   }

@@ -20,19 +20,27 @@
       <!-- Provider and Cost Info -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">{{ t('cloudBilling.alerts.provider') }}</span>
+          <span class="text-xs text-gray-500">{{
+            t('cloudBilling.alerts.provider')
+          }}</span>
           <span class="text-sm font-medium text-gray-900">
             {{ alert.provider_label || alert.provider_name || alert.provider }}
           </span>
         </div>
         <div class="space-y-1 text-xs text-gray-600">
           <div>
-            <span class="font-medium">{{ t('cloudBilling.alerts.currentCost') }}:</span>
+            <span class="font-medium"
+              >{{ t('cloudBilling.alerts.currentCost') }}:</span
+            >
             {{ formatCurrency(alert.current_cost, alert.currency) }}
           </div>
           <div>
-            <span class="font-medium">{{ t('cloudBilling.alerts.increase') }}:</span>
-            {{ formatCurrency(alert.increase_cost, alert.currency) }} ({{ alert.increase_percent }}%)
+            <span class="font-medium"
+              >{{ t('cloudBilling.alerts.increase') }}:</span
+            >
+            {{ formatCurrency(alert.increase_cost, alert.currency) }} ({{
+              alert.increase_percent
+            }}%)
           </div>
         </div>
         <div v-if="alert.alert_message" class="mt-2">
@@ -72,9 +80,9 @@ const formatDate = (dateString) => {
 const formatCurrency = (value, currency = 'CNY') => {
   if (!value && value !== 0) return '-'
   const currencySymbols = {
-    'CNY': '¥',
-    'USD': '$',
-    'EUR': '€'
+    CNY: '¥',
+    USD: '$',
+    EUR: '€'
   }
   const symbol = currencySymbols[currency] || currency
   return `${symbol}${Number(value).toFixed(2)}`
