@@ -2,6 +2,7 @@ export const cloudBillingOverviewSummary = {
   estimatedTotal: 482360.5,
   currentConsumed: 318245.2,
   dailyAverage: 10608.17,
+  collectedDays: 7,
   peakCost: 26890.35,
   peakDate: '2026-03-18',
   trend: [

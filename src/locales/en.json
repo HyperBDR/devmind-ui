@@ -911,6 +911,7 @@
       "overviewCostTrendHint": "Daily cost movement for the current month by currency",
       "overviewTrendRangeToday": "Today",
       "overviewTrendRangeWeek": "Week",
+      "overviewTrendRangeThirtyDays": "30 Days",
       "overviewTrendRangeMonth": "Month",
       "overviewTrendRangeYear": "Year",
       "overviewMixedCurrency": "Multi-currency view",
