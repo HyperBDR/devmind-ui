@@ -66,7 +66,7 @@
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="row in stats.by_platform" :key="row.platform">
-                      <td class="px-4 py-2 text-sm text-gray-900">{{ row.platform }}</td>
+                      <td class="px-4 py-2 text-sm text-gray-900">{{ getPlatformLabel(row.platform) }}</td>
                       <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ row.count }}</td>
                     </tr>
                   </tbody>
@@ -94,6 +94,14 @@ import { dataCollectorApi } from '@/api/dataCollector'
 const { t } = useI18n()
 const loading = ref(false)
 const stats = ref(null)
+
+function getPlatformLabel(platform) {
+  if (platform === 'feishu') return t('dataCollector.platforms.feishu')
+  if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'ai_pricehub') return t('dataCollector.platforms.ai_pricehub')
+  if (platform === 'jira') return t('dataCollector.platforms.jira')
+  return platform || '-'
+}
 
 function extractData(res) {
   return res?.data?.data ?? res?.data ?? res

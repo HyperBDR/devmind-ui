@@ -1422,7 +1422,8 @@
     "platforms": {
       "feishu": "飞书",
       "jira": "Jira",
-      "license": "授权管理平台"
+      "license": "授权管理平台",
+      "ai_pricehub": "大模型价格"
     },
     "records": {
       "pageTitle": "采集数据",
@@ -1637,6 +1638,24 @@
       "passwordPlaceholderEdit": "留空则不修改",
       "step2Desc": "选择需要同步的采集类型",
       "orderCollection": "订单采集"
+    },
+    "aiPriceHub": {
+      "primarySourceTitle": "大模型主配置",
+      "platformSlug": "平台标识",
+      "platformSlugDesc": "用于比价维度区分的唯一平台标识，例如 agione",
+      "vendorName": "平台名称",
+      "endpointUrl": "模型来源接口",
+      "region": "区域（可选）",
+      "currency": "币种",
+      "pointsPerCurrencyUnit": "积分汇率（每 1 币种单位对应积分）",
+      "parserLlmConfigUuid": "使用的大模型（LLM 配置 UUID）",
+      "parserLlmPlaceholder": "请选择大模型配置",
+      "parserLlmLoading": "正在加载大模型配置...",
+      "parserLlmEmpty": "暂无可用的大模型配置，请先在模型配置中启用至少一个全局 LLM。",
+      "parserLlmLoadError": "加载大模型配置失败",
+      "currentSelected": "当前已选",
+      "step2Desc": "选择需要同步的比价采集类型",
+      "syncCollection": "比价同步采集"
     }
   },
   "llm": {

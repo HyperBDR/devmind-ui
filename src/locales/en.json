@@ -1412,7 +1412,8 @@
     "platforms": {
       "feishu": "Lark",
       "jira": "Jira",
-      "license": "License"
+      "license": "License",
+      "ai_pricehub": "AI Pricing"
     },
     "records": {
       "pageTitle": "Collection data",
@@ -1627,6 +1628,24 @@
       "passwordPlaceholderEdit": "Leave blank to keep current",
       "step2Desc": "Select collection type to sync",
       "orderCollection": "Order collection"
+    },
+    "aiPriceHub": {
+      "primarySourceTitle": "Primary model pricing source",
+      "platformSlug": "Platform slug",
+      "platformSlugDesc": "Unique platform key used for pricing comparison, e.g. agione",
+      "vendorName": "Platform name",
+      "endpointUrl": "Model source endpoint",
+      "region": "Region (optional)",
+      "currency": "Currency",
+      "pointsPerCurrencyUnit": "Points rate (points per 1 currency unit)",
+      "parserLlmConfigUuid": "LLM config in use (UUID)",
+      "parserLlmPlaceholder": "Select an LLM config",
+      "parserLlmLoading": "Loading LLM configs...",
+      "parserLlmEmpty": "No active global LLM config found. Enable one in model config first.",
+      "parserLlmLoadError": "Failed to load LLM configs",
+      "currentSelected": "currently selected",
+      "step2Desc": "Select pricing collection targets to sync",
+      "syncCollection": "Pricing sync collection"
     }
   },
   "llm": {

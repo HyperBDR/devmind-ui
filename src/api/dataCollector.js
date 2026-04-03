@@ -67,6 +67,11 @@ export const dataCollectorApi = {
     return response
   },
 
+  async getLlmOptions() {
+    const response = await apiClient.get(`${BASE}/configs/llm-options/`)
+    return response
+  },
+
   async triggerValidate(uuid, payload = {}) {
     const response = await apiClient.post(`${BASE}/configs/${uuid}/validate/`, payload)
     return response

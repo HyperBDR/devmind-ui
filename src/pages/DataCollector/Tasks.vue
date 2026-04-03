@@ -44,6 +44,7 @@
                   <option value="jira">{{ t('dataCollector.platforms.jira') }}</option>
                   <option value="feishu">{{ t('dataCollector.platforms.feishu') }}</option>
                   <option value="license">{{ t('dataCollector.platforms.license') }}</option>
+                  <option value="ai_pricehub">{{ t('dataCollector.platforms.ai_pricehub') }}</option>
                 </select>
               </span>
 
@@ -279,6 +280,7 @@ function getPlatformLabel(platform) {
   if (!platform) return ''
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'ai_pricehub') return t('dataCollector.platforms.ai_pricehub')
   return platformLabels[platform] || platform
 }
 

@@ -110,7 +110,7 @@
                 <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end gap-2">
                     <button
-                      v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license'"
+                      v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license' || c.platform === 'ai_pricehub'"
                       @click="openFullEdit(c)"
                       class="text-amber-600 hover:text-amber-900 transition-colors"
                       :title="t('dataCollector.settings.editConfig')"
@@ -181,7 +181,7 @@
               {{ t('dataCollector.settings.scheduleCron') }}: {{ c.schedule_cron || '0 */2 * * *' }}
             </div>
             <div class="flex flex-wrap gap-2">
-              <BaseButton v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license'" variant="outline" size="sm" @click="openFullEdit(c)">{{ t('dataCollector.settings.editConfig') }}</BaseButton>
+              <BaseButton v-if="c.platform === 'jira' || c.platform === 'feishu' || c.platform === 'license' || c.platform === 'ai_pricehub'" variant="outline" size="sm" @click="openFullEdit(c)">{{ t('dataCollector.settings.editConfig') }}</BaseButton>
               <BaseButton variant="outline" size="sm" @click="openSectionEdit(c, 'schedule')">{{ t('dataCollector.settings.editScheduleAndRetention') }}</BaseButton>
               <BaseButton variant="outline" size="sm" @click="openCollectModal(c)">{{ t('dataCollector.settings.triggerCollect') }}</BaseButton>
               <BaseButton variant="outline" size="sm" class="text-red-600" @click="deleteConfig(c)">{{ t('common.delete') }}</BaseButton>
@@ -345,6 +345,7 @@ const platformLabels = {
 function getPlatformLabel(platform) {
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'ai_pricehub') return t('dataCollector.platforms.ai_pricehub')
   return platformLabels[platform] || platform
 }
 
