@@ -1276,7 +1276,7 @@ const props = defineProps({
     type: Object,
     default: null
   },
-  providerOptions: {
+  tagOptions: {
     type: Array,
     default: () => []
   },
@@ -1381,13 +1381,11 @@ const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
 const availableTags = computed(() => {
   const tagSet = new Set()
-  ;(props.providerOptions || []).forEach((provider) => {
-    ;(provider?.tags || []).forEach((tag) => {
-      const normalized = String(tag || '').trim()
-      if (normalized) {
-        tagSet.add(normalized)
-      }
-    })
+  ;(props.tagOptions || []).forEach((tag) => {
+    const normalized = String(tag || '').trim()
+    if (normalized) {
+      tagSet.add(normalized)
+    }
   })
   formData.tags.forEach((tag) => {
     const normalized = String(tag || '').trim()

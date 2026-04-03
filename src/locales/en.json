@@ -914,6 +914,7 @@
       "overviewCostTrendHint": "Daily cost movement for the current month by currency",
       "overviewTrendRangeToday": "Today",
       "overviewTrendRangeWeek": "Week",
+      "overviewTrendRangeThirtyDays": "30 Days",
       "overviewTrendRangeMonth": "Month",
       "overviewTrendRangeYear": "Year",
       "overviewMixedCurrency": "Multi-currency view",
@@ -1067,6 +1068,14 @@
       "name": "Name",
       "type": "Type",
       "displayName": "Display Name",
+      "authIdentifier": "AK / Username",
+      "authIdentifierEmpty": "Not configured",
+      "authIdentifierKinds": {
+        "accessKeyId": "AK",
+        "username": "Username",
+        "clientId": "Client ID",
+        "identifier": "Identifier"
+      },
       "status": "Status",
       "createdAt": "Created At",
       "createProvider": "Add Provider",

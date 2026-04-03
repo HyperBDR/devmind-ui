@@ -164,7 +164,7 @@
                             {{ t('cloudBilling.billing.totalCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                            {{ formatStatsSummaryAmount(statistics.total_cost, 'total_cost') }}
                           </div>
                           <div
                             v-if="statsSummaryHasMixedCurrencies"
@@ -185,7 +185,7 @@
                             {{ t('cloudBilling.billing.averageCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
-                            {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                            {{ formatStatsSummaryAmount(statistics.average_cost, 'average_cost') }}
                           </div>
                           <div
                             v-if="statsSummaryHasMixedCurrencies"
@@ -242,6 +242,7 @@
                     <div class="h-full">
                       <BillingPieChart
                         :statistics="statistics"
+                        :exchange-rate="statistics?.exchange_rate"
                       />
                     </div>
                   </div>
@@ -253,7 +254,7 @@
                         {{ t('cloudBilling.billing.totalCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                        {{ formatStatsSummaryAmount(statistics.total_cost, 'total_cost') }}
                       </div>
                       <div
                         v-if="statsSummaryHasMixedCurrencies"
@@ -267,7 +268,7 @@
                         {{ t('cloudBilling.billing.averageCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                        {{ formatStatsSummaryAmount(statistics.average_cost, 'average_cost') }}
                       </div>
                       <div
                         v-if="statsSummaryHasMixedCurrencies"
@@ -536,10 +537,14 @@ import BillingPieChart from '@/components/cloud-billing/BillingPieChart.vue'
 import BillingDailyCostChart from '@/components/cloud-billing/BillingDailyCostChart.vue'
 import { getLocalizedBillingProviderName, getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
-const getProviderSelectLabel = (provider) => getProviderDisplayName(provider)
+const getProviderSelectLabel = (provider) => {
+  const name = getProviderDisplayName(provider)
+  const notes = String(provider?.notes || '').trim()
+  return notes ? `${name} - ${notes}` : name
+}
 const getBillingProviderName = (billing) => getLocalizedBillingProviderName(billing, t)
 
 // Count configured active providers instead of billing rows in the current period.
@@ -621,6 +626,37 @@ const statsSummaryCurrencies = computed(() => {
   )
 
   return currencies
+})
+
+const statsSummaryRows = computed(() => {
+  const byProvider = statistics.value?.by_provider
+  if (!byProvider) {
+    return []
+  }
+  return Object.values(byProvider).filter((providerData) => {
+    if (!statsProviderId.value) {
+      return true
+    }
+    return providerData.provider_id === parseInt(statsProviderId.value)
+  })
+})
+
+const statsSummaryByCurrency = computed(() => {
+  const grouped = {}
+  statsSummaryRows.value.forEach((row) => {
+    const currency = String(row.currency || 'CNY').trim() || 'CNY'
+    if (!grouped[currency]) {
+      grouped[currency] = {
+        total_cost: 0,
+        total_balance: 0,
+        count: 0
+      }
+    }
+    grouped[currency].total_cost += Number(row.total_cost || 0)
+    grouped[currency].total_balance += Number(row.balance || 0)
+    grouped[currency].count += 1
+  })
+  return grouped
 })
 
 const statsSummaryHasMixedCurrencies = computed(() => statsSummaryCurrencies.value.length > 1)
@@ -797,20 +833,62 @@ const loadStatistics = async () => {
 }
 
 const formatBalanceSummary = (value, currency = 'CNY') => {
+  if (selectedProviderBalanceUnsupported.value) {
+    return formatCost(0, currency || 'CNY')
+  }
+  if (statsSummaryHasMixedCurrencies.value) {
+    const balancesByCurrency = {}
+    Object.entries(statsSummaryByCurrency.value).forEach(([code, item]) => {
+      balancesByCurrency[code] = Number(item.total_balance || 0)
+    })
+    return formatMultiCurrencySummary(balancesByCurrency)
+  }
   if (!currency) {
     return '--'
-  }
-  if (selectedProviderBalanceUnsupported.value) {
-    return formatCost(0, currency)
   }
   return formatCost(value ?? 0, currency)
 }
 
-const formatStatsSummaryAmount = (value) => {
+const formatStatsSummaryAmount = (value, metric = 'total_cost') => {
+  if (statsSummaryHasMixedCurrencies.value) {
+    const valuesByCurrency = {}
+    Object.entries(statsSummaryByCurrency.value).forEach(([code, item]) => {
+      if (metric === 'average_cost') {
+        valuesByCurrency[code] = item.count > 0
+          ? Number(item.total_cost || 0) / item.count
+          : 0
+      } else {
+        valuesByCurrency[code] = Number(item.total_cost || 0)
+      }
+    })
+    return formatMultiCurrencySummary(valuesByCurrency)
+  }
   if (!statsSummaryCurrency.value) {
     return '--'
   }
   return formatCost(value ?? 0, statsSummaryCurrency.value)
+}
+
+const formatMultiCurrencySummary = (valueByCurrency) => {
+  const preferredOrder = ['CNY', 'USD']
+  const entries = Object.entries(valueByCurrency || {})
+    .filter(([, amount]) => Number.isFinite(Number(amount)))
+    .sort(([a], [b]) => {
+      const ai = preferredOrder.indexOf(a)
+      const bi = preferredOrder.indexOf(b)
+      if (ai === -1 && bi === -1) return a.localeCompare(b)
+      if (ai === -1) return 1
+      if (bi === -1) return -1
+      return ai - bi
+    })
+
+  if (entries.length === 0) {
+    return '--'
+  }
+
+  return entries
+    .map(([currency, amount]) => formatCost(amount, currency))
+    .join(' / ')
 }
 
 const formatBillingBalance = (billing) => {

@@ -78,6 +78,11 @@
                   {{ t('cloudBilling.settings.providers.providerType') }}
                 </th>
                 <th
+                  class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200 min-w-[180px]"
+                >
+                  {{ t('cloudBilling.providers.authIdentifier') }}
+                </th>
+                <th
                   class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
                 >
                   {{ t('cloudBilling.providers.status') }}
@@ -133,6 +138,22 @@
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                   {{ getProviderTypeText(provider.provider_type) }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-500">
+                  <div
+                    v-if="provider.auth_identifier"
+                    class="min-w-[180px]"
+                  >
+                    <div class="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                      {{ getProviderAuthLabel(provider) }}
+                    </div>
+                    <div class="mt-1 break-all font-mono text-xs text-gray-700">
+                      {{ provider.auth_identifier }}
+                    </div>
+                  </div>
+                  <span v-else class="text-xs text-gray-400">
+                    {{ t('cloudBilling.providers.authIdentifierEmpty') }}
+                  </span>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <label
@@ -332,6 +353,25 @@
                 >
                 {{ getProviderTypeText(provider.provider_type) }}
               </div>
+              <div>
+                <span class="font-medium"
+                  >{{ t('cloudBilling.providers.authIdentifier') }}:</span
+                >
+                <div
+                  v-if="provider.auth_identifier"
+                  class="mt-1"
+                >
+                  <div class="text-[11px] uppercase tracking-wide text-gray-400">
+                    {{ getProviderAuthLabel(provider) }}
+                  </div>
+                  <div class="break-all font-mono text-xs text-gray-700">
+                    {{ provider.auth_identifier }}
+                  </div>
+                </div>
+                <span v-else class="text-xs text-gray-400">
+                  {{ t('cloudBilling.providers.authIdentifierEmpty') }}
+                </span>
+              </div>
               <div v-if="getAlertRule(provider.id)">
                 <span class="font-medium"
                   >{{ t('cloudBilling.settings.alertRule.title') }}:</span
@@ -453,7 +493,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
-      :provider-options="providers"
+      :tag-options="tagOptions"
       :show-alert-rule="!editingProvider"
       @close="closeModal"
       @saved="handleSaved"
@@ -464,7 +504,7 @@
       v-if="editingNotesProvider"
       :show="!!editingNotesProvider"
       :provider="editingNotesProvider"
-      :provider-options="providers"
+      :tag-options="tagOptions"
       @close="editingNotesProvider = null"
       @saved="handleNotesSaved"
     />
@@ -495,6 +535,7 @@ import ProviderNotesModal from '@/components/cloud-billing/ProviderNotesModal.vu
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
 import {
   getLocalizedProviderDisplayName,
+  getProviderAuthIdentifierLabel,
   getProviderTypeLabel
 } from '@/utils/providerDisplay'
 
@@ -503,6 +544,7 @@ const { showSuccess, showError } = useToast()
 
 const loading = ref(true)
 const providers = ref([])
+const tagOptions = ref([])
 const alertRules = ref([])
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
@@ -527,6 +569,8 @@ const paginationShowing = computed(() => ({
 const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
 const getProviderDisplayName = (provider) =>
   getLocalizedProviderDisplayName(provider, t)
+const getProviderAuthLabel = (provider) =>
+  getProviderAuthIdentifierLabel(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -626,6 +670,35 @@ const extractListData = (data) => {
   }
 }
 
+const normalizeTagOptionList = (items) => {
+  const seen = new Set()
+  const normalized = []
+
+  ;(items || []).forEach((item) => {
+    const value = String(item || '').trim()
+    if (!value || seen.has(value)) {
+      return
+    }
+    seen.add(value)
+    normalized.push(value)
+  })
+
+  return normalized.sort((a, b) => a.localeCompare(b))
+}
+
+const loadTagOptions = async () => {
+  try {
+    const response = await cloudBillingApi.getProviderTags()
+    const data = extractResponseData(response)
+    tagOptions.value = normalizeTagOptionList(data?.tags || [])
+  } catch (error) {
+    console.error('Failed to load provider tags:', error)
+    tagOptions.value = normalizeTagOptionList(
+      providers.value.flatMap((provider) => provider?.tags || [])
+    )
+  }
+}
+
 const loadAlertRulesForProviders = async (providerList) => {
   if (!providerList.length) {
     alertRules.value = []
@@ -670,10 +743,16 @@ const loadProviders = async (page = currentPage.value) => {
       providers.value = list.slice(start, start + pageSize.value)
     }
 
-    await loadAlertRulesForProviders(providers.value)
+    await Promise.all([
+      loadAlertRulesForProviders(providers.value),
+      currentPage.value === 1 && tagOptions.value.length === 0
+        ? loadTagOptions()
+        : Promise.resolve()
+    ])
   } catch (error) {
     console.error('Failed to load providers:', error)
     providers.value = []
+    tagOptions.value = []
     alertRules.value = []
     totalCount.value = 0
   } finally {
@@ -725,6 +804,7 @@ const closeModal = () => {
 
 const handleNotesSaved = () => {
   editingNotesProvider.value = null
+  loadTagOptions()
   loadProviders(currentPage.value)
 }
 
@@ -735,6 +815,7 @@ const handleAlertRuleSaved = () => {
 
 const handleSaved = () => {
   closeModal()
+  loadTagOptions()
   loadProviders(currentPage.value)
 }
 
@@ -780,6 +861,7 @@ const deleteProvider = async (id) => {
   try {
     await cloudBillingApi.deleteProvider(id)
     showSuccess(t('cloudBilling.providers.deleteSuccess'))
+    loadTagOptions()
     const targetPage =
       providers.value.length === 1 && currentPage.value > 1
         ? currentPage.value - 1

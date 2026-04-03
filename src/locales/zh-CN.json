@@ -924,6 +924,7 @@
       "overviewCostTrendHint": "按币种展示本月逐日成本走势",
       "overviewTrendRangeToday": "今日",
       "overviewTrendRangeWeek": "近7天",
+      "overviewTrendRangeThirtyDays": "近30天",
       "overviewTrendRangeMonth": "本月",
       "overviewTrendRangeYear": "全年",
       "overviewMixedCurrency": "多币种视角",
@@ -1077,6 +1078,14 @@
       "name": "名称",
       "type": "类型",
       "displayName": "显示名称",
+      "authIdentifier": "AK / 用户名",
+      "authIdentifierEmpty": "未配置",
+      "authIdentifierKinds": {
+        "accessKeyId": "AK",
+        "username": "用户名",
+        "clientId": "Client ID",
+        "identifier": "标识"
+      },
       "status": "状态",
       "createdAt": "创建时间",
       "createProvider": "添加云平台",

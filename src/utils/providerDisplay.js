@@ -63,3 +63,16 @@ export function getLocalizedBillingProviderName(billing, t) {
     t
   )
 }
+
+export function getProviderAuthIdentifierLabel(provider, t) {
+  const kind = String(provider?.auth_identifier_kind || '').trim()
+  const labelKeys = {
+    access_key_id: 'cloudBilling.providers.authIdentifierKinds.accessKeyId',
+    username: 'cloudBilling.providers.authIdentifierKinds.username',
+    client_id: 'cloudBilling.providers.authIdentifierKinds.clientId',
+    identifier: 'cloudBilling.providers.authIdentifierKinds.identifier',
+  }
+
+  const key = labelKeys[kind] || labelKeys.identifier
+  return t(key)
+}
