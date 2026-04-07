@@ -53,16 +53,6 @@ export const adminRoutes = [
     meta: { requiresAuth: true, requiredFeature: 'admin_console' }
   },
   {
-    path: '/management/model-pricing',
-    redirect: '/management/model-pricing/config'
-  },
-  {
-    path: '/management/model-pricing/config',
-    name: 'ModelPricingConfig',
-    component: () => import('@/admin/pages/ModelPricing/Config.vue'),
-    meta: { requiresAuth: true, requiredFeature: 'admin_console' }
-  },
-  {
     path: '/management/task-management',
     redirect: '/management/task-management/list'
   },

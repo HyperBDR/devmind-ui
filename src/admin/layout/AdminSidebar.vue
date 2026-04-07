@@ -185,50 +185,6 @@
 
         <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
           <button
-            @click="toggleModelPricingMenu"
-            class="admin-nav-item admin-nav-item-parent w-full"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="flex-1 text-left">{{ t('modelPricing.menuTitle') }}</span>
-            <svg
-              class="w-4 h-4 transition-transform"
-              :class="modelPricingMenuOpen ? 'rotate-90' : ''"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          <Transition
-            enter-active-class="transition-all duration-200 ease-out"
-            enter-from-class="opacity-0 max-h-0"
-            enter-to-class="opacity-100 max-h-96"
-            leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="opacity-100 max-h-96"
-            leave-to-class="opacity-0 max-h-0"
-          >
-            <div v-if="modelPricingMenuOpen" class="submenu">
-              <router-link
-                to="/management/model-pricing/config"
-                class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/model-pricing/config') ? 'admin-nav-item-active' : ''"
-                @click="isMobile && $emit('close')"
-                @mouseenter="preloadRoute('/management/model-pricing/config')"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                </svg>
-                <span>{{ t('modelPricing.config.title') }}</span>
-              </router-link>
-            </div>
-          </Transition>
-        </div>
-
-        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
-          <button
             @click="toggleTaskManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
           >
@@ -401,7 +357,6 @@ const userStore = useUserStore()
 
 const userManagementMenuOpen = ref(true)
 const llmMenuOpen = ref(true)
-const modelPricingMenuOpen = ref(true)
 const taskManagementMenuOpen = ref(true)
 const notificationManagementMenuOpen = ref(true)
 
@@ -423,10 +378,6 @@ const toggleLLMMenu = () => {
   llmMenuOpen.value = !llmMenuOpen.value
 }
 
-const toggleModelPricingMenu = () => {
-  modelPricingMenuOpen.value = !modelPricingMenuOpen.value
-}
-
 const toggleTaskManagementMenu = () => {
   taskManagementMenuOpen.value = !taskManagementMenuOpen.value
 }
@@ -444,7 +395,6 @@ watch(
       newPath.startsWith('/management/roles')
     ) userManagementMenuOpen.value = true
     if (newPath.startsWith('/management/llm')) llmMenuOpen.value = true
-    if (newPath.startsWith('/management/model-pricing')) modelPricingMenuOpen.value = true
     if (newPath.startsWith('/management/task-management')) taskManagementMenuOpen.value = true
     if (newPath.startsWith('/management/notifier')) notificationManagementMenuOpen.value = true
   },

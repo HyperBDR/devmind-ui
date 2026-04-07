@@ -1581,20 +1581,22 @@ async function handleSubmit() {
   }
   saving.value = true
   try {
+    const keyTrimmed = (formData.key || '').trim()
+    if (!keyTrimmed) {
+      showError(t('dataCollector.settings.keyRequired'))
+      return
+    }
     if (isFullEditMode.value) {
       await dataCollectorApi.patchConfig(props.config.uuid, {
+        key: keyTrimmed,
         value: buildFullEditValueForPatch(),
+        is_enabled: formData.is_enabled,
         version: props.config.version
       })
       showSuccess(t('dataCollector.settings.updateSuccess'))
       emit('section-saved', null)
       emit('close')
     } else {
-      const keyTrimmed = (formData.key || '').trim()
-      if (!keyTrimmed) {
-        showError(t('dataCollector.settings.keyRequired'))
-        return
-      }
       const value = buildValue()
       if (props.config) {
         await dataCollectorApi.patchConfig(props.config.uuid, {
