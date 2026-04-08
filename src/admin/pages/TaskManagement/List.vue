@@ -25,6 +25,7 @@
               >
                 <option value="">{{ t('taskManagement.list.taskTypeAll') }}</option>
                 <option value="cloud_billing">{{ t('taskManagement.list.taskTypeCloudBilling') }}</option>
+                <option value="ai_pricehub">{{ t('taskManagement.list.taskTypeAiPriceHub') }}</option>
                 <option value="agentcore_notifier">{{ t('taskManagement.list.taskTypeNotifier') }}</option>
                 <option value="agentcore_task">{{ t('taskManagement.list.taskTypeTask') }}</option>
               </select>

@@ -15,6 +15,11 @@ const routes = [
     meta: { requiresGuest: true }
   },
   {
+    path: '/reset-password/:uid/:token/',
+    name: 'ResetPassword',
+    component: () => import('@/pages/ResetPassword.vue')
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/pages/Dashboard.vue'),
@@ -82,6 +87,16 @@ const routes = [
     name: 'CloudBillingBilling',
     component: () => import('@/pages/CloudBilling/Billing.vue'),
     meta: { requiresAuth: true, requiredFeature: 'operations_console' }
+  },
+  {
+    path: '/cloud-billing/ai-pricing',
+    redirect: '/ai-pricehub'
+  },
+  {
+    path: '/ai-pricehub',
+    name: 'AIPriceHub',
+    component: () => import('@/pages/AIPriceHub.vue'),
+    meta: { requiresAuth: true, requiredFeature: 'ai_pricehub' }
   },
   {
     path: '/cloud-billing/tasks',
