@@ -3,6 +3,11 @@ import { useUserStore } from '@/store/user'
 import { adminRoutes } from '@/admin/routes'
 import { getLandingPath, hasFeature } from '@/utils/platformAccess'
 
+const hyperbdrMonitorRouteMeta = {
+  requiresAuth: true,
+  requiredFeature: 'hyperbdr_dashboard'
+}
+
 const routes = [
   {
     path: '/',
@@ -159,37 +164,37 @@ const routes = [
     path: '/hyperbdr-monitor/dashboard',
     name: 'HyperBDRMonitorDashboard',
     component: () => import('@/pages/HyperBDRMonitor/Dashboard.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/tenants',
     name: 'HyperBDRMonitorTenants',
     component: () => import('@/pages/HyperBDRMonitor/Tenants.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/licenses',
     name: 'HyperBDRMonitorLicenses',
     component: () => import('@/pages/HyperBDRMonitor/Licenses.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/hosts',
     name: 'HyperBDRMonitorHosts',
     component: () => import('@/pages/HyperBDRMonitor/Hosts.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/tasks',
     name: 'HyperBDRMonitorTasks',
     component: () => import('@/pages/HyperBDRMonitor/Tasks.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/tasks/:id',
     name: 'HyperBDRMonitorTaskDetail',
     component: () => import('@/pages/HyperBDRMonitor/TaskDetail.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/settings',
@@ -199,21 +204,21 @@ const routes = [
     path: '/hyperbdr-monitor/settings/data-sources',
     name: 'HyperBDRMonitorSettingsDataSources',
     component: () => import('@/pages/HyperBDRMonitor/Settings/DataSources.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/settings/data-sources/create',
     name: 'HyperBDRMonitorSettingsDataSourceCreate',
     component: () =>
       import('@/pages/HyperBDRMonitor/Settings/DataSourceForm.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/settings/data-sources/edit/:id',
     name: 'HyperBDRMonitorSettingsDataSourceEdit',
     component: () =>
       import('@/pages/HyperBDRMonitor/Settings/DataSourceForm.vue'),
-    meta: { requiresAuth: true }
+    meta: hyperbdrMonitorRouteMeta
   },
   {
     path: '/hyperbdr-monitor/settings/system',

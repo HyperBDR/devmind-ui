@@ -199,6 +199,7 @@
             >
           </router-link>
           <router-link
+            v-if="userStore.userHasFeature('hyperbdr_dashboard')"
             :to="{ name: 'HyperBDRMonitorDashboard' }"
             class="flex flex-col bg-white border border-gray-200 rounded-xl p-6 border-l-4 border-l-emerald-500 hover:border-gray-300 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
