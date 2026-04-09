@@ -15,7 +15,9 @@
 
       <!-- Toolbar -->
       <div class="bg-white rounded border border-gray-200 shadow-sm p-4 mb-4">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
           <!-- Left spacer for alignment -->
           <div class="flex items-center gap-2 flex-wrap"></div>
 
@@ -28,8 +30,18 @@
               @update:modelValue="handleSearch"
             >
               <template #icon>
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </template>
             </BaseInput>
@@ -41,8 +53,18 @@
               @click="showFilterDrawer = true"
               class="relative flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
               </svg>
               {{ t('common.filter') }}
               <span
@@ -56,18 +78,34 @@
         </div>
 
         <!-- Active Filter Tags -->
-        <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-200">
+        <div
+          v-if="activeFilterCount > 0"
+          class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-200"
+        >
           <span
             v-if="filters.trending_period"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
           >
-            <span>{{ t('githubTrending.filter.period') }}: {{ getPeriodLabel(filters.trending_period) }}</span>
+            <span
+              >{{ t('githubTrending.filter.period') }}:
+              {{ getPeriodLabel(filters.trending_period) }}</span
+            >
             <button
               @click="removePeriodFilter"
               class="text-gray-500 hover:text-gray-700 transition-colors"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </span>
@@ -75,13 +113,26 @@
             v-if="filters.trending_lang"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
           >
-            <span>{{ t('githubTrending.filter.language') }}: {{ getLanguageLabel(filters.trending_lang) }}</span>
+            <span
+              >{{ t('githubTrending.filter.language') }}:
+              {{ getLanguageLabel(filters.trending_lang) }}</span
+            >
             <button
               @click="removeLanguageFilter"
               class="text-gray-500 hover:text-gray-700 transition-colors"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </span>
@@ -89,7 +140,9 @@
       </div>
 
       <!-- Desktop Calendar View -->
-      <div class="hidden md:block bg-white rounded border border-gray-200 shadow-sm p-4 mb-4">
+      <div
+        class="hidden md:block bg-white rounded border border-gray-200 shadow-sm p-4 mb-4"
+      >
         <GitHubTrendingCalendar
           :records="allRecords"
           :selected-date="selectedCalendarDate"
@@ -99,10 +152,15 @@
       </div>
 
       <!-- Mobile Card View -->
-      <div class="md:hidden bg-white rounded border border-gray-200 shadow-sm p-4">
+      <div
+        class="md:hidden bg-white rounded border border-gray-200 shadow-sm p-4"
+      >
         <BaseLoading v-if="loading && (!records || records.length === 0)" />
 
-        <div v-else-if="!records || records.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+        <div
+          v-else-if="!records || records.length === 0"
+          class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+        >
           <svg
             class="mx-auto h-12 w-12 text-gray-400 mb-4"
             fill="none"
@@ -116,11 +174,16 @@
               d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
             />
           </svg>
-          <p class="text-sm font-medium text-gray-600">{{ t('githubTrending.noRecords') }}</p>
+          <p class="text-sm font-medium text-gray-600">
+            {{ t('githubTrending.noRecords') }}
+          </p>
         </div>
 
         <div v-else class="space-y-4">
-          <template v-for="dateGroup in groupedRecordsByDate" :key="dateGroup.date">
+          <template
+            v-for="dateGroup in groupedRecordsByDate"
+            :key="dateGroup.date"
+          >
             <!-- Date Header -->
             <div class="sticky top-0 z-10 bg-white py-2 -mt-1 pt-3">
               <h2 class="text-sm font-semibold text-gray-900">
@@ -130,11 +193,16 @@
 
             <!-- Period Groups -->
             <div class="space-y-3">
-              <template v-for="periodGroup in dateGroup.periods" :key="periodGroup.period">
+              <template
+                v-for="periodGroup in dateGroup.periods"
+                :key="periodGroup.period"
+              >
                 <!-- Period Label and Records -->
                 <div class="space-y-2">
                   <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-800 border border-primary-200">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-800 border border-primary-200"
+                    >
                       {{ getPeriodLabel(periodGroup.period) }}
                     </span>
                   </div>
@@ -160,14 +228,24 @@
         />
 
         <!-- Loading More Indicator (Mobile Only) -->
-        <div v-if="isMobile && loadingMore" class="mt-4 flex items-center justify-center py-4">
+        <div
+          v-if="isMobile && loadingMore"
+          class="mt-4 flex items-center justify-center py-4"
+        >
           <BaseLoading inline size="sm" />
-          <span class="ml-2 text-sm text-gray-500">{{ t('common.loadingMore') }}</span>
+          <span class="ml-2 text-sm text-gray-500">{{
+            t('common.loadingMore')
+          }}</span>
         </div>
 
         <!-- No More Data (Mobile Only) -->
-        <div v-if="isMobile && !hasMore && records && records.length > 0" class="mt-4 text-center py-4">
-          <span class="text-sm text-gray-500">{{ t('common.noMoreData') }}</span>
+        <div
+          v-if="isMobile && !hasMore && records && records.length > 0"
+          class="mt-4 text-center py-4"
+        >
+          <span class="text-sm text-gray-500">{{
+            t('common.noMoreData')
+          }}</span>
         </div>
       </div>
 
@@ -331,14 +409,18 @@ const loadRecords = async (append = false) => {
       }
 
       try {
-        const calendarResponse = await githubApi.getTrendingRecords(calendarParams)
+        const calendarResponse =
+          await githubApi.getTrendingRecords(calendarParams)
         const calendarData = extractResponseData(calendarResponse)
 
         // Helper function to parse date string without timezone conversion
         const parseDateString = (dateStr) => {
           if (!dateStr) return null
           // If already in YYYY-MM-DD format, parse directly
-          if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          if (
+            typeof dateStr === 'string' &&
+            /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
+          ) {
             const [year, month, day] = dateStr.split('-').map(Number)
             return new Date(year, month - 1, day)
           }
@@ -347,7 +429,7 @@ const loadRecords = async (append = false) => {
         }
 
         if (calendarData && calendarData.results) {
-          allRecords.value = calendarData.results.filter(record => {
+          allRecords.value = calendarData.results.filter((record) => {
             if (!record.trending_date) return false
             const recordDate = parseDateString(record.trending_date)
             if (!recordDate) return false
@@ -355,13 +437,15 @@ const loadRecords = async (append = false) => {
             return recordDate >= firstDay && recordDate <= lastDay
           })
         } else {
-          allRecords.value = Array.isArray(calendarData) ? calendarData.filter(record => {
-            if (!record.trending_date) return false
-            const recordDate = parseDateString(record.trending_date)
-            if (!recordDate) return false
-            recordDate.setHours(0, 0, 0, 0)
-            return recordDate >= firstDay && recordDate <= lastDay
-          }) : []
+          allRecords.value = Array.isArray(calendarData)
+            ? calendarData.filter((record) => {
+                if (!record.trending_date) return false
+                const recordDate = parseDateString(record.trending_date)
+                if (!recordDate) return false
+                recordDate.setHours(0, 0, 0, 0)
+                return recordDate >= firstDay && recordDate <= lastDay
+              })
+            : []
         }
       } catch (calendarError) {
         console.error('Failed to load calendar data:', calendarError)
@@ -470,7 +554,12 @@ const handlePageChange = (page) => {
 }
 
 const handleLoadMore = async () => {
-  if (currentPage.value >= totalPages.value || loadingMore.value || loading.value) return
+  if (
+    currentPage.value >= totalPages.value ||
+    loadingMore.value ||
+    loading.value
+  )
+    return
   await loadRecords(true)
 }
 
@@ -519,7 +608,13 @@ const setupIntersectionObserver = () => {
       (entries) => {
         if (!entries || entries.length === 0) return
         const entry = entries[0]
-        if (entry && entry.isIntersecting && hasMore.value && !loadingMore.value && !loading.value) {
+        if (
+          entry &&
+          entry.isIntersecting &&
+          hasMore.value &&
+          !loadingMore.value &&
+          !loading.value
+        ) {
           handleLoadMore()
         }
       },
@@ -616,7 +711,7 @@ const groupedRecordsByDate = computed(() => {
 
   const dateMap = new Map()
 
-  records.value.forEach(record => {
+  records.value.forEach((record) => {
     if (!record.trending_date) return
 
     const dateStr = record.trending_date
@@ -640,19 +735,21 @@ const groupedRecordsByDate = computed(() => {
     dateGroup.periods.get(period).records.push(record)
   })
 
-  const periodOrder = { 'today': 1, 'weekly': 2, 'monthly': 3 }
+  const periodOrder = { today: 1, weekly: 2, monthly: 3 }
 
   return Array.from(dateMap.values())
-    .map(dateGroup => {
+    .map((dateGroup) => {
       const periods = Array.from(dateGroup.periods.values())
         .sort((a, b) => {
           const orderA = periodOrder[a.period] || 99
           const orderB = periodOrder[b.period] || 99
           return orderA - orderB
         })
-        .map(periodGroup => ({
+        .map((periodGroup) => ({
           ...periodGroup,
-          records: periodGroup.records.sort((a, b) => (a.trending_rank || 0) - (b.trending_rank || 0))
+          records: periodGroup.records.sort(
+            (a, b) => (a.trending_rank || 0) - (b.trending_rank || 0)
+          )
         }))
 
       return {
@@ -669,14 +766,32 @@ const groupedRecordsByDate = computed(() => {
 })
 
 watch(
-  [() => records.value?.length || 0, hasMore, isMobile, () => loading.value, () => loadingMore.value],
+  [
+    () => records.value?.length || 0,
+    hasMore,
+    isMobile,
+    () => loading.value,
+    () => loadingMore.value
+  ],
   () => {
     try {
-      if (isMobile.value && hasMore.value && !loading.value && !loadingMore.value && !observer) {
+      if (
+        isMobile.value &&
+        hasMore.value &&
+        !loading.value &&
+        !loadingMore.value &&
+        !observer
+      ) {
         nextTick(() => {
           setupIntersectionObserver()
         })
-      } else if (observer && (!hasMore.value || loading.value || loadingMore.value || !isMobile.value)) {
+      } else if (
+        observer &&
+        (!hasMore.value ||
+          loading.value ||
+          loadingMore.value ||
+          !isMobile.value)
+      ) {
         try {
           observer.disconnect()
         } catch (e) {

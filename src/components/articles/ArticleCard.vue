@@ -35,17 +35,35 @@
 
           <!-- Menu Button and Dropdown -->
           <div
-            :ref="el => { if (el) menuRef = el }"
+            :ref="
+              (el) => {
+                if (el) menuRef = el
+              }
+            "
             class="relative flex-shrink-0"
           >
             <button
-              :ref="el => { if (el) buttonRef = el }"
+              :ref="
+                (el) => {
+                  if (el) buttonRef = el
+                }
+              "
               @click.stop="handleMenuClick"
               class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
               :title="t('common.moreActions')"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
               </svg>
             </button>
 
@@ -69,19 +87,47 @@
                   :disabled="uploading"
                   class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                    />
                   </svg>
-                  {{ article.is_uploaded ? t('articles.reupload') : t('articles.upload') }}
+                  {{
+                    article.is_uploaded
+                      ? t('articles.reupload')
+                      : t('articles.upload')
+                  }}
                 </button>
                 <button
-                  v-if="article.status === 'failed' || article.status === 'processing' || article.status === 'completed'"
+                  v-if="
+                    article.status === 'failed' ||
+                    article.status === 'processing' ||
+                    article.status === 'completed'
+                  "
                   @click="handleAction('retry', $event)"
                   :disabled="retrying"
                   class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
                   </svg>
                   {{ t('common.tryAgain') }}
                 </button>
@@ -89,8 +135,18 @@
                   @click="handleAction('delete', $event)"
                   class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                   {{ t('common.delete') }}
                 </button>
@@ -134,7 +190,6 @@ const showMenu = ref(false)
 const menuRef = ref(null)
 const buttonRef = ref(null)
 const menuStyle = ref({})
-
 
 const formatRelativeTime = (dateString) => {
   if (!dateString) return '-'
@@ -206,7 +261,11 @@ const handleAction = (action, event) => {
 }
 
 const handleClickOutside = (event) => {
-  if (showMenu.value && menuRef.value && !menuRef.value.contains(event.target)) {
+  if (
+    showMenu.value &&
+    menuRef.value &&
+    !menuRef.value.contains(event.target)
+  ) {
     showMenu.value = false
   }
 }

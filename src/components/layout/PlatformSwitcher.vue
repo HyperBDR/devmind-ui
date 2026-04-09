@@ -34,7 +34,9 @@
         v-if="open"
         class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
       >
-        <div class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <div
+          class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500"
+        >
           {{ t('platforms.switchPlatform') }}
         </div>
         <router-link
@@ -62,7 +64,10 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
-import { getAvailablePlatforms, getCurrentPlatformKey } from '@/utils/platformAccess'
+import {
+  getAvailablePlatforms,
+  getCurrentPlatformKey
+} from '@/utils/platformAccess'
 
 defineProps({
   buttonClass: {

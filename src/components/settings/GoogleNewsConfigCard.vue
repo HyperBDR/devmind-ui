@@ -226,7 +226,11 @@
             :loading="savingGoogleNews"
             :disabled="savingGoogleNews"
           >
-            {{ savingGoogleNews ? t('common.loading') : t('settings.saveSettings') }}
+            {{
+              savingGoogleNews
+                ? t('common.loading')
+                : t('settings.saveSettings')
+            }}
           </BaseButton>
         </div>
       </form>

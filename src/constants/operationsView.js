@@ -26,7 +26,7 @@ const timezoneOptionsByOffset = new Map()
 
 timezoneOptionsByOffset.set('UTC+08:00', {
   value: defaultTimezone,
-  label: 'UTC+08:00',
+  label: 'UTC+08:00'
 })
 
 for (const timezone of getAllTimezones()) {
@@ -34,12 +34,14 @@ for (const timezone of getAllTimezones()) {
   if (!timezoneOptionsByOffset.has(offsetLabel)) {
     timezoneOptionsByOffset.set(offsetLabel, {
       value: timezone.value,
-      label: offsetLabel,
+      label: offsetLabel
     })
   }
 }
 
-export const OPERATIONS_TIMEZONES = Array.from(timezoneOptionsByOffset.values()).sort(
+export const OPERATIONS_TIMEZONES = Array.from(
+  timezoneOptionsByOffset.values()
+).sort(
   (left, right) => offsetToMinutes(left.label) - offsetToMinutes(right.label)
 )
 

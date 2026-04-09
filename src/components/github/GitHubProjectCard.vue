@@ -11,7 +11,10 @@
       </h3>
 
       <!-- Description -->
-      <p v-if="project.description" class="text-xs text-gray-500 mb-3 line-clamp-2">
+      <p
+        v-if="project.description"
+        class="text-xs text-gray-500 mb-3 line-clamp-2"
+      >
         {{ project.description }}
       </p>
 
@@ -19,7 +22,8 @@
       <div class="space-y-2">
         <!-- First Row: Updated Time -->
         <div v-if="project.updated_at" class="text-sm text-gray-500">
-          {{ t('githubProjects.table.updated') }}: {{ formatRelativeTime(project.updated_at) }}
+          {{ t('githubProjects.table.updated') }}:
+          {{ formatRelativeTime(project.updated_at) }}
         </div>
 
         <!-- Second Row: Stats -->
@@ -43,17 +47,35 @@
 
           <!-- Menu Button -->
           <div
-            :ref="el => { if (el) menuRef = el }"
+            :ref="
+              (el) => {
+                if (el) menuRef = el
+              }
+            "
             class="relative flex-shrink-0"
           >
             <button
-              :ref="el => { if (el) buttonRef = el }"
+              :ref="
+                (el) => {
+                  if (el) buttonRef = el
+                }
+              "
               @click.stop="handleMenuClick"
               class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
               :title="t('common.moreActions')"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
               </svg>
             </button>
 
@@ -75,9 +97,24 @@
                   @click="handleAction('view', $event)"
                   class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
                   </svg>
                   {{ t('githubProjects.viewProject') }}
                 </button>
@@ -85,8 +122,18 @@
                   @click="handleAction('trending', $event)"
                   class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
                   </svg>
                   {{ t('githubProjects.viewTrending') }}
                 </button>
@@ -187,7 +234,11 @@ const handleAction = (action, event) => {
 }
 
 const handleClickOutside = (event) => {
-  if (showMenu.value && menuRef.value && !menuRef.value.contains(event.target)) {
+  if (
+    showMenu.value &&
+    menuRef.value &&
+    !menuRef.value.contains(event.target)
+  ) {
     showMenu.value = false
   }
 }

@@ -1,7 +1,10 @@
 /**
  * Playwright config (CommonJS for "type": "module" projects). Base URL from env.
  */
-const baseURL = process.env.BASE_URL || process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:10080'
+const baseURL =
+  process.env.BASE_URL ||
+  process.env.PLAYWRIGHT_BASE_URL ||
+  'http://localhost:10080'
 
 module.exports = {
   testDir: './e2e',

@@ -14,7 +14,9 @@
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          >
             <!-- Batch Actions (Left) -->
             <div class="flex items-center gap-2 flex-wrap">
               <BaseButton
@@ -37,8 +39,18 @@
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </template>
               </BaseInput>
@@ -50,8 +62,18 @@
                 @click="showFilterDrawer = true"
                 class="relative flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
                 </svg>
                 {{ t('common.filter') }}
                 <span
@@ -90,18 +112,34 @@
           </div>
 
           <!-- Active Filter Tags -->
-          <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-2 mb-4">
+          <div
+            v-if="activeFilterCount > 0"
+            class="flex flex-wrap items-center gap-2 mb-4"
+          >
             <span
               v-if="filters.status"
               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
             >
-              <span>{{ t('tasks.statusLabel') }}: {{ getStatusLabel(filters.status) }}</span>
+              <span
+                >{{ t('tasks.statusLabel') }}:
+                {{ getStatusLabel(filters.status) }}</span
+              >
               <button
                 @click="removeStatusFilter"
                 class="text-gray-500 hover:text-gray-700 transition-colors"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </span>
@@ -109,7 +147,10 @@
 
           <BaseLoading v-if="loading && (!tasks || tasks.length === 0)" />
 
-          <div v-else-if="!filteredTasks || filteredTasks.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-else-if="!filteredTasks || filteredTasks.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -123,7 +164,9 @@
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('tasks.noTasks') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('tasks.noTasks') }}
+            </p>
           </div>
 
           <!-- Mobile Card View with Infinite Scroll -->
@@ -146,12 +189,11 @@
               class="h-20 flex items-center justify-center"
             >
               <!-- Loading More Indicator (Auto-load when scrolling) -->
-              <div
-                v-if="loading || loadingMore"
-                class="py-6"
-              >
+              <div v-if="loading || loadingMore" class="py-6">
                 <BaseLoading inline size="sm" />
-                <p class="text-sm text-gray-500 mt-2">{{ t('common.loadingMore') }}</p>
+                <p class="text-sm text-gray-500 mt-2">
+                  {{ t('common.loadingMore') }}
+                </p>
               </div>
             </div>
 
@@ -165,14 +207,27 @@
           </div>
 
           <!-- Desktop Table View -->
-          <div v-if="filteredTasks && filteredTasks.length > 0" class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm">
-              <BaseLoading inline size="lg" variant="primary" :show-text="false" />
+          <div
+            v-if="filteredTasks && filteredTasks.length > 0"
+            class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+          >
+            <div
+              v-if="loading"
+              class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm"
+            >
+              <BaseLoading
+                inline
+                size="lg"
+                variant="primary"
+                :show-text="false"
+              />
             </div>
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     <input
                       type="checkbox"
                       :checked="allSelected"
@@ -180,22 +235,34 @@
                       class="w-4 h-4 rounded border-gray-300 bg-white text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer checked:bg-primary-600 checked:border-primary-600"
                     />
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.name') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.statusLabel') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.startedAt') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.finishedAt') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.duration') }}
                   </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                  <th
+                    class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                  >
                     {{ t('tasks.successCount') }}
                   </th>
                 </tr>
@@ -228,7 +295,9 @@
                     >
                       {{ task?.name || '-' }}
                     </button>
-                    <div v-else class="text-sm font-semibold text-gray-900">-</div>
+                    <div v-else class="text-sm font-semibold text-gray-900">
+                      -
+                    </div>
                   </td>
                   <td class="px-4 py-4 whitespace-nowrap">
                     <StatusBadge :status="mapStatus(task?.status)" />
@@ -259,15 +328,21 @@
           </div>
 
           <!-- Pagination (Desktop Only) -->
-          <div class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div
+            class="hidden md:flex mt-6 pt-4 border-t border-gray-200 flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            >
               <div class="text-sm text-gray-700 font-medium">
                 <span v-if="totalCount > 0">
-                  {{ t('common.pagination.showing', {
-                    from: (currentPage - 1) * pageSize + 1,
-                    to: Math.min(currentPage * pageSize, totalCount),
-                    total: totalCount
-                  }) }}
+                  {{
+                    t('common.pagination.showing', {
+                      from: (currentPage - 1) * pageSize + 1,
+                      to: Math.min(currentPage * pageSize, totalCount),
+                      total: totalCount
+                    })
+                  }}
                 </span>
                 <span v-else class="text-gray-500">
                   {{ t('common.noData') }}
@@ -299,8 +374,15 @@
               >
                 {{ t('common.previous') }}
               </BaseButton>
-              <span class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200">
-                {{ t('common.pagination.page', { current: currentPage, total: totalPages }) }}
+              <span
+                class="text-sm text-gray-700 font-semibold flex items-center px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200"
+              >
+                {{
+                  t('common.pagination.page', {
+                    current: currentPage,
+                    total: totalPages
+                  })
+                }}
               </span>
               <BaseButton
                 variant="outline"
@@ -327,7 +409,9 @@
       <ConfirmDialog
         :show="showBatchDeleteDialog"
         :title="t('tasks.batchDeleteConfirm')"
-        :message="t('tasks.batchDeleteMessage', { count: selectedTasks.length })"
+        :message="
+          t('tasks.batchDeleteMessage', { count: selectedTasks.length })
+        "
         :variant="'danger'"
         :loading="deleting"
         @close="showBatchDeleteDialog = false"
@@ -473,7 +557,10 @@ const loadTasks = async (isPolling = false) => {
         totalPages.value = total > 0 ? Math.ceil(total / validPageSize) : 1
         // Only update currentPage if it's not already set by user action (e.g., page size change)
         // This prevents overriding user's page reset when changing page size
-        if (data.pagination.page && data.pagination.page !== currentPage.value) {
+        if (
+          data.pagination.page &&
+          data.pagination.page !== currentPage.value
+        ) {
           // Only sync if backend returned a different page (shouldn't happen normally)
           // But we keep currentPage.value as user set it
         }
@@ -513,13 +600,13 @@ const loadTasks = async (isPolling = false) => {
 // Merge task updates during polling to avoid full table re-render
 const mergeTaskUpdates = (newTasks) => {
   // Create a map of existing tasks by ID for quick lookup
-  const existingTasksMap = new Map(tasks.value.map(task => [task.id, task]))
+  const existingTasksMap = new Map(tasks.value.map((task) => [task.id, task]))
 
   let hasChanges = false
 
   // Update existing tasks by comparing with new data
-  const updatedTasks = tasks.value.map(existingTask => {
-    const newTask = newTasks.find(nt => nt.id === existingTask.id)
+  const updatedTasks = tasks.value.map((existingTask) => {
+    const newTask = newTasks.find((nt) => nt.id === existingTask.id)
     if (newTask) {
       // Check if key fields have changed
       const keyFieldsChanged =
@@ -552,18 +639,18 @@ const applyFilters = () => {
 
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(task =>
+    filtered = filtered.filter((task) =>
       task.name?.toLowerCase().includes(query)
     )
   }
 
   if (filters.value.status) {
-    filtered = filtered.filter(task => task.status === filters.value.status)
+    filtered = filtered.filter((task) => task.status === filters.value.status)
   }
 
   filteredTasks.value = filtered
-  selectedTasks.value = selectedTasks.value.filter(
-    task => filtered.some(t => t.id === task.id)
+  selectedTasks.value = selectedTasks.value.filter((task) =>
+    filtered.some((t) => t.id === task.id)
   )
 }
 
@@ -647,7 +734,12 @@ const getSuccessCount = (task) => {
   const result = task.result
   const statistics = result.statistics || {}
 
-  const successful = statistics.successful ?? result.successful_count ?? result.success_count ?? result.processed_count ?? 0
+  const successful =
+    statistics.successful ??
+    result.successful_count ??
+    result.success_count ??
+    result.processed_count ??
+    0
 
   return successful > 0 ? successful : '-'
 }
@@ -687,13 +779,15 @@ const handleRefresh = () => {
 }
 
 const allSelected = computed(() => {
-  return filteredTasks.value.length > 0 &&
-    filteredTasks.value.every(task => isTaskSelected(task))
+  return (
+    filteredTasks.value.length > 0 &&
+    filteredTasks.value.every((task) => isTaskSelected(task))
+  )
 })
 
 const isTaskSelected = (task) => {
   if (!task || !selectedTasks.value) return false
-  return selectedTasks.value.some(t => t && t.id === task.id)
+  return selectedTasks.value.some((t) => t && t.id === task.id)
 }
 
 const handleSelectAll = (event) => {
@@ -711,9 +805,7 @@ const handleTaskSelect = (task, checked) => {
       selectedTasks.value.push(task)
     }
   } else {
-    selectedTasks.value = selectedTasks.value.filter(
-      t => t.id !== task.id
-    )
+    selectedTasks.value = selectedTasks.value.filter((t) => t.id !== task.id)
   }
 }
 
@@ -792,7 +884,11 @@ const handleLoadMore = async () => {
     }
   } catch (error) {
     // Only show error if it's not a cancellation
-    if (error && error.name !== 'AbortError' && error.name !== 'CanceledError') {
+    if (
+      error &&
+      error.name !== 'AbortError' &&
+      error.name !== 'CanceledError'
+    ) {
       showError(extractErrorMessage(error, t('tasks.loadError')))
     }
   } finally {
@@ -855,7 +951,13 @@ const setupIntersectionObserver = () => {
         if (!entries || entries.length === 0) return
         const entry = entries[0]
         // Auto-load when sentinel element becomes visible (or is about to)
-        if (entry && entry.isIntersecting && hasMore.value && !loadingMore.value && !loading.value) {
+        if (
+          entry &&
+          entry.isIntersecting &&
+          hasMore.value &&
+          !loadingMore.value &&
+          !loading.value
+        ) {
           handleLoadMore()
         }
       },
@@ -881,7 +983,7 @@ const setupIntersectionObserver = () => {
 const hasRunningTasks = computed(() => {
   if (!Array.isArray(tasks.value)) return false
   return tasks.value.some(
-    task => task?.status === 'running' || task?.status === 'pending'
+    (task) => task?.status === 'running' || task?.status === 'pending'
   )
 })
 
@@ -892,22 +994,35 @@ const isDetailTaskRunning = (task) => {
 }
 
 // Poll single task when detail modal is open and task is still running
-const pollDetailTask = useIntervalFn(async () => {
-  const task = selectedTask.value
-  if (!showDetailsModal.value || !task?.id || !isDetailTaskRunning(task)) return
-  try {
-    const response = await tasksApi.getTask(task.id)
-    const data = extractResponseData(response)
-    if (data) selectedTask.value = data
-  } catch {
-    // Ignore poll errors (e.g. network), keep showing current data
-  }
-}, 4000, { immediate: false })
+const pollDetailTask = useIntervalFn(
+  async () => {
+    const task = selectedTask.value
+    if (!showDetailsModal.value || !task?.id || !isDetailTaskRunning(task))
+      return
+    try {
+      const response = await tasksApi.getTask(task.id)
+      const data = extractResponseData(response)
+      if (data) selectedTask.value = data
+    } catch {
+      // Ignore poll errors (e.g. network), keep showing current data
+    }
+  },
+  4000,
+  { immediate: false }
+)
 
 watch(
-  [showDetailsModal, () => selectedTask.value?.id, () => selectedTask.value?.status],
+  [
+    showDetailsModal,
+    () => selectedTask.value?.id,
+    () => selectedTask.value?.status
+  ],
   () => {
-    if (showDetailsModal.value && selectedTask.value?.id && isDetailTaskRunning(selectedTask.value)) {
+    if (
+      showDetailsModal.value &&
+      selectedTask.value?.id &&
+      isDetailTaskRunning(selectedTask.value)
+    ) {
       pollDetailTask.resume()
     } else {
       pollDetailTask.pause()
@@ -925,15 +1040,33 @@ const { pause, resume } = useIntervalFn(() => {
 
 // Watch for changes in tasks, hasMore, loading states, or mobile status to re-setup observer
 watch(
-  [() => filteredTasks.value?.length || 0, hasMore, isMobile, () => loading.value, () => loadingMore.value],
+  [
+    () => filteredTasks.value?.length || 0,
+    hasMore,
+    isMobile,
+    () => loading.value,
+    () => loadingMore.value
+  ],
   () => {
     try {
       // Only setup observer when not loading and has more data
-      if (isMobile.value && hasMore.value && !loading.value && !loadingMore.value && !observer) {
+      if (
+        isMobile.value &&
+        hasMore.value &&
+        !loading.value &&
+        !loadingMore.value &&
+        !observer
+      ) {
         nextTick(() => {
           setupIntersectionObserver()
         })
-      } else if (observer && (!hasMore.value || loading.value || loadingMore.value || !isMobile.value)) {
+      } else if (
+        observer &&
+        (!hasMore.value ||
+          loading.value ||
+          loadingMore.value ||
+          !isMobile.value)
+      ) {
         // Disconnect observer when loading or no more data
         try {
           observer.disconnect()
@@ -985,11 +1118,15 @@ onUnmounted(() => {
 })
 
 // Watch for changes in running tasks to start/stop polling
-watch(hasRunningTasks, (hasRunning) => {
-  if (hasRunning) {
-    resume()
-  } else {
-    pause()
-  }
-}, { immediate: true })
+watch(
+  hasRunningTasks,
+  (hasRunning) => {
+    if (hasRunning) {
+      resume()
+    } else {
+      pause()
+    }
+  },
+  { immediate: true }
+)
 </script>

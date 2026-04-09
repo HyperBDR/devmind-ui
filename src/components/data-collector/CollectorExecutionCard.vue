@@ -24,10 +24,23 @@
             {{ formatDate(task.started_at || task.created_at) }}
           </span>
         </div>
-        <div v-if="task.duration || (task.started_at && task.finished_at)" class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">{{ t('dataCollector.tasks.duration') }}</span>
+        <div
+          v-if="task.duration || (task.started_at && task.finished_at)"
+          class="flex items-center justify-between"
+        >
+          <span class="text-xs text-gray-500">{{
+            t('dataCollector.tasks.duration')
+          }}</span>
           <span class="text-sm font-medium text-gray-900">
-            {{ formatDuration(task.duration || calculateDuration(task.started_at || task.created_at, task.finished_at)) }}
+            {{
+              formatDuration(
+                task.duration ||
+                  calculateDuration(
+                    task.started_at || task.created_at,
+                    task.finished_at
+                  )
+              )
+            }}
           </span>
         </div>
       </div>

@@ -103,7 +103,9 @@
             :loading="savingGithub"
             :disabled="savingGithub"
           >
-            {{ savingGithub ? t('common.loading') : t('settings.saveSettings') }}
+            {{
+              savingGithub ? t('common.loading') : t('settings.saveSettings')
+            }}
           </BaseButton>
         </div>
       </form>

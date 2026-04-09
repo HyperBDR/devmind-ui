@@ -10,7 +10,7 @@ const PROVIDER_TYPE_LABEL_KEYS = {
   azure: 'cloudBilling.providers.types.azure',
   volcengine: 'cloudBilling.providers.types.volcengine',
   baidu: 'cloudBilling.providers.types.baidu',
-  zhipu: 'cloudBilling.providers.types.zhipu',
+  zhipu: 'cloudBilling.providers.types.zhipu'
 }
 
 const LOCALE_MESSAGES = [en, zhCN]
@@ -20,7 +20,9 @@ function getMessageByPath(messages, path) {
 }
 
 function normalizeValue(value) {
-  return String(value || '').trim().toLowerCase()
+  return String(value || '')
+    .trim()
+    .toLowerCase()
 }
 
 export function getProviderTypeLabel(type, t) {
@@ -40,7 +42,10 @@ export function getLocalizedProviderDisplayName(provider, t) {
     return localizedLabel
   }
 
-  const aliases = new Set([normalizeValue(providerType), normalizeValue(localizedLabel)])
+  const aliases = new Set([
+    normalizeValue(providerType),
+    normalizeValue(localizedLabel)
+  ])
   const labelKey = PROVIDER_TYPE_LABEL_KEYS[providerType]
   if (labelKey) {
     LOCALE_MESSAGES.forEach((messages) => {
@@ -51,14 +56,19 @@ export function getLocalizedProviderDisplayName(provider, t) {
     })
   }
 
-  return aliases.has(normalizeValue(rawDisplayName)) ? localizedLabel : rawDisplayName
+  return aliases.has(normalizeValue(rawDisplayName))
+    ? localizedLabel
+    : rawDisplayName
 }
 
 export function getLocalizedBillingProviderName(billing, t) {
   return getLocalizedProviderDisplayName(
     {
       provider_type: billing?.provider_type,
-      display_name: billing?.provider_display_name || billing?.provider_name || billing?.provider,
+      display_name:
+        billing?.provider_display_name ||
+        billing?.provider_name ||
+        billing?.provider
     },
     t
   )
@@ -70,7 +80,7 @@ export function getProviderAuthIdentifierLabel(provider, t) {
     access_key_id: 'cloudBilling.providers.authIdentifierKinds.accessKeyId',
     username: 'cloudBilling.providers.authIdentifierKinds.username',
     client_id: 'cloudBilling.providers.authIdentifierKinds.clientId',
-    identifier: 'cloudBilling.providers.authIdentifierKinds.identifier',
+    identifier: 'cloudBilling.providers.authIdentifierKinds.identifier'
   }
 
   const key = labelKeys[kind] || labelKeys.identifier

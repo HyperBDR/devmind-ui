@@ -15,7 +15,7 @@ const getStoredLanguage = () => {
     return 'en'
   }
   // Only allow 'en' or 'zh-CN', fallback to 'en' for any other value
-  return (stored === 'zh-CN' || stored === 'en') ? stored : 'en'
+  return stored === 'zh-CN' || stored === 'en' ? stored : 'en'
 }
 
 // Create Vue i18n instance

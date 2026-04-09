@@ -97,7 +97,8 @@ const wrapperClassMap = {
   compact: 'w-full text-xs'
 }
 
-const commonInput = 'w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed'
+const commonInput =
+  'w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed'
 const sizeMap = {
   default: {
     input: `${commonInput} px-2.5 py-1.5 text-sm h-10`,
@@ -119,7 +120,9 @@ const desktopWrapperClass = computed(() => {
   return classes
 })
 const autoApply = computed(() => !props.showActions)
-const hideInputIcon = computed(() => props.size === 'compact' || !props.showInputIcon)
+const hideInputIcon = computed(
+  () => props.size === 'compact' || !props.showInputIcon
+)
 const normalizedLanguage = computed(() => {
   const lang = locale.value || preferencesStore.currentLanguage || 'en'
   if (lang.startsWith('zh')) return 'zh-CN'
@@ -183,7 +186,10 @@ const emitValue = (val) => {
     return
   }
   const dateObj = val instanceof Date ? val : new Date(val)
-  emit('update:modelValue', Number.isNaN(dateObj.getTime()) ? null : dateObj.toISOString())
+  emit(
+    'update:modelValue',
+    Number.isNaN(dateObj.getTime()) ? null : dateObj.toISOString()
+  )
 }
 
 const onPickerUpdate = (val) => {
@@ -223,7 +229,7 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     mediaQuery = window.matchMedia('(max-width: 640px)')
     const handler = (e) => {
-      isMobile.value = e.matches || ('ontouchstart' in window)
+      isMobile.value = e.matches || 'ontouchstart' in window
     }
     mediaQuery.addEventListener?.('change', handler)
     onBeforeUnmount(() => {

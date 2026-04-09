@@ -3,12 +3,18 @@
     <div class="mx-auto w-full max-w-[1480px]">
       <section class="rounded-[28px] border border-gray-200 bg-white shadow-sm">
         <div class="border-b border-gray-200 px-6 py-5 lg:px-8">
-          <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+          <div
+            class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between"
+          >
             <div class="min-w-0 flex-1">
-              <p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary-600">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.22em] text-primary-600"
+              >
                 {{ t('aiPriceHub.eyebrow') }}
               </p>
-              <h1 class="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+              <h1
+                class="mt-2 text-2xl font-semibold tracking-tight text-gray-900"
+              >
                 {{ t('aiPriceHub.title') }}
               </h1>
               <p class="mt-2 max-w-3xl text-sm leading-6 text-gray-500">
@@ -16,15 +22,23 @@
               </p>
             </div>
 
-            <div class="flex w-full flex-col gap-3 xl:w-auto xl:min-w-[640px] xl:flex-row xl:justify-end">
-              <div class="relative min-w-0 flex-1 xl:max-w-[280px]" ref="platformDropdownRef">
+            <div
+              class="flex w-full flex-col gap-3 xl:w-auto xl:min-w-[640px] xl:flex-row xl:justify-end"
+            >
+              <div
+                class="relative min-w-0 flex-1 xl:max-w-[280px]"
+                ref="platformDropdownRef"
+              >
                 <button
                   type="button"
                   class="flex w-full items-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-primary-300 hover:text-primary-700"
                   @click="platformOpen = !platformOpen"
                 >
                   <span class="min-w-0 flex-1 truncate text-left">
-                    {{ selectedPlatformLabel || t('aiPriceHub.selector.platformLabel') }}
+                    {{
+                      selectedPlatformLabel ||
+                      t('aiPriceHub.selector.platformLabel')
+                    }}
                   </span>
                   <svg
                     class="h-4 w-4 shrink-0 transition-transform"
@@ -33,7 +47,12 @@
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 <Transition
@@ -48,7 +67,9 @@
                     v-if="platformOpen"
                     class="absolute right-0 z-30 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
                   >
-                    <div class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <div
+                      class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500"
+                    >
                       {{ t('aiPriceHub.selector.platformLabel') }}
                     </div>
                     <button
@@ -58,7 +79,9 @@
                       class="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                       @click="selectPlatform(platform.platform_slug)"
                     >
-                      <span class="truncate">{{ platformOptionLabel(platform) }}</span>
+                      <span class="truncate">{{
+                        platformOptionLabel(platform)
+                      }}</span>
                       <span
                         v-if="platform.platform_slug === selectedPlatformSlug"
                         class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700"
@@ -77,7 +100,12 @@
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                  />
                 </svg>
                 <input
                   v-model="searchQuery"
@@ -92,10 +120,14 @@
 
         <div class="border-b border-gray-200 bg-gray-50/70 px-6 py-4 lg:px-8">
           <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-            <span class="rounded-full bg-white px-3 py-1 font-medium text-gray-700 ring-1 ring-gray-200">
+            <span
+              class="rounded-full bg-white px-3 py-1 font-medium text-gray-700 ring-1 ring-gray-200"
+            >
               {{ t('aiPriceHub.stats.models') }} {{ filteredRows.length }}
             </span>
-            <span class="rounded-full bg-white px-3 py-1 font-medium text-gray-700 ring-1 ring-gray-200">
+            <span
+              class="rounded-full bg-white px-3 py-1 font-medium text-gray-700 ring-1 ring-gray-200"
+            >
               {{ t('aiPriceHub.stats.vendors') }} {{ vendorColumns.length + 1 }}
             </span>
             <span class="text-xs text-gray-500">
@@ -124,14 +156,22 @@
               <table class="min-w-full border-collapse">
                 <thead>
                   <tr class="bg-gray-50/70">
-                    <th class="sticky left-0 z-10 min-w-[220px] border-b border-r border-gray-200 bg-gray-50/90 px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 backdrop-blur">
+                    <th
+                      class="sticky left-0 z-10 min-w-[220px] border-b border-r border-gray-200 bg-gray-50/90 px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 backdrop-blur"
+                    >
                       {{ t('aiPriceHub.table.model') }}
                     </th>
-                    <th class="min-w-[210px] border-b border-r border-gray-200 bg-primary-50/60 px-5 py-4 text-left">
-                      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">
+                    <th
+                      class="min-w-[210px] border-b border-r border-gray-200 bg-primary-50/60 px-5 py-4 text-left"
+                    >
+                      <p
+                        class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700"
+                      >
                         {{ t('aiPriceHub.vendors.agione') }}
                       </p>
-                      <div class="mt-2 grid grid-cols-2 gap-3 text-[11px] font-semibold uppercase tracking-wide text-primary-700">
+                      <div
+                        class="mt-2 grid grid-cols-2 gap-3 text-[11px] font-semibold uppercase tracking-wide text-primary-700"
+                      >
                         <span>{{ t('aiPriceHub.table.input') }}</span>
                         <span>{{ t('aiPriceHub.table.output') }}</span>
                       </div>
@@ -141,10 +181,14 @@
                       :key="vendor.key"
                       class="min-w-[210px] border-b border-r border-gray-200 px-5 py-4 text-left last:border-r-0"
                     >
-                      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+                      <p
+                        class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500"
+                      >
                         {{ vendor.label }}
                       </p>
-                      <div class="mt-2 grid grid-cols-2 gap-3 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                      <div
+                        class="mt-2 grid grid-cols-2 gap-3 text-[11px] font-semibold uppercase tracking-wide text-gray-500"
+                      >
                         <span>{{ t('aiPriceHub.table.input') }}</span>
                         <span>{{ t('aiPriceHub.table.output') }}</span>
                       </div>
@@ -157,21 +201,42 @@
                     :key="row.primary_model.id"
                     class="align-top hover:bg-gray-50/50"
                   >
-                    <td class="sticky left-0 z-10 border-b border-r border-gray-200 bg-white px-5 py-5 backdrop-blur">
-                      <p class="text-sm font-semibold text-gray-900" :title="row.primary_model.name">
+                    <td
+                      class="sticky left-0 z-10 border-b border-r border-gray-200 bg-white px-5 py-5 backdrop-blur"
+                    >
+                      <p
+                        class="text-sm font-semibold text-gray-900"
+                        :title="row.primary_model.name"
+                      >
                         {{ row.primary_model.name }}
                       </p>
                     </td>
-                    <td class="border-b border-r border-gray-200 bg-primary-50/30 px-5 py-5">
+                    <td
+                      class="border-b border-r border-gray-200 bg-primary-50/30 px-5 py-5"
+                    >
                       <div class="grid grid-cols-2 gap-3">
                         <div>
-                          <p class="whitespace-nowrap text-sm font-semibold text-gray-900">
-                            {{ formatMoney(row.primary_model.input_price_per_million, row.primary_model.currency) }}
+                          <p
+                            class="whitespace-nowrap text-sm font-semibold text-gray-900"
+                          >
+                            {{
+                              formatMoney(
+                                row.primary_model.input_price_per_million,
+                                row.primary_model.currency
+                              )
+                            }}
                           </p>
                         </div>
                         <div>
-                          <p class="whitespace-nowrap text-sm font-semibold text-gray-900">
-                            {{ formatMoney(row.primary_model.output_price_per_million, row.primary_model.currency) }}
+                          <p
+                            class="whitespace-nowrap text-sm font-semibold text-gray-900"
+                          >
+                            {{
+                              formatMoney(
+                                row.primary_model.output_price_per_million,
+                                row.primary_model.currency
+                              )
+                            }}
                           </p>
                         </div>
                       </div>
@@ -184,19 +249,65 @@
                       <template v-if="row.comparison_by_vendor[vendor.key]">
                         <div class="grid grid-cols-2 gap-3">
                           <div>
-                            <p class="whitespace-nowrap text-sm font-semibold text-gray-900">
-                              {{ formatMoney(row.comparison_by_vendor[vendor.key].input_price_per_million, row.comparison_by_vendor[vendor.key].currency) }}
+                            <p
+                              class="whitespace-nowrap text-sm font-semibold text-gray-900"
+                            >
+                              {{
+                                formatMoney(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .input_price_per_million,
+                                  row.comparison_by_vendor[vendor.key].currency
+                                )
+                              }}
                             </p>
-                            <p class="mt-1 text-xs" :class="deltaTextClass(row.comparison_by_vendor[vendor.key].input_advantage)">
-                              {{ formatCompactAdvantage(row.comparison_by_vendor[vendor.key].input_advantage, row.comparison_by_vendor[vendor.key].input_advantage_ratio) }}
+                            <p
+                              class="mt-1 text-xs"
+                              :class="
+                                deltaTextClass(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .input_advantage
+                                )
+                              "
+                            >
+                              {{
+                                formatCompactAdvantage(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .input_advantage,
+                                  row.comparison_by_vendor[vendor.key]
+                                    .input_advantage_ratio
+                                )
+                              }}
                             </p>
                           </div>
                           <div>
-                            <p class="whitespace-nowrap text-sm font-semibold text-gray-900">
-                              {{ formatMoney(row.comparison_by_vendor[vendor.key].output_price_per_million, row.comparison_by_vendor[vendor.key].currency) }}
+                            <p
+                              class="whitespace-nowrap text-sm font-semibold text-gray-900"
+                            >
+                              {{
+                                formatMoney(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .output_price_per_million,
+                                  row.comparison_by_vendor[vendor.key].currency
+                                )
+                              }}
                             </p>
-                            <p class="mt-1 text-xs" :class="deltaTextClass(row.comparison_by_vendor[vendor.key].output_advantage)">
-                              {{ formatCompactAdvantage(row.comparison_by_vendor[vendor.key].output_advantage, row.comparison_by_vendor[vendor.key].output_advantage_ratio) }}
+                            <p
+                              class="mt-1 text-xs"
+                              :class="
+                                deltaTextClass(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .output_advantage
+                                )
+                              "
+                            >
+                              {{
+                                formatCompactAdvantage(
+                                  row.comparison_by_vendor[vendor.key]
+                                    .output_advantage,
+                                  row.comparison_by_vendor[vendor.key]
+                                    .output_advantage_ratio
+                                )
+                              }}
                             </p>
                           </div>
                         </div>
@@ -217,31 +328,56 @@
                 class="rounded-2xl border border-gray-200 bg-white p-4"
               >
                 <div class="mb-4">
-                  <h3 class="text-base font-semibold text-gray-900" :title="row.primary_model.name">
+                  <h3
+                    class="text-base font-semibold text-gray-900"
+                    :title="row.primary_model.name"
+                  >
                     {{ row.primary_model.name }}
                   </h3>
                 </div>
 
                 <div class="space-y-3">
-                  <div class="rounded-xl border border-primary-100 bg-primary-50/50 p-3">
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">
+                  <div
+                    class="rounded-xl border border-primary-100 bg-primary-50/50 p-3"
+                  >
+                    <p
+                      class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700"
+                    >
                       {{ t('aiPriceHub.vendors.agione') }}
                     </p>
                     <div class="mt-3 grid grid-cols-2 gap-3">
                       <div>
-                        <p class="text-[11px] font-medium uppercase tracking-wide text-primary-700">
+                        <p
+                          class="text-[11px] font-medium uppercase tracking-wide text-primary-700"
+                        >
                           {{ t('aiPriceHub.table.input') }}
                         </p>
-                        <p class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          {{ formatMoney(row.primary_model.input_price_per_million, row.primary_model.currency) }}
+                        <p
+                          class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900"
+                        >
+                          {{
+                            formatMoney(
+                              row.primary_model.input_price_per_million,
+                              row.primary_model.currency
+                            )
+                          }}
                         </p>
                       </div>
                       <div>
-                        <p class="text-[11px] font-medium uppercase tracking-wide text-primary-700">
+                        <p
+                          class="text-[11px] font-medium uppercase tracking-wide text-primary-700"
+                        >
                           {{ t('aiPriceHub.table.output') }}
                         </p>
-                        <p class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          {{ formatMoney(row.primary_model.output_price_per_million, row.primary_model.currency) }}
+                        <p
+                          class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900"
+                        >
+                          {{
+                            formatMoney(
+                              row.primary_model.output_price_per_million,
+                              row.primary_model.currency
+                            )
+                          }}
                         </p>
                       </div>
                     </div>
@@ -252,30 +388,85 @@
                     :key="`${row.primary_model.id}-${vendor.key}-mobile`"
                     class="rounded-xl border border-gray-200 bg-gray-50 p-3"
                   >
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-600">
+                    <p
+                      class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-600"
+                    >
                       {{ vendor.label }}
                     </p>
-                    <div v-if="row.comparison_by_vendor[vendor.key]" class="mt-3 grid grid-cols-2 gap-3">
+                    <div
+                      v-if="row.comparison_by_vendor[vendor.key]"
+                      class="mt-3 grid grid-cols-2 gap-3"
+                    >
                       <div>
-                        <p class="text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                        <p
+                          class="text-[11px] font-medium uppercase tracking-wide text-gray-500"
+                        >
                           {{ t('aiPriceHub.table.input') }}
                         </p>
-                        <p class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          {{ formatMoney(row.comparison_by_vendor[vendor.key].input_price_per_million, row.comparison_by_vendor[vendor.key].currency) }}
+                        <p
+                          class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900"
+                        >
+                          {{
+                            formatMoney(
+                              row.comparison_by_vendor[vendor.key]
+                                .input_price_per_million,
+                              row.comparison_by_vendor[vendor.key].currency
+                            )
+                          }}
                         </p>
-                        <p class="mt-1 text-xs" :class="deltaTextClass(row.comparison_by_vendor[vendor.key].input_advantage)">
-                          {{ formatCompactAdvantage(row.comparison_by_vendor[vendor.key].input_advantage, row.comparison_by_vendor[vendor.key].input_advantage_ratio) }}
+                        <p
+                          class="mt-1 text-xs"
+                          :class="
+                            deltaTextClass(
+                              row.comparison_by_vendor[vendor.key]
+                                .input_advantage
+                            )
+                          "
+                        >
+                          {{
+                            formatCompactAdvantage(
+                              row.comparison_by_vendor[vendor.key]
+                                .input_advantage,
+                              row.comparison_by_vendor[vendor.key]
+                                .input_advantage_ratio
+                            )
+                          }}
                         </p>
                       </div>
                       <div>
-                        <p class="text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                        <p
+                          class="text-[11px] font-medium uppercase tracking-wide text-gray-500"
+                        >
                           {{ t('aiPriceHub.table.output') }}
                         </p>
-                        <p class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          {{ formatMoney(row.comparison_by_vendor[vendor.key].output_price_per_million, row.comparison_by_vendor[vendor.key].currency) }}
+                        <p
+                          class="mt-1 whitespace-nowrap text-sm font-semibold text-gray-900"
+                        >
+                          {{
+                            formatMoney(
+                              row.comparison_by_vendor[vendor.key]
+                                .output_price_per_million,
+                              row.comparison_by_vendor[vendor.key].currency
+                            )
+                          }}
                         </p>
-                        <p class="mt-1 text-xs" :class="deltaTextClass(row.comparison_by_vendor[vendor.key].output_advantage)">
-                          {{ formatCompactAdvantage(row.comparison_by_vendor[vendor.key].output_advantage, row.comparison_by_vendor[vendor.key].output_advantage_ratio) }}
+                        <p
+                          class="mt-1 text-xs"
+                          :class="
+                            deltaTextClass(
+                              row.comparison_by_vendor[vendor.key]
+                                .output_advantage
+                            )
+                          "
+                        >
+                          {{
+                            formatCompactAdvantage(
+                              row.comparison_by_vendor[vendor.key]
+                                .output_advantage,
+                              row.comparison_by_vendor[vendor.key]
+                                .output_advantage_ratio
+                            )
+                          }}
                         </p>
                       </div>
                     </div>
@@ -319,12 +510,17 @@ const platformDropdownRef = ref(null)
 
 const primarySources = computed(() => overview.value.primary_sources || [])
 const selectedPlatform = computed(
-  () => primarySources.value.find((item) => item.platform_slug === selectedPlatformSlug.value) || null
+  () =>
+    primarySources.value.find(
+      (item) => item.platform_slug === selectedPlatformSlug.value
+    ) || null
 )
 const selectedPlatformLabel = computed(() => {
   const platform = selectedPlatform.value
   if (!platform) return ''
-  return platform.region ? `${platform.name} · ${platform.region}` : platform.name
+  return platform.region
+    ? `${platform.name} · ${platform.region}`
+    : platform.name
 })
 
 const VENDOR_I18N_KEYS = {
@@ -338,7 +534,7 @@ const VENDOR_I18N_KEYS = {
   deepseek: 'aiPriceHub.vendors.deepseek',
   volcengine: 'aiPriceHub.vendors.volcengine',
   'volc engine': 'aiPriceHub.vendors.volcengine',
-  '火山引擎': 'aiPriceHub.vendors.volcengine',
+  火山引擎: 'aiPriceHub.vendors.volcengine',
   zhipu: 'aiPriceHub.vendors.zhipu',
   'zhipu ai': 'aiPriceHub.vendors.zhipu',
   'z.ai': 'aiPriceHub.vendors.zhipu'
@@ -357,7 +553,9 @@ const vendorColumns = computed(() => {
       }
     })
   })
-  return Array.from(map.values()).sort((left, right) => left.label.localeCompare(right.label))
+  return Array.from(map.values()).sort((left, right) =>
+    left.label.localeCompare(right.label)
+  )
 })
 
 const filteredRows = computed(() => {
@@ -367,14 +565,18 @@ const filteredRows = computed(() => {
   return comparisonRows.value.filter((row) => {
     const modelName = String(row.primary_model.name || '').toLowerCase()
     const matchesVendor = row.comparisons.some((item) =>
-      localizeVendorName(item.vendor_name, item.vendor_slug).toLowerCase().includes(query)
+      localizeVendorName(item.vendor_name, item.vendor_slug)
+        .toLowerCase()
+        .includes(query)
     )
     return modelName.includes(query) || matchesVendor
   })
 })
 
 function vendorKey(slug, name) {
-  return String(slug || name || '').trim().toLowerCase()
+  return String(slug || name || '')
+    .trim()
+    .toLowerCase()
 }
 
 function currencySymbol(currency = 'USD') {
@@ -405,7 +607,11 @@ function formatPercent(value) {
 
 function localizeVendorName(name, slug = '') {
   const keyCandidates = [slug, name]
-    .map((value) => String(value || '').trim().toLowerCase())
+    .map((value) =>
+      String(value || '')
+        .trim()
+        .toLowerCase()
+    )
     .filter(Boolean)
 
   for (const candidate of keyCandidates) {
@@ -426,8 +632,12 @@ function formatCompactAdvantage(advantage, ratio) {
     return t('aiPriceHub.advantage.same')
   }
   return advantage > 0
-    ? t('aiPriceHub.advantage.compactSaving', { ratio: formatPercent(Math.abs(ratio)) })
-    : t('aiPriceHub.advantage.compactPremium', { ratio: formatPercent(Math.abs(ratio)) })
+    ? t('aiPriceHub.advantage.compactSaving', {
+        ratio: formatPercent(Math.abs(ratio))
+      })
+    : t('aiPriceHub.advantage.compactPremium', {
+        ratio: formatPercent(Math.abs(ratio))
+      })
 }
 
 function deltaTextClass(advantage) {
@@ -446,7 +656,10 @@ async function loadAllComparisons() {
 
   const settled = await Promise.allSettled(
     primaryModels.map(async (model) => {
-      const response = await aiPriceHubApi.getComparison(model.id, selectedPlatformSlug.value)
+      const response = await aiPriceHubApi.getComparison(
+        model.id,
+        selectedPlatformSlug.value
+      )
       const payload = extractResponseData(response)
       const comparisonByVendor = {}
       ;(payload.comparisons || []).forEach((item) => {
@@ -472,7 +685,11 @@ async function loadAllComparisons() {
         comparison_by_vendor: {}
       }
     })
-    .sort((left, right) => String(left.primary_model.name).localeCompare(String(right.primary_model.name)))
+    .sort((left, right) =>
+      String(left.primary_model.name).localeCompare(
+        String(right.primary_model.name)
+      )
+    )
 }
 
 async function bootstrap() {
@@ -481,8 +698,16 @@ async function bootstrap() {
   try {
     const response = await aiPriceHubApi.getOverview(selectedPlatformSlug.value)
     overview.value = extractResponseData(response)
-    if (!selectedPlatformSlug.value || !primarySources.value.some((item) => item.platform_slug === selectedPlatformSlug.value)) {
-      selectedPlatformSlug.value = overview.value.selected_platform_slug || primarySources.value[0]?.platform_slug || ''
+    if (
+      !selectedPlatformSlug.value ||
+      !primarySources.value.some(
+        (item) => item.platform_slug === selectedPlatformSlug.value
+      )
+    ) {
+      selectedPlatformSlug.value =
+        overview.value.selected_platform_slug ||
+        primarySources.value[0]?.platform_slug ||
+        ''
     }
     await loadAllComparisons()
   } catch (err) {
@@ -505,11 +730,16 @@ async function selectPlatform(platformSlug) {
 
 function platformOptionLabel(platform) {
   if (!platform) return ''
-  return platform.region ? `${platform.name} · ${platform.region}` : platform.name
+  return platform.region
+    ? `${platform.name} · ${platform.region}`
+    : platform.name
 }
 
 function handleClickOutside(event) {
-  if (platformDropdownRef.value && !platformDropdownRef.value.contains(event.target)) {
+  if (
+    platformDropdownRef.value &&
+    !platformDropdownRef.value.contains(event.target)
+  ) {
     platformOpen.value = false
   }
 }

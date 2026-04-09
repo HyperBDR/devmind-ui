@@ -25,32 +25,48 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.name') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.type') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.displayName') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.authIdentifier') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.status') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.providers.createdAt') }}
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {{ t('common.actions') }}
                 </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="provider in providers" :key="provider.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
                   {{ provider.name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -61,7 +77,10 @@
                     <div class="text-sm text-gray-700">
                       {{ getProviderDisplayName(provider) }}
                     </div>
-                    <div v-if="provider.tags?.length" class="mt-2 flex flex-wrap gap-1.5">
+                    <div
+                      v-if="provider.tags?.length"
+                      class="mt-2 flex flex-wrap gap-1.5"
+                    >
                       <span
                         v-for="tag in provider.tags"
                         :key="`${provider.id}-${tag}`"
@@ -74,7 +93,9 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-500">
                   <div v-if="provider.auth_identifier" class="min-w-[180px]">
-                    <div class="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                    <div
+                      class="text-[11px] font-medium uppercase tracking-wide text-gray-400"
+                    >
                       {{ getProviderAuthLabel(provider) }}
                     </div>
                     <div class="mt-1 break-all font-mono text-xs text-gray-700">
@@ -87,16 +108,26 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    :class="provider.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
+                    :class="
+                      provider.is_active
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    "
                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                   >
-                    {{ provider.is_active ? t('common.active') : t('common.inactive') }}
+                    {{
+                      provider.is_active
+                        ? t('common.active')
+                        : t('common.inactive')
+                    }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatDate(provider.created_at) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                >
                   <button
                     @click="editProvider(provider)"
                     class="text-blue-600 hover:text-blue-900 mr-4"
@@ -118,7 +149,10 @@
                 </td>
               </tr>
               <tr v-if="providers.length === 0">
-                <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                <td
+                  colspan="7"
+                  class="px-6 py-4 text-center text-sm text-gray-500"
+                >
                   {{ t('cloudBilling.providers.noProviders') }}
                 </td>
               </tr>
@@ -162,8 +196,10 @@ const showCreateModal = ref(false)
 const editingProvider = ref(null)
 
 const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
-const getProviderDisplayName = (provider) => getLocalizedProviderDisplayName(provider, t)
-const getProviderAuthLabel = (provider) => getProviderAuthIdentifierLabel(provider, t)
+const getProviderDisplayName = (provider) =>
+  getLocalizedProviderDisplayName(provider, t)
+const getProviderAuthLabel = (provider) =>
+  getProviderAuthIdentifierLabel(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -239,7 +275,11 @@ const validateProvider = async (id) => {
     if (response.data?.valid) {
       alert(t('cloudBilling.providers.validationSuccess'))
     } else {
-      alert(t('cloudBilling.providers.validationFailed') + ': ' + (response.data?.message || ''))
+      alert(
+        t('cloudBilling.providers.validationFailed') +
+          ': ' +
+          (response.data?.message || '')
+      )
     }
   } catch (error) {
     console.error('Failed to validate provider:', error)

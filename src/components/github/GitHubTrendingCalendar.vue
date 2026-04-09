@@ -108,15 +108,26 @@
                   {{ getPeriodLabel(periodData.period) }}
                 </span>
                 <span class="text-gray-400">·</span>
-                <span class="font-bold text-gray-900">{{ periodData.count }}</span>
-                <span class="text-gray-500 text-[10px]">{{ t('githubTrending.dateDetail.projects') }}</span>
+                <span class="font-bold text-gray-900">{{
+                  periodData.count
+                }}</span>
+                <span class="text-gray-500 text-[10px]">{{
+                  t('githubTrending.dateDetail.projects')
+                }}</span>
                 <span v-if="periodData.lang" class="text-gray-400">·</span>
-                <span v-if="periodData.lang" class="text-gray-600 truncate font-medium max-w-[60px]">{{ periodData.lang }}</span>
+                <span
+                  v-if="periodData.lang"
+                  class="text-gray-600 truncate font-medium max-w-[60px]"
+                  >{{ periodData.lang }}</span
+                >
               </div>
             </div>
           </div>
           <div
-            v-if="getPeriodDataForDate(date.date).length === 0 && date.isCurrentMonth"
+            v-if="
+              getPeriodDataForDate(date.date).length === 0 &&
+              date.isCurrentMonth
+            "
             class="text-xs text-gray-400"
           >
             {{ t('githubTrending.calendar.noData') }}
@@ -162,8 +173,18 @@ const currentMonthLabel = computed(() => {
     return `${year}年${month}月`
   }
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
   ]
   return `${monthNames[month - 1]} ${year}`
 })
@@ -228,11 +249,12 @@ const getPeriodDataForDate = (date) => {
 
   // Group by period and language
   const periodLangMap = new Map()
-  records.forEach(record => {
+  records.forEach((record) => {
     const period = record.trending_period || 'unknown'
-    const lang = record.trending_lang && record.trending_lang !== 'any'
-      ? record.trending_lang
-      : null
+    const lang =
+      record.trending_lang && record.trending_lang !== 'any'
+        ? record.trending_lang
+        : null
     const key = `${period}_${lang || 'all'}`
 
     if (!periodLangMap.has(key)) {
@@ -246,23 +268,25 @@ const getPeriodDataForDate = (date) => {
     data.count++
   })
 
-  return Array.from(periodLangMap.values()).map(data => ({
-    period: data.period,
-    count: data.count,
-    lang: data.lang
-  })).sort((a, b) => {
-    const periodOrder = { 'today': 1, 'weekly': 2, 'monthly': 3 }
-    const orderA = periodOrder[a.period] || 99
-    const orderB = periodOrder[b.period] || 99
-    if (orderA !== orderB) {
-      return orderA - orderB
-    }
-    // If same period, sort by language (null last)
-    if (!a.lang && b.lang) return 1
-    if (a.lang && !b.lang) return -1
-    if (a.lang && b.lang) return a.lang.localeCompare(b.lang)
-    return 0
-  })
+  return Array.from(periodLangMap.values())
+    .map((data) => ({
+      period: data.period,
+      count: data.count,
+      lang: data.lang
+    }))
+    .sort((a, b) => {
+      const periodOrder = { today: 1, weekly: 2, monthly: 3 }
+      const orderA = periodOrder[a.period] || 99
+      const orderB = periodOrder[b.period] || 99
+      if (orderA !== orderB) {
+        return orderA - orderB
+      }
+      // If same period, sort by language (null last)
+      if (!a.lang && b.lang) return 1
+      if (a.lang && !b.lang) return -1
+      if (a.lang && b.lang) return a.lang.localeCompare(b.lang)
+      return 0
+    })
 }
 
 const getPeriodLabel = (period) => {
@@ -306,16 +330,19 @@ const handleDateClick = (date) => {
   }
 }
 
-watch(() => props.selectedDate, (newDate) => {
-  if (newDate) {
-    const year = newDate.getFullYear()
-    const month = newDate.getMonth()
-    const currentYear = currentMonth.value.getFullYear()
-    const currentMonthIndex = currentMonth.value.getMonth()
+watch(
+  () => props.selectedDate,
+  (newDate) => {
+    if (newDate) {
+      const year = newDate.getFullYear()
+      const month = newDate.getMonth()
+      const currentYear = currentMonth.value.getFullYear()
+      const currentMonthIndex = currentMonth.value.getMonth()
 
-    if (year !== currentYear || month !== currentMonthIndex) {
-      currentMonth.value = new Date(year, month, 1)
+      if (year !== currentYear || month !== currentMonthIndex) {
+        currentMonth.value = new Date(year, month, 1)
+      }
     }
   }
-})
+)
 </script>

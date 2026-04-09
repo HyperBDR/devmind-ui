@@ -38,7 +38,10 @@
         />
 
         <!-- Notification channels: configured in Admin > Notifications > Channels -->
-        <div v-if="isAdmin" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div
+          v-if="isAdmin"
+          class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+        >
           <h3 class="text-sm font-semibold text-gray-900 mb-1">
             {{ t('settings.notificationChannels') }}
           </h3>
@@ -138,7 +141,10 @@ const loadAllConfigs = async () => {
     }
 
     // Update publish OSS config
-    if (publishOssData.status === 'fulfilled' && publishOssData.value !== null) {
+    if (
+      publishOssData.status === 'fulfilled' &&
+      publishOssData.value !== null
+    ) {
       Object.assign(publishOssConfig, {
         use_same_as_storage: publishOssData.value.use_same_as_storage ?? true,
         access_key_id: publishOssData.value.access_key_id || '',

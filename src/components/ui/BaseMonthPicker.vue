@@ -67,7 +67,7 @@ const monthOptions = computed(() => {
   const now = new Date()
   const startDate = startOfMonth(addMonths(now, -props.monthsBack))
   const endDate = addMonths(now, props.monthsForward)
-  
+
   let current = startDate
   while (current <= endDate) {
     const value = format(current, 'yyyy-MM')
@@ -80,7 +80,7 @@ const monthOptions = computed(() => {
     options.push({ value, label })
     current = addMonths(current, 1)
   }
-  
+
   return options.reverse()
 })
 

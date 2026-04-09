@@ -265,7 +265,10 @@ router.beforeEach(async (to, from, next) => {
       }
     }
 
-    if (to.meta.requiredFeature && !hasFeature(userStore.userInfo, to.meta.requiredFeature)) {
+    if (
+      to.meta.requiredFeature &&
+      !hasFeature(userStore.userInfo, to.meta.requiredFeature)
+    ) {
       next(getLandingPath(userStore.userInfo))
       return
     }
