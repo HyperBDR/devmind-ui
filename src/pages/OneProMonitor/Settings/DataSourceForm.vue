@@ -2,8 +2,8 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <SettingsNav
-        :title="t('oneproMonitor.settingsPage.title')"
-        :subtitle="t('oneproMonitor.settingsPage.dataSourcesSubtitle')"
+        :title="t('hyperbdrMonitor.settingsPage.title')"
+        :subtitle="t('hyperbdrMonitor.settingsPage.dataSourcesSubtitle')"
       />
 
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -14,15 +14,15 @@
             <h2 class="text-lg font-semibold text-gray-900">
               {{
                 isEdit
-                  ? t('oneproMonitor.settingsPage.editDataSourceTitle')
-                  : t('oneproMonitor.settingsPage.newDataSourceTitle')
+                  ? t('hyperbdrMonitor.settingsPage.editDataSourceTitle')
+                  : t('hyperbdrMonitor.settingsPage.newDataSourceTitle')
               }}
             </h2>
             <p class="mt-1 text-sm text-gray-500">
               {{
                 isEdit
-                  ? t('oneproMonitor.settingsPage.editDataSourceSubtitle')
-                  : t('oneproMonitor.settingsPage.newDataSourceSubtitle')
+                  ? t('hyperbdrMonitor.settingsPage.editDataSourceSubtitle')
+                  : t('hyperbdrMonitor.settingsPage.newDataSourceSubtitle')
               }}
             </p>
           </div>
@@ -30,7 +30,7 @@
             :to="{ name: 'OneProMonitorSettingsDataSources' }"
             class="text-sm font-medium text-primary-600 hover:text-primary-700"
           >
-            {{ t('oneproMonitor.actions.backToList') }}
+            {{ t('hyperbdrMonitor.actions.backToList') }}
           </router-link>
         </div>
 
@@ -41,7 +41,7 @@
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">{{
-                t('oneproMonitor.labels.name')
+                t('hyperbdrMonitor.labels.name')
               }}</label>
               <input
                 v-model="form.name"
@@ -51,7 +51,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">{{
-                t('oneproMonitor.labels.apiUrl')
+                t('hyperbdrMonitor.labels.apiUrl')
               }}</label>
               <input
                 v-model="form.api_url"
@@ -62,7 +62,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">{{
-                t('oneproMonitor.labels.username')
+                t('hyperbdrMonitor.labels.username')
               }}</label>
               <input
                 v-model="form.username"
@@ -73,8 +73,8 @@
             <div>
               <label class="block text-sm font-medium text-gray-700">{{
                 isEdit
-                  ? t('oneproMonitor.settingsPage.passwordHintEdit')
-                  : t('oneproMonitor.labels.password')
+                  ? t('hyperbdrMonitor.settingsPage.passwordHintEdit')
+                  : t('hyperbdrMonitor.labels.password')
               }}</label>
               <input
                 v-model="form.password"
@@ -89,7 +89,7 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label class="block text-sm font-medium text-gray-700">{{
-                  t('oneproMonitor.labels.apiTimeout')
+                  t('hyperbdrMonitor.labels.apiTimeout')
                 }}</label>
                 <input
                   v-model.number="form.api_timeout"
@@ -100,7 +100,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700">{{
-                  t('oneproMonitor.labels.collectInterval')
+                  t('hyperbdrMonitor.labels.collectInterval')
                 }}</label>
                 <input
                   v-model.number="form.collect_interval"
@@ -113,7 +113,7 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label class="block text-sm font-medium text-gray-700">{{
-                  t('oneproMonitor.labels.retryCount')
+                  t('hyperbdrMonitor.labels.retryCount')
                 }}</label>
                 <input
                   v-model.number="form.api_retry_count"
@@ -124,7 +124,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700">{{
-                  t('oneproMonitor.labels.retryDelay')
+                  t('hyperbdrMonitor.labels.retryDelay')
                 }}</label>
                 <input
                   v-model.number="form.api_retry_delay"
@@ -141,7 +141,7 @@
                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
               <span class="text-sm text-gray-700">{{
-                t('oneproMonitor.settingsPage.enableSource')
+                t('hyperbdrMonitor.settingsPage.enableSource')
               }}</span>
             </label>
           </div>
@@ -153,13 +153,13 @@
               :to="{ name: 'OneProMonitorSettingsDataSources' }"
               class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:text-gray-900"
             >
-              {{ t('oneproMonitor.actions.cancel') }}
+              {{ t('hyperbdrMonitor.actions.cancel') }}
             </router-link>
             <BaseButton type="submit" :loading="saving">
               {{
                 isEdit
-                  ? t('oneproMonitor.actions.saveUpdate')
-                  : t('oneproMonitor.actions.createDataSource')
+                  ? t('hyperbdrMonitor.actions.saveUpdate')
+                  : t('hyperbdrMonitor.actions.createDataSource')
               }}
             </BaseButton>
           </div>
@@ -215,7 +215,7 @@ async function loadSource() {
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.loadSourceDetailError')
+        t('hyperbdrMonitor.settingsPage.loadSourceDetailError')
     )
   }
 }
@@ -229,16 +229,16 @@ async function submit() {
     }
     if (isEdit.value) {
       await oneproMonitorApi.dataSources.update(route.params.id, payload)
-      showSuccess(t('oneproMonitor.settingsPage.updateSuccess'))
+      showSuccess(t('hyperbdrMonitor.settingsPage.updateSuccess'))
     } else {
       await oneproMonitorApi.dataSources.create(payload)
-      showSuccess(t('oneproMonitor.settingsPage.createSuccess'))
+      showSuccess(t('hyperbdrMonitor.settingsPage.createSuccess'))
     }
     router.push({ name: 'OneProMonitorSettingsDataSources' })
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.saveSourceError')
+        t('hyperbdrMonitor.settingsPage.saveSourceError')
     )
   } finally {
     saving.value = false

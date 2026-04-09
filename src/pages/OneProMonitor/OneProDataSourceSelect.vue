@@ -5,14 +5,14 @@
         v-if="props.variant === 'prominent' || props.variant === 'toolbar'"
         class="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]"
       />
-      {{ t('oneproMonitor.labels.dataSource') }}
+      {{ t('hyperbdrMonitor.labels.dataSource') }}
     </span>
     <select
       :value="selectedDataSource"
       :class="selectClass"
       @change="handleChange"
     >
-      <option value="">{{ t('oneproMonitor.labels.allDataSources') }}</option>
+      <option value="">{{ t('hyperbdrMonitor.labels.allDataSources') }}</option>
       <option
         v-for="source in dataSources"
         :key="source.id"

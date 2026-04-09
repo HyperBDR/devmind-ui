@@ -30,9 +30,7 @@
 
         <div class="flex items-center space-x-4">
           <LanguageSwitcher variant="dark" />
-          <PlatformSwitcher
-            button-class="border-slate-600 bg-slate-800 text-slate-200 hover:border-indigo-400 hover:text-white"
-          />
+          <PlatformSwitcher variant="dark" />
           <div class="relative" ref="userMenuRef">
             <button
               @click="toggleUserMenu"

@@ -2,8 +2,8 @@
   <div v-if="platforms.length > 1" class="relative" ref="switcherRef">
     <button
       @click="open = !open"
-      class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-primary-300 hover:text-primary-700"
-      :class="buttonClass"
+      class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium shadow-sm transition-colors"
+      :class="[buttonClasses, buttonClass]"
     >
       <span class="max-w-[20rem] truncate whitespace-nowrap">{{
         currentPlatform?.label || t('platforms.switchPlatform')
@@ -34,10 +34,12 @@
     >
       <div
         v-if="open"
-        class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+        class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl shadow-lg"
+        :class="panelClasses"
       >
         <div
-          class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500"
+          class="border-b px-4 py-3 text-xs font-semibold uppercase tracking-wide"
+          :class="headerClasses"
         >
           {{ t('platforms.switchPlatform') }}
         </div>
@@ -45,7 +47,8 @@
           v-for="platform in platforms"
           :key="platform.key"
           :to="platform.defaultPath"
-          class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
+          class="flex items-center justify-between px-4 py-3 text-sm transition-colors"
+          :class="itemClasses"
           @click="open = false"
         >
           <span class="min-w-0 flex-1 truncate whitespace-nowrap pr-2">{{
@@ -73,7 +76,11 @@ import {
   getCurrentPlatformKey
 } from '@/utils/platformAccess'
 
-defineProps({
+const props = defineProps({
+  variant: {
+    type: String,
+    default: 'light'
+  },
   buttonClass: {
     type: String,
     default: ''
@@ -94,6 +101,32 @@ const currentPlatform = computed(
     platforms.value.find((item) => item.key === currentPlatformKey.value) ||
     platforms.value[0] ||
     null
+)
+
+const isDark = computed(() => props.variant === 'dark')
+
+const buttonClasses = computed(() =>
+  isDark.value
+    ? 'border border-slate-600 bg-slate-800 text-slate-100 hover:border-slate-500 hover:bg-slate-700'
+    : 'border border-gray-200 bg-white text-gray-700 hover:border-primary-300 hover:text-primary-700'
+)
+
+const panelClasses = computed(() =>
+  isDark.value
+    ? 'border border-gray-200 bg-white'
+    : 'border border-gray-200 bg-white'
+)
+
+const headerClasses = computed(() =>
+  isDark.value
+    ? 'border-gray-100 text-gray-500'
+    : 'border-gray-100 text-gray-500'
+)
+
+const itemClasses = computed(() =>
+  isDark.value
+    ? 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
 )
 
 const handleClickOutside = (event) => {

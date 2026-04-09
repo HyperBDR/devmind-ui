@@ -2,10 +2,10 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <OneProPageHeader
-        :eyebrow="t('oneproMonitor.licensesPage.eyebrow')"
-        :title="t('oneproMonitor.licensesPage.title')"
-        :subtitle="t('oneproMonitor.licensesPage.subtitle')"
-        :scope-hint="t('oneproMonitor.licensesPage.scopeHint')"
+        :eyebrow="t('hyperbdrMonitor.licensesPage.eyebrow')"
+        :title="t('hyperbdrMonitor.licensesPage.title')"
+        :subtitle="t('hyperbdrMonitor.licensesPage.subtitle')"
+        :scope-hint="t('hyperbdrMonitor.licensesPage.scopeHint')"
       >
         <template #summary>
           <article
@@ -14,13 +14,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-cyan-700/70"
             >
-              {{ t('oneproMonitor.licensesPage.catalogTitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.catalogTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ licenses.length }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.licensesPage.catalogSubtitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.catalogSubtitle') }}
             </p>
           </article>
           <article
@@ -29,13 +29,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-violet-700/70"
             >
-              {{ t('oneproMonitor.licensesPage.utilizationTitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.utilizationTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ totalUsageRatio }}%
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.licensesPage.utilizationSubtitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.utilizationSubtitle') }}
             </p>
           </article>
           <article
@@ -44,13 +44,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-amber-700/70"
             >
-              {{ t('oneproMonitor.licensesPage.exhaustedTitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.exhaustedTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ exhaustedCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.licensesPage.exhaustedSubtitle') }}
+              {{ t('hyperbdrMonitor.licensesPage.exhaustedSubtitle') }}
             </p>
           </article>
         </template>
@@ -63,15 +63,15 @@
           >
             <div>
               <h2 class="text-lg font-semibold text-gray-900">
-                {{ t('oneproMonitor.licensesPage.filtersTitle') }}
+                {{ t('hyperbdrMonitor.licensesPage.filtersTitle') }}
               </h2>
               <p class="mt-1 text-sm text-gray-500">
-                {{ t('oneproMonitor.licensesPage.filtersSubtitle') }}
+                {{ t('hyperbdrMonitor.licensesPage.filtersSubtitle') }}
               </p>
             </div>
             <p class="text-sm text-gray-500">
               {{
-                t('oneproMonitor.licensesPage.showingCount', {
+                t('hyperbdrMonitor.licensesPage.showingCount', {
                   count: licenses.length
                 })
               }}
@@ -86,14 +86,14 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.labels.type') }}
+                {{ t('hyperbdrMonitor.labels.type') }}
               </span>
               <select
                 v-model="filters.type"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
                 <option value="">
-                  {{ t('oneproMonitor.labels.allTypes') }}
+                  {{ t('hyperbdrMonitor.labels.allTypes') }}
                 </option>
                 <option value="dr">DR</option>
                 <option value="other">Other</option>
@@ -103,20 +103,20 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.labels.status') }}
+                {{ t('hyperbdrMonitor.labels.status') }}
               </span>
               <select
                 v-model="filters.status"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
                 <option value="">
-                  {{ t('oneproMonitor.labels.allStatuses') }}
+                  {{ t('hyperbdrMonitor.labels.allStatuses') }}
                 </option>
                 <option value="available">
-                  {{ t('oneproMonitor.labels.statusAvailable') }}
+                  {{ t('hyperbdrMonitor.labels.statusAvailable') }}
                 </option>
                 <option value="exhausted">
-                  {{ t('oneproMonitor.labels.statusExhausted') }}
+                  {{ t('hyperbdrMonitor.labels.statusExhausted') }}
                 </option>
               </select>
             </label>
@@ -125,7 +125,7 @@
                 class="w-full"
                 :loading="loading"
                 @click="loadLicenses"
-                >{{ t('oneproMonitor.actions.filter') }}</BaseButton
+                >{{ t('hyperbdrMonitor.actions.filter') }}</BaseButton
               >
             </div>
           </div>
@@ -141,27 +141,27 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.type') }}
+                  {{ t('hyperbdrMonitor.labels.type') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.tenant') }}
+                  {{ t('hyperbdrMonitor.labels.tenant') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.licensesPage.capacityOverview') }}
+                  {{ t('hyperbdrMonitor.licensesPage.capacityOverview') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.dataSource') }}
+                  {{ t('hyperbdrMonitor.labels.dataSource') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.licensesPage.validity') }}
+                  {{ t('hyperbdrMonitor.licensesPage.validity') }}
                 </th>
               </tr>
             </thead>
@@ -176,7 +176,7 @@
                 <td class="px-6 py-4 text-sm text-gray-600">
                   <div class="flex items-center justify-between gap-3">
                     <span>{{
-                      t('oneproMonitor.licensesPage.usedOfTotal', {
+                      t('hyperbdrMonitor.licensesPage.usedOfTotal', {
                         used: license.total_used || 0,
                         total: license.total_amount || 0
                       })
@@ -214,7 +214,7 @@
                   colspan="5"
                   class="px-6 py-12 text-center text-sm text-gray-500"
                 >
-                  {{ t('oneproMonitor.licensesPage.empty') }}
+                  {{ t('hyperbdrMonitor.licensesPage.empty') }}
                 </td>
               </tr>
             </tbody>
@@ -284,7 +284,7 @@ async function loadLicenses() {
     licenses.value = payload.items || []
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.licensesPage.loadError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.licensesPage.loadError')
     )
   } finally {
     loading.value = false

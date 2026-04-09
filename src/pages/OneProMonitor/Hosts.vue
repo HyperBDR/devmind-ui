@@ -2,10 +2,10 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <OneProPageHeader
-        :eyebrow="t('oneproMonitor.hostsPage.eyebrow')"
-        :title="t('oneproMonitor.hostsPage.title')"
-        :subtitle="t('oneproMonitor.hostsPage.subtitle')"
-        :scope-hint="t('oneproMonitor.hostsPage.scopeHint')"
+        :eyebrow="t('hyperbdrMonitor.hostsPage.eyebrow')"
+        :title="t('hyperbdrMonitor.hostsPage.title')"
+        :subtitle="t('hyperbdrMonitor.hostsPage.subtitle')"
+        :scope-hint="t('hyperbdrMonitor.hostsPage.scopeHint')"
       >
         <template #summary>
           <div class="xl:col-span-full">
@@ -19,7 +19,7 @@
                   <p
                     class="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600/80"
                   >
-                    {{ t('oneproMonitor.hostsPage.resultsTitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.resultsTitle') }}
                   </p>
                   <p
                     class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
@@ -27,7 +27,7 @@
                     {{ hostSummary.total }}
                   </p>
                   <p class="mt-2 text-sm leading-6 text-gray-500">
-                    {{ t('oneproMonitor.hostsPage.totalSubtitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.totalSubtitle') }}
                   </p>
                 </article>
                 <article
@@ -43,7 +43,7 @@
                   <p
                     class="text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-700/70"
                   >
-                    {{ t('oneproMonitor.hostsPage.healthyTitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.healthyTitle') }}
                   </p>
                   <p
                     class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
@@ -51,7 +51,7 @@
                     {{ hostSummary.healthy }}
                   </p>
                   <p class="mt-2 text-sm leading-6 text-gray-500">
-                    {{ t('oneproMonitor.hostsPage.healthySubtitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.healthySubtitle') }}
                   </p>
                 </article>
                 <article
@@ -67,7 +67,7 @@
                   <p
                     class="text-[11px] font-medium uppercase tracking-[0.2em] text-amber-700/75"
                   >
-                    {{ t('oneproMonitor.hostsPage.errorTitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.errorTitle') }}
                   </p>
                   <p
                     class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
@@ -75,7 +75,7 @@
                     {{ hostSummary.error }}
                   </p>
                   <p class="mt-2 text-sm leading-6 text-gray-500">
-                    {{ t('oneproMonitor.hostsPage.errorSubtitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.errorSubtitle') }}
                   </p>
                 </article>
                 <article
@@ -91,7 +91,7 @@
                   <p
                     class="text-[11px] font-medium uppercase tracking-[0.2em] text-rose-700/75"
                   >
-                    {{ t('oneproMonitor.hostsPage.invalidLicenseTitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.invalidLicenseTitle') }}
                   </p>
                   <p
                     class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
@@ -99,7 +99,7 @@
                     {{ hostSummary.invalidLicense }}
                   </p>
                   <p class="mt-2 text-sm leading-6 text-gray-500">
-                    {{ t('oneproMonitor.hostsPage.invalidLicenseSubtitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.invalidLicenseSubtitle') }}
                   </p>
                 </article>
               </div>
@@ -108,14 +108,14 @@
               >
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <span>{{ t('oneproMonitor.hostsPage.summaryHint') }}</span>
+                  <span>{{ t('hyperbdrMonitor.hostsPage.summaryHint') }}</span>
                 </div>
                 <span
                   class="hidden rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-emerald-700 md:inline-flex"
                 >
                   {{
                     selectedDataSourceName ||
-                    t('oneproMonitor.labels.allDataSources')
+                    t('hyperbdrMonitor.labels.allDataSources')
                   }}
                 </span>
               </div>
@@ -131,16 +131,16 @@
           >
             <div>
               <h2 class="text-lg font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.filtersTitle') }}
+                {{ t('hyperbdrMonitor.hostsPage.filtersTitle') }}
               </h2>
               <p class="mt-1 text-sm text-gray-500">
-                {{ t('oneproMonitor.hostsPage.filtersSubtitle') }}
+                {{ t('hyperbdrMonitor.hostsPage.filtersSubtitle') }}
               </p>
             </div>
             <div class="flex items-center gap-3">
               <p class="text-sm text-gray-500">
                 {{
-                  t('oneproMonitor.hostsPage.showingCount', {
+                  t('hyperbdrMonitor.hostsPage.showingCount', {
                     count: totalHosts
                   })
                 }}
@@ -161,7 +161,7 @@
                   <p
                     class="px-3 pb-2 pt-1 text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
                   >
-                    {{ t('oneproMonitor.hostsPage.exportTitle') }}
+                    {{ t('hyperbdrMonitor.hostsPage.exportTitle') }}
                   </p>
                   <button
                     type="button"
@@ -169,11 +169,11 @@
                     @click="exportHosts('filtered')"
                   >
                     <span class="text-sm font-medium text-gray-900">
-                      {{ t('oneproMonitor.hostsPage.exportScopes.filtered') }}
+                      {{ t('hyperbdrMonitor.hostsPage.exportScopes.filtered') }}
                     </span>
                     <span class="mt-1 text-xs leading-5 text-gray-500">
                       {{
-                        t('oneproMonitor.hostsPage.exportScopes.filteredHint')
+                        t('hyperbdrMonitor.hostsPage.exportScopes.filteredHint')
                       }}
                     </span>
                   </button>
@@ -184,13 +184,13 @@
                   >
                     <span class="text-sm font-medium text-gray-900">
                       {{
-                        t('oneproMonitor.hostsPage.exportScopes.dataSourceAll')
+                        t('hyperbdrMonitor.hostsPage.exportScopes.dataSourceAll')
                       }}
                     </span>
                     <span class="mt-1 text-xs leading-5 text-gray-500">
                       {{
                         t(
-                          'oneproMonitor.hostsPage.exportScopes.dataSourceAllHint'
+                          'hyperbdrMonitor.hostsPage.exportScopes.dataSourceAllHint'
                         )
                       }}
                     </span>
@@ -209,12 +209,12 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.hostsPage.searchLabel') }}
+                {{ t('hyperbdrMonitor.hostsPage.searchLabel') }}
               </span>
               <input
                 v-model="filters.name"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
-                :placeholder="t('oneproMonitor.hostsPage.searchPlaceholder')"
+                :placeholder="t('hyperbdrMonitor.hostsPage.searchPlaceholder')"
                 @keyup.enter="applyFilters"
               />
             </label>
@@ -223,14 +223,14 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.hostsPage.taskStatusLabel') }}
+                {{ t('hyperbdrMonitor.hostsPage.taskStatusLabel') }}
               </span>
               <select
                 v-model="filters.status"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
                 <option value="">
-                  {{ t('oneproMonitor.hostsPage.statusPlaceholder') }}
+                  {{ t('hyperbdrMonitor.hostsPage.statusPlaceholder') }}
                 </option>
                 <option
                   v-for="option in taskStatusFilterOptions"
@@ -246,37 +246,37 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.labels.authorization') }}
+                {{ t('hyperbdrMonitor.labels.authorization') }}
               </span>
               <select
                 v-model="filters.licenseValid"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
                 <option value="">
-                  {{ t('oneproMonitor.hostsPage.authorizationPlaceholder') }}
+                  {{ t('hyperbdrMonitor.hostsPage.authorizationPlaceholder') }}
                 </option>
                 <option value="true">
-                  {{ t('oneproMonitor.labels.valid') }}
+                  {{ t('hyperbdrMonitor.labels.valid') }}
                 </option>
                 <option value="false">
-                  {{ t('oneproMonitor.labels.invalid') }}
+                  {{ t('hyperbdrMonitor.labels.invalid') }}
                 </option>
               </select>
             </label>
 
             <div class="flex items-end gap-3">
               <BaseButton variant="outline" @click="resetFilters">
-                {{ t('oneproMonitor.actions.reset') }}
+                {{ t('hyperbdrMonitor.actions.reset') }}
               </BaseButton>
               <BaseButton :loading="loading" @click="applyFilters">
-                {{ t('oneproMonitor.actions.filter') }}
+                {{ t('hyperbdrMonitor.actions.filter') }}
               </BaseButton>
             </div>
           </div>
 
           <div class="mt-4 flex flex-wrap items-center gap-2">
             <span class="text-sm font-medium text-gray-500">{{
-              t('oneproMonitor.hostsPage.activeFilters')
+              t('hyperbdrMonitor.hostsPage.activeFilters')
             }}</span>
             <template v-if="activeFilters.length > 0">
               <span
@@ -291,7 +291,7 @@
               v-else
               class="inline-flex items-center rounded-full border border-dashed border-gray-200 px-3 py-1 text-xs text-gray-400"
             >
-              {{ t('oneproMonitor.hostsPage.noActiveFilters') }}
+              {{ t('hyperbdrMonitor.hostsPage.noActiveFilters') }}
             </span>
           </div>
         </div>
@@ -306,15 +306,15 @@
           >
             <div>
               <h2 class="text-lg font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.listTitle') }}
+                {{ t('hyperbdrMonitor.hostsPage.listTitle') }}
               </h2>
               <p class="mt-1 text-sm text-gray-500">
-                {{ t('oneproMonitor.hostsPage.listSubtitle') }}
+                {{ t('hyperbdrMonitor.hostsPage.listSubtitle') }}
               </p>
             </div>
             <p class="text-sm text-gray-500">
               {{
-                t('oneproMonitor.hostsPage.showingCount', { count: totalHosts })
+                t('hyperbdrMonitor.hostsPage.showingCount', { count: totalHosts })
               }}
             </p>
           </div>
@@ -329,48 +329,48 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.host') }}
+                  {{ t('hyperbdrMonitor.labels.host') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.tenant') }}
+                  {{ t('hyperbdrMonitor.labels.tenant') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.hostStatus') }}
+                  {{ t('hyperbdrMonitor.labels.hostStatus') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.bootStatus') }}
+                  {{ t('hyperbdrMonitor.labels.bootStatus') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.healthStatus') }}
+                  {{ t('hyperbdrMonitor.labels.healthStatus') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.system') }} /
-                  {{ t('oneproMonitor.labels.resources') }}
+                  {{ t('hyperbdrMonitor.labels.system') }} /
+                  {{ t('hyperbdrMonitor.labels.resources') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.authorization') }}
+                  {{ t('hyperbdrMonitor.labels.authorization') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.errorSummary') }}
+                  {{ t('hyperbdrMonitor.labels.errorSummary') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.actions') }}
+                  {{ t('hyperbdrMonitor.labels.actions') }}
                 </th>
               </tr>
             </thead>
@@ -391,7 +391,7 @@
                       >
                         {{
                           host.data_source_name ||
-                          t('oneproMonitor.labels.dataSource')
+                          t('hyperbdrMonitor.labels.dataSource')
                         }}
                       </span>
                     </div>
@@ -400,7 +400,7 @@
                     >
                       <span>ID: {{ host.id || '-' }}</span>
                       <span
-                        >{{ t('oneproMonitor.labels.lastCollected') }}:
+                        >{{ t('hyperbdrMonitor.labels.lastCollected') }}:
                         {{ formatDateTime(host.last_collected_at) }}</span
                       >
                     </div>
@@ -415,7 +415,7 @@
                     <div class="mt-2 text-xs text-gray-500">
                       {{
                         host.data_source_name ||
-                        t('oneproMonitor.labels.dataSource')
+                        t('hyperbdrMonitor.labels.dataSource')
                       }}
                     </div>
                   </div>
@@ -482,8 +482,8 @@
                   >
                     {{
                       host.license_valid
-                        ? t('oneproMonitor.labels.valid')
-                        : t('oneproMonitor.labels.invalid')
+                        ? t('hyperbdrMonitor.labels.valid')
+                        : t('hyperbdrMonitor.labels.invalid')
                     }}
                   </span>
                 </td>
@@ -502,7 +502,7 @@
                     v-else
                     class="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-400"
                   >
-                    {{ t('oneproMonitor.hostsPage.noError') }}
+                    {{ t('hyperbdrMonitor.hostsPage.noError') }}
                   </span>
                 </td>
 
@@ -512,7 +512,7 @@
                     variant="outline"
                     @click="openHostDetail(host)"
                   >
-                    {{ t('oneproMonitor.actions.detail') }}
+                    {{ t('hyperbdrMonitor.actions.detail') }}
                   </BaseButton>
                 </td>
               </tr>
@@ -521,7 +521,7 @@
                   colspan="9"
                   class="px-6 py-14 text-center text-sm text-gray-500"
                 >
-                  {{ t('oneproMonitor.hostsPage.empty') }}
+                  {{ t('hyperbdrMonitor.hostsPage.empty') }}
                 </td>
               </tr>
             </tbody>
@@ -602,25 +602,25 @@
 
       <BaseModal
         :show="detailVisible"
-        :title="selectedHost?.name || t('oneproMonitor.hostsPage.detailTitle')"
+        :title="selectedHost?.name || t('hyperbdrMonitor.hostsPage.detailTitle')"
         @close="closeHostDetail"
       >
         <div v-if="selectedHost" class="space-y-6">
           <div>
             <p class="text-sm text-gray-500">
-              {{ t('oneproMonitor.hostsPage.detailSubtitle') }}
+              {{ t('hyperbdrMonitor.hostsPage.detailSubtitle') }}
             </p>
           </div>
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <h2 class="text-sm font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.sections.basic') }}
+                {{ t('hyperbdrMonitor.hostsPage.sections.basic') }}
               </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.hostId') }}
+                    {{ t('hyperbdrMonitor.labels.hostId') }}
                   </dt>
                   <dd class="break-all text-right font-medium text-gray-900">
                     {{ selectedHost.id || '-' }}
@@ -628,7 +628,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.tenant') }}
+                    {{ t('hyperbdrMonitor.labels.tenant') }}
                   </dt>
                   <dd class="text-right text-gray-900">
                     {{ selectedHost.tenant_name || '-' }}
@@ -636,7 +636,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.dataSource') }}
+                    {{ t('hyperbdrMonitor.labels.dataSource') }}
                   </dt>
                   <dd class="text-right text-gray-900">
                     {{ selectedHost.data_source_name || '-' }}
@@ -644,7 +644,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.system') }}
+                    {{ t('hyperbdrMonitor.labels.system') }}
                   </dt>
                   <dd class="text-right text-gray-900">
                     {{ selectedHost.os_type || '-' }} /
@@ -653,7 +653,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.lastCollected') }}
+                    {{ t('hyperbdrMonitor.labels.lastCollected') }}
                   </dt>
                   <dd class="text-right text-gray-900">
                     {{ formatDateTime(selectedHost.last_collected_at) }}
@@ -664,12 +664,12 @@
 
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <h2 class="text-sm font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.sections.runtime') }}
+                {{ t('hyperbdrMonitor.hostsPage.sections.runtime') }}
               </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex items-center justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.hostStatus') }}
+                    {{ t('hyperbdrMonitor.labels.hostStatus') }}
                   </dt>
                   <dd>
                     <span
@@ -682,7 +682,7 @@
                 </div>
                 <div class="flex items-center justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.bootStatus') }}
+                    {{ t('hyperbdrMonitor.labels.bootStatus') }}
                   </dt>
                   <dd>
                     <span
@@ -695,7 +695,7 @@
                 </div>
                 <div class="flex items-center justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.healthStatus') }}
+                    {{ t('hyperbdrMonitor.labels.healthStatus') }}
                   </dt>
                   <dd>
                     <span
@@ -712,7 +712,7 @@
                 </div>
                 <div class="flex items-center justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.taskStatus') }}
+                    {{ t('hyperbdrMonitor.labels.taskStatus') }}
                   </dt>
                   <dd>
                     <span
@@ -730,7 +730,7 @@
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <h2 class="text-sm font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.sections.resources') }}
+                {{ t('hyperbdrMonitor.hostsPage.sections.resources') }}
               </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex justify-between gap-4">
@@ -747,7 +747,7 @@
                 </div>
                 <div class="flex items-center justify-between gap-4">
                   <dt class="text-gray-500">
-                    {{ t('oneproMonitor.labels.authorization') }}
+                    {{ t('hyperbdrMonitor.labels.authorization') }}
                   </dt>
                   <dd>
                     <span
@@ -760,8 +760,8 @@
                     >
                       {{
                         selectedHost.license_valid
-                          ? t('oneproMonitor.labels.valid')
-                          : t('oneproMonitor.labels.invalid')
+                          ? t('hyperbdrMonitor.labels.valid')
+                          : t('hyperbdrMonitor.labels.invalid')
                       }}
                     </span>
                   </dd>
@@ -771,14 +771,14 @@
 
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <h2 class="text-sm font-semibold text-gray-900">
-                {{ t('oneproMonitor.hostsPage.sections.error') }}
+                {{ t('hyperbdrMonitor.hostsPage.sections.error') }}
               </h2>
               <div
                 class="mt-4 min-h-[140px] whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"
               >
                 {{
                   selectedHost.error_message ||
-                  t('oneproMonitor.hostsPage.noError')
+                  t('hyperbdrMonitor.hostsPage.noError')
                 }}
               </div>
             </section>
@@ -865,7 +865,7 @@ const activeFilters = computed(() => {
   if (filters.value.name) {
     entries.push({
       key: 'name',
-      label: t('oneproMonitor.hostsPage.searchLabel'),
+      label: t('hyperbdrMonitor.hostsPage.searchLabel'),
       value: filters.value.name
     })
   }
@@ -873,7 +873,7 @@ const activeFilters = computed(() => {
   if (filters.value.status) {
     entries.push({
       key: 'status',
-      label: t('oneproMonitor.hostsPage.taskStatusLabel'),
+      label: t('hyperbdrMonitor.hostsPage.taskStatusLabel'),
       value: taskStatusFilterLabel(filters.value.status)
     })
   }
@@ -881,9 +881,9 @@ const activeFilters = computed(() => {
   if (filters.value.healthScope) {
     entries.push({
       key: 'health_scope',
-      label: t('oneproMonitor.labels.healthStatus'),
+      label: t('hyperbdrMonitor.labels.healthStatus'),
       value: t(
-        `oneproMonitor.hostsPage.quickScopes.${filters.value.healthScope}`
+        `hyperbdrMonitor.hostsPage.quickScopes.${filters.value.healthScope}`
       )
     })
   }
@@ -894,26 +894,26 @@ const activeFilters = computed(() => {
   ) {
     entries.push({
       key: 'license_valid',
-      label: t('oneproMonitor.labels.authorization'),
+      label: t('hyperbdrMonitor.labels.authorization'),
       value:
         filters.value.licenseValid === 'true'
-          ? t('oneproMonitor.labels.valid')
-          : t('oneproMonitor.labels.invalid')
+          ? t('hyperbdrMonitor.labels.valid')
+          : t('hyperbdrMonitor.labels.invalid')
     })
   }
 
   if (filters.value.hasError === 'true') {
     entries.push({
       key: 'has_error',
-      label: t('oneproMonitor.labels.errorSummary'),
-      value: t('oneproMonitor.hostsPage.quickScopes.hasError')
+      label: t('hyperbdrMonitor.labels.errorSummary'),
+      value: t('hyperbdrMonitor.hostsPage.quickScopes.hasError')
     })
   }
 
   if (selectedDataSource.value) {
     entries.push({
       key: 'data_source_id',
-      label: t('oneproMonitor.hostsPage.dataSourceLabel'),
+      label: t('hyperbdrMonitor.hostsPage.dataSourceLabel'),
       value: selectedDataSourceName.value || selectedDataSource.value
     })
   }
@@ -975,17 +975,17 @@ const hostTaskStatusMap = {
 const taskStatusFilterOptions = computed(() => [
   {
     value: 'completed',
-    label: t('oneproMonitor.hostsPage.taskStatus.completed')
+    label: t('hyperbdrMonitor.hostsPage.taskStatus.completed')
   },
-  { value: 'failed', label: t('oneproMonitor.hostsPage.taskStatus.failed') },
+  { value: 'failed', label: t('hyperbdrMonitor.hostsPage.taskStatus.failed') },
   {
     value: 'processing',
-    label: t('oneproMonitor.hostsPage.taskStatus.processing')
+    label: t('hyperbdrMonitor.hostsPage.taskStatus.processing')
   }
 ])
 
 function taskStatusFilterLabel(value) {
-  return t(`oneproMonitor.hostsPage.taskStatus.${value}`)
+  return t(`hyperbdrMonitor.hostsPage.taskStatus.${value}`)
 }
 
 function derivedTaskStatusLabel(status) {
@@ -1088,7 +1088,7 @@ async function loadHosts() {
     }
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.hostsPage.loadError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.hostsPage.loadError')
     )
   } finally {
     loading.value = false
@@ -1119,7 +1119,7 @@ async function exportHosts(scope) {
     exportMenuOpen.value = false
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.hostsPage.exportError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.hostsPage.exportError')
     )
   } finally {
     exportingScope.value = ''

@@ -2,8 +2,8 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <SettingsNav
-        :title="t('oneproMonitor.settingsPage.title')"
-        :subtitle="t('oneproMonitor.settingsPage.dataSourcesSubtitle')"
+        :title="t('hyperbdrMonitor.settingsPage.title')"
+        :subtitle="t('hyperbdrMonitor.settingsPage.dataSourcesSubtitle')"
       />
 
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -12,17 +12,17 @@
         >
           <div>
             <h2 class="text-lg font-semibold text-gray-900">
-              {{ t('oneproMonitor.settingsPage.dataSourceSectionTitle') }}
+              {{ t('hyperbdrMonitor.settingsPage.dataSourceSectionTitle') }}
             </h2>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.settingsPage.dataSourceSectionSubtitle') }}
+              {{ t('hyperbdrMonitor.settingsPage.dataSourceSectionSubtitle') }}
             </p>
           </div>
           <router-link
             :to="{ name: 'OneProMonitorSettingsDataSourceCreate' }"
             class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
           >
-            {{ t('oneproMonitor.actions.createDataSource') }}
+            {{ t('hyperbdrMonitor.actions.createDataSource') }}
           </router-link>
         </div>
 
@@ -34,32 +34,32 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.dataSource') }}
+                  {{ t('hyperbdrMonitor.labels.dataSource') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.apiUrl') }}
+                  {{ t('hyperbdrMonitor.labels.apiUrl') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.status') }}
+                  {{ t('hyperbdrMonitor.labels.status') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.collectInterval') }}
+                  {{ t('hyperbdrMonitor.labels.collectInterval') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.lastCollected') }}
+                  {{ t('hyperbdrMonitor.labels.lastCollected') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.actions') }}
+                  {{ t('hyperbdrMonitor.labels.actions') }}
                 </th>
               </tr>
             </thead>
@@ -84,8 +84,8 @@
                     />
                     <span class="text-gray-700">{{
                       source.is_active
-                        ? t('oneproMonitor.labels.active')
-                        : t('oneproMonitor.labels.inactive')
+                        ? t('hyperbdrMonitor.labels.active')
+                        : t('hyperbdrMonitor.labels.inactive')
                     }}</span>
                   </label>
                 </td>
@@ -101,7 +101,7 @@
                       class="font-medium text-primary-600 hover:text-primary-700"
                       @click="triggerCollect(source.id)"
                     >
-                      {{ t('oneproMonitor.actions.collect') }}
+                      {{ t('hyperbdrMonitor.actions.collect') }}
                     </button>
                     <router-link
                       :to="{
@@ -110,13 +110,13 @@
                       }"
                       class="font-medium text-gray-700 hover:text-gray-900"
                     >
-                      {{ t('oneproMonitor.actions.edit') }}
+                      {{ t('hyperbdrMonitor.actions.edit') }}
                     </router-link>
                     <button
                       class="font-medium text-red-600 hover:text-red-700"
                       @click="removeSource(source)"
                     >
-                      {{ t('oneproMonitor.actions.delete') }}
+                      {{ t('hyperbdrMonitor.actions.delete') }}
                     </button>
                   </div>
                 </td>
@@ -126,7 +126,7 @@
                   colspan="6"
                   class="px-6 py-12 text-center text-sm text-gray-500"
                 >
-                  {{ t('oneproMonitor.settingsPage.emptySources') }}
+                  {{ t('hyperbdrMonitor.settingsPage.emptySources') }}
                 </td>
               </tr>
             </tbody>
@@ -164,7 +164,7 @@ async function loadDataSources() {
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.loadSourcesError')
+        t('hyperbdrMonitor.settingsPage.loadSourcesError')
     )
   } finally {
     loading.value = false
@@ -176,12 +176,12 @@ async function toggleStatus(source) {
     await oneproMonitorApi.dataSources.patch(source.id, {
       is_active: !source.is_active
     })
-    showSuccess(t('oneproMonitor.settingsPage.toggleSourceSuccess'))
+    showSuccess(t('hyperbdrMonitor.settingsPage.toggleSourceSuccess'))
     await loadDataSources()
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.toggleSourceError')
+        t('hyperbdrMonitor.settingsPage.toggleSourceError')
     )
   }
 }
@@ -189,11 +189,11 @@ async function toggleStatus(source) {
 async function triggerCollect(id) {
   try {
     await oneproMonitorApi.dataSources.collect(id)
-    showSuccess(t('oneproMonitor.settingsPage.collectSuccess'))
+    showSuccess(t('hyperbdrMonitor.settingsPage.collectSuccess'))
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.collectError')
+        t('hyperbdrMonitor.settingsPage.collectError')
     )
   }
 }
@@ -201,19 +201,19 @@ async function triggerCollect(id) {
 async function removeSource(source) {
   if (
     !window.confirm(
-      t('oneproMonitor.settingsPage.deleteConfirm', { name: source.name })
+      t('hyperbdrMonitor.settingsPage.deleteConfirm', { name: source.name })
     )
   ) {
     return
   }
   try {
     await oneproMonitorApi.dataSources.delete(source.id)
-    showSuccess(t('oneproMonitor.settingsPage.deleteSuccess'))
+    showSuccess(t('hyperbdrMonitor.settingsPage.deleteSuccess'))
     await loadDataSources()
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.settingsPage.deleteError')
+        t('hyperbdrMonitor.settingsPage.deleteError')
     )
   }
 }

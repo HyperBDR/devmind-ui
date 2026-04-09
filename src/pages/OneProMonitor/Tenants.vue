@@ -2,10 +2,10 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <OneProPageHeader
-        :eyebrow="t('oneproMonitor.tenantsPage.eyebrow')"
-        :title="t('oneproMonitor.tenantsPage.title')"
-        :subtitle="t('oneproMonitor.tenantsPage.subtitle')"
-        :scope-hint="t('oneproMonitor.tenantsPage.scopeHint')"
+        :eyebrow="t('hyperbdrMonitor.tenantsPage.eyebrow')"
+        :title="t('hyperbdrMonitor.tenantsPage.title')"
+        :subtitle="t('hyperbdrMonitor.tenantsPage.subtitle')"
+        :scope-hint="t('hyperbdrMonitor.tenantsPage.scopeHint')"
       />
 
       <section class="rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -15,15 +15,15 @@
           >
             <div>
               <h2 class="text-lg font-semibold text-gray-900">
-                {{ t('oneproMonitor.tenantsPage.filtersTitle') }}
+                {{ t('hyperbdrMonitor.tenantsPage.filtersTitle') }}
               </h2>
               <p class="mt-1 text-sm text-gray-500">
-                {{ t('oneproMonitor.tenantsPage.filtersSubtitle') }}
+                {{ t('hyperbdrMonitor.tenantsPage.filtersSubtitle') }}
               </p>
             </div>
             <p class="text-sm text-gray-500">
               {{
-                t('oneproMonitor.tenantsPage.showingCount', {
+                t('hyperbdrMonitor.tenantsPage.showingCount', {
                   count: tenants.length
                 })
               }}
@@ -38,12 +38,12 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.labels.tenant') }}
+                {{ t('hyperbdrMonitor.labels.tenant') }}
               </span>
               <input
                 v-model="filters.name"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
-                :placeholder="t('oneproMonitor.tenantsPage.searchPlaceholder')"
+                :placeholder="t('hyperbdrMonitor.tenantsPage.searchPlaceholder')"
                 @keyup.enter="loadTenants"
               />
             </label>
@@ -52,7 +52,7 @@
                 class="w-full"
                 :loading="loading"
                 @click="loadTenants"
-                >{{ t('oneproMonitor.actions.filter') }}</BaseButton
+                >{{ t('hyperbdrMonitor.actions.filter') }}</BaseButton
               >
             </div>
           </div>
@@ -68,32 +68,32 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.tenant') }}
+                  {{ t('hyperbdrMonitor.labels.tenant') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.status') }}
+                  {{ t('hyperbdrMonitor.labels.status') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.dataSource') }}
+                  {{ t('hyperbdrMonitor.labels.dataSource') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.tenantsPage.hostCount') }}
+                  {{ t('hyperbdrMonitor.tenantsPage.hostCount') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.tenantsPage.licenseOverview') }}
+                  {{ t('hyperbdrMonitor.tenantsPage.licenseOverview') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.lastCollected') }}
+                  {{ t('hyperbdrMonitor.labels.lastCollected') }}
                 </th>
               </tr>
             </thead>
@@ -111,7 +111,7 @@
                     class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium"
                     :class="pillClass(tenant.status)"
                   >
-                    {{ tenant.status || t('oneproMonitor.labels.unknown') }}
+                    {{ tenant.status || t('hyperbdrMonitor.labels.unknown') }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">
@@ -122,7 +122,7 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">
                   {{
-                    t('oneproMonitor.tenantsPage.licenseSummary', {
+                    t('hyperbdrMonitor.tenantsPage.licenseSummary', {
                       used: tenant.license_used || 0,
                       remaining: tenant.license_remaining || 0
                     })
@@ -137,7 +137,7 @@
                   colspan="6"
                   class="px-6 py-12 text-center text-sm text-gray-500"
                 >
-                  {{ t('oneproMonitor.tenantsPage.empty') }}
+                  {{ t('hyperbdrMonitor.tenantsPage.empty') }}
                 </td>
               </tr>
             </tbody>
@@ -186,7 +186,7 @@ async function loadTenants() {
     tenants.value = payload.items || []
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.tenantsPage.loadError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.tenantsPage.loadError')
     )
   } finally {
     loading.value = false
