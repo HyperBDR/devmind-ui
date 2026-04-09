@@ -803,11 +803,9 @@
     "allTenants": "All Tenants",
     "pocTenant": "PoC Tenants",
     "officialTenant": "Official Tenants",
-    "totalDropOff": "Total Drop-off",
     "dropOff": "Drop-off Rate",
     "droppedUsers": "Dropped Users",
     "users": "Users",
-    "retentionTrend": "Retention Trend",
     "sceneTypeMigration": "Migration",
     "sceneTypeDisaster": "Disaster Recovery",
     "statsDays": "<{ value } days",
@@ -828,7 +826,6 @@
     "close": "Close",
     "highActivity": "High Active",
     "mediumActivity": "Medium Active",
-    "lowActivity": "Low Active",
     "highActivityDef": "High: Auth utilization >60%",
     "mediumActivityDef": "Medium: Auth utilization 30%-60%",
     "lowActivityDef": "Low: Auth utilization <30%",
@@ -1441,6 +1438,104 @@
         "deleteSuccess": "Alert rule deleted successfully",
         "saveError": "Failed to save"
       }
+    }
+  },
+  "aiPriceHub": {
+    "navTitle": "LLM Pricing Comparison",
+    "eyebrow": "LLM Pricing Comparison",
+    "title": "LLM Pricing Comparison",
+    "subtitle": "Compare pricing by platform and quickly see how much each vendor differs on input and output costs.",
+    "sync": "Sync Pricing",
+    "syncing": "Syncing...",
+    "unit": "per 1M tokens",
+    "search": {
+      "placeholder": "Search vendor or model"
+    },
+    "selector": {
+      "title": "Choose Primary Model",
+      "description": "Choose an AGIOne platform first, then a synced primary model from that platform. DevMind matches comparable vendor pricing automatically.",
+      "platformLabel": "AGIOne Platform",
+      "label": "Primary Model"
+    },
+    "stats": {
+      "models": "Models",
+      "platform": "Current Platform",
+      "platformHint": "Pricing reflects the selected AGIOne environment",
+      "vendors": "Comparable Vendors",
+      "vendorsHint": "Vendors still shown after filtering",
+      "bestInput": "Best Input Savings",
+      "bestInputHint": "Vendor with the strongest input discount",
+      "bestOutput": "Best Output Savings",
+      "bestOutputHint": "Vendor with the strongest output discount",
+      "bestValueSummary": "{vendor} · saves {amount} · {ratio} lower",
+      "noSavings": "No clear savings yet"
+    },
+    "summary": {
+      "currentModel": "Current Primary Model",
+      "inputPrice": "Input Price",
+      "outputPrice": "Output Price",
+      "sources": "Source Vendors",
+      "aggregateSources": "Aggregate Sources",
+      "compareCount": "{count} comparable vendors",
+      "description": "The selected model costs {input} for input and {output} for output. The table below shows how much it saves versus each comparable vendor, or where it is higher."
+    },
+    "comparison": {
+      "title": "Vendor Comparison",
+      "subtitle": "Matches use the same model name and currency, then calculate savings and discount rate relative to each vendor."
+    },
+    "matrix": {
+      "title": "Pricing Matrix",
+      "subtitle": "Compare input and output pricing for each vendor side by side against the selected primary model.",
+      "metric": "Metric",
+      "inputPrice": "Input Price",
+      "inputComparison": "Input Comparison",
+      "outputPrice": "Output Price",
+      "outputComparison": "Output Comparison",
+      "comparisonHint": "Relative to the primary model",
+      "reference": "Current baseline"
+    },
+    "table": {
+      "vendor": "Vendor",
+      "model": "Model",
+      "input": "Input Price",
+      "inputAdvantage": "Input Savings",
+      "output": "Output Price",
+      "outputAdvantage": "Output Savings"
+    },
+    "vendors": {
+      "agione": "AGIOne",
+      "aliyun": "Aliyun",
+      "baidu": "Baidu Qianfan",
+      "deepseek": "DeepSeek",
+      "volcengine": "VolcEngine",
+      "zhipu": "Zhipu AI"
+    },
+    "advantage": {
+      "saving": "Saves {amount} · {ratio} lower",
+      "compactSaving": "{ratio} lower",
+      "premium": "Costs {amount} more · {ratio} higher",
+      "compactPremium": "{ratio} higher",
+      "same": "Similar price",
+      "unavailable": "No comparable result"
+    },
+    "badge": {
+      "betterValue": "Better value",
+      "higherPrice": "Higher price",
+      "mixed": "Mixed input/output",
+      "similar": "Similar"
+    },
+    "empty": {
+      "title": "No comparable pricing yet",
+      "description": "There is no comparable vendor pricing for this model yet, or pricing has not been synced."
+    },
+    "messages": {
+      "syncSuccess": "Pricing sync completed"
+    },
+    "errors": {
+      "loadPlatforms": "Failed to load platform configs",
+      "loadOverview": "Failed to load model list",
+      "loadComparison": "Failed to load price comparison",
+      "sync": "Failed to sync pricing"
     }
   },
   "dataCollector": {
@@ -2190,7 +2285,6 @@
   },
   "todos": {
     "title": "Todos",
-    "calendar": "Calendar View",
     "list": "List View",
     "add": "Add",
     "edit": "Edit",
@@ -2429,13 +2523,13 @@
       "customTaskType": "Or enter custom task type",
       "scheduleType": "Schedule Type",
       "scheduleTypeRequired": "Please select schedule type",
-      "crontabSettings": "Crontab Settings",
+      "crontabSettings": "Schedule Settings",
       "intervalSettings": "Schedule Settings",
       "periodRequired": "Please select period unit",
       "minute": "Minute",
-      "minuteHelp": "e.g., */5 for every 5 minutes",
+      "minuteHelp": "Minute (0-59), comma-separated for multiple, * for every minute",
       "hour": "Hour",
-      "hourHelp": "e.g., * for every hour",
+      "hourHelp": "Hour (0-23), comma-separated for multiple, * for every hour",
       "dayOfMonth": "Day of Month",
       "dayOfMonthPlaceholder": "e.g., * or 1,15 or 1-5",
       "dayOfMonthHelp": "Day of month (1-31), comma-separated for multiple, * for every day",
@@ -2451,7 +2545,7 @@
       "timezoneInfo": "Timezone Settings",
       "timezoneDescription": "Tasks will be scheduled according to your local timezone ({timezone})",
       "every": "Interval Value",
-      "period": "Period Unit",
+      "period": "Period",
       "taskArguments": "Task Arguments",
       "keywords": "Keywords",
       "keywordsPlaceholder": "Separate multiple keywords with commas",
@@ -2461,11 +2555,9 @@
       "topicsHelp": "e.g., TECHNOLOGY, BUSINESS",
       "count": "Count",
       "sourceLanguage": "Source Language",
-      "sourceLanguage": "Source Language",
       "sourceRegion": "Source Region",
       "language": "Language",
       "region": "Region",
-      "period": "Period",
       "socialAccount": "Article Storage Prefix",
       "socialAccountPlaceholder": "Enter article storage prefix",
       "socialAccountHelp": "Used to distinguish article storage paths when publishing to different social media accounts (e.g., toutiao_ai, weibo_user)",
@@ -2494,8 +2586,6 @@
       "selectTopic": "Select a topic",
       "keywordDuplicate": "Keyword already exists",
       "enabled": "Enable Task",
-      "crontabSettings": "Schedule Settings",
-      "minute": "Minute",
       "minutePlaceholder": "e.g., 30 or 0,15,30,45 or *",
       "langCode": "Language Code",
       "langCodeAny": "Any",
@@ -2509,12 +2599,9 @@
       "trendingPeriodMonthly": "Monthly",
       "maxProjects": "Max Projects",
       "maxProjectsHelp": "Maximum number of projects to collect (default: 20, max: 100). Actual count may be less as GitHub trending page has a fixed number of projects",
-      "minuteHelp": "Minute (0-59), comma-separated for multiple, * for every minute",
       "minuteRequired": "Please enter minute",
       "minuteInvalid": "Minute must be a number between 0-59, comma-separated for multiple",
-      "hour": "Hour",
       "hourPlaceholder": "e.g., 9 or 9,12,15,18 or *",
-      "hourHelp": "Hour (0-23), comma-separated for multiple, * for every hour",
       "hourRequired": "Please enter hour",
       "hourInvalid": "Hour must be a number between 0-23, comma-separated for multiple",
       "alertTaskMinuteHelp": "Alert task restriction: Only a single minute value (0-59) is allowed, e.g., 5 means execute at the 5th minute of every hour",
@@ -2672,7 +2759,6 @@
       "failed": "Failed"
     },
     "basicInfo": "Basic Information",
-    "statusLabel": "Task Status",
     "sourceUrl": "Source URL",
     "original": "Original",
     "translated": "Translated",
@@ -2698,7 +2784,6 @@
     "error": "Error",
     "socialMedia": "Social Media",
     "storagePrefix": "Storage Prefix",
-    "storageLocation": "Storage Location",
     "uploadStatus": "Upload Status",
     "transformStatus": "Transform Status",
     "publishStatus": "Publish Status",

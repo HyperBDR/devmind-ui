@@ -492,7 +492,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import { extractErrorMessage, extractResponseData } from '@/utils/api'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const overview = ref({
   primary_sources: [],
@@ -518,26 +518,31 @@ const selectedPlatform = computed(
 const selectedPlatformLabel = computed(() => {
   const platform = selectedPlatform.value
   if (!platform) return ''
-  return platform.region
-    ? `${platform.name} · ${platform.region}`
-    : platform.name
+  return platformLabel(platform)
 })
 
 const VENDOR_I18N_KEYS = {
   agione: 'aiPriceHub.vendors.agione',
   aliyun: 'aiPriceHub.vendors.aliyun',
   'alibaba cloud': 'aiPriceHub.vendors.aliyun',
+  'alibaba-china': 'aiPriceHub.vendors.aliyun',
   alibaba: 'aiPriceHub.vendors.aliyun',
+  '阿里云': 'aiPriceHub.vendors.aliyun',
   baidu: 'aiPriceHub.vendors.baidu',
   qianfan: 'aiPriceHub.vendors.baidu',
   'baidu qianfan': 'aiPriceHub.vendors.baidu',
+  '百度千帆': 'aiPriceHub.vendors.baidu',
   deepseek: 'aiPriceHub.vendors.deepseek',
+  'deep seek': 'aiPriceHub.vendors.deepseek',
   volcengine: 'aiPriceHub.vendors.volcengine',
   'volc engine': 'aiPriceHub.vendors.volcengine',
-  火山引擎: 'aiPriceHub.vendors.volcengine',
+  '火山引擎': 'aiPriceHub.vendors.volcengine',
   zhipu: 'aiPriceHub.vendors.zhipu',
   'zhipu ai': 'aiPriceHub.vendors.zhipu',
-  'z.ai': 'aiPriceHub.vendors.zhipu'
+  'z.ai': 'aiPriceHub.vendors.zhipu',
+  'z.ai model': 'aiPriceHub.vendors.zhipu',
+  '智谱': 'aiPriceHub.vendors.zhipu',
+  '智谱 ai': 'aiPriceHub.vendors.zhipu'
 }
 
 const vendorColumns = computed(() => {
@@ -554,7 +559,7 @@ const vendorColumns = computed(() => {
     })
   })
   return Array.from(map.values()).sort((left, right) =>
-    left.label.localeCompare(right.label)
+    left.label.localeCompare(right.label, locale.value)
   )
 })
 
@@ -579,6 +584,10 @@ function vendorKey(slug, name) {
     .toLowerCase()
 }
 
+function currentIntlLocale() {
+  return locale.value === 'zh-CN' ? 'zh-CN' : 'en-US'
+}
+
 function currencySymbol(currency = 'USD') {
   const symbolMap = {
     CNY: '¥',
@@ -593,7 +602,7 @@ function currencySymbol(currency = 'USD') {
 
 function formatMoney(value, currency = 'USD') {
   if (value === null || value === undefined) return '-'
-  const numberPart = new Intl.NumberFormat('en-US', {
+  const numberPart = new Intl.NumberFormat(currentIntlLocale(), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(value)
@@ -602,7 +611,11 @@ function formatMoney(value, currency = 'USD') {
 
 function formatPercent(value) {
   if (value === null || value === undefined) return '-'
-  return `${(value * 100).toFixed(1)}%`
+  return new Intl.NumberFormat(currentIntlLocale(), {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  }).format(value)
 }
 
 function localizeVendorName(name, slug = '') {
@@ -622,6 +635,18 @@ function localizeVendorName(name, slug = '') {
   }
 
   return name || slug || '-'
+}
+
+function platformLabel(platform) {
+  if (!platform) return ''
+
+  const localizedName = localizeVendorName(
+    platform.name || platform.vendor_name,
+    platform.vendor_slug || platform.platform_slug
+  )
+  return platform.region
+    ? `${localizedName} · ${platform.region}`
+    : localizedName
 }
 
 function formatCompactAdvantage(advantage, ratio) {
@@ -729,10 +754,7 @@ async function selectPlatform(platformSlug) {
 }
 
 function platformOptionLabel(platform) {
-  if (!platform) return ''
-  return platform.region
-    ? `${platform.name} · ${platform.region}`
-    : platform.name
+  return platformLabel(platform)
 }
 
 function handleClickOutside(event) {

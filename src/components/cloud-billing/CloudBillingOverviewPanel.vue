@@ -2338,9 +2338,6 @@ function displayDaysRemaining(
   unitKey = 'cloudBilling.billing.overviewDaysUnit'
 ) {
   if (!hasDaysRemainingReference(account)) {
-    if (Number.isFinite(Number(account?.days_remaining))) {
-      return `${account.days_remaining}${t(unitKey)}`
-    }
     return t('cloudBilling.billing.overviewDaysReferenceUnavailable')
   }
   return `${account.days_remaining}${t(unitKey)}`
