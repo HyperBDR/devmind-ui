@@ -36,10 +36,55 @@ const props = defineProps({
   statistics: {
     type: Object,
     default: null
+  },
+  exchangeRate: {
+    type: Number,
+    default: 7.15
   }
 })
 
 const { t } = useI18n()
+
+const buildProviderLabel = (providerData, fallbackKey) => {
+  const providerName = String(
+    providerData?.provider_name || fallbackKey || ''
+  ).trim()
+  const providerNotes = String(providerData?.provider_notes || '').trim()
+  return providerNotes ? `${providerName} - ${providerNotes}` : providerName
+}
+
+const chartCurrency = computed(() => {
+  if (!props.statistics?.by_provider) {
+    return 'CNY'
+  }
+  const currencies = new Set(
+    Object.values(props.statistics.by_provider)
+      .map((providerData) => String(providerData.currency || '').toUpperCase())
+      .filter(Boolean)
+  )
+  if (currencies.size === 1) {
+    return Array.from(currencies)[0]
+  }
+  return 'CNY'
+})
+
+const convertValueToChartCurrency = (value, currency) => {
+  const numericValue = Number(value || 0)
+  const sourceCurrency = String(currency || '').toUpperCase() || 'CNY'
+  const targetCurrency = chartCurrency.value
+  const rate = Number(props.exchangeRate || 7.15)
+
+  if (sourceCurrency === targetCurrency) {
+    return numericValue
+  }
+  if (sourceCurrency === 'USD' && targetCurrency === 'CNY') {
+    return numericValue * rate
+  }
+  if (sourceCurrency === 'CNY' && targetCurrency === 'USD') {
+    return numericValue / rate
+  }
+  return numericValue
+}
 
 const chartData = computed(() => {
   if (!props.statistics || !props.statistics.by_provider) {
@@ -73,13 +118,13 @@ const chartData = computed(() => {
   const borderColor = []
 
   providerEntries.forEach(([key, providerData], index) => {
-    // Build label with provider name and account_id if available
-    let label = providerData.provider_name || key
-    if (providerData.account_id) {
-      label = `${label} ${providerData.account_id}`
-    }
-    labels.push(label)
-    data.push(parseFloat(providerData.total_cost || 0))
+    labels.push(buildProviderLabel(providerData, key))
+    data.push(
+      convertValueToChartCurrency(
+        parseFloat(providerData.total_cost || 0),
+        providerData.currency
+      )
+    )
     backgroundColor.push(colors[index % colors.length])
     borderColor.push('#ffffff')
   })
@@ -146,7 +191,7 @@ const chartOptions = computed(() => {
             const percentage =
               total > 0 ? ((value / total) * 100).toFixed(2) : 0
 
-            return `${label}: ${formatCost(value, 'CNY')} (${percentage}%)`
+            return `${label}: ${formatCost(value, chartCurrency.value)} (${percentage}%)`
           }
         }
       }

@@ -13,7 +13,11 @@
       @change="handleChange"
     >
       <option value="">{{ t('oneproMonitor.labels.allDataSources') }}</option>
-      <option v-for="source in dataSources" :key="source.id" :value="String(source.id)">
+      <option
+        v-for="source in dataSources"
+        :key="source.id"
+        :value="String(source.id)"
+      >
         {{ source.name }}
       </option>
     </select>
@@ -45,7 +49,7 @@ const {
   loadDataSources
 } = useOneProDataSourceScope()
 
-const wrapperClass = computed(() => (
+const wrapperClass = computed(() =>
   props.layout === 'inline'
     ? [
         'flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3',
@@ -53,12 +57,14 @@ const wrapperClass = computed(() => (
           ? 'rounded-2xl border border-gray-200 bg-white/95 px-3 py-2 shadow-[0_16px_40px_-24px_rgba(15,23,42,0.45)] backdrop-blur'
           : props.variant === 'toolbar'
             ? 'rounded-2xl border border-white/60 bg-white/80 px-3 py-2 shadow-[0_18px_48px_-30px_rgba(15,23,42,0.35)] backdrop-blur'
-          : ''
-      ].filter(Boolean).join(' ')
+            : ''
+      ]
+        .filter(Boolean)
+        .join(' ')
     : 'flex min-w-[220px] flex-col gap-2'
-))
+)
 
-const labelClass = computed(() => (
+const labelClass = computed(() =>
   props.layout === 'inline'
     ? [
         'text-xs font-medium uppercase tracking-[0.18em] sm:whitespace-nowrap',
@@ -67,9 +73,9 @@ const labelClass = computed(() => (
           : 'text-gray-500'
       ].join(' ')
     : 'text-xs font-medium uppercase tracking-[0.18em] text-gray-500'
-))
+)
 
-const selectClass = computed(() => (
+const selectClass = computed(() =>
   props.layout === 'inline'
     ? [
         'w-full rounded-xl border bg-white text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100 sm:min-w-[240px] sm:w-auto',
@@ -77,10 +83,10 @@ const selectClass = computed(() => (
           ? 'border-gray-200 px-4 py-2.5 shadow-sm'
           : props.variant === 'toolbar'
             ? 'border-emerald-100 bg-emerald-50/70 px-4 py-2.5 shadow-inner'
-          : 'border-gray-300 px-4 py-3'
+            : 'border-gray-300 px-4 py-3'
       ].join(' ')
     : 'rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100'
-))
+)
 
 function handleChange(event) {
   setSelectedDataSource(event.target.value)

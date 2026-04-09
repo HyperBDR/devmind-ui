@@ -12,7 +12,9 @@ const routes = [
 
 test.describe('OnePro Monitor routes', () => {
   for (const route of routes) {
-    test(`route ${route} is reachable or redirected to login`, async ({ page }) => {
+    test(`route ${route} is reachable or redirected to login`, async ({
+      page
+    }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')
 

@@ -18,6 +18,12 @@ export const FEATURE_DEFINITIONS = [
     matchers: ['/hyperbdr-dashboard']
   },
   {
+    key: 'ai_pricehub',
+    labelKey: 'platforms.aiPriceHub',
+    defaultPath: '/ai-pricehub',
+    matchers: ['/ai-pricehub']
+  },
+  {
     key: 'admin_console',
     labelKey: 'platforms.adminConsole',
     defaultPath: '/management/users',
@@ -34,6 +40,7 @@ const FEATURE_MAP = new Map(FEATURE_DEFINITIONS.map((item) => [item.key, item]))
 const FEATURE_ALIASES = {
   cloud_billing: 'operations_console',
   data_collector: 'operations_console',
+  ai_model_pricing: 'ai_pricehub',
   llm_console: 'admin_console',
   task_management_console: 'admin_console',
   notification_console: 'admin_console'

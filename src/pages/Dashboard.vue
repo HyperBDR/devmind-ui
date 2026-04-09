@@ -222,6 +222,19 @@
               t('dashboard.overview.comingSoon')
             }}</span>
             <h3 class="mt-2 text-base font-semibold text-gray-900">
+              {{ t('dashboard.overview.moduleHyperMotion') }}
+            </h3>
+            <p class="mt-2 text-sm text-gray-600 flex-1">
+              {{ t('dashboard.overview.moduleHyperMotionDesc') }}
+            </p>
+          </div>
+          <div
+            class="flex flex-col bg-white border border-gray-200 rounded-xl p-6"
+          >
+            <span class="text-xs font-medium text-gray-400">{{
+              t('dashboard.overview.comingSoon')
+            }}</span>
+            <h3 class="mt-2 text-base font-semibold text-gray-900">
               {{ t('dashboard.overview.moduleRndAnalytics') }}
             </h3>
             <p class="mt-2 text-sm text-gray-600 flex-1">

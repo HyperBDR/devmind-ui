@@ -159,7 +159,10 @@
           >
             <button
               type="button"
-              @click="searchType = 'keywords'; handleSearchTypeChange()"
+              @click="
+                searchType = 'keywords'
+                handleSearchTypeChange()
+              "
               class="px-4 py-1.5 text-xs font-medium rounded transition-all duration-200 min-w-[90px] relative"
               :class="
                 searchType === 'keywords'
@@ -173,7 +176,10 @@
             </button>
             <button
               type="button"
-              @click="searchType = 'topics'; handleSearchTypeChange()"
+              @click="
+                searchType = 'topics'
+                handleSearchTypeChange()
+              "
               class="px-4 py-1.5 text-xs font-medium rounded transition-all duration-200 min-w-[90px] relative"
               :class="
                 searchType === 'topics'
@@ -309,7 +315,10 @@
               v-for="topic in availableTopics"
               :key="topic"
               type="button"
-              @click="selectedTopic = topic; handleTopicChange()"
+              @click="
+                selectedTopic = topic
+                handleTopicChange()
+              "
               class="px-4 py-2 text-sm font-medium rounded-md border transition-colors text-center"
               :class="
                 selectedTopic === topic

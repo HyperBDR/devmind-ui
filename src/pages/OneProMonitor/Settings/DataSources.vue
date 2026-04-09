@@ -7,10 +7,16 @@
       />
 
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          class="px-6 py-4 border-b border-gray-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        >
           <div>
-            <h2 class="text-lg font-semibold text-gray-900">{{ t('oneproMonitor.settingsPage.dataSourceSectionTitle') }}</h2>
-            <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.settingsPage.dataSourceSectionSubtitle') }}</p>
+            <h2 class="text-lg font-semibold text-gray-900">
+              {{ t('oneproMonitor.settingsPage.dataSourceSectionTitle') }}
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+              {{ t('oneproMonitor.settingsPage.dataSourceSectionSubtitle') }}
+            </p>
           </div>
           <router-link
             :to="{ name: 'OneProMonitorSettingsDataSourceCreate' }"
@@ -25,21 +31,49 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.dataSource') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.apiUrl') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.status') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.collectInterval') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.lastCollected') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{{ t('oneproMonitor.labels.actions') }}</th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.dataSource') }}
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.apiUrl') }}
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.status') }}
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.collectInterval') }}
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.lastCollected') }}
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.actions') }}
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 bg-white">
               <tr v-for="source in dataSources" :key="source.id">
                 <td class="px-6 py-4 text-sm text-gray-900">
                   <div class="font-medium">{{ source.name }}</div>
-                  <div class="mt-1 text-xs text-gray-500">{{ source.username }}</div>
+                  <div class="mt-1 text-xs text-gray-500">
+                    {{ source.username }}
+                  </div>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ source.api_url }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  {{ source.api_url }}
+                </td>
                 <td class="px-6 py-4 text-sm">
                   <label class="inline-flex items-center gap-2">
                     <input
@@ -47,31 +81,53 @@
                       class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       :checked="source.is_active"
                       @change="toggleStatus(source)"
-                    >
-                    <span class="text-gray-700">{{ source.is_active ? t('oneproMonitor.labels.active') : t('oneproMonitor.labels.inactive') }}</span>
+                    />
+                    <span class="text-gray-700">{{
+                      source.is_active
+                        ? t('oneproMonitor.labels.active')
+                        : t('oneproMonitor.labels.inactive')
+                    }}</span>
                   </label>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ source.collect_interval || 3600 }}s</td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ formatDateTime(source.last_collected_at) }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  {{ source.collect_interval || 3600 }}s
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  {{ formatDateTime(source.last_collected_at) }}
+                </td>
                 <td class="px-6 py-4 text-sm">
                   <div class="flex flex-wrap gap-3">
-                    <button class="font-medium text-primary-600 hover:text-primary-700" @click="triggerCollect(source.id)">
+                    <button
+                      class="font-medium text-primary-600 hover:text-primary-700"
+                      @click="triggerCollect(source.id)"
+                    >
                       {{ t('oneproMonitor.actions.collect') }}
                     </button>
                     <router-link
-                      :to="{ name: 'OneProMonitorSettingsDataSourceEdit', params: { id: source.id } }"
+                      :to="{
+                        name: 'OneProMonitorSettingsDataSourceEdit',
+                        params: { id: source.id }
+                      }"
                       class="font-medium text-gray-700 hover:text-gray-900"
                     >
                       {{ t('oneproMonitor.actions.edit') }}
                     </router-link>
-                    <button class="font-medium text-red-600 hover:text-red-700" @click="removeSource(source)">
+                    <button
+                      class="font-medium text-red-600 hover:text-red-700"
+                      @click="removeSource(source)"
+                    >
                       {{ t('oneproMonitor.actions.delete') }}
                     </button>
                   </div>
                 </td>
               </tr>
               <tr v-if="dataSources.length === 0">
-                <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-500">{{ t('oneproMonitor.settingsPage.emptySources') }}</td>
+                <td
+                  colspan="6"
+                  class="px-6 py-12 text-center text-sm text-gray-500"
+                >
+                  {{ t('oneproMonitor.settingsPage.emptySources') }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -106,7 +162,10 @@ async function loadDataSources() {
     const payload = unwrap(response)
     dataSources.value = payload.items || []
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.loadSourcesError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.loadSourcesError')
+    )
   } finally {
     loading.value = false
   }
@@ -120,7 +179,10 @@ async function toggleStatus(source) {
     showSuccess(t('oneproMonitor.settingsPage.toggleSourceSuccess'))
     await loadDataSources()
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.toggleSourceError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.toggleSourceError')
+    )
   }
 }
 
@@ -129,12 +191,19 @@ async function triggerCollect(id) {
     await oneproMonitorApi.dataSources.collect(id)
     showSuccess(t('oneproMonitor.settingsPage.collectSuccess'))
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.collectError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.collectError')
+    )
   }
 }
 
 async function removeSource(source) {
-  if (!window.confirm(t('oneproMonitor.settingsPage.deleteConfirm', { name: source.name }))) {
+  if (
+    !window.confirm(
+      t('oneproMonitor.settingsPage.deleteConfirm', { name: source.name })
+    )
+  ) {
     return
   }
   try {
@@ -142,7 +211,10 @@ async function removeSource(source) {
     showSuccess(t('oneproMonitor.settingsPage.deleteSuccess'))
     await loadDataSources()
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.deleteError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.deleteError')
+    )
   }
 }
 

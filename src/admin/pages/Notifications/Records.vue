@@ -275,7 +275,7 @@
                   :disabled="page <= 1"
                   :title="t('common.pagination.previous')"
                   class="flex items-center gap-1"
-                  @click="page -= 1; fetchRecords()"
+                  @click="page--; fetchRecords()"
                 >
                   <svg
                     class="w-4 h-4"
@@ -300,7 +300,7 @@
                   :disabled="page >= totalPages"
                   :title="t('common.pagination.next')"
                   class="flex items-center gap-1"
-                  @click="page += 1; fetchRecords()"
+                  @click="page++; fetchRecords()"
                 >
                   <svg
                     class="w-4 h-4"

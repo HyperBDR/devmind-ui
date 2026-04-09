@@ -1,7 +1,7 @@
 <template>
   <AppLayout>
     <div class="w-full max-w-full p-6">
-      <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center justify-between mb-4">
         <div>
           <h1 class="text-lg font-semibold text-gray-900">
             {{ t('cloudBilling.billing.title') }}
@@ -22,7 +22,7 @@
           "
           @click="handleRefresh"
           :title="t('common.refresh')"
-          class="flex items-center gap-1 shadow-sm hover:shadow-md transition-shadow"
+          class="flex items-center gap-1 transition-shadow shadow-sm hover:shadow-md"
         >
           <svg
             v-if="
@@ -48,12 +48,12 @@
         </BaseButton>
       </div>
 
-      <div class="bg-white rounded border border-gray-200 shadow-sm">
+      <div class="bg-white border border-gray-200 rounded shadow-sm">
         <div class="p-6">
           <!-- Tabs -->
           <div>
             <div class="border-b border-gray-200">
-              <nav class="-mb-px flex space-x-4 overflow-x-auto">
+              <nav class="flex -mb-px space-x-4 overflow-x-auto">
                 <button
                   v-for="tab in tabs"
                   :key="tab.id"
@@ -75,13 +75,13 @@
               <div v-if="activeTab === 'statistics'">
                 <!-- Statistics Filters -->
                 <div
-                  class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4"
+                  class="p-4 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm"
                 >
                   <div class="flex flex-wrap items-end gap-4">
                     <!-- Period Type Selection -->
                     <div class="flex-1 min-w-[140px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.periodType') }}:
                       </label>
@@ -104,7 +104,7 @@
                       class="flex-1 min-w-[180px]"
                     >
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.month') }}:
                       </label>
@@ -118,7 +118,7 @@
                       class="flex-1 min-w-[140px]"
                     >
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.year') }}:
                       </label>
@@ -134,7 +134,7 @@
                     <!-- Provider Filter -->
                     <div class="flex-1 min-w-[180px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.provider') }}
                       </label>
@@ -151,7 +151,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ getProviderDisplayName(provider) }}
+                          {{ getProviderSelectLabel(provider) }}
                         </option>
                       </select>
                     </div>
@@ -159,7 +159,7 @@
                     <!-- Account ID Filter -->
                     <div class="flex-1 min-w-[180px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.accountId') }}
                       </label>
@@ -192,15 +192,15 @@
                   <!-- Summary Cards and Pie Chart Row -->
                   <div
                     v-if="statsPeriodType === 'month'"
-                    class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"
+                    class="grid items-start grid-cols-1 gap-6 lg:grid-cols-2"
                   >
                     <!-- Left Column: Summary Cards -->
-                    <div class="space-y-3 h-full flex flex-col">
+                    <div class="flex flex-col h-full space-y-3">
                       <div
-                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                        class="flex items-center flex-1 gap-3 p-4 bg-white border border-gray-200 rounded-lg"
                       >
                         <div
-                          class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+                          class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg"
                         >
                           <svg
                             class="w-6 h-6 text-blue-600"
@@ -217,12 +217,15 @@
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                          <div class="text-xs font-medium text-gray-500 mb-1">
+                          <div class="mb-1 text-xs font-medium text-gray-500">
                             {{ t('cloudBilling.billing.totalCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
                             {{
-                              formatStatsSummaryAmount(statistics.total_cost)
+                              formatStatsSummaryAmount(
+                                statistics.total_cost,
+                                'total_cost'
+                              )
                             }}
                           </div>
                           <div
@@ -236,10 +239,10 @@
                         </div>
                       </div>
                       <div
-                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                        class="flex items-center flex-1 gap-3 p-4 bg-white border border-gray-200 rounded-lg"
                       >
                         <div
-                          class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
+                          class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg"
                         >
                           <svg
                             class="w-6 h-6 text-green-600"
@@ -256,12 +259,15 @@
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                          <div class="text-xs font-medium text-gray-500 mb-1">
+                          <div class="mb-1 text-xs font-medium text-gray-500">
                             {{ t('cloudBilling.billing.averageCost') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
                             {{
-                              formatStatsSummaryAmount(statistics.average_cost)
+                              formatStatsSummaryAmount(
+                                statistics.average_cost,
+                                'average_cost'
+                              )
                             }}
                           </div>
                           <div
@@ -275,10 +281,10 @@
                         </div>
                       </div>
                       <div
-                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                        class="flex items-center flex-1 gap-3 p-4 bg-white border border-gray-200 rounded-lg"
                       >
                         <div
-                          class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center"
+                          class="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-lg bg-amber-100"
                         >
                           <svg
                             class="w-6 h-6 text-amber-600"
@@ -295,7 +301,7 @@
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                          <div class="text-xs font-medium text-gray-500 mb-1">
+                          <div class="mb-1 text-xs font-medium text-gray-500">
                             {{ t('cloudBilling.billing.balance') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
@@ -323,10 +329,10 @@
                         </div>
                       </div>
                       <div
-                        class="bg-white border border-gray-200 rounded-lg p-4 flex-1 flex items-center gap-3"
+                        class="flex items-center flex-1 gap-3 p-4 bg-white border border-gray-200 rounded-lg"
                       >
                         <div
-                          class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+                          class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg"
                         >
                           <svg
                             class="w-6 h-6 text-purple-600"
@@ -343,7 +349,7 @@
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                          <div class="text-xs font-medium text-gray-500 mb-1">
+                          <div class="mb-1 text-xs font-medium text-gray-500">
                             {{ t('cloudBilling.billing.accountCount') }}
                           </div>
                           <div class="text-xl font-bold text-gray-900">
@@ -354,20 +360,28 @@
                     </div>
                     <!-- Right Column: Provider Cost Distribution Pie Chart -->
                     <div class="h-full">
-                      <BillingPieChart :statistics="statistics" />
+                      <BillingPieChart
+                        :statistics="statistics"
+                        :exchange-rate="statistics?.exchange_rate"
+                      />
                     </div>
                   </div>
 
                   <!-- Summary Cards Only (for Year View) -->
-                  <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div
-                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                      class="flex flex-col justify-center p-3 bg-white border border-gray-200 rounded-lg"
                     >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.totalCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatStatsSummaryAmount(statistics.total_cost) }}
+                        {{
+                          formatStatsSummaryAmount(
+                            statistics.total_cost,
+                            'total_cost'
+                          )
+                        }}
                       </div>
                       <div
                         v-if="statsSummaryHasMixedCurrencies"
@@ -377,13 +391,18 @@
                       </div>
                     </div>
                     <div
-                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                      class="flex flex-col justify-center p-3 bg-white border border-gray-200 rounded-lg"
                     >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.averageCost') }}
                       </div>
                       <div class="text-lg font-bold text-gray-900">
-                        {{ formatStatsSummaryAmount(statistics.average_cost) }}
+                        {{
+                          formatStatsSummaryAmount(
+                            statistics.average_cost,
+                            'average_cost'
+                          )
+                        }}
                       </div>
                       <div
                         v-if="statsSummaryHasMixedCurrencies"
@@ -393,7 +412,7 @@
                       </div>
                     </div>
                     <div
-                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                      class="flex flex-col justify-center p-3 bg-white border border-gray-200 rounded-lg"
                     >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.recordCount') }}
@@ -403,7 +422,7 @@
                       </div>
                     </div>
                     <div
-                      class="bg-white border border-gray-200 rounded-lg p-3 flex flex-col justify-center"
+                      class="flex flex-col justify-center p-3 bg-white border border-gray-200 rounded-lg"
                     >
                       <div class="text-xs font-medium text-gray-500 mb-0.5">
                         {{ t('cloudBilling.billing.balance') }}
@@ -452,7 +471,7 @@
 
                 <div
                   v-if="!statsLoading && !statistics"
-                  class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+                  class="py-16 text-center border border-gray-200 rounded-lg bg-gray-50"
                 >
                   <p class="text-sm font-medium text-gray-600">
                     {{ t('cloudBilling.billing.noData') }}
@@ -464,13 +483,13 @@
               <div v-if="activeTab === 'details'">
                 <!-- Details Filters -->
                 <div
-                  class="mb-6 bg-white rounded-lg border border-gray-200 shadow-sm p-4"
+                  class="p-4 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm"
                 >
                   <div class="flex flex-wrap items-end gap-4">
                     <!-- Date Range -->
                     <div class="flex-1 min-w-[160px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.startDate') }}
                       </label>
@@ -483,7 +502,7 @@
                     </div>
                     <div class="flex-1 min-w-[160px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.endDate') }}
                       </label>
@@ -498,7 +517,7 @@
                     <!-- Provider Filter -->
                     <div class="flex-1 min-w-[180px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.provider') }}
                       </label>
@@ -515,7 +534,7 @@
                           :key="provider.id"
                           :value="provider.id"
                         >
-                          {{ getProviderDisplayName(provider) }}
+                          {{ getProviderSelectLabel(provider) }}
                         </option>
                       </select>
                     </div>
@@ -523,7 +542,7 @@
                     <!-- Account ID Filter -->
                     <div class="flex-1 min-w-[180px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('cloudBilling.billing.accountId') }}
                       </label>
@@ -550,7 +569,7 @@
                     <!-- Search -->
                     <div class="flex-1 min-w-[200px]">
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block mb-1 text-sm font-medium text-gray-700"
                       >
                         {{ t('common.search') }}
                       </label>
@@ -584,10 +603,10 @@
 
                 <div
                   v-if="!detailsLoading && billings.length === 0"
-                  class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+                  class="py-16 text-center border border-gray-200 rounded-lg bg-gray-50"
                 >
                   <svg
-                    class="mx-auto h-12 w-12 text-gray-400 mb-4"
+                    class="w-12 h-12 mx-auto mb-4 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -607,38 +626,38 @@
                 <!-- Details Table -->
                 <div
                   v-if="!detailsLoading && billings.length > 0"
-                  class="overflow-x-auto rounded-lg border border-gray-200"
+                  class="overflow-x-auto border border-gray-200 rounded-lg"
                 >
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.provider') }}
                         </th>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.accountId') }}
                         </th>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.collectionTime') }}
                         </th>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.cost') }}
                         </th>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.balance') }}
                         </th>
                         <th
-                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                         >
                           {{ t('cloudBilling.billing.changeFromLastHour') }}
                         </th>
@@ -649,30 +668,30 @@
                         v-for="billing in billings"
                         :key="billing.id"
                         @click="handlePreview(billing)"
-                        class="cursor-pointer hover:bg-gray-50 transition-colors"
+                        class="transition-colors cursor-pointer hover:bg-gray-50"
                       >
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                          class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
                         >
                           {{ getBillingProviderName(billing) }}
                         </td>
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                          class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
                         >
                           {{ billing.account_id || '-' }}
                         </td>
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                          class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
                         >
                           {{ formatDate(billing.collection_time) }}
                         </td>
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                          class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
                         >
                           {{ formatCost(billing.cost, billing.currency) }}
                         </td>
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                          class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
                         >
                           <div>{{ formatBillingBalance(billing) }}</div>
                           <div
@@ -686,7 +705,7 @@
                           </div>
                         </td>
                         <td
-                          class="px-6 py-4 whitespace-nowrap text-sm"
+                          class="px-6 py-4 text-sm whitespace-nowrap"
                           :class="
                             getChangeClass(
                               billing.change_from_last_hour,
@@ -744,11 +763,15 @@ import {
   getLocalizedProviderDisplayName
 } from '@/utils/providerDisplay'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 const getProviderDisplayName = (provider) =>
   getLocalizedProviderDisplayName(provider, t)
-const getProviderSelectLabel = (provider) => getProviderDisplayName(provider)
+const getProviderSelectLabel = (provider) => {
+  const name = getProviderDisplayName(provider)
+  const notes = String(provider?.notes || '').trim()
+  return notes ? `${name} - ${notes}` : name
+}
 const getBillingProviderName = (billing) =>
   getLocalizedBillingProviderName(billing, t)
 
@@ -839,6 +862,37 @@ const statsSummaryCurrencies = computed(() => {
   )
 
   return currencies
+})
+
+const statsSummaryRows = computed(() => {
+  const byProvider = statistics.value?.by_provider
+  if (!byProvider) {
+    return []
+  }
+  return Object.values(byProvider).filter((providerData) => {
+    if (!statsProviderId.value) {
+      return true
+    }
+    return providerData.provider_id === parseInt(statsProviderId.value)
+  })
+})
+
+const statsSummaryByCurrency = computed(() => {
+  const grouped = {}
+  statsSummaryRows.value.forEach((row) => {
+    const currency = String(row.currency || 'CNY').trim() || 'CNY'
+    if (!grouped[currency]) {
+      grouped[currency] = {
+        total_cost: 0,
+        total_balance: 0,
+        count: 0
+      }
+    }
+    grouped[currency].total_cost += Number(row.total_cost || 0)
+    grouped[currency].total_balance += Number(row.balance || 0)
+    grouped[currency].count += 1
+  })
+  return grouped
 })
 
 const statsSummaryHasMixedCurrencies = computed(
@@ -1017,20 +1071,61 @@ const loadStatistics = async () => {
 }
 
 const formatBalanceSummary = (value, currency = 'CNY') => {
+  if (selectedProviderBalanceUnsupported.value) {
+    return formatCost(0, currency || 'CNY')
+  }
+  if (statsSummaryHasMixedCurrencies.value) {
+    const balancesByCurrency = {}
+    Object.entries(statsSummaryByCurrency.value).forEach(([code, item]) => {
+      balancesByCurrency[code] = Number(item.total_balance || 0)
+    })
+    return formatMultiCurrencySummary(balancesByCurrency)
+  }
   if (!currency) {
     return '--'
-  }
-  if (selectedProviderBalanceUnsupported.value) {
-    return formatCost(0, currency)
   }
   return formatCost(value ?? 0, currency)
 }
 
-const formatStatsSummaryAmount = (value) => {
+const formatStatsSummaryAmount = (value, metric = 'total_cost') => {
+  if (statsSummaryHasMixedCurrencies.value) {
+    const valuesByCurrency = {}
+    Object.entries(statsSummaryByCurrency.value).forEach(([code, item]) => {
+      if (metric === 'average_cost') {
+        valuesByCurrency[code] =
+          item.count > 0 ? Number(item.total_cost || 0) / item.count : 0
+      } else {
+        valuesByCurrency[code] = Number(item.total_cost || 0)
+      }
+    })
+    return formatMultiCurrencySummary(valuesByCurrency)
+  }
   if (!statsSummaryCurrency.value) {
     return '--'
   }
   return formatCost(value ?? 0, statsSummaryCurrency.value)
+}
+
+const formatMultiCurrencySummary = (valueByCurrency) => {
+  const preferredOrder = ['CNY', 'USD']
+  const entries = Object.entries(valueByCurrency || {})
+    .filter(([, amount]) => Number.isFinite(Number(amount)))
+    .sort(([a], [b]) => {
+      const ai = preferredOrder.indexOf(a)
+      const bi = preferredOrder.indexOf(b)
+      if (ai === -1 && bi === -1) return a.localeCompare(b)
+      if (ai === -1) return 1
+      if (bi === -1) return -1
+      return ai - bi
+    })
+
+  if (entries.length === 0) {
+    return '--'
+  }
+
+  return entries
+    .map(([currency, amount]) => formatCost(amount, currency))
+    .join(' / ')
 }
 
 const formatBillingBalance = (billing) => {

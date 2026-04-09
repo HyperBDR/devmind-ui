@@ -691,6 +691,7 @@
     "switchPlatform": "Switch view",
     "workspace": "Workspace",
     "operationsConsole": "Operations Console",
+    "aiPriceHub": "LLM Pricing Comparison",
     "hyperbdrDashboard": "HyperMotion / HyperBDR Dashboard",
     "adminConsole": "Admin Console",
     "llmConsole": "LLM Console",
@@ -1054,6 +1055,7 @@
       "overviewCostTrendHint": "Daily cost movement for the current month by currency",
       "overviewTrendRangeToday": "Today",
       "overviewTrendRangeWeek": "Week",
+      "overviewTrendRangeThirtyDays": "30 Days",
       "overviewTrendRangeMonth": "Month",
       "overviewTrendRangeYear": "Year",
       "overviewMixedCurrency": "Multi-currency view",
@@ -1089,6 +1091,7 @@
       "overviewNotes": "Notes",
       "overviewCreditLimit": "Credit Limit",
       "overviewDaysRemaining": "Days Remaining",
+      "overviewDaysReferenceUnavailable": "Insufficient reference data",
       "overviewDaysUnit": "days",
       "overviewDaysShort": "d",
       "overviewRiskStatus": "Risk",
@@ -1113,6 +1116,7 @@
       "accountDrawerStatusAttention": "Attention",
       "accountDrawerRecommendationMessage": "Based on the recent average burn of {daily}, the current funds are projected to reach the threshold in {days} days. Add {amount} to cover the next {window} days.",
       "accountDrawerFallbackRecommendation": "This account is estimated to remain available for {days} more days. Reserve a buffer in advance for workload fluctuations.",
+      "accountDrawerNoReferenceRecommendation": "The current sample covers fewer than 7 days, so there is not enough reference data yet to estimate days remaining.",
       "statistics": "Usage Statistics",
       "details": "Usage Details",
       "dateRange": "Date Range",
@@ -1455,7 +1459,8 @@
       "feishu": "Lark",
       "jira": "Jira",
       "license": "License",
-      "hyperbdr": "HyperBDR"
+      "hyperbdr": "HyperBDR",
+      "ai_pricehub": "AI Pricing"
     },
     "records": {
       "pageTitle": "Collection data",
@@ -1683,6 +1688,24 @@
       "passwordPlaceholder": "Enter password",
       "passwordPlaceholderEdit": "Leave blank to keep current",
       "step2Desc": "No additional sync targets are required for HyperBDR. Continue to schedule settings."
+    },
+    "aiPriceHub": {
+      "primarySourceTitle": "Primary model pricing source",
+      "platformSlug": "Platform slug",
+      "platformSlugDesc": "Unique platform key used for pricing comparison, e.g. agione",
+      "vendorName": "Platform name",
+      "endpointUrl": "Model source endpoint",
+      "region": "Region (optional)",
+      "currency": "Currency",
+      "pointsPerCurrencyUnit": "Points rate (points per 1 currency unit)",
+      "parserLlmConfigUuid": "LLM config in use (UUID)",
+      "parserLlmPlaceholder": "Select an LLM config",
+      "parserLlmLoading": "Loading LLM configs...",
+      "parserLlmEmpty": "No active global LLM config found. Enable one in model config first.",
+      "parserLlmLoadError": "Failed to load LLM configs",
+      "currentSelected": "currently selected",
+      "step2Desc": "Select pricing collection targets to sync",
+      "syncCollection": "Pricing sync collection"
     }
   },
   "llm": {

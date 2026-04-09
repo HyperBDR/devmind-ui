@@ -60,6 +60,11 @@ export const cloudBillingApi = {
     return response
   },
 
+  async getProviderTags() {
+    const response = await apiClient.get('/v1/cloud-billing/providers/tags/')
+    return response
+  },
+
   // Billing Data APIs
   async getBillingData(params = {}) {
     const response = await apiClient.get('/v1/cloud-billing/billing-data/', {

@@ -126,7 +126,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="currentPage -= 1; fetchGroups()"
+                @click="currentPage--; fetchGroups()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -134,7 +134,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="currentPage += 1; fetchGroups()"
+                @click="currentPage++; fetchGroups()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>

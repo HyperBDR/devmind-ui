@@ -366,7 +366,7 @@
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                  @change="currentPage = 1; loadTasks()"
+                  @change="handlePageSizeChange"
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>
@@ -377,7 +377,7 @@
                   variant="outline"
                   size="sm"
                   :disabled="currentPage <= 1"
-                  @click="currentPage -= 1; loadTasks()"
+                  @click="goPrevPage"
                 >
                   {{ t('common.pagination.previous') }}
                 </BaseButton>
@@ -385,7 +385,7 @@
                   variant="outline"
                   size="sm"
                   :disabled="currentPage >= totalPages"
-                  @click="currentPage += 1; loadTasks()"
+                  @click="goNextPage"
                 >
                   {{ t('common.pagination.next') }}
                 </BaseButton>
@@ -598,6 +598,23 @@ const handleSearch = () => {
 
 const handleFilterChange = () => {
   currentPage.value = 1
+  loadTasks()
+}
+
+const handlePageSizeChange = () => {
+  currentPage.value = 1
+  loadTasks()
+}
+
+const goPrevPage = () => {
+  if (currentPage.value <= 1) return
+  currentPage.value -= 1
+  loadTasks()
+}
+
+const goNextPage = () => {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value += 1
   loadTasks()
 }
 

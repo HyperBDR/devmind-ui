@@ -84,163 +84,171 @@
     <BaseLoading v-if="loading && !overviewLoaded" />
 
     <template v-else>
-      <section class="grid gap-6 lg:grid-cols-4">
-        <div class="space-y-6 lg:col-span-3">
-          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <article
-              v-for="card in summaryCards"
-              :key="card.key"
-              class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-colors hover:border-gray-300"
-            >
-              <div class="mb-4 flex items-center justify-between">
-                <span
-                  class="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400"
-                >
-                  {{ card.label }}
-                </span>
-                <div
-                  class="rounded-lg bg-gray-50 p-2 text-gray-400 transition-colors group-hover:bg-primary-50 group-hover:text-primary-600"
-                >
-                  <component :is="card.icon" class="h-4 w-4" />
-                </div>
-              </div>
-              <div class="text-2xl font-bold tracking-tight text-gray-900">
-                {{ card.value }}
-              </div>
-              <div v-if="card.subValue" class="mt-1 text-xs text-gray-500">
-                {{ card.subValue }}
-              </div>
-            </article>
-          </div>
-
-          <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 class="text-sm font-semibold text-gray-900">
-                  {{ t('cloudBilling.billing.overviewCostTrend') }}
-                </h3>
-                <p class="mt-1 text-xs text-gray-500">
-                  {{ t('cloudBilling.billing.overviewCostTrendHint') }}
-                </p>
-              </div>
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex rounded-lg border border-gray-200 bg-gray-50 p-1"
-                >
-                  <button
-                    v-for="range in trendRanges"
-                    :key="range"
-                    class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors"
-                    :class="
-                      selectedTrendRange === range
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700'
-                    "
-                    @click="selectedTrendRange = range"
-                  >
-                    {{
-                      t(
-                        `cloudBilling.billing.overviewTrendRange${capitalizeRange(range)}`
-                      )
-                    }}
-                  </button>
-                </div>
-                <div
-                  class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-500"
-                >
-                  {{ t('cloudBilling.billing.overviewMixedCurrency') }}
-                </div>
+      <section class="space-y-6">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <article
+            v-for="card in summaryCards"
+            :key="card.key"
+            class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-colors hover:border-gray-300"
+          >
+            <div class="mb-4 flex items-center justify-between">
+              <span
+                class="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400"
+              >
+                {{ card.label }}
+              </span>
+              <div
+                class="rounded-lg bg-gray-50 p-2 text-gray-400 transition-colors group-hover:bg-primary-50 group-hover:text-primary-600"
+              >
+                <component :is="card.icon" class="h-4 w-4" />
               </div>
             </div>
-            <div class="h-[320px]">
-              <Line
-                v-if="trendChartData"
-                :key="trendChartRenderKey"
-                :data="trendChartData"
-                :options="trendChartOptions"
-              />
+            <div class="text-2xl font-bold tracking-tight text-gray-900">
+              {{ card.value }}
             </div>
-          </div>
+            <div v-if="card.subValue" class="mt-1 text-xs text-gray-500">
+              {{ card.subValue }}
+            </div>
+          </article>
         </div>
 
-        <div class="space-y-6">
-          <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div class="mb-5">
-              <h3 class="text-sm font-semibold text-gray-900">
-                {{ t('cloudBilling.billing.overviewCurrencyDistribution') }}
-              </h3>
-            </div>
-            <div class="mx-auto h-[200px] max-w-[220px]">
-              <Doughnut
-                v-if="currencyChartData"
-                :data="currencyChartData"
-                :options="currencyChartOptions"
-              />
-            </div>
-            <div class="mt-6 space-y-4">
+        <div class="grid items-stretch gap-6 lg:grid-cols-4">
+          <div class="lg:col-span-3">
+            <div
+              class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+            >
               <div
-                v-for="item in overview.currency_breakdown"
-                :key="item.code"
-                class="space-y-2"
+                class="mb-5 flex flex-wrap items-center justify-between gap-3"
               >
-                <div class="flex items-center justify-between text-xs">
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="h-2.5 w-2.5 rounded-full"
-                      :style="{ backgroundColor: item.color }"
-                    />
-                    <span class="font-medium text-gray-600"
-                      >{{ item.code }} · {{ currencyDisplayName(item) }}</span
-                    >
-                  </div>
-                  <span class="font-mono font-semibold text-gray-900">
-                    {{ formatBreakdownValue(item) }}
-                  </span>
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-900">
+                    {{ t('cloudBilling.billing.overviewCostTrend') }}
+                  </h3>
+                  <p class="mt-1 text-xs text-gray-500">
+                    {{ t('cloudBilling.billing.overviewCostTrendHint') }}
+                  </p>
                 </div>
-                <div class="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                <div class="flex items-center gap-3">
                   <div
-                    class="h-full rounded-full"
-                    :style="{
-                      width: `${item.percentage}%`,
-                      backgroundColor: item.color
-                    }"
-                  />
+                    class="flex rounded-lg border border-gray-200 bg-gray-50 p-1"
+                  >
+                    <button
+                      v-for="range in trendRanges"
+                      :key="range"
+                      class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors"
+                      :class="
+                        selectedTrendRange === range
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      "
+                      @click="selectedTrendRange = range"
+                    >
+                      {{
+                        t(
+                          `cloudBilling.billing.overviewTrendRange${capitalizeRange(range)}`
+                        )
+                      }}
+                    </button>
+                  </div>
+                  <div
+                    class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-500"
+                  >
+                    {{ t('cloudBilling.billing.overviewMixedCurrency') }}
+                  </div>
                 </div>
               </div>
+              <div class="h-[320px]">
+                <Line
+                  v-if="trendChartData"
+                  :key="trendChartRenderKey"
+                  :data="trendChartData"
+                  :options="trendChartOptions"
+                />
+              </div>
             </div>
+          </div>
+
+          <div>
             <div
-              class="mt-6 rounded-lg border border-primary-100 bg-primary-50 p-4"
+              class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
             >
-              <div class="flex items-start gap-3">
-                <svg
-                  class="mt-0.5 h-4 w-4 text-primary-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div class="mb-5">
+                <h3 class="text-sm font-semibold text-gray-900">
+                  {{ t('cloudBilling.billing.overviewCurrencyDistribution') }}
+                </h3>
+              </div>
+              <div class="mx-auto h-[200px] max-w-[220px]">
+                <Doughnut
+                  v-if="currencyChartData"
+                  :data="currencyChartData"
+                  :options="currencyChartOptions"
+                />
+              </div>
+              <div class="mt-6 space-y-4">
+                <div
+                  v-for="item in overview.currency_breakdown"
+                  :key="item.code"
+                  class="space-y-2"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12A9 9 0 103 12a9 9 0 0018 0z"
-                  />
-                </svg>
-                <div class="min-w-0 flex-1">
-                  <div class="text-xs font-semibold text-primary-900">
-                    {{ t('cloudBilling.billing.overviewExchangeRate') }}
+                  <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="h-2.5 w-2.5 rounded-full"
+                        :style="{ backgroundColor: item.color }"
+                      />
+                      <span class="font-medium text-gray-600"
+                        >{{ item.code }} · {{ currencyDisplayName(item) }}</span
+                      >
+                    </div>
+                    <span class="font-mono font-semibold text-gray-900">
+                      {{ formatBreakdownValue(item) }}
+                    </span>
                   </div>
-                  <div class="mt-1 text-[11px] leading-5 text-primary-700">
-                    1 USD = {{ overview.exchange_rate }} CNY
+                  <div class="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      class="h-full rounded-full"
+                      :style="{
+                        width: `${item.percentage}%`,
+                        backgroundColor: item.color
+                      }"
+                    />
                   </div>
-                  <div
-                    class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-primary-100 pt-3 text-[11px]"
+                </div>
+              </div>
+              <div
+                class="mt-6 rounded-lg border border-primary-100 bg-primary-50 p-4"
+              >
+                <div class="flex items-start gap-3">
+                  <svg
+                    class="mt-0.5 h-4 w-4 text-primary-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <span class="text-primary-600">{{
-                      overview.rate_source_label
-                    }}</span>
-                    <span class="font-mono font-medium text-primary-800">{{
-                      formatTime(overview.rate_collected_at)
-                    }}</span>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12A9 9 0 103 12a9 9 0 0018 0z"
+                    />
+                  </svg>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-semibold text-primary-900">
+                      {{ t('cloudBilling.billing.overviewExchangeRate') }}
+                    </div>
+                    <div class="mt-1 text-[11px] leading-5 text-primary-700">
+                      1 USD = {{ overview.exchange_rate }} CNY
+                    </div>
+                    <div
+                      class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-primary-100 pt-3 text-[11px]"
+                    >
+                      <span class="text-primary-600">{{
+                        overview.rate_source_label
+                      }}</span>
+                      <span class="font-mono font-medium text-primary-800">{{
+                        formatTime(overview.rate_collected_at)
+                      }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -274,13 +282,20 @@
               <span
                 class="ml-1 rounded-full px-2 py-0.5 font-mono font-semibold"
                 :class="
-                  overview.financial_health.total_days < 10
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-green-100 text-green-700'
+                  overview.financial_health.total_days == null
+                    ? 'bg-zinc-100 text-zinc-500'
+                    : overview.financial_health.total_days < 10
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-green-100 text-green-700'
                 "
               >
-                {{ overview.financial_health.total_days }}
-                {{ t('cloudBilling.billing.overviewDaysUnit') }}
+                {{
+                  overview.financial_health.total_days == null
+                    ? t('cloudBilling.billing.overviewDaysReferenceUnavailable')
+                    : `${overview.financial_health.total_days}${t(
+                        'cloudBilling.billing.overviewDaysUnit'
+                      )}`
+                }}
               </span>
             </div>
           </div>
@@ -394,13 +409,7 @@
                           {{ item.category }}
                         </span>
                         <span class="truncate font-medium text-gray-700">{{
-                          getLocalizedProviderDisplayName(
-                            {
-                              provider_type: item.provider_type,
-                              display_name: item.name
-                            },
-                            t
-                          )
+                          rechargeProviderLabel(item)
                         }}</span>
                       </div>
                       <div
@@ -419,28 +428,28 @@
                         >
                           {{ tag }}
                         </span>
-                        <span
-                          v-if="item.notes"
-                          class="truncate font-medium text-gray-600"
-                        >
-                          {{ item.notes }}
-                        </span>
                       </div>
                     </div>
                     <span
                       class="font-mono font-semibold"
-                      :class="riskTextClass(daysToRisk(item.days_remaining))"
+                      :class="riskTextClass(daysRemainingRisk(item))"
                     >
-                      {{ item.days_remaining
-                      }}{{ t('cloudBilling.billing.overviewDaysShort') }}
+                      {{
+                        displayDaysRemaining(
+                          item,
+                          'cloudBilling.billing.overviewDaysShort'
+                        )
+                      }}
                     </span>
                   </div>
                   <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
                     <div
                       class="h-full rounded-full"
-                      :class="riskBarClass(daysToRisk(item.days_remaining))"
+                      :class="riskBarClass(daysRemainingRisk(item))"
                       :style="{
-                        width: `${Math.min(100, item.days_remaining)}%`
+                        width: hasDaysRemainingReference(item)
+                          ? `${Math.min(100, item.days_remaining)}%`
+                          : '0%'
                       }"
                     />
                   </div>
@@ -522,7 +531,7 @@
                     </div>
                     <span
                       class="h-2.5 w-2.5 rounded-full"
-                      :class="riskDotClass(account.risk)"
+                      :class="riskDotClass(daysRemainingRisk(account))"
                     />
                   </div>
                   <div
@@ -549,10 +558,14 @@
                       </div>
                       <div
                         class="mt-0.5 font-mono text-sm font-semibold"
-                        :class="riskTextClass(account.risk)"
+                        :class="riskTextClass(daysRemainingRisk(account))"
                       >
-                        {{ account.days_remaining
-                        }}{{ t('cloudBilling.billing.overviewDaysShort') }}
+                        {{
+                          displayDaysRemaining(
+                            account,
+                            'cloudBilling.billing.overviewDaysShort'
+                          )
+                        }}
                       </div>
                     </div>
                   </div>
@@ -635,7 +648,7 @@
                     </div>
                     <span
                       class="h-2.5 w-2.5 rounded-full"
-                      :class="riskDotClass(account.risk)"
+                      :class="riskDotClass(daysRemainingRisk(account))"
                     />
                   </div>
                   <div
@@ -648,7 +661,7 @@
                       <div
                         class="mt-0.5 truncate font-mono text-sm font-semibold text-zinc-900"
                       >
-                        {{ formatValue(account.cost) }}
+                        {{ formatValue(account.cost, account.cost_currency) }}
                       </div>
                     </div>
                     <div class="min-w-0 text-right">
@@ -657,10 +670,14 @@
                       </div>
                       <div
                         class="mt-0.5 font-mono text-sm font-semibold"
-                        :class="riskTextClass(account.risk)"
+                        :class="riskTextClass(daysRemainingRisk(account))"
                       >
-                        {{ account.days_remaining
-                        }}{{ t('cloudBilling.billing.overviewDaysShort') }}
+                        {{
+                          displayDaysRemaining(
+                            account,
+                            'cloudBilling.billing.overviewDaysShort'
+                          )
+                        }}
                       </div>
                     </div>
                   </div>
@@ -920,7 +937,7 @@
                   </td>
                   <td class="px-6 py-4">
                     <div class="font-mono text-sm font-semibold text-zinc-800">
-                      {{ formatValue(account.cost) }}
+                      {{ formatValue(account.cost, account.cost_currency) }}
                     </div>
                   </td>
                   <td class="px-6 py-4">
@@ -966,22 +983,21 @@
                   <td class="px-6 py-4">
                     <div
                       class="font-mono text-sm font-semibold"
-                      :class="riskTextClass(account.risk)"
+                      :class="riskTextClass(daysRemainingRisk(account))"
                     >
-                      {{ account.days_remaining }}
-                      {{ t('cloudBilling.billing.overviewDaysUnit') }}
+                      {{ displayDaysRemaining(account) }}
                     </div>
                   </td>
                   <td class="px-6 py-4">
                     <span
                       class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]"
-                      :class="riskBadgeClass(account.risk)"
+                      :class="riskBadgeClass(daysRemainingRisk(account))"
                     >
                       <span
                         class="h-1.5 w-1.5 rounded-full"
-                        :class="riskDotClass(account.risk)"
+                        :class="riskDotClass(daysRemainingRisk(account))"
                       />
-                      {{ riskLabel(account.risk) }}
+                      {{ riskLabel(daysRemainingRisk(account)) }}
                     </span>
                   </td>
                   <td class="px-6 py-4">
@@ -989,11 +1005,13 @@
                       <polyline
                         fill="none"
                         :stroke="
-                          account.risk === 'high'
+                          daysRemainingRisk(account) === 'high'
                             ? '#e11d48'
-                            : account.risk === 'medium'
+                            : daysRemainingRisk(account) === 'medium'
                               ? '#f59e0b'
-                              : '#10b981'
+                              : daysRemainingRisk(account) === 'unknown'
+                                ? '#a1a1aa'
+                                : '#10b981'
                         "
                         stroke-width="2"
                         stroke-linecap="round"
@@ -1053,13 +1071,19 @@
                     class="rounded-full px-2.5 py-1 font-semibold"
                     :class="
                       recommendationBadgeClass(
-                        selectedAccountDetail.recommendation_status
+                        recommendationStatus(
+                          selectedAccount,
+                          selectedAccountDetail
+                        )
                       )
                     "
                   >
                     {{
                       recommendationLabel(
-                        selectedAccountDetail.recommendation_status
+                        recommendationStatus(
+                          selectedAccount,
+                          selectedAccountDetail
+                        )
                       )
                     }}
                   </span>
@@ -1124,13 +1148,19 @@
                         class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
                         :class="
                           recommendationBadgeClass(
-                            selectedAccountDetail.recommendation_status
+                            recommendationStatus(
+                              selectedAccount,
+                              selectedAccountDetail
+                            )
                           )
                         "
                       >
                         {{
                           recommendationLabel(
-                            selectedAccountDetail.recommendation_status
+                            recommendationStatus(
+                              selectedAccount,
+                              selectedAccountDetail
+                            )
                           )
                         }}
                       </span>
@@ -1152,7 +1182,12 @@
                   <div
                     class="mt-2 text-2xl font-semibold tracking-tight text-zinc-900"
                   >
-                    {{ formatValue(selectedAccountDetail.daily_average) }}
+                    {{
+                      formatAccountValue(
+                        selectedAccountDetail.daily_average,
+                        selectedAccountDetail.service_breakdown_currency
+                      )
+                    }}
                   </div>
                 </article>
                 <article
@@ -1164,7 +1199,12 @@
                   <div
                     class="mt-2 text-2xl font-semibold tracking-tight text-zinc-900"
                   >
-                    {{ formatValue(selectedAccountDetail.daily_peak) }}
+                    {{
+                      formatAccountValue(
+                        selectedAccountDetail.daily_peak,
+                        selectedAccountDetail.service_breakdown_currency
+                      )
+                    }}
                   </div>
                 </article>
                 <article
@@ -1448,6 +1488,7 @@ function createFallbackOverview() {
       estimated_total: cloudBillingOverviewSummary.estimatedTotal,
       current_consumed: cloudBillingOverviewSummary.currentConsumed,
       daily_average: cloudBillingOverviewSummary.dailyAverage,
+      collected_days: cloudBillingOverviewSummary.collectedDays || 0,
       peak_cost: cloudBillingOverviewSummary.peakCost,
       peak_date: cloudBillingOverviewSummary.peakDate,
       trend: cloudBillingOverviewSummary.trend
@@ -1469,6 +1510,7 @@ function createFallbackOverview() {
       tags: item.tags || [],
       category: item.category,
       cost: item.cost,
+      cost_currency: item.costCurrency || 'CNY',
       percentage: item.percentage,
       change: item.change,
       risk: item.risk,
@@ -1483,6 +1525,10 @@ function createFallbackOverview() {
         item.balanceCurrency ||
         '',
       days_remaining: item.daysRemaining,
+      recent_collected_days: item.recentCollectedDays || 0,
+      has_days_remaining_reference:
+        item.hasDaysRemainingReference !== false &&
+        Number(item.recentCollectedDays || 0) >= 7,
       type: item.type,
       usage_rate: item.usageRate || null,
       account_id: item.accountId || '',
@@ -1507,35 +1553,171 @@ function currencyDisplayName(item) {
   return item?.name || code
 }
 
+function getDatePartsInTimezone(timezone) {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+    const parts = formatter.formatToParts(new Date())
+    const year = Number(parts.find((part) => part.type === 'year')?.value || 0)
+    const month = Number(
+      parts.find((part) => part.type === 'month')?.value || 0
+    )
+    const day = Number(parts.find((part) => part.type === 'day')?.value || 0)
+    return { year, month, day }
+  } catch {
+    return { year: 0, month: 0, day: 0 }
+  }
+}
+
+function getRemainingDaysInCurrentMonth(timezone) {
+  const { year, month, day } = getDatePartsInTimezone(timezone)
+  if (!year || !month || !day) {
+    return 0
+  }
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate()
+  return Math.max(daysInMonth - day, 0)
+}
+
+function getTodayDateString(timezone) {
+  const { year, month, day } = getDatePartsInTimezone(timezone)
+  if (!year || !month || !day) {
+    return ''
+  }
+  return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+function normalizeTrendCostCny(item) {
+  const cnyValue = Number(item?.cny)
+  const usdValue = Number(item?.usd)
+  if (Number.isFinite(cnyValue) || Number.isFinite(usdValue)) {
+    return (
+      (Number.isFinite(cnyValue) ? cnyValue : 0) +
+      convertCurrencyValue(
+        Number.isFinite(usdValue) ? usdValue : 0,
+        'USD',
+        'CNY'
+      )
+    )
+  }
+
+  const normalizedCurrency = String(item?.currency || '').toUpperCase()
+
+  const total = Number(item?.total)
+  if (Number.isFinite(total)) {
+    return convertCurrencyValue(total, normalizedCurrency || 'CNY', 'CNY')
+  }
+
+  const value = Number(item?.value)
+  if (Number.isFinite(value)) {
+    return convertCurrencyValue(value, normalizedCurrency || 'CNY', 'CNY')
+  }
+  return 0
+}
+
+function normalizeTrendDate(item, timezone) {
+  const rawDate = String(item?.date || '').trim()
+  if (!rawDate) {
+    return ''
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+    return rawDate
+  }
+  if (/^\d{2}-\d{2}$/.test(rawDate)) {
+    const { year } = getDatePartsInTimezone(timezone)
+    if (year) {
+      return `${year}-${rawDate}`
+    }
+  }
+  return rawDate
+}
+
+function hasTrendCostData(item) {
+  return (
+    Number.isFinite(Number(item?.cny)) ||
+    Number.isFinite(Number(item?.usd)) ||
+    Number.isFinite(Number(item?.total)) ||
+    Number.isFinite(Number(item?.value))
+  )
+}
+
+const unifiedSummary = computed(() => {
+  const baseSummary = overview.value.summary || {}
+  const monthTrend =
+    baseSummary?.trend_ranges?.month || baseSummary?.trend || []
+  const today = getTodayDateString(selectedTimezone.value)
+  const usableTrend = (monthTrend || []).filter((item) => {
+    const date = String(item?.date || '')
+    if (!date || !today) {
+      return true
+    }
+    return date <= today
+  })
+  const recentTotalCost = usableTrend.reduce(
+    (sum, item) => sum + normalizeTrendCostCny(item),
+    0
+  )
+  const collectedDays = Number(baseSummary.collected_days || 0)
+  const dailyAverage =
+    collectedDays > 0
+      ? recentTotalCost / collectedDays
+      : Number(baseSummary.daily_average || 0)
+  const currentConsumed = usableTrend.some((item) => hasTrendCostData(item))
+    ? recentTotalCost
+    : Number(baseSummary.current_consumed || 0)
+  const remainingDays = getRemainingDaysInCurrentMonth(selectedTimezone.value)
+  const estimatedTotal = currentConsumed + dailyAverage * remainingDays
+  let peakCost = Number(baseSummary.peak_cost || 0)
+  let peakDate = baseSummary.peak_date || '-'
+  usableTrend.forEach((item) => {
+    const cost = normalizeTrendCostCny(item)
+    if (cost > peakCost) {
+      peakCost = cost
+      peakDate = normalizeTrendDate(item, selectedTimezone.value) || peakDate
+    }
+  })
+
+  return {
+    ...baseSummary,
+    daily_average: dailyAverage,
+    estimated_total: estimatedTotal,
+    peak_cost: peakCost,
+    peak_date: peakDate
+  }
+})
+
 const summaryCards = computed(() => [
   {
     key: 'estimated',
     label: t('cloudBilling.billing.overviewEstimatedTotal'),
-    value: formatValue(overview.value.summary.estimated_total),
+    value: formatValue(unifiedSummary.value.estimated_total),
     icon: OverviewBarChartIcon
   },
   {
     key: 'consumed',
     label: t('cloudBilling.billing.overviewConsumed'),
-    value: formatValue(overview.value.summary.current_consumed),
+    value: formatValue(unifiedSummary.value.current_consumed),
     icon: OverviewClockIcon
   },
   {
     key: 'daily',
     label: t('cloudBilling.billing.overviewDailyAverage'),
-    value: formatValue(overview.value.summary.daily_average),
+    value: formatValue(unifiedSummary.value.daily_average),
     icon: OverviewTrendIcon
   },
   {
     key: 'peak',
     label: t('cloudBilling.billing.overviewPeakCost'),
-    value: formatValue(overview.value.summary.peak_cost),
-    subValue: `${t('cloudBilling.billing.overviewPeakDate')}: ${overview.value.summary.peak_date || '-'}`,
+    value: formatValue(unifiedSummary.value.peak_cost),
+    subValue: `${t('cloudBilling.billing.overviewPeakDate')}: ${unifiedSummary.value.peak_date || '-'}`,
     icon: OverviewPeakIcon
   }
 ])
 
-const trendRanges = ['today', 'week', 'month', 'year']
+const trendRanges = ['today', 'week', 'thirtyDays', 'month', 'year']
 
 const currentTrend = computed(() => {
   const trendRangesMap = overview.value.summary?.trend_ranges || {}
@@ -1552,14 +1734,7 @@ const exchangeRateValue = computed(() => {
 })
 
 function convertTrendTotal(item) {
-  const cnyValue = Number(item?.cny || 0)
-  const usdValue = Number(item?.usd || 0)
-
-  if (selectedCurrency.value === 'USD') {
-    return usdValue + cnyValue / exchangeRateValue.value
-  }
-
-  return cnyValue + usdValue * exchangeRateValue.value
+  return convertAmountByCurrency(normalizeTrendCostCny(item), 'CNY')
 }
 
 const convertedTotalFunds = computed(() => {
@@ -1567,12 +1742,7 @@ const convertedTotalFunds = computed(() => {
 })
 
 function formatConvertedValue(value) {
-  const numericValue = Number(value || 0)
-  const symbol = selectedCurrency.value === 'USD' ? '$' : '¥'
-  return `${symbol}${numericValue.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })}`
+  return formatCurrencyByCode(value, selectedCurrency.value)
 }
 
 const trendChartData = computed(() => ({
@@ -1636,8 +1806,7 @@ const trendChartOptions = computed(() => ({
       grid: { color: '#f4f4f5' },
       ticks: {
         color: '#a1a1aa',
-        callback: (value) =>
-          `${selectedCurrency.value === 'USD' ? '$' : '¥'}${value}`
+        callback: (value) => formatAxisTickValue(value)
       }
     }
   }
@@ -1645,7 +1814,7 @@ const trendChartOptions = computed(() => ({
 
 const quotaTrendAccounts = computed(() =>
   [...(overview.value.accounts || [])]
-    .sort((a, b) => a.days_remaining - b.days_remaining || b.cost - a.cost)
+    .sort(compareAccountsByAvailability)
     .slice(0, 5)
 )
 
@@ -1659,8 +1828,13 @@ const quotaTrendColors = ['#10b981', '#2563eb', '#f59e0b', '#ef4444', '#8b5cf6']
 const quotaTrendChartData = computed(() => ({
   labels: quotaTrendLabels.value,
   datasets: quotaTrendAccounts.value.map((account, index) => ({
-    label: localizedAccountName(account),
-    data: (account.trend || []).map((item) => Number(item.value || 0)),
+    label: quotaTrendAccountLabel(account),
+    data: (account.trend || []).map((item) =>
+      convertAmountByCurrency(
+        Number(item.value || 0),
+        account.display_funds_currency || account.balance_currency || 'CNY'
+      )
+    ),
     borderColor: quotaTrendColors[index % quotaTrendColors.length],
     backgroundColor: 'transparent',
     tension: 0.36,
@@ -1696,7 +1870,7 @@ const quotaTrendChartOptions = computed(() => ({
       padding: 12,
       callbacks: {
         label: (context) =>
-          `${context.dataset.label}: ${formatValue(context.parsed.y)}`
+          `${context.dataset.label}: ${formatConvertedValue(context.parsed.y)}`
       }
     }
   },
@@ -1710,13 +1884,7 @@ const quotaTrendChartOptions = computed(() => ({
       ticks: {
         color: '#9ca3af',
         font: { size: 10 },
-        callback: (value) => {
-          const numericValue = Number(value || 0)
-          if (selectedCurrency.value === 'USD') {
-            return `$${Math.round(numericValue / 1000)}k`
-          }
-          return `¥${Math.round(numericValue / 1000)}k`
-        }
+        callback: (value) => formatAxisTickValue(value)
       }
     }
   }
@@ -1752,7 +1920,7 @@ const selectedAccountDetail = computed(() => {
   const account = selectedAccount.value
   if (!account) {
     return {
-      recommendation_status: 'healthy',
+      recommendation_status: 'unknown',
       daily_average: 0,
       daily_peak: 0,
       recommended_recharge: 0,
@@ -1772,7 +1940,11 @@ const selectedAccountDetail = computed(() => {
   }
   return (
     account.detail || {
-      recommendation_status: account.risk === 'high' ? 'attention' : 'healthy',
+      recommendation_status: hasDaysRemainingReference(account)
+        ? daysRemainingRisk(account) === 'high'
+          ? 'attention'
+          : 'healthy'
+        : 'unknown',
       daily_average: Number(account.change || 0),
       daily_peak: Math.max(
         ...(account.trend || []).map((item) => Number(item.value || 0)),
@@ -1804,6 +1976,9 @@ const recommendationMessage = computed(() => {
   if (!account) {
     return ''
   }
+  if (!hasDaysRemainingReference(account)) {
+    return t('cloudBilling.billing.accountDrawerNoReferenceRecommendation')
+  }
   const detail = selectedAccountDetail.value
   if (!detail.recommended_recharge) {
     return t('cloudBilling.billing.accountDrawerFallbackRecommendation', {
@@ -1811,9 +1986,15 @@ const recommendationMessage = computed(() => {
     })
   }
   return t('cloudBilling.billing.accountDrawerRecommendationMessage', {
-    daily: formatValue(detail.daily_average),
+    daily: formatAccountValue(
+      detail.daily_average,
+      detail.service_breakdown_currency
+    ),
     days: account.days_remaining,
-    amount: formatValue(detail.recommended_recharge),
+    amount: formatAccountValue(
+      detail.recommended_recharge,
+      detail.service_breakdown_currency
+    ),
     window: detail.recommended_window_days || 30
   })
 })
@@ -1906,7 +2087,10 @@ const accountDetailChartOptions = computed(() => ({
       padding: 12,
       callbacks: {
         label: (context) =>
-          `${context.dataset.label}: ${formatValue(context.parsed.y)}`
+          `${context.dataset.label}: ${formatAccountValue(
+            context.parsed.y,
+            selectedAccountDetail.value.service_breakdown_currency
+          )}`
       }
     }
   },
@@ -1992,6 +2176,33 @@ function sumUniqueProviderBalances(accounts) {
   }, 0)
 }
 
+function normalizeCurrencyCode(currency) {
+  const normalized = String(currency || '').toUpperCase()
+  return normalized || 'CNY'
+}
+
+function convertCurrencyValue(value, fromCurrency, toCurrency) {
+  const numericValue = Number(value || 0)
+  if (!Number.isFinite(numericValue)) {
+    return 0
+  }
+
+  const from = normalizeCurrencyCode(fromCurrency)
+  const to = normalizeCurrencyCode(toCurrency)
+  if (from === to) {
+    return numericValue
+  }
+
+  const rate = exchangeRateValue.value
+  if (from === 'USD' && to === 'CNY') {
+    return numericValue * rate
+  }
+  if (from === 'CNY' && to === 'USD') {
+    return numericValue / rate
+  }
+  return numericValue
+}
+
 const groupedRows = computed(() => {
   if (!groupByProvider.value) {
     return [
@@ -1999,7 +2210,9 @@ const groupedRows = computed(() => {
         name: t('cloudBilling.billing.overviewAllAccounts'),
         rows: filteredAccounts.value,
         totalCost: filteredAccounts.value.reduce(
-          (sum, item) => sum + Number(item.cost || 0),
+          (sum, item) =>
+            sum +
+            convertCurrencyValue(item.cost, item.cost_currency || 'CNY', 'CNY'),
           0
         ),
         totalBalance: sumUniqueProviderBalances(filteredAccounts.value)
@@ -2018,7 +2231,12 @@ const groupedRows = computed(() => {
   return Array.from(grouped.entries()).map(([name, rows]) => ({
     name,
     rows,
-    totalCost: rows.reduce((sum, item) => sum + Number(item.cost || 0), 0),
+    totalCost: rows.reduce(
+      (sum, item) =>
+        sum +
+        convertCurrencyValue(item.cost, item.cost_currency || 'CNY', 'CNY'),
+      0
+    ),
     totalBalance: sumUniqueProviderBalances(rows)
   }))
 })
@@ -2061,45 +2279,129 @@ function daysToRisk(daysRemaining) {
   return 'low'
 }
 
+function legacyRisk(account) {
+  const risk = String(account?.risk || '').toLowerCase()
+  if (risk === 'high' || risk === 'medium' || risk === 'low') {
+    return risk
+  }
+  return ''
+}
+
+function hasDaysRemainingReference(account) {
+  return Boolean(account?.has_days_remaining_reference)
+}
+
+function daysRemainingRisk(account) {
+  if (!hasDaysRemainingReference(account))
+    return legacyRisk(account) || 'unknown'
+  return daysToRisk(account?.days_remaining)
+}
+
 function riskLabel(risk) {
+  if (risk === 'unknown')
+    return t('cloudBilling.billing.overviewDaysReferenceUnavailable')
   if (risk === 'high') return t('cloudBilling.billing.overviewRiskHigh')
   if (risk === 'medium') return t('cloudBilling.billing.overviewRiskMedium')
   return t('cloudBilling.billing.overviewRiskLow')
 }
 
 function riskTextClass(risk) {
+  if (risk === 'unknown') return 'text-zinc-400'
   if (risk === 'high') return 'text-rose-600'
   if (risk === 'medium') return 'text-amber-600'
   return 'text-emerald-600'
 }
 
 function riskDotClass(risk) {
+  if (risk === 'unknown') return 'bg-zinc-300'
   if (risk === 'high') return 'bg-rose-500'
   if (risk === 'medium') return 'bg-amber-500'
   return 'bg-emerald-500'
 }
 
 function riskBadgeClass(risk) {
+  if (risk === 'unknown') return 'bg-zinc-100 text-zinc-500'
   if (risk === 'high') return 'bg-rose-50 text-rose-700'
   if (risk === 'medium') return 'bg-amber-50 text-amber-700'
   return 'bg-emerald-50 text-emerald-700'
 }
 
 function riskBarClass(risk) {
+  if (risk === 'unknown') return 'bg-zinc-300'
   if (risk === 'high') return 'bg-rose-500'
   if (risk === 'medium') return 'bg-amber-500'
   return 'bg-emerald-500'
 }
 
+function displayDaysRemaining(
+  account,
+  unitKey = 'cloudBilling.billing.overviewDaysUnit'
+) {
+  if (!hasDaysRemainingReference(account)) {
+    if (Number.isFinite(Number(account?.days_remaining))) {
+      return `${account.days_remaining}${t(unitKey)}`
+    }
+    return t('cloudBilling.billing.overviewDaysReferenceUnavailable')
+  }
+  return `${account.days_remaining}${t(unitKey)}`
+}
+
 function recommendationBadgeClass(status) {
+  if (status === 'unknown') return 'bg-zinc-100 text-zinc-500'
   if (status === 'attention') return 'bg-amber-100 text-amber-700'
   return 'bg-emerald-100 text-emerald-700'
 }
 
 function recommendationLabel(status) {
+  if (status === 'unknown')
+    return t('cloudBilling.billing.overviewDaysReferenceUnavailable')
   if (status === 'attention')
     return t('cloudBilling.billing.accountDrawerStatusAttention')
   return t('cloudBilling.billing.accountDrawerStatusHealthy')
+}
+
+function normalizedBalanceForSort(account) {
+  const sourceValue =
+    account?.balance != null ? account.balance : account?.display_funds || 0
+  return convertCurrencyValue(
+    Number(sourceValue || 0),
+    account?.display_funds_currency || account?.balance_currency || 'CNY',
+    'CNY'
+  )
+}
+
+function compareAccountsByAvailability(a, b) {
+  const aHasReference = hasDaysRemainingReference(a)
+  const bHasReference = hasDaysRemainingReference(b)
+
+  if (aHasReference && bHasReference) {
+    return (
+      a.days_remaining - b.days_remaining ||
+      convertCurrencyValue(b.cost, b.cost_currency || 'CNY', 'CNY') -
+        convertCurrencyValue(a.cost, a.cost_currency || 'CNY', 'CNY')
+    )
+  }
+
+  if (!aHasReference && !bHasReference) {
+    return (
+      normalizedBalanceForSort(a) - normalizedBalanceForSort(b) ||
+      convertCurrencyValue(b.cost, b.cost_currency || 'CNY', 'CNY') -
+        convertCurrencyValue(a.cost, a.cost_currency || 'CNY', 'CNY')
+    )
+  }
+
+  return aHasReference ? -1 : 1
+}
+
+function recommendationStatus(account, detail) {
+  if (!hasDaysRemainingReference(account)) {
+    const risk = legacyRisk(account)
+    if (risk) {
+      return risk === 'high' ? 'attention' : 'healthy'
+    }
+    return 'unknown'
+  }
+  return detail?.recommendation_status || 'healthy'
 }
 
 function displayServiceName(name) {
@@ -2109,42 +2411,28 @@ function displayServiceName(name) {
   return name || t('cloudBilling.billing.accountDrawerLegendPrimary')
 }
 
-function formatValue(value) {
+function formatValue(value, sourceCurrency = 'CNY') {
+  return formatAccountValue(value, sourceCurrency)
+}
+
+function convertAmountByCurrency(value, currency) {
+  return convertCurrencyValue(value, currency, selectedCurrency.value)
+}
+
+function formatCurrencyByCode(value, currency) {
   const numericValue = Number(value || 0)
-  if (selectedCurrency.value === 'USD') {
-    return `$${(
-      numericValue / Number(overview.value.exchange_rate || 7.15)
-    ).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })}`
-  }
-  return `¥${numericValue.toLocaleString(undefined, {
+  const symbol = normalizeCurrencyCode(currency) === 'USD' ? '$' : '¥'
+  return `${symbol}${numericValue.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}`
 }
 
-function convertAmountByCurrency(value, currency) {
-  const numericValue = Number(value || 0)
-  const normalizedCurrency = String(currency || '').toUpperCase()
-  const rate = exchangeRateValue.value
-
-  if (selectedCurrency.value === 'USD') {
-    if (normalizedCurrency === 'CNY') {
-      return numericValue / rate
-    }
-    return numericValue
-  }
-
-  if (normalizedCurrency === 'USD') {
-    return numericValue * rate
-  }
-  return numericValue
-}
-
 function formatAccountValue(value, currency) {
-  return formatConvertedValue(convertAmountByCurrency(value, currency))
+  return formatCurrencyByCode(
+    convertAmountByCurrency(value, currency),
+    selectedCurrency.value
+  )
 }
 
 function formatCompactValue(value) {
@@ -2196,6 +2484,30 @@ function localizedAccountName(account) {
     },
     t
   )
+}
+
+function withNotesLabel(baseLabel, notes) {
+  const label = String(baseLabel || '').trim()
+  const noteText = String(notes || '').trim()
+  if (!noteText) {
+    return label
+  }
+  return label ? `${label} - ${noteText}` : noteText
+}
+
+function quotaTrendAccountLabel(account) {
+  return withNotesLabel(localizedAccountName(account), account?.notes)
+}
+
+function rechargeProviderLabel(item) {
+  const baseLabel = getLocalizedProviderDisplayName(
+    {
+      provider_type: item?.provider_type,
+      display_name: item?.name
+    },
+    t
+  )
+  return withNotesLabel(baseLabel, item?.notes)
 }
 
 function localizedProviderLabel(account) {
@@ -2277,15 +2589,15 @@ function exportAccountsCsv() {
     localizedProviderLabel(account) || localizedAccountName(account) || '',
     account.account_id || '',
     paymentTypeLabel(account.type),
-    formatValue(account.cost),
+    formatValue(account.cost, account.cost_currency),
     showBalance(account)
       ? formatAccountValue(account.balance, account.balance_currency)
       : '',
     account.credit_limit
       ? formatAccountValue(account.credit_limit, account.credit_limit_currency)
       : '',
-    `${account.days_remaining}${t('cloudBilling.billing.overviewDaysShort')}`,
-    riskLabel(account.risk),
+    displayDaysRemaining(account, 'cloudBilling.billing.overviewDaysShort'),
+    riskLabel(daysRemainingRisk(account)),
     account.notes || ''
   ])
 

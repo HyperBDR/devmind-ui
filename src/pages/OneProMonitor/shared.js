@@ -37,7 +37,16 @@ export function pillClass(status) {
   if (['running', 'warning', 'processing', 'pending'].includes(value)) {
     return 'bg-amber-100 text-amber-700 border-amber-200'
   }
-  if (['failed', 'disabled', 'error', 'unhealthy', 'disconnected', 'invalid'].includes(value)) {
+  if (
+    [
+      'failed',
+      'disabled',
+      'error',
+      'unhealthy',
+      'disconnected',
+      'invalid'
+    ].includes(value)
+  ) {
     return 'bg-red-100 text-red-700 border-red-200'
   }
   return 'bg-gray-100 text-gray-700 border-gray-200'
@@ -110,13 +119,22 @@ export function oneProHealthStatusLabel(status, t) {
 }
 
 export function oneProHostStatusClass(status) {
-  return ONEPRO_HOST_STATUS_TONES[String(status || '').toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-200'
+  return (
+    ONEPRO_HOST_STATUS_TONES[String(status || '').toLowerCase()] ||
+    'bg-gray-100 text-gray-700 border-gray-200'
+  )
 }
 
 export function oneProBootStatusClass(status) {
-  return ONEPRO_BOOT_STATUS_TONES[String(status || '').toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-200'
+  return (
+    ONEPRO_BOOT_STATUS_TONES[String(status || '').toLowerCase()] ||
+    'bg-gray-100 text-gray-700 border-gray-200'
+  )
 }
 
 export function oneProHealthStatusClass(status) {
-  return ONEPRO_HEALTH_STATUS_TONES[String(status || '').toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-200'
+  return (
+    ONEPRO_HEALTH_STATUS_TONES[String(status || '').toLowerCase()] ||
+    'bg-gray-100 text-gray-700 border-gray-200'
+  )
 }

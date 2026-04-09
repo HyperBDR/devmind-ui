@@ -38,7 +38,8 @@ async function loadDataSources(force = false) {
   if (!force && loadingPromise) return loadingPromise
 
   loadingDataSources.value = true
-  loadingPromise = oneproMonitorApi.dataSources.list({ limit: 200 })
+  loadingPromise = oneproMonitorApi.dataSources
+    .list({ limit: 200 })
     .then((response) => {
       const payload = unwrap(response)
       dataSources.value = payload.items || []
@@ -46,7 +47,9 @@ async function loadDataSources(force = false) {
 
       if (
         selectedDataSource.value &&
-        !dataSources.value.some((source) => String(source.id) === String(selectedDataSource.value))
+        !dataSources.value.some(
+          (source) => String(source.id) === String(selectedDataSource.value)
+        )
       ) {
         setSelectedDataSource('')
       }
@@ -62,7 +65,9 @@ async function loadDataSources(force = false) {
 }
 
 const selectedDataSourceName = computed(() => {
-  const source = dataSources.value.find((item) => String(item.id) === String(selectedDataSource.value))
+  const source = dataSources.value.find(
+    (item) => String(item.id) === String(selectedDataSource.value)
+  )
   return source?.name || ''
 })
 

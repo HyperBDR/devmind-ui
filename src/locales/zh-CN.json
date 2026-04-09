@@ -701,6 +701,7 @@
     "switchPlatform": "切换视图",
     "workspace": "用户工作台",
     "operationsConsole": "运营控制台",
+    "aiPriceHub": "大模型比价",
     "hyperbdrDashboard": "HyperMotion / HyperBDR数据仪表盘",
     "adminConsole": "管理员控制台",
     "llmConsole": "LLM 控制台",
@@ -1063,6 +1064,7 @@
       "overviewCostTrendHint": "按币种展示本月逐日成本走势",
       "overviewTrendRangeToday": "今日",
       "overviewTrendRangeWeek": "近7天",
+      "overviewTrendRangeThirtyDays": "近30天",
       "overviewTrendRangeMonth": "本月",
       "overviewTrendRangeYear": "全年",
       "overviewMixedCurrency": "多币种视角",
@@ -1098,6 +1100,7 @@
       "overviewNotes": "备注",
       "overviewCreditLimit": "信用额度",
       "overviewDaysRemaining": "预计可用天数",
+      "overviewDaysReferenceUnavailable": "暂无参考数据",
       "overviewDaysUnit": "天",
       "overviewDaysShort": "天",
       "overviewRiskStatus": "风险状态",
@@ -1122,6 +1125,7 @@
       "accountDrawerStatusAttention": "关注",
       "accountDrawerRecommendationMessage": "根据近30日均消耗 {daily}，预计当前资金额度将在 {days} 天后临界。建议补充 {amount} 以覆盖未来 {window} 天消耗。",
       "accountDrawerFallbackRecommendation": "当前账号预计仍可用 {days} 天，建议结合业务波动提前预留资金缓冲。",
+      "accountDrawerNoReferenceRecommendation": "当前统计样本不足 7 天，暂无参考数据，建议继续观察后再评估预计可用天数。",
       "statistics": "使用统计",
       "details": "使用明细",
       "dateRange": "日期范围",
@@ -1464,7 +1468,8 @@
       "feishu": "飞书",
       "jira": "Jira",
       "license": "授权管理平台",
-      "hyperbdr": "HyperBDR"
+      "hyperbdr": "HyperBDR",
+      "ai_pricehub": "大模型价格"
     },
     "records": {
       "pageTitle": "采集数据",
@@ -1692,6 +1697,24 @@
       "passwordPlaceholder": "请输入密码",
       "passwordPlaceholderEdit": "留空则不修改",
       "step2Desc": "HyperBDR 无需额外选择同步对象，可直接进入调度设置。"
+    },
+    "aiPriceHub": {
+      "primarySourceTitle": "大模型主配置",
+      "platformSlug": "平台标识",
+      "platformSlugDesc": "用于比价维度区分的唯一平台标识，例如 agione",
+      "vendorName": "平台名称",
+      "endpointUrl": "模型来源接口",
+      "region": "区域（可选）",
+      "currency": "币种",
+      "pointsPerCurrencyUnit": "积分汇率（每 1 币种单位对应积分）",
+      "parserLlmConfigUuid": "使用的大模型（LLM 配置 UUID）",
+      "parserLlmPlaceholder": "请选择大模型配置",
+      "parserLlmLoading": "正在加载大模型配置...",
+      "parserLlmEmpty": "暂无可用的大模型配置，请先在模型配置中启用至少一个全局 LLM。",
+      "parserLlmLoadError": "加载大模型配置失败",
+      "currentSelected": "当前已选",
+      "step2Desc": "选择需要同步的比价采集类型",
+      "syncCollection": "比价同步采集"
     }
   },
   "llm": {

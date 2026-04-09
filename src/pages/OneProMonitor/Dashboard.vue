@@ -1,13 +1,21 @@
 <template>
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
-      <section class="relative overflow-hidden rounded-2xl border border-emerald-100 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.14),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.96),rgba(248,250,252,0.98))] shadow-[0_20px_50px_-38px_rgba(15,23,42,0.55)]">
-        <div class="flex flex-col gap-4 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+      <section
+        class="relative overflow-hidden rounded-2xl border border-emerald-100 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.14),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.96),rgba(248,250,252,0.98))] shadow-[0_20px_50px_-38px_rgba(15,23,42,0.55)]"
+      >
+        <div
+          class="flex flex-col gap-4 px-5 py-4 lg:flex-row lg:items-center lg:justify-between"
+        >
           <div class="flex flex-wrap items-center gap-4">
-            <span class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.28em] text-white">
+            <span
+              class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.28em] text-white"
+            >
               OnePro
             </span>
-            <p class="text-sm text-gray-500">{{ t('oneproMonitor.dashboardPage.scopeHint') }}</p>
+            <p class="text-sm text-gray-500">
+              {{ t('oneproMonitor.dashboardPage.scopeHint') }}
+            </p>
           </div>
           <div class="w-full max-w-md">
             <OneProDataSourceSelect layout="inline" variant="toolbar" />
@@ -15,16 +23,30 @@
         </div>
       </section>
 
-      <section class="relative overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_30px_80px_-48px_rgba(15,23,42,0.32)]">
-        <div class="absolute -left-10 top-0 h-40 w-40 rounded-full bg-emerald-100/80 blur-3xl" />
-        <div class="absolute right-0 top-4 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl" />
+      <section
+        class="relative overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_30px_80px_-48px_rgba(15,23,42,0.32)]"
+      >
+        <div
+          class="absolute -left-10 top-0 h-40 w-40 rounded-full bg-emerald-100/80 blur-3xl"
+        />
+        <div
+          class="absolute right-0 top-4 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl"
+        />
         <div class="relative px-6 py-7 lg:px-8 lg:py-8">
           <div>
-            <p class="text-sm font-medium uppercase tracking-[0.24em] text-emerald-600">OnePro Monitor</p>
-            <h1 class="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-gray-950 lg:text-4xl">
+            <p
+              class="text-sm font-medium uppercase tracking-[0.24em] text-emerald-600"
+            >
+              OnePro Monitor
+            </p>
+            <h1
+              class="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-gray-950 lg:text-4xl"
+            >
               {{ t('oneproMonitor.dashboardPage.title') }}
             </h1>
-            <p class="mt-3 max-w-2xl text-sm leading-7 text-gray-600 lg:text-[15px]">
+            <p
+              class="mt-3 max-w-2xl text-sm leading-7 text-gray-600 lg:text-[15px]"
+            >
               {{ t('oneproMonitor.dashboardPage.subtitle') }}
             </p>
           </div>
@@ -38,18 +60,34 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">{{ t('oneproMonitor.dashboardPage.tenantTotal') }}</p>
-              <p class="mt-3 text-3xl font-semibold text-gray-950">{{ stats.tenant?.total || 0 }}</p>
+              <p
+                class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
+              >
+                {{ t('oneproMonitor.dashboardPage.tenantTotal') }}
+              </p>
+              <p class="mt-3 text-3xl font-semibold text-gray-950">
+                {{ stats.tenant?.total || 0 }}
+              </p>
             </div>
-            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <span
+              class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700"
+            >
               {{ activeTenantCount }}
             </span>
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
-            {{ t('oneproMonitor.dashboardPage.tenantSummary', { active: activeTenantCount, disabled: disabledTenantCount }) }}
+            {{
+              t('oneproMonitor.dashboardPage.tenantSummary', {
+                active: activeTenantCount,
+                disabled: disabledTenantCount
+              })
+            }}
           </p>
           <div class="mt-5 h-1.5 rounded-full bg-gray-100">
-            <div class="h-1.5 rounded-full bg-emerald-500" :style="{ width: `${activeTenantRatio}%` }" />
+            <div
+              class="h-1.5 rounded-full bg-emerald-500"
+              :style="{ width: `${activeTenantRatio}%` }"
+            />
           </div>
         </article>
 
@@ -59,18 +97,34 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">{{ t('oneproMonitor.dashboardPage.hostTotal') }}</p>
-              <p class="mt-3 text-3xl font-semibold text-gray-950">{{ stats.host?.total || 0 }}</p>
+              <p
+                class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
+              >
+                {{ t('oneproMonitor.dashboardPage.hostTotal') }}
+              </p>
+              <p class="mt-3 text-3xl font-semibold text-gray-950">
+                {{ stats.host?.total || 0 }}
+              </p>
             </div>
-            <span class="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+            <span
+              class="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700"
+            >
               {{ healthyHostRatio }}%
             </span>
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
-            {{ t('oneproMonitor.dashboardPage.hostCoverageSummary', { healthy: healthyHostCount, total: stats.host?.total || 0 }) }}
+            {{
+              t('oneproMonitor.dashboardPage.hostCoverageSummary', {
+                healthy: healthyHostCount,
+                total: stats.host?.total || 0
+              })
+            }}
           </p>
           <div class="mt-5 h-1.5 rounded-full bg-gray-100">
-            <div class="h-1.5 rounded-full bg-sky-500" :style="{ width: `${healthyHostRatio}%` }" />
+            <div
+              class="h-1.5 rounded-full bg-sky-500"
+              :style="{ width: `${healthyHostRatio}%` }"
+            />
           </div>
         </article>
 
@@ -80,54 +134,101 @@
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400">{{ t('oneproMonitor.dashboardPage.licenseUsage') }}</p>
-              <p class="mt-3 text-3xl font-semibold text-gray-950">{{ licenseUsageRatio }}%</p>
+              <p
+                class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
+              >
+                {{ t('oneproMonitor.dashboardPage.licenseUsage') }}
+              </p>
+              <p class="mt-3 text-3xl font-semibold text-gray-950">
+                {{ licenseUsageRatio }}%
+              </p>
             </div>
-            <span class="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+            <span
+              class="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700"
+            >
               {{ stats.license?.total_used || 0 }}
             </span>
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
-            {{ t('oneproMonitor.dashboardPage.licenseSummary', { used: stats.license?.total_used || 0, unused: stats.license?.total_unused || 0 }) }}
+            {{
+              t('oneproMonitor.dashboardPage.licenseSummary', {
+                used: stats.license?.total_used || 0,
+                unused: stats.license?.total_unused || 0
+              })
+            }}
           </p>
           <div class="mt-5 h-1.5 rounded-full bg-gray-100">
-            <div class="h-1.5 rounded-full bg-violet-500" :style="{ width: `${licenseUsageRatio}%` }" />
+            <div
+              class="h-1.5 rounded-full bg-violet-500"
+              :style="{ width: `${licenseUsageRatio}%` }"
+            />
           </div>
         </article>
-
       </div>
 
-      <section class="overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-sm">
-          <div class="border-b border-gray-200 bg-gray-50/60 px-6 py-4">
-            <h2 class="text-lg font-semibold text-gray-900">{{ t('oneproMonitor.dashboardPage.riskTitle') }}</h2>
-            <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.dashboardPage.riskSubtitle') }}</p>
+      <section
+        class="overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-sm"
+      >
+        <div class="border-b border-gray-200 bg-gray-50/60 px-6 py-4">
+          <h2 class="text-lg font-semibold text-gray-900">
+            {{ t('oneproMonitor.dashboardPage.riskTitle') }}
+          </h2>
+          <p class="mt-1 text-sm text-gray-500">
+            {{ t('oneproMonitor.dashboardPage.riskSubtitle') }}
+          </p>
+        </div>
+        <div class="grid gap-4 px-6 py-5 md:grid-cols-3">
+          <div
+            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-sm cursor-pointer"
+            @click="
+              openDashboardLink('OneProMonitorTasks', { status: 'failed' })
+            "
+          >
+            <p class="text-sm font-medium text-gray-900">
+              {{ t('oneproMonitor.dashboardPage.failedTasksTitle') }}
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ failedTaskCount }}
+            </p>
+            <p class="mt-1 text-sm text-gray-500">
+              {{ t('oneproMonitor.dashboardPage.failedTasksSubtitle') }}
+            </p>
           </div>
-          <div class="grid gap-4 px-6 py-5 md:grid-cols-3">
-            <div
-              class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-sm cursor-pointer"
-              @click="openDashboardLink('OneProMonitorTasks', { status: 'failed' })"
-            >
-              <p class="text-sm font-medium text-gray-900">{{ t('oneproMonitor.dashboardPage.failedTasksTitle') }}</p>
-              <p class="mt-1 text-2xl font-semibold text-gray-900">{{ failedTaskCount }}</p>
-              <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.dashboardPage.failedTasksSubtitle') }}</p>
-            </div>
-            <div
-              class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-sm cursor-pointer"
-              @click="openDashboardLink('OneProMonitorHosts', { health_scope: 'risky' })"
-            >
-              <p class="text-sm font-medium text-gray-900">{{ t('oneproMonitor.dashboardPage.riskyHostsTitle') }}</p>
-              <p class="mt-1 text-2xl font-semibold text-gray-900">{{ riskyHostCount }}</p>
-              <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.dashboardPage.riskyHostsSubtitle') }}</p>
-            </div>
-            <div
-              class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-rose-200 hover:shadow-sm cursor-pointer"
-              @click="openDashboardLink('OneProMonitorHosts', { license_valid: 'false' })"
-            >
-              <p class="text-sm font-medium text-gray-900">{{ t('oneproMonitor.dashboardPage.invalidLicenseHostsTitle') }}</p>
-              <p class="mt-1 text-2xl font-semibold text-gray-900">{{ stats.host?.invalid_license || 0 }}</p>
-              <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.dashboardPage.invalidLicenseHostsSubtitle') }}</p>
-            </div>
+          <div
+            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-sm cursor-pointer"
+            @click="
+              openDashboardLink('OneProMonitorHosts', { health_scope: 'risky' })
+            "
+          >
+            <p class="text-sm font-medium text-gray-900">
+              {{ t('oneproMonitor.dashboardPage.riskyHostsTitle') }}
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ riskyHostCount }}
+            </p>
+            <p class="mt-1 text-sm text-gray-500">
+              {{ t('oneproMonitor.dashboardPage.riskyHostsSubtitle') }}
+            </p>
           </div>
+          <div
+            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-rose-200 hover:shadow-sm cursor-pointer"
+            @click="
+              openDashboardLink('OneProMonitorHosts', {
+                license_valid: 'false'
+              })
+            "
+          >
+            <p class="text-sm font-medium text-gray-900">
+              {{ t('oneproMonitor.dashboardPage.invalidLicenseHostsTitle') }}
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ stats.host?.invalid_license || 0 }}
+            </p>
+            <p class="mt-1 text-sm text-gray-500">
+              {{ t('oneproMonitor.dashboardPage.invalidLicenseHostsSubtitle') }}
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   </AppLayout>
@@ -149,11 +250,8 @@ import { useOneProDataSourceScope } from './useOneProDataSourceScope'
 const { t } = useI18n()
 const { showError } = useToast()
 const router = useRouter()
-const {
-  selectedDataSource,
-  loadDataSources,
-  appendDataSourceScope
-} = useOneProDataSourceScope()
+const { selectedDataSource, loadDataSources, appendDataSourceScope } =
+  useOneProDataSourceScope()
 
 const stats = ref({})
 
@@ -174,7 +272,9 @@ const failedTaskCount = computed(() => {
 
 const riskyHostCount = computed(() => {
   const source = stats.value.host?.health_status_stats || {}
-  return (source.warning || 0) + (source.unhealthy || 0) + (source.disconnected || 0)
+  return (
+    (source.warning || 0) + (source.unhealthy || 0) + (source.disconnected || 0)
+  )
 })
 
 const healthyHostCount = computed(() => {
@@ -191,11 +291,17 @@ const activeTenantRatio = computed(() => {
 const healthyHostRatio = computed(() => {
   const total = toNumber(stats.value.host?.total, 0)
   if (!total) return 0
-  return Math.min(100, Math.max(0, Math.round(((total - riskyHostCount.value) / total) * 100)))
+  return Math.min(
+    100,
+    Math.max(0, Math.round(((total - riskyHostCount.value) / total) * 100))
+  )
 })
 
 const licenseUsageRatio = computed(() => {
-  return Math.min(100, Math.max(0, toNumber(stats.value.license?.usage_ratio, 0)))
+  return Math.min(
+    100,
+    Math.max(0, toNumber(stats.value.license?.usage_ratio, 0))
+  )
 })
 
 function openDashboardLink(name, query = {}) {
@@ -218,7 +324,10 @@ async function loadAll() {
   try {
     await loadDashboard()
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.dashboardPage.loadError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.dashboardPage.loadError')
+    )
   }
 }
 

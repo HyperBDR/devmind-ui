@@ -324,7 +324,7 @@
                 >{{ timeFilterLabel }}</span
               >
             </div>
-            <p class="mt-1 text-[11px] text-slate-400">
+            <p class="mt-1 text-xs text-slate-400">
               {{ t('hyperbdrDashboard.funnelDesc') }}
             </p>
           </div>
@@ -380,7 +380,7 @@
                   >{{ timeFilterLabel }}</span
                 >
               </div>
-              <p class="mt-1 text-[11px] text-slate-400">
+              <p class="mt-1 text-xs text-slate-400">
                 {{ t('hyperbdrDashboard.trendDescCumulative') }}
               </p>
             </div>
@@ -441,7 +441,7 @@
                 >{{ timeFilterLabel }}</span
               >
             </div>
-            <p class="mt-1 text-[11px] text-slate-400">
+            <p class="mt-1 text-xs text-slate-400">
               {{ t('hyperbdrDashboard.churnDesc') }}
             </p>
           </div>
@@ -471,7 +471,7 @@
                 >({{ focusCardsTotal }})</span
               >
             </div>
-            <p class="mt-1 text-[11px] text-slate-400">
+            <p class="mt-1 text-xs text-slate-400">
               {{ t('hyperbdrDashboard.focusDesc') }}
             </p>
           </div>
@@ -601,7 +601,7 @@
                 >{{ timeFilterLabel }}</span
               >
             </div>
-            <p class="mt-1 text-[11px] text-slate-400">
+            <p class="mt-1 text-xs text-slate-400">
               {{ t('hyperbdrDashboard.utilizationDesc') }}
             </p>
           </div>

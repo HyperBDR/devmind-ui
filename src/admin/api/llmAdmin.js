@@ -5,6 +5,8 @@
  */
 import apiClient from '@/api/index'
 
+const LLM_ADMIN_REQUEST_TIMEOUT = 90000
+
 function getCookie(name) {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
@@ -76,7 +78,11 @@ export const llmAdminApi = {
   },
   /** POST test config without saving. Body: { provider, config }. Returns { ok: boolean, detail?: string }. */
   postLLMConfigTest(body) {
-    return apiClient.post('/v1/admin/llm-config/test/', body).then(extractData)
+    return apiClient
+      .post('/v1/admin/llm-config/test/', body, {
+        timeout: LLM_ADMIN_REQUEST_TIMEOUT
+      })
+      .then(extractData)
   },
   /**
    * POST run test call with a saved config. Body: { config_uuid, prompt, max_tokens? }.
@@ -85,7 +91,9 @@ export const llmAdminApi = {
    */
   postLLMConfigTestCall(body) {
     return apiClient
-      .post('/v1/admin/llm-config/test-call/', body, { timeout: 90000 })
+      .post('/v1/admin/llm-config/test-call/', body, {
+        timeout: LLM_ADMIN_REQUEST_TIMEOUT
+      })
       .then(extractData)
   },
 

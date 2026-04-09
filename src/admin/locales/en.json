@@ -49,6 +49,7 @@
     "switchPlatform": "Switch view",
     "workspace": "Workspace",
     "operationsConsole": "Operations Console",
+    "aiPriceHub": "LLM Pricing Comparison",
     "adminConsole": "Admin Console",
     "llmConsole": "LLM Console",
     "taskManagementConsole": "Task Console",

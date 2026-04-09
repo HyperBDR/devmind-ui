@@ -201,7 +201,7 @@ const props = defineProps({
     type: Object,
     default: null
   },
-  providerOptions: {
+  tagOptions: {
     type: Array,
     default: () => []
   }
@@ -225,13 +225,11 @@ const normalizeTag = (value) => String(value || '').trim()
 
 const availableTags = computed(() => {
   const tagSet = new Set()
-  ;(props.providerOptions || []).forEach((item) => {
-    ;(item?.tags || []).forEach((tag) => {
-      const normalized = normalizeTag(tag)
-      if (normalized) {
-        tagSet.add(normalized)
-      }
-    })
+  ;(props.tagOptions || []).forEach((tag) => {
+    const normalized = normalizeTag(tag)
+    if (normalized) {
+      tagSet.add(normalized)
+    }
   })
   formData.tags.forEach((tag) => {
     const normalized = normalizeTag(tag)
@@ -331,12 +329,13 @@ const handleSubmit = async () => {
 
   saving.value = true
   try {
-    await cloudBillingApi.patchProvider(props.provider.id, {
+    const response = await cloudBillingApi.patchProvider(props.provider.id, {
       notes: formData.notes,
       tags: [...formData.tags]
     })
+    const providerData = extractResponseData(response)
     showSuccess(t('cloudBilling.providers.notesUpdateSuccess'))
-    emit('saved')
+    emit('saved', providerData)
   } catch (error) {
     console.error('Failed to update provider notes:', error)
     const responseData = extractResponseData(error?.response || error)

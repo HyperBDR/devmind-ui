@@ -33,6 +33,9 @@
                 <option value="cloud_billing">
                   {{ t('taskManagement.list.taskTypeCloudBilling') }}
                 </option>
+                <option value="ai_pricehub">
+                  {{ t('taskManagement.list.taskTypeAiPriceHub') }}
+                </option>
                 <option value="agentcore_notifier">
                   {{ t('taskManagement.list.taskTypeNotifier') }}
                 </option>
@@ -249,7 +252,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="currentPage -= 1; loadTasks()"
+                @click="currentPage--; loadTasks()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -257,7 +260,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="currentPage += 1; loadTasks()"
+                @click="currentPage++; loadTasks()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>

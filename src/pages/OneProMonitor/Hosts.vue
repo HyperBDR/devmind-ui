@@ -9,53 +9,114 @@
       >
         <template #summary>
           <div class="xl:col-span-full">
-            <div class="rounded-[28px] border border-gray-200/80 bg-white/70 p-2 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.28)] backdrop-blur-sm">
+            <div
+              class="rounded-[28px] border border-gray-200/80 bg-white/70 p-2 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.28)] backdrop-blur-sm"
+            >
               <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                <article class="rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-4 shadow-[0_14px_34px_-24px_rgba(15,23,42,0.28)]">
-                  <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600/80">
+                <article
+                  class="rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-4 shadow-[0_14px_34px_-24px_rgba(15,23,42,0.28)]"
+                >
+                  <p
+                    class="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600/80"
+                  >
                     {{ t('oneproMonitor.hostsPage.resultsTitle') }}
                   </p>
-                  <p class="mt-3 text-3xl font-semibold tracking-tight text-gray-950">{{ hostSummary.total }}</p>
-                  <p class="mt-2 text-sm leading-6 text-gray-500">{{ t('oneproMonitor.hostsPage.totalSubtitle') }}</p>
+                  <p
+                    class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
+                  >
+                    {{ hostSummary.total }}
+                  </p>
+                  <p class="mt-2 text-sm leading-6 text-gray-500">
+                    {{ t('oneproMonitor.hostsPage.totalSubtitle') }}
+                  </p>
                 </article>
                 <article
                   class="cursor-pointer rounded-2xl border border-emerald-100 bg-[linear-gradient(145deg,rgba(236,253,245,0.96),rgba(209,250,229,0.6))] px-5 py-4 shadow-[0_14px_34px_-24px_rgba(16,185,129,0.34)] transition hover:-translate-y-0.5 hover:border-emerald-200"
-                  @click="applyQuickFilter({ healthScope: 'healthy', hasError: '', licenseValid: '' })"
+                  @click="
+                    applyQuickFilter({
+                      healthScope: 'healthy',
+                      hasError: '',
+                      licenseValid: ''
+                    })
+                  "
                 >
-                  <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-700/70">
+                  <p
+                    class="text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-700/70"
+                  >
                     {{ t('oneproMonitor.hostsPage.healthyTitle') }}
                   </p>
-                  <p class="mt-3 text-3xl font-semibold tracking-tight text-gray-950">{{ hostSummary.healthy }}</p>
-                  <p class="mt-2 text-sm leading-6 text-gray-500">{{ t('oneproMonitor.hostsPage.healthySubtitle') }}</p>
+                  <p
+                    class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
+                  >
+                    {{ hostSummary.healthy }}
+                  </p>
+                  <p class="mt-2 text-sm leading-6 text-gray-500">
+                    {{ t('oneproMonitor.hostsPage.healthySubtitle') }}
+                  </p>
                 </article>
                 <article
                   class="cursor-pointer rounded-2xl border border-amber-100 bg-[linear-gradient(145deg,rgba(255,251,235,0.96),rgba(254,240,138,0.16))] px-5 py-4 shadow-[0_14px_34px_-24px_rgba(245,158,11,0.34)] transition hover:-translate-y-0.5 hover:border-amber-200"
-                  @click="applyQuickFilter({ hasError: 'true', healthScope: '', licenseValid: '' })"
+                  @click="
+                    applyQuickFilter({
+                      hasError: 'true',
+                      healthScope: '',
+                      licenseValid: ''
+                    })
+                  "
                 >
-                  <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-amber-700/75">
+                  <p
+                    class="text-[11px] font-medium uppercase tracking-[0.2em] text-amber-700/75"
+                  >
                     {{ t('oneproMonitor.hostsPage.errorTitle') }}
                   </p>
-                  <p class="mt-3 text-3xl font-semibold tracking-tight text-gray-950">{{ hostSummary.error }}</p>
-                  <p class="mt-2 text-sm leading-6 text-gray-500">{{ t('oneproMonitor.hostsPage.errorSubtitle') }}</p>
+                  <p
+                    class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
+                  >
+                    {{ hostSummary.error }}
+                  </p>
+                  <p class="mt-2 text-sm leading-6 text-gray-500">
+                    {{ t('oneproMonitor.hostsPage.errorSubtitle') }}
+                  </p>
                 </article>
                 <article
                   class="cursor-pointer rounded-2xl border border-rose-100 bg-[linear-gradient(145deg,rgba(255,241,242,0.96),rgba(254,205,211,0.4))] px-5 py-4 shadow-[0_14px_34px_-24px_rgba(244,63,94,0.3)] transition hover:-translate-y-0.5 hover:border-rose-200"
-                  @click="applyQuickFilter({ licenseValid: 'false', healthScope: '', hasError: '' })"
+                  @click="
+                    applyQuickFilter({
+                      licenseValid: 'false',
+                      healthScope: '',
+                      hasError: ''
+                    })
+                  "
                 >
-                  <p class="text-[11px] font-medium uppercase tracking-[0.2em] text-rose-700/75">
+                  <p
+                    class="text-[11px] font-medium uppercase tracking-[0.2em] text-rose-700/75"
+                  >
                     {{ t('oneproMonitor.hostsPage.invalidLicenseTitle') }}
                   </p>
-                  <p class="mt-3 text-3xl font-semibold tracking-tight text-gray-950">{{ hostSummary.invalidLicense }}</p>
-                  <p class="mt-2 text-sm leading-6 text-gray-500">{{ t('oneproMonitor.hostsPage.invalidLicenseSubtitle') }}</p>
+                  <p
+                    class="mt-3 text-3xl font-semibold tracking-tight text-gray-950"
+                  >
+                    {{ hostSummary.invalidLicense }}
+                  </p>
+                  <p class="mt-2 text-sm leading-6 text-gray-500">
+                    {{ t('oneproMonitor.hostsPage.invalidLicenseSubtitle') }}
+                  </p>
                 </article>
               </div>
-              <div class="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/65 px-4 py-3 text-sm text-emerald-900/85">
+              <div
+                class="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/65 px-4 py-3 text-sm text-emerald-900/85"
+              >
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                   <span>{{ t('oneproMonitor.hostsPage.summaryHint') }}</span>
                 </div>
-                <span class="hidden rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-emerald-700 md:inline-flex">
-                  {{ selectedDataSourceName || t('oneproMonitor.labels.allDataSources') }}
+                <span
+                  class="hidden rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-emerald-700 md:inline-flex"
+                >
+                  {{
+                    selectedDataSourceName ||
+                    t('oneproMonitor.labels.allDataSources')
+                  }}
                 </span>
               </div>
             </div>
@@ -65,13 +126,25 @@
 
       <section class="rounded-2xl border border-gray-200 bg-white shadow-sm">
         <div class="border-b border-gray-200 px-6 py-5">
-          <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+          <div
+            class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between"
+          >
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.filtersTitle') }}</h2>
-              <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.hostsPage.filtersSubtitle') }}</p>
+              <h2 class="text-lg font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.filtersTitle') }}
+              </h2>
+              <p class="mt-1 text-sm text-gray-500">
+                {{ t('oneproMonitor.hostsPage.filtersSubtitle') }}
+              </p>
             </div>
             <div class="flex items-center gap-3">
-              <p class="text-sm text-gray-500">{{ t('oneproMonitor.hostsPage.showingCount', { count: totalHosts }) }}</p>
+              <p class="text-sm text-gray-500">
+                {{
+                  t('oneproMonitor.hostsPage.showingCount', {
+                    count: totalHosts
+                  })
+                }}
+              </p>
               <div class="relative">
                 <BaseButton
                   variant="outline"
@@ -85,7 +158,9 @@
                   v-if="exportMenuOpen"
                   class="absolute right-0 top-full z-20 mt-2 w-64 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl"
                 >
-                  <p class="px-3 pb-2 pt-1 text-xs font-medium uppercase tracking-[0.18em] text-gray-500">
+                  <p
+                    class="px-3 pb-2 pt-1 text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
+                  >
                     {{ t('oneproMonitor.hostsPage.exportTitle') }}
                   </p>
                   <button
@@ -97,7 +172,9 @@
                       {{ t('oneproMonitor.hostsPage.exportScopes.filtered') }}
                     </span>
                     <span class="mt-1 text-xs leading-5 text-gray-500">
-                      {{ t('oneproMonitor.hostsPage.exportScopes.filteredHint') }}
+                      {{
+                        t('oneproMonitor.hostsPage.exportScopes.filteredHint')
+                      }}
                     </span>
                   </button>
                   <button
@@ -106,10 +183,16 @@
                     @click="exportHosts('data_source_all')"
                   >
                     <span class="text-sm font-medium text-gray-900">
-                      {{ t('oneproMonitor.hostsPage.exportScopes.dataSourceAll') }}
+                      {{
+                        t('oneproMonitor.hostsPage.exportScopes.dataSourceAll')
+                      }}
                     </span>
                     <span class="mt-1 text-xs leading-5 text-gray-500">
-                      {{ t('oneproMonitor.hostsPage.exportScopes.dataSourceAllHint') }}
+                      {{
+                        t(
+                          'oneproMonitor.hostsPage.exportScopes.dataSourceAllHint'
+                        )
+                      }}
                     </span>
                   </button>
                 </div>
@@ -119,9 +202,13 @@
         </div>
 
         <div class="px-6 py-5">
-          <div class="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.2fr)_220px_220px_auto]">
+          <div
+            class="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.2fr)_220px_220px_auto]"
+          >
             <label class="block">
-              <span class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500">
+              <span
+                class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
+              >
                 {{ t('oneproMonitor.hostsPage.searchLabel') }}
               </span>
               <input
@@ -129,35 +216,51 @@
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
                 :placeholder="t('oneproMonitor.hostsPage.searchPlaceholder')"
                 @keyup.enter="applyFilters"
-              >
+              />
             </label>
 
             <label class="block">
-              <span class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500">
+              <span
+                class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
+              >
                 {{ t('oneproMonitor.hostsPage.taskStatusLabel') }}
               </span>
               <select
                 v-model="filters.status"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
-                <option value="">{{ t('oneproMonitor.hostsPage.statusPlaceholder') }}</option>
-                <option v-for="option in taskStatusFilterOptions" :key="option.value" :value="option.value">
+                <option value="">
+                  {{ t('oneproMonitor.hostsPage.statusPlaceholder') }}
+                </option>
+                <option
+                  v-for="option in taskStatusFilterOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
                   {{ option.label }}
                 </option>
               </select>
             </label>
 
             <label class="block">
-              <span class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500">
+              <span
+                class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
+              >
                 {{ t('oneproMonitor.labels.authorization') }}
               </span>
               <select
                 v-model="filters.licenseValid"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
-                <option value="">{{ t('oneproMonitor.hostsPage.authorizationPlaceholder') }}</option>
-                <option value="true">{{ t('oneproMonitor.labels.valid') }}</option>
-                <option value="false">{{ t('oneproMonitor.labels.invalid') }}</option>
+                <option value="">
+                  {{ t('oneproMonitor.hostsPage.authorizationPlaceholder') }}
+                </option>
+                <option value="true">
+                  {{ t('oneproMonitor.labels.valid') }}
+                </option>
+                <option value="false">
+                  {{ t('oneproMonitor.labels.invalid') }}
+                </option>
               </select>
             </label>
 
@@ -172,7 +275,9 @@
           </div>
 
           <div class="mt-4 flex flex-wrap items-center gap-2">
-            <span class="text-sm font-medium text-gray-500">{{ t('oneproMonitor.hostsPage.activeFilters') }}</span>
+            <span class="text-sm font-medium text-gray-500">{{
+              t('oneproMonitor.hostsPage.activeFilters')
+            }}</span>
             <template v-if="activeFilters.length > 0">
               <span
                 v-for="filter in activeFilters"
@@ -192,14 +297,26 @@
         </div>
       </section>
 
-      <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <section
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+      >
         <div class="border-b border-gray-200 px-6 py-5">
-          <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+          <div
+            class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between"
+          >
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.listTitle') }}</h2>
-              <p class="mt-1 text-sm text-gray-500">{{ t('oneproMonitor.hostsPage.listSubtitle') }}</p>
+              <h2 class="text-lg font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.listTitle') }}
+              </h2>
+              <p class="mt-1 text-sm text-gray-500">
+                {{ t('oneproMonitor.hostsPage.listSubtitle') }}
+              </p>
             </div>
-            <p class="text-sm text-gray-500">{{ t('oneproMonitor.hostsPage.showingCount', { count: totalHosts }) }}</p>
+            <p class="text-sm text-gray-500">
+              {{
+                t('oneproMonitor.hostsPage.showingCount', { count: totalHosts })
+              }}
+            </p>
           </div>
         </div>
 
@@ -209,31 +326,50 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50/90">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.host') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.tenant') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.hostStatus') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.bootStatus') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.healthStatus') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  {{ t('oneproMonitor.labels.system') }} / {{ t('oneproMonitor.labels.resources') }}
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {{ t('oneproMonitor.labels.system') }} /
+                  {{ t('oneproMonitor.labels.resources') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.authorization') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.errorSummary') }}
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
                   {{ t('oneproMonitor.labels.actions') }}
                 </th>
               </tr>
@@ -247,54 +383,40 @@
                 <td class="px-6 py-4 text-sm text-gray-900">
                   <div class="min-w-[220px]">
                     <div class="flex flex-wrap items-center gap-2">
-                      <span class="font-semibold text-gray-900">{{ host.name || '-' }}</span>
-                      <span class="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-700">
-                        {{ host.data_source_name || t('oneproMonitor.labels.dataSource') }}
+                      <span class="font-semibold text-gray-900">{{
+                        host.name || '-'
+                      }}</span>
+                      <span
+                        class="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-700"
+                      >
+                        {{
+                          host.data_source_name ||
+                          t('oneproMonitor.labels.dataSource')
+                        }}
                       </span>
                     </div>
-                    <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                    <div
+                      class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500"
+                    >
                       <span>ID: {{ host.id || '-' }}</span>
-                      <span>{{ t('oneproMonitor.labels.lastCollected') }}: {{ formatDateTime(host.last_collected_at) }}</span>
+                      <span
+                        >{{ t('oneproMonitor.labels.lastCollected') }}:
+                        {{ formatDateTime(host.last_collected_at) }}</span
+                      >
                     </div>
                   </div>
                 </td>
 
                 <td class="px-6 py-4 text-sm text-gray-600">
                   <div class="min-w-[180px]">
-                    <div class="font-medium text-gray-900">{{ host.tenant_name || '-' }}</div>
+                    <div class="font-medium text-gray-900">
+                      {{ host.tenant_name || '-' }}
+                    </div>
                     <div class="mt-2 text-xs text-gray-500">
-                      {{ host.data_source_name || t('oneproMonitor.labels.dataSource') }}
-                    </div>
-                  </div>
-                </td>
-
-                <td class="px-6 py-4 text-sm">
-                  <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProHostStatusClass(host.status)">
-                    {{ oneProHostStatusLabel(host.status, t) }}
-                  </span>
-                </td>
-
-                <td class="px-6 py-4 text-sm">
-                  <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProBootStatusClass(host.boot_status)">
-                    {{ oneProBootStatusLabel(host.boot_status, t) }}
-                  </span>
-                </td>
-
-                <td class="px-6 py-4 text-sm">
-                  <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProHealthStatusClass(host.health_status)">
-                    {{ oneProHealthStatusLabel(host.health_status, t) }}
-                  </span>
-                </td>
-
-                <td class="px-6 py-4 text-sm text-gray-600">
-                  <div class="min-w-[180px] space-y-2">
-                    <div>
-                      <div class="font-medium text-gray-900">{{ host.os_type || '-' }}</div>
-                      <div class="mt-1 text-xs text-gray-500">{{ host.host_type || '-' }}</div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-                      <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1">CPU {{ host.cpu_num || 0 }}</span>
-                      <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1">RAM {{ host.ram_size || 0 }} GB</span>
+                      {{
+                        host.data_source_name ||
+                        t('oneproMonitor.labels.dataSource')
+                      }}
                     </div>
                   </div>
                 </td>
@@ -302,9 +424,67 @@
                 <td class="px-6 py-4 text-sm">
                   <span
                     class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
-                    :class="host.license_valid ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'"
+                    :class="oneProHostStatusClass(host.status)"
                   >
-                    {{ host.license_valid ? t('oneproMonitor.labels.valid') : t('oneproMonitor.labels.invalid') }}
+                    {{ oneProHostStatusLabel(host.status, t) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-sm">
+                  <span
+                    class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                    :class="oneProBootStatusClass(host.boot_status)"
+                  >
+                    {{ oneProBootStatusLabel(host.boot_status, t) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-sm">
+                  <span
+                    class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                    :class="oneProHealthStatusClass(host.health_status)"
+                  >
+                    {{ oneProHealthStatusLabel(host.health_status, t) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  <div class="min-w-[180px] space-y-2">
+                    <div>
+                      <div class="font-medium text-gray-900">
+                        {{ host.os_type || '-' }}
+                      </div>
+                      <div class="mt-1 text-xs text-gray-500">
+                        {{ host.host_type || '-' }}
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs text-gray-500">
+                      <span
+                        class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1"
+                        >CPU {{ host.cpu_num || 0 }}</span
+                      >
+                      <span
+                        class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1"
+                        >RAM {{ host.ram_size || 0 }} GB</span
+                      >
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 text-sm">
+                  <span
+                    class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                    :class="
+                      host.license_valid
+                        ? 'bg-green-100 text-green-700 border-green-200'
+                        : 'bg-red-100 text-red-700 border-red-200'
+                    "
+                  >
+                    {{
+                      host.license_valid
+                        ? t('oneproMonitor.labels.valid')
+                        : t('oneproMonitor.labels.invalid')
+                    }}
                   </span>
                 </td>
 
@@ -314,7 +494,9 @@
                     class="max-w-[240px] rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900"
                     :title="host.error_message"
                   >
-                    <span class="block truncate">{{ summarizeError(host.error_message) }}</span>
+                    <span class="block truncate">{{
+                      summarizeError(host.error_message)
+                    }}</span>
                   </div>
                   <span
                     v-else
@@ -325,13 +507,20 @@
                 </td>
 
                 <td class="px-6 py-4 text-sm">
-                  <BaseButton size="sm" variant="outline" @click="openHostDetail(host)">
+                  <BaseButton
+                    size="sm"
+                    variant="outline"
+                    @click="openHostDetail(host)"
+                  >
                     {{ t('oneproMonitor.actions.detail') }}
                   </BaseButton>
                 </td>
               </tr>
               <tr v-if="hosts.length === 0">
-                <td colspan="9" class="px-6 py-14 text-center text-sm text-gray-500">
+                <td
+                  colspan="9"
+                  class="px-6 py-14 text-center text-sm text-gray-500"
+                >
                   {{ t('oneproMonitor.hostsPage.empty') }}
                 </td>
               </tr>
@@ -340,15 +529,21 @@
         </div>
 
         <div class="border-t border-gray-200 px-6 py-4">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <div
+            class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+          >
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+            >
               <div class="text-sm text-gray-700">
                 <span v-if="totalCount > 0">
-                  {{ t('common.pagination.showing', {
-                    from: displayFrom,
-                    to: displayTo,
-                    total: totalCount
-                  }) }}
+                  {{
+                    t('common.pagination.showing', {
+                      from: displayFrom,
+                      to: displayTo,
+                      total: totalCount
+                    })
+                  }}
                 </span>
                 <span v-else class="text-gray-500">
                   {{ t('common.noData') }}
@@ -381,8 +576,15 @@
                 {{ t('common.previous') }}
               </BaseButton>
 
-              <span class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
-                {{ t('common.pagination.page', { current: currentPage, total: totalPages }) }}
+              <span
+                class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700"
+              >
+                {{
+                  t('common.pagination.page', {
+                    current: currentPage,
+                    total: totalPages
+                  })
+                }}
               </span>
 
               <BaseButton
@@ -405,67 +607,118 @@
       >
         <div v-if="selectedHost" class="space-y-6">
           <div>
-            <p class="text-sm text-gray-500">{{ t('oneproMonitor.hostsPage.detailSubtitle') }}</p>
+            <p class="text-sm text-gray-500">
+              {{ t('oneproMonitor.hostsPage.detailSubtitle') }}
+            </p>
           </div>
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <h2 class="text-sm font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.sections.basic') }}</h2>
+              <h2 class="text-sm font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.sections.basic') }}
+              </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.hostId') }}</dt>
-                  <dd class="break-all text-right font-medium text-gray-900">{{ selectedHost.id || '-' }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.hostId') }}
+                  </dt>
+                  <dd class="break-all text-right font-medium text-gray-900">
+                    {{ selectedHost.id || '-' }}
+                  </dd>
                 </div>
                 <div class="flex justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.tenant') }}</dt>
-                  <dd class="text-right text-gray-900">{{ selectedHost.tenant_name || '-' }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.tenant') }}
+                  </dt>
+                  <dd class="text-right text-gray-900">
+                    {{ selectedHost.tenant_name || '-' }}
+                  </dd>
                 </div>
                 <div class="flex justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.dataSource') }}</dt>
-                  <dd class="text-right text-gray-900">{{ selectedHost.data_source_name || '-' }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.dataSource') }}
+                  </dt>
+                  <dd class="text-right text-gray-900">
+                    {{ selectedHost.data_source_name || '-' }}
+                  </dd>
                 </div>
                 <div class="flex justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.system') }}</dt>
-                  <dd class="text-right text-gray-900">{{ selectedHost.os_type || '-' }} / {{ selectedHost.host_type || '-' }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.system') }}
+                  </dt>
+                  <dd class="text-right text-gray-900">
+                    {{ selectedHost.os_type || '-' }} /
+                    {{ selectedHost.host_type || '-' }}
+                  </dd>
                 </div>
                 <div class="flex justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.lastCollected') }}</dt>
-                  <dd class="text-right text-gray-900">{{ formatDateTime(selectedHost.last_collected_at) }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.lastCollected') }}
+                  </dt>
+                  <dd class="text-right text-gray-900">
+                    {{ formatDateTime(selectedHost.last_collected_at) }}
+                  </dd>
                 </div>
               </dl>
             </section>
 
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <h2 class="text-sm font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.sections.runtime') }}</h2>
+              <h2 class="text-sm font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.sections.runtime') }}
+              </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex items-center justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.hostStatus') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.hostStatus') }}
+                  </dt>
                   <dd>
-                    <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProHostStatusClass(selectedHost.status)">
+                    <span
+                      class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                      :class="oneProHostStatusClass(selectedHost.status)"
+                    >
                       {{ oneProHostStatusLabel(selectedHost.status, t) }}
                     </span>
                   </dd>
                 </div>
                 <div class="flex items-center justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.bootStatus') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.bootStatus') }}
+                  </dt>
                   <dd>
-                    <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProBootStatusClass(selectedHost.boot_status)">
+                    <span
+                      class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                      :class="oneProBootStatusClass(selectedHost.boot_status)"
+                    >
                       {{ oneProBootStatusLabel(selectedHost.boot_status, t) }}
                     </span>
                   </dd>
                 </div>
                 <div class="flex items-center justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.healthStatus') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.healthStatus') }}
+                  </dt>
                   <dd>
-                    <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="oneProHealthStatusClass(selectedHost.health_status)">
-                      {{ oneProHealthStatusLabel(selectedHost.health_status, t) }}
+                    <span
+                      class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                      :class="
+                        oneProHealthStatusClass(selectedHost.health_status)
+                      "
+                    >
+                      {{
+                        oneProHealthStatusLabel(selectedHost.health_status, t)
+                      }}
                     </span>
                   </dd>
                 </div>
                 <div class="flex items-center justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.taskStatus') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.taskStatus') }}
+                  </dt>
                   <dd>
-                    <span class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none" :class="derivedTaskStatusClass(selectedHost.status)">
+                    <span
+                      class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
+                      :class="derivedTaskStatusClass(selectedHost.status)"
+                    >
                       {{ derivedTaskStatusLabel(selectedHost.status) }}
                     </span>
                   </dd>
@@ -476,24 +729,40 @@
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <h2 class="text-sm font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.sections.resources') }}</h2>
+              <h2 class="text-sm font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.sections.resources') }}
+              </h2>
               <dl class="mt-4 space-y-3 text-sm">
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">CPU</dt>
-                  <dd class="text-right text-gray-900">{{ selectedHost.cpu_num || 0 }}</dd>
+                  <dd class="text-right text-gray-900">
+                    {{ selectedHost.cpu_num || 0 }}
+                  </dd>
                 </div>
                 <div class="flex justify-between gap-4">
                   <dt class="text-gray-500">RAM</dt>
-                  <dd class="text-right text-gray-900">{{ selectedHost.ram_size || 0 }} GB</dd>
+                  <dd class="text-right text-gray-900">
+                    {{ selectedHost.ram_size || 0 }} GB
+                  </dd>
                 </div>
                 <div class="flex items-center justify-between gap-4">
-                  <dt class="text-gray-500">{{ t('oneproMonitor.labels.authorization') }}</dt>
+                  <dt class="text-gray-500">
+                    {{ t('oneproMonitor.labels.authorization') }}
+                  </dt>
                   <dd>
                     <span
                       class="inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-medium leading-none"
-                      :class="selectedHost.license_valid ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'"
+                      :class="
+                        selectedHost.license_valid
+                          ? 'bg-green-100 text-green-700 border-green-200'
+                          : 'bg-red-100 text-red-700 border-red-200'
+                      "
                     >
-                      {{ selectedHost.license_valid ? t('oneproMonitor.labels.valid') : t('oneproMonitor.labels.invalid') }}
+                      {{
+                        selectedHost.license_valid
+                          ? t('oneproMonitor.labels.valid')
+                          : t('oneproMonitor.labels.invalid')
+                      }}
                     </span>
                   </dd>
                 </div>
@@ -501,9 +770,16 @@
             </section>
 
             <section class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <h2 class="text-sm font-semibold text-gray-900">{{ t('oneproMonitor.hostsPage.sections.error') }}</h2>
-              <div class="mt-4 min-h-[140px] whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
-                {{ selectedHost.error_message || t('oneproMonitor.hostsPage.noError') }}
+              <h2 class="text-sm font-semibold text-gray-900">
+                {{ t('oneproMonitor.hostsPage.sections.error') }}
+              </h2>
+              <div
+                class="mt-4 min-h-[140px] whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"
+              >
+                {{
+                  selectedHost.error_message ||
+                  t('oneproMonitor.hostsPage.noError')
+                }}
               </div>
             </section>
           </div>
@@ -573,9 +849,15 @@ const filters = ref({
 })
 
 const totalHosts = computed(() => totalCount.value)
-const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / pageSize.value)))
-const displayFrom = computed(() => (totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1))
-const displayTo = computed(() => Math.min(currentPage.value * pageSize.value, totalCount.value))
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(totalCount.value / pageSize.value))
+)
+const displayFrom = computed(() =>
+  totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1
+)
+const displayTo = computed(() =>
+  Math.min(currentPage.value * pageSize.value, totalCount.value)
+)
 
 const activeFilters = computed(() => {
   const entries = []
@@ -600,17 +882,23 @@ const activeFilters = computed(() => {
     entries.push({
       key: 'health_scope',
       label: t('oneproMonitor.labels.healthStatus'),
-      value: t(`oneproMonitor.hostsPage.quickScopes.${filters.value.healthScope}`)
+      value: t(
+        `oneproMonitor.hostsPage.quickScopes.${filters.value.healthScope}`
+      )
     })
   }
 
-  if (filters.value.licenseValid === 'true' || filters.value.licenseValid === 'false') {
+  if (
+    filters.value.licenseValid === 'true' ||
+    filters.value.licenseValid === 'false'
+  ) {
     entries.push({
       key: 'license_valid',
       label: t('oneproMonitor.labels.authorization'),
-      value: filters.value.licenseValid === 'true'
-        ? t('oneproMonitor.labels.valid')
-        : t('oneproMonitor.labels.invalid')
+      value:
+        filters.value.licenseValid === 'true'
+          ? t('oneproMonitor.labels.valid')
+          : t('oneproMonitor.labels.invalid')
     })
   }
 
@@ -634,41 +922,89 @@ const activeFilters = computed(() => {
 })
 
 const hostTaskStatusMap = {
-  sync_snapshot_done: { label: 'completed', className: 'bg-green-100 text-green-700 border-green-200' },
-  host_register_done: { label: 'completed', className: 'bg-green-100 text-green-700 border-green-200' },
-  boot_done: { label: 'completed', className: 'bg-green-100 text-green-700 border-green-200' },
-  clean_done: { label: 'completed', className: 'bg-green-100 text-green-700 border-green-200' },
-  sync_failed: { label: 'failed', className: 'bg-red-100 text-red-700 border-red-200' },
-  clean_failed: { label: 'failed', className: 'bg-red-100 text-red-700 border-red-200' },
-  boot_failed: { label: 'failed', className: 'bg-red-100 text-red-700 border-red-200' },
-  sync_doing: { label: 'processing', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-  clean_doing: { label: 'processing', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-  boot_doing: { label: 'processing', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-  sync_queued: { label: 'pending', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-  sync_stopped: { label: 'stopped', className: 'bg-gray-100 text-gray-700 border-gray-200' }
+  sync_snapshot_done: {
+    label: 'completed',
+    className: 'bg-green-100 text-green-700 border-green-200'
+  },
+  host_register_done: {
+    label: 'completed',
+    className: 'bg-green-100 text-green-700 border-green-200'
+  },
+  boot_done: {
+    label: 'completed',
+    className: 'bg-green-100 text-green-700 border-green-200'
+  },
+  clean_done: {
+    label: 'completed',
+    className: 'bg-green-100 text-green-700 border-green-200'
+  },
+  sync_failed: {
+    label: 'failed',
+    className: 'bg-red-100 text-red-700 border-red-200'
+  },
+  clean_failed: {
+    label: 'failed',
+    className: 'bg-red-100 text-red-700 border-red-200'
+  },
+  boot_failed: {
+    label: 'failed',
+    className: 'bg-red-100 text-red-700 border-red-200'
+  },
+  sync_doing: {
+    label: 'processing',
+    className: 'bg-amber-100 text-amber-700 border-amber-200'
+  },
+  clean_doing: {
+    label: 'processing',
+    className: 'bg-amber-100 text-amber-700 border-amber-200'
+  },
+  boot_doing: {
+    label: 'processing',
+    className: 'bg-amber-100 text-amber-700 border-amber-200'
+  },
+  sync_queued: {
+    label: 'pending',
+    className: 'bg-amber-100 text-amber-700 border-amber-200'
+  },
+  sync_stopped: {
+    label: 'stopped',
+    className: 'bg-gray-100 text-gray-700 border-gray-200'
+  }
 }
 
-const taskStatusFilterOptions = computed(() => ([
-  { value: 'completed', label: t('oneproMonitor.hostsPage.taskStatus.completed') },
+const taskStatusFilterOptions = computed(() => [
+  {
+    value: 'completed',
+    label: t('oneproMonitor.hostsPage.taskStatus.completed')
+  },
   { value: 'failed', label: t('oneproMonitor.hostsPage.taskStatus.failed') },
-  { value: 'processing', label: t('oneproMonitor.hostsPage.taskStatus.processing') }
-]))
+  {
+    value: 'processing',
+    label: t('oneproMonitor.hostsPage.taskStatus.processing')
+  }
+])
 
 function taskStatusFilterLabel(value) {
   return t(`oneproMonitor.hostsPage.taskStatus.${value}`)
 }
 
 function derivedTaskStatusLabel(status) {
-  const normalized = hostTaskStatusMap[String(status || '').toLowerCase()]?.label || 'unknown'
+  const normalized =
+    hostTaskStatusMap[String(status || '').toLowerCase()]?.label || 'unknown'
   return taskStatusFilterLabel(normalized)
 }
 
 function derivedTaskStatusClass(status) {
-  return hostTaskStatusMap[String(status || '').toLowerCase()]?.className || 'bg-gray-100 text-gray-700 border-gray-200'
+  return (
+    hostTaskStatusMap[String(status || '').toLowerCase()]?.className ||
+    'bg-gray-100 text-gray-700 border-gray-200'
+  )
 }
 
 function summarizeError(message) {
-  return String(message || '').replace(/\s+/g, ' ').trim()
+  return String(message || '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 function openHostDetail(host) {
@@ -725,15 +1061,17 @@ function handlePageSizeChange() {
 async function loadHosts() {
   loading.value = true
   try {
-    const response = await oneproMonitorApi.hosts.list(appendDataSourceScope({
-      skip: (currentPage.value - 1) * pageSize.value,
-      limit: pageSize.value,
-      name: filters.value.name || undefined,
-      task_status: filters.value.status || undefined,
-      health_scope: filters.value.healthScope || undefined,
-      license_valid: filters.value.licenseValid || undefined,
-      has_error: filters.value.hasError || undefined
-    }))
+    const response = await oneproMonitorApi.hosts.list(
+      appendDataSourceScope({
+        skip: (currentPage.value - 1) * pageSize.value,
+        limit: pageSize.value,
+        name: filters.value.name || undefined,
+        task_status: filters.value.status || undefined,
+        health_scope: filters.value.healthScope || undefined,
+        license_valid: filters.value.licenseValid || undefined,
+        has_error: filters.value.hasError || undefined
+      })
+    )
     const payload = unwrap(response)
     hosts.value = payload.items || []
     totalCount.value = Number(payload.total || 0)
@@ -749,7 +1087,9 @@ async function loadHosts() {
       return
     }
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.hostsPage.loadError'))
+    showError(
+      error?.response?.data?.detail || t('oneproMonitor.hostsPage.loadError')
+    )
   } finally {
     loading.value = false
   }
@@ -778,7 +1118,9 @@ async function exportHosts(scope) {
     await oneproMonitorApi.hosts.export(buildExportParams(scope))
     exportMenuOpen.value = false
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.hostsPage.exportError'))
+    showError(
+      error?.response?.data?.detail || t('oneproMonitor.hostsPage.exportError')
+    )
   } finally {
     exportingScope.value = ''
   }
@@ -787,14 +1129,23 @@ async function exportHosts(scope) {
 function syncFiltersFromRoute() {
   filters.value = {
     name: typeof route.query.name === 'string' ? route.query.name : '',
-    status: typeof route.query.task_status === 'string' ? route.query.task_status : '',
-    healthScope: typeof route.query.health_scope === 'string' ? route.query.health_scope : '',
-    licenseValid: route.query.license_valid === 'true' || route.query.license_valid === 'false'
-      ? route.query.license_valid
-      : '',
-    hasError: route.query.has_error === 'true' || route.query.has_error === 'false'
-      ? route.query.has_error
-      : ''
+    status:
+      typeof route.query.task_status === 'string'
+        ? route.query.task_status
+        : '',
+    healthScope:
+      typeof route.query.health_scope === 'string'
+        ? route.query.health_scope
+        : '',
+    licenseValid:
+      route.query.license_valid === 'true' ||
+      route.query.license_valid === 'false'
+        ? route.query.license_valid
+        : '',
+    hasError:
+      route.query.has_error === 'true' || route.query.has_error === 'false'
+        ? route.query.has_error
+        : ''
   }
 }
 

@@ -254,7 +254,10 @@
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                  @change="page = 1; fetchList()"
+                  @change="
+                    page = 1;
+                    fetchList()
+                  "
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>

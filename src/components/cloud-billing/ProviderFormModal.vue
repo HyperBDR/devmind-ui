@@ -1433,7 +1433,7 @@ const props = defineProps({
     type: Object,
     default: null
   },
-  providerOptions: {
+  tagOptions: {
     type: Array,
     default: () => []
   },
@@ -1538,13 +1538,11 @@ const emailToRecipients = ref(['', '', ''])
 const pendingChannelUuid = ref('')
 const availableTags = computed(() => {
   const tagSet = new Set()
-  ;(props.providerOptions || []).forEach((provider) => {
-    ;(provider?.tags || []).forEach((tag) => {
-      const normalized = String(tag || '').trim()
-      if (normalized) {
-        tagSet.add(normalized)
-      }
-    })
+  ;(props.tagOptions || []).forEach((tag) => {
+    const normalized = String(tag || '').trim()
+    if (normalized) {
+      tagSet.add(normalized)
+    }
   })
   formData.tags.forEach((tag) => {
     const normalized = String(tag || '').trim()
@@ -2358,13 +2356,19 @@ const handleSubmit = async () => {
 
     let providerId
     let successMessage
+    let savedProvider
     if (props.provider) {
-      await cloudBillingApi.updateProvider(props.provider.id, data)
+      const response = await cloudBillingApi.updateProvider(
+        props.provider.id,
+        data
+      )
+      savedProvider = extractResponseData(response)
       providerId = props.provider.id
       successMessage = t('cloudBilling.providers.updateSuccess')
     } else {
       const response = await cloudBillingApi.createProvider(data)
       const providerData = extractResponseData(response)
+      savedProvider = providerData
       providerId = providerData.id
       successMessage = t('cloudBilling.providers.createSuccess')
     }
@@ -2419,7 +2423,7 @@ const handleSubmit = async () => {
     }
 
     showSuccess(successMessage)
-    emit('saved')
+    emit('saved', savedProvider)
   } catch (error) {
     console.error('Failed to save provider:', error)
     console.error('Error response data:', error.response?.data)

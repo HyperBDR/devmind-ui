@@ -8,7 +8,36 @@
       <div class="flex items-center gap-2 flex-wrap"></div>
 
       <!-- Search and Filter (Right) -->
-      <div class="flex items-center gap-3 w-full sm:w-auto">
+      <div
+        class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto"
+      >
+        <div class="relative w-full sm:w-80">
+          <span
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </span>
+          <input
+            v-model="searchQuery"
+            type="text"
+            :placeholder="
+              t('cloudBilling.settings.providers.searchPlaceholder')
+            "
+            class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 shadow-sm transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
+          />
+        </div>
         <BaseButton
           @click="showCreateModal = true"
           size="sm"
@@ -38,7 +67,7 @@
     <!-- Providers Table -->
     <template v-else>
       <div
-        v-if="providers.length === 0"
+        v-if="allProviders.length === 0"
         class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
       >
         <svg
@@ -59,6 +88,28 @@
         </p>
       </div>
 
+      <div
+        v-else-if="filteredProviders.length === 0"
+        class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+      >
+        <svg
+          class="mx-auto h-12 w-12 text-gray-400 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+        <p class="text-sm font-medium text-gray-600">
+          {{ t('cloudBilling.settings.providers.noSearchResults') }}
+        </p>
+      </div>
+
       <template v-else>
         <!-- Desktop Table View -->
         <div
@@ -76,6 +127,11 @@
                   class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
                 >
                   {{ t('cloudBilling.settings.providers.providerType') }}
+                </th>
+                <th
+                  class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200 min-w-[180px]"
+                >
+                  {{ t('cloudBilling.providers.authIdentifier') }}
                 </th>
                 <th
                   class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
@@ -101,7 +157,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
               <tr
-                v-for="provider in providers"
+                v-for="provider in paginatedProviders"
                 :key="provider.id"
                 class="transition-colors duration-150 hover:bg-gray-50"
               >
@@ -133,6 +189,21 @@
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                   {{ getProviderTypeText(provider.provider_type) }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-500">
+                  <div v-if="provider.auth_identifier" class="min-w-[180px]">
+                    <div
+                      class="text-[11px] font-medium uppercase tracking-wide text-gray-400"
+                    >
+                      {{ getProviderAuthLabel(provider) }}
+                    </div>
+                    <div class="mt-1 break-all font-mono text-xs text-gray-700">
+                      {{ provider.auth_identifier }}
+                    </div>
+                  </div>
+                  <span v-else class="text-xs text-gray-400">
+                    {{ t('cloudBilling.providers.authIdentifierEmpty') }}
+                  </span>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <label
@@ -281,7 +352,7 @@
         <!-- Mobile Card View -->
         <div class="md:hidden space-y-3">
           <div
-            v-for="provider in providers"
+            v-for="provider in paginatedProviders"
             :key="provider.id"
             class="bg-white rounded-lg border border-gray-200 shadow-sm p-4"
           >
@@ -331,6 +402,24 @@
                   }}:</span
                 >
                 {{ getProviderTypeText(provider.provider_type) }}
+              </div>
+              <div>
+                <span class="font-medium"
+                  >{{ t('cloudBilling.providers.authIdentifier') }}:</span
+                >
+                <div v-if="provider.auth_identifier" class="mt-1">
+                  <div
+                    class="text-[11px] uppercase tracking-wide text-gray-400"
+                  >
+                    {{ getProviderAuthLabel(provider) }}
+                  </div>
+                  <div class="break-all font-mono text-xs text-gray-700">
+                    {{ provider.auth_identifier }}
+                  </div>
+                </div>
+                <span v-else class="text-xs text-gray-400">
+                  {{ t('cloudBilling.providers.authIdentifierEmpty') }}
+                </span>
               </div>
               <div v-if="getAlertRule(provider.id)">
                 <span class="font-medium"
@@ -407,7 +496,7 @@
         </div>
 
         <div
-          v-if="!loading && totalCount > 0"
+          v-if="!loading && filteredProviders.length > 0"
           class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
         >
           <p class="text-sm text-gray-600">
@@ -453,7 +542,7 @@
       v-if="showCreateModal || editingProvider"
       :show="showCreateModal || !!editingProvider"
       :provider="editingProvider"
-      :provider-options="providers"
+      :tag-options="tagOptions"
       :show-alert-rule="!editingProvider"
       @close="closeModal"
       @saved="handleSaved"
@@ -464,7 +553,7 @@
       v-if="editingNotesProvider"
       :show="!!editingNotesProvider"
       :provider="editingNotesProvider"
-      :provider-options="providers"
+      :tag-options="tagOptions"
       @close="editingNotesProvider = null"
       @saved="handleNotesSaved"
     />
@@ -482,7 +571,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
 import { useToast } from '@/composables/useToast'
@@ -495,6 +584,7 @@ import ProviderNotesModal from '@/components/cloud-billing/ProviderNotesModal.vu
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
 import {
   getLocalizedProviderDisplayName,
+  getProviderAuthIdentifierLabel,
   getProviderTypeLabel
 } from '@/utils/providerDisplay'
 
@@ -502,16 +592,65 @@ const { t } = useI18n()
 const { showSuccess, showError } = useToast()
 
 const loading = ref(true)
-const providers = ref([])
-const alertRules = ref([])
+const allProviders = ref([])
+const tagOptions = ref([])
+const alertRulesByProvider = ref({})
+const loadedAlertRuleProviderIds = ref({})
+const searchQuery = ref('')
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
 const editingNotesProvider = ref(null)
 const editingAlertRuleProvider = ref(null)
 const togglingIds = ref([])
 const currentPage = ref(1)
-const totalCount = ref(0)
 const pageSize = ref(10)
+
+const getSearchableProviderTexts = (provider) => {
+  const config = provider?.config || {}
+  return [
+    provider?.display_name,
+    provider?.displayName,
+    provider?.name,
+    provider?.notes,
+    provider?.auth_identifier,
+    config.username,
+    config.zhipu_username,
+    config.ZHIPU_USERNAME,
+    config.access_key_id,
+    config.aws_access_key_id,
+    config.AWS_ACCESS_KEY_ID,
+    config.huawei_access_key_id,
+    config.HUAWEI_ACCESS_KEY_ID,
+    config.alibaba_access_key_id,
+    config.ALIBABA_ACCESS_KEY_ID,
+    config.tencent_access_key_id,
+    config.TENCENT_ACCESS_KEY_ID,
+    config.volcengine_access_key_id,
+    config.VOLCENGINE_ACCESS_KEY_ID,
+    config.baidu_access_key_id,
+    config.BAIDU_ACCESS_KEY_ID,
+    config.api_key,
+    config.access_key
+  ]
+}
+
+const filteredProviders = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) {
+    return allProviders.value
+  }
+
+  return allProviders.value.filter((provider) =>
+    getSearchableProviderTexts(provider).some((value) =>
+      String(value || '')
+        .trim()
+        .toLowerCase()
+        .includes(query)
+    )
+  )
+})
+
+const totalCount = computed(() => filteredProviders.value.length)
 
 const totalPages = computed(() =>
   totalCount.value > 0 ? Math.ceil(totalCount.value / pageSize.value) : 1
@@ -524,9 +663,16 @@ const paginationShowing = computed(() => ({
   total: totalCount.value
 }))
 
+const paginatedProviders = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredProviders.value.slice(start, start + pageSize.value)
+})
+
 const getProviderTypeText = (type) => getProviderTypeLabel(type, t)
 const getProviderDisplayName = (provider) =>
   getLocalizedProviderDisplayName(provider, t)
+const getProviderAuthLabel = (provider) =>
+  getProviderAuthIdentifierLabel(provider, t)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -543,7 +689,7 @@ const hasThresholdValue = (value) => {
 }
 
 const getAlertRule = (providerId) => {
-  return alertRules.value.find((rule) => rule.provider === providerId)
+  return alertRulesByProvider.value[providerId] || null
 }
 
 const getAlertRuleSummary = (providerId) => {
@@ -626,58 +772,131 @@ const extractListData = (data) => {
   }
 }
 
+const normalizeTagOptionList = (items) => {
+  const seen = new Set()
+  const normalized = []
+
+  ;(items || []).forEach((item) => {
+    const value = String(item || '').trim()
+    if (!value || seen.has(value)) {
+      return
+    }
+    seen.add(value)
+    normalized.push(value)
+  })
+
+  return normalized.sort((a, b) => a.localeCompare(b))
+}
+
+const loadTagOptions = async () => {
+  try {
+    const response = await cloudBillingApi.getProviderTags()
+    const data = extractResponseData(response)
+    tagOptions.value = normalizeTagOptionList(data?.tags || [])
+  } catch (error) {
+    console.error('Failed to load provider tags:', error)
+    tagOptions.value = normalizeTagOptionList(
+      allProviders.value.flatMap((provider) => provider?.tags || [])
+    )
+  }
+}
+
 const loadAlertRulesForProviders = async (providerList) => {
   if (!providerList.length) {
-    alertRules.value = []
+    return
+  }
+
+  const providersToLoad = providerList.filter(
+    (provider) => !loadedAlertRuleProviderIds.value[provider.id]
+  )
+
+  if (!providersToLoad.length) {
     return
   }
 
   const responses = await Promise.all(
-    providerList.map((provider) =>
+    providersToLoad.map((provider) =>
       cloudBillingApi
         .getAlertRules({ provider_id: provider.id, page_size: 1 })
         .catch(() => ({ data: { results: [] } }))
     )
   )
 
-  alertRules.value = responses
-    .map((response) => {
-      const data = extractResponseData(response)
-      const { list } = extractListData(data)
-      return list[0] || null
+  providersToLoad.forEach((provider, index) => {
+    const response = responses[index]
+    const data = extractResponseData(response)
+    const { list } = extractListData(data)
+    alertRulesByProvider.value[provider.id] = list[0] || null
+    loadedAlertRuleProviderIds.value[provider.id] = true
+  })
+}
+
+const fetchAllProviders = async () => {
+  const pageSizeValue = 100
+  const providersResponse = await cloudBillingApi.getProviders({
+    page: 1,
+    page_size: pageSizeValue
+  })
+
+  const providersData = extractResponseData(providersResponse)
+  const { list, total, paginated } = extractListData(providersData)
+
+  if (!paginated) {
+    return list
+  }
+
+  const allLoadedProviders = [...list]
+  const totalPagesValue = Math.max(1, Math.ceil(total / pageSizeValue))
+
+  for (let page = 2; page <= totalPagesValue; page += 1) {
+    const pageResponse = await cloudBillingApi.getProviders({
+      page,
+      page_size: pageSizeValue
     })
-    .filter(Boolean)
+    const pageData = extractResponseData(pageResponse)
+    const { list: pageList } = extractListData(pageData)
+    allLoadedProviders.push(...pageList)
+  }
+
+  return allLoadedProviders
 }
 
 const loadProviders = async (page = currentPage.value) => {
   loading.value = true
   try {
-    const providersResponse = await cloudBillingApi.getProviders({
-      page,
-      page_size: pageSize.value
-    })
-
-    const providersData = extractResponseData(providersResponse)
-    const { list, total, paginated } = extractListData(providersData)
-
-    totalCount.value = total
+    const list = await fetchAllProviders()
     currentPage.value = page
+    allProviders.value = list
 
-    if (paginated) {
-      providers.value = list
-    } else {
-      const start = (page - 1) * pageSize.value
-      providers.value = list.slice(start, start + pageSize.value)
-    }
-
-    await loadAlertRulesForProviders(providers.value)
+    await Promise.all([
+      loadAlertRulesForProviders(paginatedProviders.value),
+      currentPage.value === 1 && tagOptions.value.length === 0
+        ? loadTagOptions()
+        : Promise.resolve()
+    ])
   } catch (error) {
     console.error('Failed to load providers:', error)
-    providers.value = []
-    alertRules.value = []
-    totalCount.value = 0
+    allProviders.value = []
+    tagOptions.value = []
+    alertRulesByProvider.value = {}
+    loadedAlertRuleProviderIds.value = {}
   } finally {
     loading.value = false
+  }
+}
+
+const upsertProvider = (provider) => {
+  if (!provider?.id) return
+
+  const index = allProviders.value.findIndex((item) => item.id === provider.id)
+  if (index === -1) {
+    allProviders.value = [provider, ...allProviders.value]
+    return
+  }
+
+  allProviders.value[index] = {
+    ...allProviders.value[index],
+    ...provider
   }
 }
 
@@ -685,7 +904,7 @@ const toggleProvider = async (id, enabled) => {
   togglingIds.value.push(id)
   try {
     await cloudBillingApi.patchProvider(id, { is_active: enabled })
-    const provider = providers.value.find((p) => p.id === id)
+    const provider = allProviders.value.find((p) => p.id === id)
     if (provider) {
       provider.is_active = enabled
     }
@@ -697,7 +916,7 @@ const toggleProvider = async (id, enabled) => {
   } catch (error) {
     console.error('Failed to toggle provider:', error)
     showError(t('cloudBilling.providers.toggleError'))
-    const provider = providers.value.find((p) => p.id === id)
+    const provider = allProviders.value.find((p) => p.id === id)
     if (provider) {
       provider.is_active = !enabled
     }
@@ -723,34 +942,51 @@ const closeModal = () => {
   editingProvider.value = null
 }
 
-const handleNotesSaved = () => {
+const handleNotesSaved = (provider) => {
   editingNotesProvider.value = null
-  loadProviders(currentPage.value)
+  if (provider) {
+    upsertProvider(provider)
+  }
+  tagOptions.value = normalizeTagOptionList(
+    allProviders.value.flatMap((item) => item?.tags || [])
+  )
 }
 
 const handleAlertRuleSaved = () => {
+  if (editingAlertRuleProvider.value?.id) {
+    const providerId = editingAlertRuleProvider.value.id
+    loadedAlertRuleProviderIds.value[providerId] = false
+    delete alertRulesByProvider.value[providerId]
+  }
   editingAlertRuleProvider.value = null
-  loadProviders(currentPage.value)
+  loadAlertRulesForProviders(paginatedProviders.value)
 }
 
-const handleSaved = () => {
+const handleSaved = (provider) => {
   closeModal()
-  loadProviders(currentPage.value)
+  if (provider) {
+    upsertProvider(provider)
+  } else {
+    loadProviders(currentPage.value)
+    return
+  }
+  tagOptions.value = normalizeTagOptionList(
+    allProviders.value.flatMap((item) => item?.tags || [])
+  )
 }
 
 const goPrevPage = () => {
   if (currentPage.value <= 1) return
-  loadProviders(currentPage.value - 1)
+  currentPage.value -= 1
 }
 
 const goNextPage = () => {
   if (currentPage.value >= totalPages.value) return
-  loadProviders(currentPage.value + 1)
+  currentPage.value += 1
 }
 
 const handlePageSizeChange = () => {
   currentPage.value = 1
-  loadProviders(1)
 }
 
 const validateProvider = async (id) => {
@@ -780,11 +1016,17 @@ const deleteProvider = async (id) => {
   try {
     await cloudBillingApi.deleteProvider(id)
     showSuccess(t('cloudBilling.providers.deleteSuccess'))
-    const targetPage =
-      providers.value.length === 1 && currentPage.value > 1
-        ? currentPage.value - 1
-        : currentPage.value
-    loadProviders(targetPage)
+    allProviders.value = allProviders.value.filter(
+      (provider) => provider.id !== id
+    )
+    delete alertRulesByProvider.value[id]
+    delete loadedAlertRuleProviderIds.value[id]
+    tagOptions.value = normalizeTagOptionList(
+      allProviders.value.flatMap((provider) => provider?.tags || [])
+    )
+    if (paginatedProviders.value.length === 0 && currentPage.value > 1) {
+      currentPage.value -= 1
+    }
   } catch (error) {
     console.error('Failed to delete provider:', error)
     showError(t('cloudBilling.providers.deleteError'))
@@ -794,4 +1036,24 @@ const deleteProvider = async (id) => {
 onMounted(() => {
   loadProviders()
 })
+
+watch(searchQuery, () => {
+  currentPage.value = 1
+})
+
+watch(totalPages, (value) => {
+  if (currentPage.value > value) {
+    currentPage.value = value || 1
+  }
+})
+
+watch(
+  paginatedProviders,
+  (providers) => {
+    if (!loading.value) {
+      loadAlertRulesForProviders(providers)
+    }
+  },
+  { deep: false }
+)
 </script>

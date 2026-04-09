@@ -7,10 +7,24 @@
       />
 
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div
+          class="px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+        >
           <div>
-            <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? t('oneproMonitor.settingsPage.editDataSourceTitle') : t('oneproMonitor.settingsPage.newDataSourceTitle') }}</h2>
-            <p class="mt-1 text-sm text-gray-500">{{ isEdit ? t('oneproMonitor.settingsPage.editDataSourceSubtitle') : t('oneproMonitor.settingsPage.newDataSourceSubtitle') }}</p>
+            <h2 class="text-lg font-semibold text-gray-900">
+              {{
+                isEdit
+                  ? t('oneproMonitor.settingsPage.editDataSourceTitle')
+                  : t('oneproMonitor.settingsPage.newDataSourceTitle')
+              }}
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+              {{
+                isEdit
+                  ? t('oneproMonitor.settingsPage.editDataSourceSubtitle')
+                  : t('oneproMonitor.settingsPage.newDataSourceSubtitle')
+              }}
+            </p>
           </div>
           <router-link
             :to="{ name: 'OneProMonitorSettingsDataSources' }"
@@ -20,54 +34,121 @@
           </router-link>
         </div>
 
-        <form class="px-6 py-6 grid grid-cols-1 gap-6 lg:grid-cols-2" @submit.prevent="submit">
+        <form
+          class="px-6 py-6 grid grid-cols-1 gap-6 lg:grid-cols-2"
+          @submit.prevent="submit"
+        >
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.name') }}</label>
-              <input v-model="form.name" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required>
+              <label class="block text-sm font-medium text-gray-700">{{
+                t('oneproMonitor.labels.name')
+              }}</label>
+              <input
+                v-model="form.name"
+                class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                required
+              />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.apiUrl') }}</label>
-              <input v-model="form.api_url" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" placeholder="https://example.com" required>
+              <label class="block text-sm font-medium text-gray-700">{{
+                t('oneproMonitor.labels.apiUrl')
+              }}</label>
+              <input
+                v-model="form.api_url"
+                class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                placeholder="https://example.com"
+                required
+              />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.username') }}</label>
-              <input v-model="form.username" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required>
+              <label class="block text-sm font-medium text-gray-700">{{
+                t('oneproMonitor.labels.username')
+              }}</label>
+              <input
+                v-model="form.username"
+                class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                required
+              />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">{{ isEdit ? t('oneproMonitor.settingsPage.passwordHintEdit') : t('oneproMonitor.labels.password') }}</label>
-              <input v-model="form.password" type="password" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" :required="!isEdit">
+              <label class="block text-sm font-medium text-gray-700">{{
+                isEdit
+                  ? t('oneproMonitor.settingsPage.passwordHintEdit')
+                  : t('oneproMonitor.labels.password')
+              }}</label>
+              <input
+                v-model="form.password"
+                type="password"
+                class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                :required="!isEdit"
+              />
             </div>
           </div>
 
           <div class="space-y-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.apiTimeout') }}</label>
-                <input v-model.number="form.api_timeout" type="number" min="5" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-700">{{
+                  t('oneproMonitor.labels.apiTimeout')
+                }}</label>
+                <input
+                  v-model.number="form.api_timeout"
+                  type="number"
+                  min="5"
+                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.collectInterval') }}</label>
-                <input v-model.number="form.collect_interval" type="number" min="60" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-700">{{
+                  t('oneproMonitor.labels.collectInterval')
+                }}</label>
+                <input
+                  v-model.number="form.collect_interval"
+                  type="number"
+                  min="60"
+                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
               </div>
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.retryCount') }}</label>
-                <input v-model.number="form.api_retry_count" type="number" min="0" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-700">{{
+                  t('oneproMonitor.labels.retryCount')
+                }}</label>
+                <input
+                  v-model.number="form.api_retry_count"
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700">{{ t('oneproMonitor.labels.retryDelay') }}</label>
-                <input v-model.number="form.api_retry_delay" type="number" min="0" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-700">{{
+                  t('oneproMonitor.labels.retryDelay')
+                }}</label>
+                <input
+                  v-model.number="form.api_retry_delay"
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
               </div>
             </div>
             <label class="inline-flex items-center gap-2 pt-2">
-              <input v-model="form.is_active" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
-              <span class="text-sm text-gray-700">{{ t('oneproMonitor.settingsPage.enableSource') }}</span>
+              <input
+                v-model="form.is_active"
+                type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <span class="text-sm text-gray-700">{{
+                t('oneproMonitor.settingsPage.enableSource')
+              }}</span>
             </label>
           </div>
 
-          <div class="lg:col-span-2 flex justify-end gap-3 border-t border-gray-200 pt-6">
+          <div
+            class="lg:col-span-2 flex justify-end gap-3 border-t border-gray-200 pt-6"
+          >
             <router-link
               :to="{ name: 'OneProMonitorSettingsDataSources' }"
               class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:text-gray-900"
@@ -75,7 +156,11 @@
               {{ t('oneproMonitor.actions.cancel') }}
             </router-link>
             <BaseButton type="submit" :loading="saving">
-              {{ isEdit ? t('oneproMonitor.actions.saveUpdate') : t('oneproMonitor.actions.createDataSource') }}
+              {{
+                isEdit
+                  ? t('oneproMonitor.actions.saveUpdate')
+                  : t('oneproMonitor.actions.createDataSource')
+              }}
             </BaseButton>
           </div>
         </form>
@@ -128,7 +213,10 @@ async function loadSource() {
       password: ''
     }
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.loadSourceDetailError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.loadSourceDetailError')
+    )
   }
 }
 
@@ -148,7 +236,10 @@ async function submit() {
     }
     router.push({ name: 'OneProMonitorSettingsDataSources' })
   } catch (error) {
-    showError(error?.response?.data?.detail || t('oneproMonitor.settingsPage.saveSourceError'))
+    showError(
+      error?.response?.data?.detail ||
+        t('oneproMonitor.settingsPage.saveSourceError')
+    )
   } finally {
     saving.value = false
   }
