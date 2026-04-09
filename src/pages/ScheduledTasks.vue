@@ -12,10 +12,16 @@
       <div class="bg-white rounded border border-gray-200 shadow-sm">
         <div class="p-6">
           <!-- Toolbar -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"
+          >
             <!-- Batch Actions (Left) -->
             <div class="flex flex-wrap items-center gap-2">
-              <BaseButton @click="handleCreate" size="sm" class="w-full sm:w-auto">
+              <BaseButton
+                @click="handleCreate"
+                size="sm"
+                class="w-full sm:w-auto"
+              >
                 {{ t('scheduledTasks.create') }}
               </BaseButton>
               <BaseButton
@@ -25,8 +31,14 @@
                 @click="handleBatchDeleteClick"
                 class="flex-1 sm:flex-initial"
               >
-                <span class="hidden sm:inline">{{ t('scheduledTasks.batchDelete') }} ({{ selectedTasks.length }})</span>
-                <span class="sm:hidden">{{ t('scheduledTasks.batchDelete') }}</span>
+                <span class="hidden sm:inline"
+                  >{{ t('scheduledTasks.batchDelete') }} ({{
+                    selectedTasks.length
+                  }})</span
+                >
+                <span class="sm:hidden">{{
+                  t('scheduledTasks.batchDelete')
+                }}</span>
               </BaseButton>
               <BaseButton
                 v-if="selectedTasks.length > 0"
@@ -35,8 +47,14 @@
                 @click="handleBatchToggle"
                 class="flex-1 sm:flex-initial"
               >
-                <span class="hidden sm:inline">{{ t('scheduledTasks.batchToggle') }} ({{ selectedTasks.length }})</span>
-                <span class="sm:hidden">{{ t('scheduledTasks.batchToggle') }}</span>
+                <span class="hidden sm:inline"
+                  >{{ t('scheduledTasks.batchToggle') }} ({{
+                    selectedTasks.length
+                  }})</span
+                >
+                <span class="sm:hidden">{{
+                  t('scheduledTasks.batchToggle')
+                }}</span>
               </BaseButton>
             </div>
 
@@ -49,8 +67,18 @@
                 @update:modelValue="handleSearch"
               >
                 <template #icon>
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </template>
               </BaseInput>
@@ -61,8 +89,12 @@
                 @change="handleFilterChange"
               >
                 <option value="">{{ t('scheduledTasks.filter.all') }}</option>
-                <option value="enabled">{{ t('scheduledTasks.filter.enabled') }}</option>
-                <option value="disabled">{{ t('scheduledTasks.filter.disabled') }}</option>
+                <option value="enabled">
+                  {{ t('scheduledTasks.filter.enabled') }}
+                </option>
+                <option value="disabled">
+                  {{ t('scheduledTasks.filter.disabled') }}
+                </option>
               </select>
 
               <BaseButton
@@ -94,7 +126,10 @@
 
           <BaseLoading v-if="loading && filteredTasks.length === 0" />
 
-          <div v-if="!loading && filteredTasks.length === 0" class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50">
+          <div
+            v-if="!loading && filteredTasks.length === 0"
+            class="py-16 text-center rounded-lg border border-gray-200 bg-gray-50"
+          >
             <svg
               class="mx-auto h-12 w-12 text-gray-400 mb-4"
               fill="none"
@@ -108,7 +143,9 @@
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p class="text-sm font-medium text-gray-600">{{ t('scheduledTasks.noTasks') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('scheduledTasks.noTasks') }}
+            </p>
           </div>
 
           <template v-if="!loading && filteredTasks.length > 0">
@@ -134,12 +171,11 @@
                 class="h-20 flex items-center justify-center"
               >
                 <!-- Loading More Indicator (Auto-load when scrolling) -->
-                <div
-                  v-if="loading || loadingMore"
-                  class="py-6"
-                >
+                <div v-if="loading || loadingMore" class="py-6">
                   <BaseLoading inline size="sm" />
-                  <p class="text-sm text-gray-500 mt-2">{{ t('common.loadingMore') }}</p>
+                  <p class="text-sm text-gray-500 mt-2">
+                    {{ t('common.loadingMore') }}
+                  </p>
                 </div>
               </div>
 
@@ -148,20 +184,34 @@
                 v-if="!hasMore && filteredTasks.length > 0"
                 class="py-6 text-center"
               >
-                <p class="text-sm text-gray-400">{{ t('common.noMoreData') }}</p>
+                <p class="text-sm text-gray-400">
+                  {{ t('common.noMoreData') }}
+                </p>
               </div>
             </div>
 
             <!-- Desktop Table View -->
-            <div class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div
+              class="hidden md:block overflow-x-auto relative rounded-lg border border-gray-200 bg-white shadow-sm"
+            >
               <!-- Loading overlay when data exists but is refreshing -->
-              <div v-if="loading && filteredTasks.length > 0" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm">
-                <BaseLoading inline size="lg" variant="primary" :show-text="false" />
+              <div
+                v-if="loading && filteredTasks.length > 0"
+                class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm"
+              >
+                <BaseLoading
+                  inline
+                  size="lg"
+                  variant="primary"
+                  :show-text="false"
+                />
               </div>
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       <input
                         type="checkbox"
                         :checked="allSelected"
@@ -169,22 +219,34 @@
                         class="w-4 h-4 rounded border-gray-300 bg-white text-primary-600 focus:ring-primary-500 focus:ring-2 cursor-pointer checked:bg-primary-600 checked:border-primary-600"
                       />
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('scheduledTasks.name') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('scheduledTasks.schedule') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('scheduledTasks.status') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('scheduledTasks.taskType') }}
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('scheduledTasks.createdAt') }}
                     </th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                    <th
+                      class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                    >
                       {{ t('common.moreActions') }}
                     </th>
                   </tr>
@@ -218,14 +280,23 @@
                     </td>
                     <td class="px-4 py-4">
                       <span class="text-sm text-gray-600 font-medium">
-                        {{ formatSchedule(task?.schedule_type, task?.schedule_value) }}
+                        {{
+                          formatSchedule(
+                            task?.schedule_type,
+                            task?.schedule_value
+                          )
+                        }}
                       </span>
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap">
-                      <StatusBadge :status="task?.enabled ? 'enabled' : 'disabled'" />
+                      <StatusBadge
+                        :status="task?.enabled ? 'enabled' : 'disabled'"
+                      />
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap">
-                      <span class="text-sm text-gray-700 font-medium">{{ getTaskTypeLabel(task?.task_type) }}</span>
+                      <span class="text-sm text-gray-700 font-medium">{{
+                        getTaskTypeLabel(task?.task_type)
+                      }}</span>
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap">
                       <span class="text-sm text-gray-600 font-medium">
@@ -254,7 +325,11 @@
                           size="sm"
                           @click="handleToggle(task)"
                         >
-                          {{ task.enabled ? t('scheduledTasks.disable') : t('scheduledTasks.enable') }}
+                          {{
+                            task.enabled
+                              ? t('scheduledTasks.disable')
+                              : t('scheduledTasks.enable')
+                          }}
                         </BaseButton>
                         <BaseButton
                           variant="danger"
@@ -276,18 +351,22 @@
               class="hidden md:flex mt-4 flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4"
             >
               <p class="text-sm text-gray-600">
-                {{ t('common.pagination.showing', {
-                  from: (currentPage - 1) * pageSize + 1,
-                  to: Math.min(currentPage * pageSize, totalCount),
-                  total: totalCount
-                }) }}
+                {{
+                  t('common.pagination.showing', {
+                    from: (currentPage - 1) * pageSize + 1,
+                    to: Math.min(currentPage * pageSize, totalCount),
+                    total: totalCount
+                  })
+                }}
               </p>
               <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+                <label class="text-sm text-gray-600"
+                  >{{ t('common.pagination.itemsPerPage') }}:</label
+                >
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                  @change="currentPage = 1; loadTasks()"
+                  @change="handlePageSizeChange"
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>
@@ -298,7 +377,7 @@
                   variant="outline"
                   size="sm"
                   :disabled="currentPage <= 1"
-                  @click="currentPage--; loadTasks()"
+                  @click="goPrevPage"
                 >
                   {{ t('common.pagination.previous') }}
                 </BaseButton>
@@ -306,7 +385,7 @@
                   variant="outline"
                   size="sm"
                   :disabled="currentPage >= totalPages"
-                  @click="currentPage++; loadTasks()"
+                  @click="goNextPage"
                 >
                   {{ t('common.pagination.next') }}
                 </BaseButton>
@@ -348,7 +427,11 @@
       <ConfirmDialog
         :show="showBatchDeleteDialog"
         :title="t('scheduledTasks.batchDeleteConfirm')"
-        :message="t('scheduledTasks.batchDeleteMessage', { count: selectedTasks.length })"
+        :message="
+          t('scheduledTasks.batchDeleteMessage', {
+            count: selectedTasks.length
+          })
+        "
         :variant="'danger'"
         :loading="deleting"
         @close="showBatchDeleteDialog = false"
@@ -417,9 +500,7 @@ const loadTaskTypes = async () => {
 
 const getTaskTypeLabel = (taskType) => {
   if (!taskType) return '-'
-  const taskTypeObj = availableTaskTypes.value.find(
-    t => t.value === taskType
-  )
+  const taskTypeObj = availableTaskTypes.value.find((t) => t.value === taskType)
   return taskTypeObj?.label || taskType.split('.').pop() || '-'
 }
 
@@ -459,7 +540,7 @@ const loadTasks = async () => {
         }
       } else {
         // Try to find any array-like property
-        const arrayKeys = Object.keys(data).filter(key =>
+        const arrayKeys = Object.keys(data).filter((key) =>
           Array.isArray(data[key])
         )
         if (arrayKeys.length > 0) {
@@ -471,7 +552,7 @@ const loadTasks = async () => {
     }
 
     // Filter out any null or undefined values
-    tasks.value = results.filter(t => t != null && t !== undefined)
+    tasks.value = results.filter((t) => t != null && t !== undefined)
     // Ensure applyFilters is called to update filteredTasks
     applyFilters()
   } catch (error) {
@@ -491,22 +572,22 @@ const applyFilters = () => {
 
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(task =>
+    filtered = filtered.filter((task) =>
       task.name?.toLowerCase().includes(query)
     )
   }
 
   if (statusFilter.value) {
     if (statusFilter.value === 'enabled') {
-      filtered = filtered.filter(task => task.enabled === true)
+      filtered = filtered.filter((task) => task.enabled === true)
     } else if (statusFilter.value === 'disabled') {
-      filtered = filtered.filter(task => task.enabled === false)
+      filtered = filtered.filter((task) => task.enabled === false)
     }
   }
 
   filteredTasks.value = filtered
-  selectedTasks.value = selectedTasks.value.filter(
-    task => filtered.some(t => t.uuid === task.uuid)
+  selectedTasks.value = selectedTasks.value.filter((task) =>
+    filtered.some((t) => t.uuid === task.uuid)
   )
 }
 
@@ -517,6 +598,23 @@ const handleSearch = () => {
 
 const handleFilterChange = () => {
   currentPage.value = 1
+  loadTasks()
+}
+
+const handlePageSizeChange = () => {
+  currentPage.value = 1
+  loadTasks()
+}
+
+const goPrevPage = () => {
+  if (currentPage.value <= 1) return
+  currentPage.value -= 1
+  loadTasks()
+}
+
+const goNextPage = () => {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value += 1
   loadTasks()
 }
 
@@ -545,7 +643,7 @@ const handleLoadMore = async () => {
       } else if (data.list && Array.isArray(data.list)) {
         newTasks = data.list
       } else {
-        const arrayKeys = Object.keys(data).filter(key =>
+        const arrayKeys = Object.keys(data).filter((key) =>
           Array.isArray(data[key])
         )
         if (arrayKeys.length > 0) {
@@ -555,7 +653,9 @@ const handleLoadMore = async () => {
     }
 
     // Filter out any null or undefined values and append to existing tasks
-    const validNewTasks = (newTasks || []).filter(t => t != null && t !== undefined)
+    const validNewTasks = (newTasks || []).filter(
+      (t) => t != null && t !== undefined
+    )
     if (Array.isArray(tasks.value) && Array.isArray(validNewTasks)) {
       tasks.value = [...tasks.value, ...validNewTasks]
       applyFilters()
@@ -563,7 +663,11 @@ const handleLoadMore = async () => {
     }
   } catch (error) {
     // Only show error if it's not a cancellation
-    if (error && error.name !== 'AbortError' && error.name !== 'CanceledError') {
+    if (
+      error &&
+      error.name !== 'AbortError' &&
+      error.name !== 'CanceledError'
+    ) {
       showError(extractErrorMessage(error, t('scheduledTasks.loadError')))
     }
   } finally {
@@ -626,7 +730,13 @@ const setupIntersectionObserver = () => {
         if (!entries || entries.length === 0) return
         const entry = entries[0]
         // Auto-load when sentinel element becomes visible (or is about to)
-        if (entry && entry.isIntersecting && hasMore.value && !loadingMore.value && !loading.value) {
+        if (
+          entry &&
+          entry.isIntersecting &&
+          hasMore.value &&
+          !loadingMore.value &&
+          !loading.value
+        ) {
           handleLoadMore()
         }
       },
@@ -653,13 +763,15 @@ const handleRefresh = () => {
 }
 
 const allSelected = computed(() => {
-  return filteredTasks.value.length > 0 &&
-    filteredTasks.value.every(task => isTaskSelected(task))
+  return (
+    filteredTasks.value.length > 0 &&
+    filteredTasks.value.every((task) => isTaskSelected(task))
+  )
 })
 
 const isTaskSelected = (task) => {
   if (!task || !selectedTasks.value) return false
-  return selectedTasks.value.some(t => t && t.uuid === task.uuid)
+  return selectedTasks.value.some((t) => t && t.uuid === task.uuid)
 }
 
 const handleSelectAll = (event) => {
@@ -678,7 +790,7 @@ const handleTaskSelect = (task, checked) => {
     }
   } else {
     selectedTasks.value = selectedTasks.value.filter(
-      t => t.uuid !== task.uuid
+      (t) => t.uuid !== task.uuid
     )
   }
 }
@@ -693,7 +805,7 @@ const handleBatchDeleteConfirm = async () => {
 
   deleting.value = true
   try {
-    const deletePromises = selectedTasks.value.map(task =>
+    const deletePromises = selectedTasks.value.map((task) =>
       scheduledTasksApi.deleteScheduledTask(task.uuid)
     )
     await Promise.all(deletePromises)
@@ -716,24 +828,28 @@ const handleBatchToggle = async () => {
   if (selectedTasks.value.length === 0) return
 
   try {
-    const togglePromises = selectedTasks.value.map(task =>
-      scheduledTasksApi.updateScheduledTask(task.uuid, {
-        enabled: !task.enabled
-      }).then(response => ({
-        uuid: task.uuid,
-        updatedTask: extractResponseData(response)
-      }))
+    const togglePromises = selectedTasks.value.map((task) =>
+      scheduledTasksApi
+        .updateScheduledTask(task.uuid, {
+          enabled: !task.enabled
+        })
+        .then((response) => ({
+          uuid: task.uuid,
+          updatedTask: extractResponseData(response)
+        }))
     )
     const results = await Promise.all(togglePromises)
 
     // Update each task in local list
     results.forEach(({ uuid, updatedTask }) => {
-      const taskIndex = tasks.value.findIndex(t => t && t.uuid === uuid)
+      const taskIndex = tasks.value.findIndex((t) => t && t.uuid === uuid)
       if (taskIndex !== -1) {
         tasks.value[taskIndex] = updatedTask
       }
 
-      const filteredIndex = filteredTasks.value.findIndex(t => t && t.uuid === uuid)
+      const filteredIndex = filteredTasks.value.findIndex(
+        (t) => t && t.uuid === uuid
+      )
       if (filteredIndex !== -1) {
         filteredTasks.value[filteredIndex] = updatedTask
       }
@@ -768,7 +884,9 @@ const handleViewDetails = async (task) => {
     const response = await scheduledTasksApi.getScheduledTask(task.uuid)
     const fullTask = extractResponseData(response)
     selectedTask.value = fullTask || task
-    selectedTaskTypeLabel.value = getTaskTypeLabel(fullTask?.task_type || task?.task_type)
+    selectedTaskTypeLabel.value = getTaskTypeLabel(
+      fullTask?.task_type || task?.task_type
+    )
     showDetailPanel.value = true
   } catch (error) {
     console.error('Failed to load task details:', error)
@@ -787,7 +905,10 @@ const handleModalClose = () => {
 const handleSave = async (taskData) => {
   try {
     if (editingTask.value && editingTask.value.uuid) {
-      await scheduledTasksApi.updateScheduledTask(editingTask.value.uuid, taskData)
+      await scheduledTasksApi.updateScheduledTask(
+        editingTask.value.uuid,
+        taskData
+      )
       showSuccess(t('scheduledTasks.updateSuccess'))
     } else {
       await scheduledTasksApi.createScheduledTask(taskData)
@@ -815,13 +936,15 @@ const handleToggle = async (task) => {
     const updatedTask = extractResponseData(response)
 
     // Update the task in local list
-    const taskIndex = tasks.value.findIndex(t => t && t.uuid === task.uuid)
+    const taskIndex = tasks.value.findIndex((t) => t && t.uuid === task.uuid)
     if (taskIndex !== -1) {
       tasks.value[taskIndex] = updatedTask
     }
 
     // Update filteredTasks if it exists there
-    const filteredIndex = filteredTasks.value.findIndex(t => t && t.uuid === task.uuid)
+    const filteredIndex = filteredTasks.value.findIndex(
+      (t) => t && t.uuid === task.uuid
+    )
     if (filteredIndex !== -1) {
       filteredTasks.value[filteredIndex] = updatedTask
     }
@@ -852,9 +975,13 @@ const handleDeleteConfirm = async () => {
 
     if (isSuccess) {
       // Remove from local list immediately before showing success
-      tasks.value = tasks.value.filter(t => t && t.uuid !== deletedUuid)
-      filteredTasks.value = filteredTasks.value.filter(t => t && t.uuid !== deletedUuid)
-      selectedTasks.value = selectedTasks.value.filter(t => t && t.uuid !== deletedUuid)
+      tasks.value = tasks.value.filter((t) => t && t.uuid !== deletedUuid)
+      filteredTasks.value = filteredTasks.value.filter(
+        (t) => t && t.uuid !== deletedUuid
+      )
+      selectedTasks.value = selectedTasks.value.filter(
+        (t) => t && t.uuid !== deletedUuid
+      )
 
       showSuccess(t('scheduledTasks.deleteSuccess'))
       showDeleteDialog.value = false
@@ -863,7 +990,9 @@ const handleDeleteConfirm = async () => {
       // Then reload to ensure sync with backend
       await loadTasks()
     } else {
-      showError(t('scheduledTasks.deleteError') + ` (Status: ${response.status})`)
+      showError(
+        t('scheduledTasks.deleteError') + ` (Status: ${response.status})`
+      )
     }
   } catch (error) {
     // Log detailed error for debugging
@@ -884,22 +1013,34 @@ const formatSchedule = (type, value) => {
 
   // Handle crontab schedule
   if (type === 'crontab') {
-    const minute = value.minute !== undefined ? String(value.minute).padStart(2, '0') : '00'
+    const minute =
+      value.minute !== undefined ? String(value.minute).padStart(2, '0') : '00'
     const hour = value.hour || '*'
     const dayOfMonth = value.day_of_month || '*'
     const monthOfYear = value.month_of_year || '*'
     const dayOfWeek = value.day_of_week || '*'
 
-    return formatCrontabSchedule(minute, hour, dayOfMonth, monthOfYear, dayOfWeek)
+    return formatCrontabSchedule(
+      minute,
+      hour,
+      dayOfMonth,
+      monthOfYear,
+      dayOfWeek
+    )
   }
 
   // Handle interval schedule (legacy support)
   if (type === 'interval' || !type) {
-    const period = value.period === 'minutes' ? t('scheduledTasks.minutes')
-      : value.period === 'hours' ? t('scheduledTasks.hours')
-      : value.period === 'days' ? t('scheduledTasks.days')
-      : value.period === 'seconds' ? t('scheduledTasks.seconds')
-      : value.period
+    const period =
+      value.period === 'minutes'
+        ? t('scheduledTasks.minutes')
+        : value.period === 'hours'
+          ? t('scheduledTasks.hours')
+          : value.period === 'days'
+            ? t('scheduledTasks.days')
+            : value.period === 'seconds'
+              ? t('scheduledTasks.seconds')
+              : value.period
     return `${value.every} ${period}`
   }
 
@@ -907,26 +1048,39 @@ const formatSchedule = (type, value) => {
 }
 
 // Helper function to format crontab schedule display
-const formatCrontabSchedule = (minute, hour, dayOfMonth, monthOfYear, dayOfWeek) => {
+const formatCrontabSchedule = (
+  minute,
+  hour,
+  dayOfMonth,
+  monthOfYear,
+  dayOfWeek
+) => {
   // If only hour and minute are set (default case), use simple format
   if (dayOfMonth === '*' && monthOfYear === '*' && dayOfWeek === '*') {
     if (hour === '*') {
       return t('scheduledTasks.form.previewEveryHour', { minute })
     }
     if (typeof hour === 'string') {
-      const hours = hour.split(',').map(h => h.trim()).filter(h => h)
+      const hours = hour
+        .split(',')
+        .map((h) => h.trim())
+        .filter((h) => h)
       if (hours.length === 0) return '-'
       if (hours.length === 24) {
         return t('scheduledTasks.form.previewEveryHour', { minute })
       }
       if (hours.length <= 5) {
-        const hourDisplay = hours.map(h => String(h).padStart(2, '0')).join(', ')
+        const hourDisplay = hours
+          .map((h) => String(h).padStart(2, '0'))
+          .join(', ')
         return t('scheduledTasks.form.previewSchedule', {
           minute,
           hours: hourDisplay
         })
       }
-      const hourDisplay = t('scheduledTasks.form.multipleHours', { count: hours.length })
+      const hourDisplay = t('scheduledTasks.form.multipleHours', {
+        count: hours.length
+      })
       return t('scheduledTasks.form.previewSchedule', {
         minute,
         hours: hourDisplay
@@ -942,18 +1096,26 @@ const formatCrontabSchedule = (minute, hour, dayOfMonth, monthOfYear, dayOfWeek)
   const parts = []
 
   if (monthOfYear !== '*') {
-    const months = monthOfYear.split(',').map(m => m.trim()).filter(m => m)
+    const months = monthOfYear
+      .split(',')
+      .map((m) => m.trim())
+      .filter((m) => m)
     if (months.length === 1) {
       parts.push(months[0] + t('scheduledTasks.form.monthUnit'))
     } else if (months.length <= 3) {
       parts.push(months.join(',') + t('scheduledTasks.form.monthUnit'))
     } else {
-      parts.push(t('scheduledTasks.form.multipleMonths', { count: months.length }))
+      parts.push(
+        t('scheduledTasks.form.multipleMonths', { count: months.length })
+      )
     }
   }
 
   if (dayOfMonth !== '*') {
-    const days = dayOfMonth.split(',').map(d => d.trim()).filter(d => d)
+    const days = dayOfMonth
+      .split(',')
+      .map((d) => d.trim())
+      .filter((d) => d)
     if (days.length === 1) {
       parts.push(days[0] + t('scheduledTasks.form.dayUnit'))
     } else if (days.length <= 3) {
@@ -965,7 +1127,7 @@ const formatCrontabSchedule = (minute, hour, dayOfMonth, monthOfYear, dayOfWeek)
 
   if (dayOfWeek !== '*') {
     const dayNames = t('scheduledTasks.form.dayOfWeekNames').split(',')
-    const days = dayOfWeek.split(',').map(d => {
+    const days = dayOfWeek.split(',').map((d) => {
       const dayNum = parseInt(d.trim())
       if (dayNum === 0 || dayNum === 7) return dayNames[0]
       if (dayNum >= 1 && dayNum <= 6) return dayNames[dayNum]
@@ -979,7 +1141,7 @@ const formatCrontabSchedule = (minute, hour, dayOfMonth, monthOfYear, dayOfWeek)
   if (hour === '*') {
     hourStr = t('scheduledTasks.form.everyHour')
   } else if (typeof hour === 'string') {
-    const hours = hour.split(',').map(h => String(h.trim()).padStart(2, '0'))
+    const hours = hour.split(',').map((h) => String(h.trim()).padStart(2, '0'))
     hourStr = hours.join(',') + t('scheduledTasks.form.hourUnit')
   } else {
     hourStr = String(hour).padStart(2, '0') + t('scheduledTasks.form.hourUnit')
@@ -1023,7 +1185,9 @@ const handleCollectNow = async (task) => {
     if (taskType === 'github_trending.collect_github_trendings') {
       try {
         const taskTypeLabel = getTaskTypeLabel(taskType)
-        const taskTypeName = taskTypeLabel ? taskTypeLabel.replace(/\s+/g, '') : 'GitHubTrending'
+        const taskTypeName = taskTypeLabel
+          ? taskTypeLabel.replace(/\s+/g, '')
+          : 'GitHubTrending'
         const taskNameParts = [`[Manual]${taskTypeName}`]
 
         if (kwargs.since) {
@@ -1038,7 +1202,8 @@ const handleCollectNow = async (task) => {
 
         // Add timestamp
         const now = new Date()
-        const timestamp = now.getFullYear().toString().slice(-2) +
+        const timestamp =
+          now.getFullYear().toString().slice(-2) +
           String(now.getMonth() + 1).padStart(2, '0') +
           String(now.getDate()).padStart(2, '0') +
           String(now.getHours()).padStart(2, '0') +
@@ -1079,8 +1244,9 @@ const handleCollectNow = async (task) => {
         )
 
         // Check if error is related to GitHub token configuration
-        const isTokenError = errorMessage.toLowerCase().includes('token') ||
-                            errorMessage.toLowerCase().includes('configure')
+        const isTokenError =
+          errorMessage.toLowerCase().includes('token') ||
+          errorMessage.toLowerCase().includes('configure')
 
         if (isTokenError) {
           showError(t('scheduledTasks.githubTokenNotConfigured'))
@@ -1104,7 +1270,9 @@ const handleCollectNow = async (task) => {
     // Format: [Manual] + task type label + parameter info
     // Note: [Manual] is joined without underscore
     const taskTypeLabel = getTaskTypeLabel(taskType)
-    const taskTypeName = taskTypeLabel ? taskTypeLabel.replace(/\s+/g, '') : 'Task'
+    const taskTypeName = taskTypeLabel
+      ? taskTypeLabel.replace(/\s+/g, '')
+      : 'Task'
     const taskNameParts = [`[Manual]${taskTypeName}`]
 
     if (kwargs.keywords && kwargs.keywords.length > 0) {
@@ -1120,7 +1288,8 @@ const handleCollectNow = async (task) => {
 
     // Add timestamp
     const now = new Date()
-    const timestamp = now.getFullYear().toString().slice(-2) +
+    const timestamp =
+      now.getFullYear().toString().slice(-2) +
       String(now.getMonth() + 1).padStart(2, '0') +
       String(now.getDate()).padStart(2, '0') +
       String(now.getHours()).padStart(2, '0') +
@@ -1168,15 +1337,33 @@ const handleCollectNow = async (task) => {
 
 // Watch for changes in tasks, hasMore, loading states, or mobile status to re-setup observer
 watch(
-  [() => filteredTasks.value?.length || 0, hasMore, isMobile, () => loading.value, () => loadingMore.value],
+  [
+    () => filteredTasks.value?.length || 0,
+    hasMore,
+    isMobile,
+    () => loading.value,
+    () => loadingMore.value
+  ],
   () => {
     try {
       // Only setup observer when not loading and has more data
-      if (isMobile.value && hasMore.value && !loading.value && !loadingMore.value && !observer) {
+      if (
+        isMobile.value &&
+        hasMore.value &&
+        !loading.value &&
+        !loadingMore.value &&
+        !observer
+      ) {
         nextTick(() => {
           setupIntersectionObserver()
         })
-      } else if (observer && (!hasMore.value || loading.value || loadingMore.value || !isMobile.value)) {
+      } else if (
+        observer &&
+        (!hasMore.value ||
+          loading.value ||
+          loadingMore.value ||
+          !isMobile.value)
+      ) {
         // Disconnect observer when loading or no more data
         try {
           observer.disconnect()
