@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl z-50 flex flex-col md:max-w-xs"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-base md:text-lg font-semibold text-gray-900">
           {{ title || t('common.filter') }}
         </h2>
@@ -54,11 +56,10 @@
       </div>
 
       <!-- Filter Content -->
-      <div class="flex-1 overflow-y-auto px-4 py-3 md:px-6 md:py-4 space-y-4 md:space-y-6">
-        <div
-          v-for="filter in filters"
-          :key="filter.key"
-        >
+      <div
+        class="flex-1 overflow-y-auto px-4 py-3 md:px-6 md:py-4 space-y-4 md:space-y-6"
+      >
+        <div v-for="filter in filters" :key="filter.key">
           <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">
             {{ filter.label }}
           </label>
@@ -84,21 +85,13 @@
       </div>
 
       <!-- Footer -->
-      <div class="flex-shrink-0 px-4 py-3 md:px-6 md:py-4 border-t border-gray-200 bg-gray-50 space-y-2 md:space-y-3">
-        <BaseButton
-          variant="outline"
-          block
-          size="sm"
-          @click="handleClearAll"
-        >
+      <div
+        class="flex-shrink-0 px-4 py-3 md:px-6 md:py-4 border-t border-gray-200 bg-gray-50 space-y-2 md:space-y-3"
+      >
+        <BaseButton variant="outline" block size="sm" @click="handleClearAll">
           {{ t('articles.filter.clearAll') }}
         </BaseButton>
-        <BaseButton
-          variant="primary"
-          block
-          size="sm"
-          @click="handleApply"
-        >
+        <BaseButton variant="primary" block size="sm" @click="handleApply">
           {{ t('articles.filter.apply') }}
         </BaseButton>
       </div>
@@ -122,7 +115,7 @@ const props = defineProps({
   },
   filters: {
     type: Array,
-    required: true,
+    required: true
     // Each filter should have: { key: string, label: string, options: [{ value: any, label: string }] }
   },
   modelValue: {
@@ -138,22 +131,30 @@ const { t } = useI18n()
 const localFilters = ref({})
 
 // Initialize local filters from modelValue
-watch(() => props.modelValue, (newValue) => {
-  localFilters.value = { ...newValue }
-}, { immediate: true, deep: true })
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    localFilters.value = { ...newValue }
+  },
+  { immediate: true, deep: true }
+)
 
 // Initialize from filters config
-watch(() => props.filters, (newFilters) => {
-  if (newFilters && newFilters.length > 0) {
-    const initialFilters = {}
-    newFilters.forEach(filter => {
-      if (!(filter.key in localFilters.value)) {
-        initialFilters[filter.key] = filter.options[0]?.value || ''
-      }
-    })
-    localFilters.value = { ...localFilters.value, ...initialFilters }
-  }
-}, { immediate: true })
+watch(
+  () => props.filters,
+  (newFilters) => {
+    if (newFilters && newFilters.length > 0) {
+      const initialFilters = {}
+      newFilters.forEach((filter) => {
+        if (!(filter.key in localFilters.value)) {
+          initialFilters[filter.key] = filter.options[0]?.value || ''
+        }
+      })
+      localFilters.value = { ...localFilters.value, ...initialFilters }
+    }
+  },
+  { immediate: true }
+)
 
 const handleClose = () => {
   emit('close')
@@ -171,7 +172,7 @@ const handleApply = () => {
 
 const handleClearAll = () => {
   const clearedFilters = {}
-  props.filters.forEach(filter => {
+  props.filters.forEach((filter) => {
     clearedFilters[filter.key] = filter.options[0]?.value || ''
   })
   localFilters.value = clearedFilters

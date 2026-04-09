@@ -13,9 +13,16 @@
       <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div class="p-6">
           <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <span class="text-sm text-gray-600">{{ t('management.totalGroups', { count: totalCount }) }}</span>
+            <span class="text-sm text-gray-600">{{
+              t('management.totalGroups', { count: totalCount })
+            }}</span>
             <div class="flex items-center gap-2">
-              <BaseButton variant="outline" size="sm" :loading="loading" @click="fetchGroups">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :loading="loading"
+                @click="fetchGroups"
+              >
                 {{ t('common.refresh') }}
               </BaseButton>
               <BaseButton variant="primary" size="sm" @click="openCreateModal">
@@ -26,12 +33,20 @@
 
           <BaseLoading v-if="loading && !groups.length" />
 
-          <div v-else-if="error" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
+          <div
+            v-else-if="error"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
+          >
             <p class="text-sm font-medium text-red-600">{{ error }}</p>
           </div>
 
-          <div v-else-if="!groups.length" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
-            <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
+          <div
+            v-else-if="!groups.length"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
+          >
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('common.noData') }}
+            </p>
           </div>
 
           <div
@@ -43,21 +58,41 @@
                 <tr>
                   <th class="table-head">ID</th>
                   <th class="table-head">{{ t('management.groupName') }}</th>
-                  <th class="table-head">{{ t('management.groupUserCount') }}</th>
+                  <th class="table-head">
+                    {{ t('management.groupUserCount') }}
+                  </th>
                   <th class="table-head">{{ t('management.roles') }}</th>
-                  <th class="table-head">{{ t('management.permissionCount') }}</th>
+                  <th class="table-head">
+                    {{ t('management.permissionCount') }}
+                  </th>
                   <th class="table-head">{{ t('common.actions') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
-                <tr v-for="group in groups" :key="group.id" class="transition-colors duration-150 hover:bg-gray-50">
+                <tr
+                  v-for="group in groups"
+                  :key="group.id"
+                  class="transition-colors duration-150 hover:bg-gray-50"
+                >
                   <td class="table-cell text-gray-900">{{ group.id }}</td>
-                  <td class="table-cell font-medium text-gray-900">{{ group.name }}</td>
-                  <td class="table-cell text-gray-500">{{ group.user_count ?? 0 }}</td>
-                  <td class="table-cell text-gray-500">{{ joinNames(group.roles) }}</td>
-                  <td class="table-cell text-gray-500">{{ group.permission_count ?? 0 }}</td>
+                  <td class="table-cell font-medium text-gray-900">
+                    {{ group.name }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ group.user_count ?? 0 }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ joinNames(group.roles) }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ group.permission_count ?? 0 }}
+                  </td>
                   <td class="table-cell">
-                    <BaseButton variant="outline" size="sm" @click="openEditModal(group)">
+                    <BaseButton
+                      variant="outline"
+                      size="sm"
+                      @click="openEditModal(group)"
+                    >
                       {{ t('common.edit') }}
                     </BaseButton>
                   </td>
@@ -74,21 +109,42 @@
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
             <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <label class="text-sm text-gray-600"
+                >{{ t('common.pagination.itemsPerPage') }}:</label
+              >
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                @change="currentPage = 1; fetchGroups()"
+                @change="
+                  currentPage = 1;
+                  fetchGroups();
+                "
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
                 <option :value="50">50</option>
                 <option :value="100">100</option>
               </select>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage <= 1" @click="currentPage--; fetchGroups()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="
+                  currentPage--;
+                  fetchGroups();
+                "
+              >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage >= totalPages" @click="currentPage++; fetchGroups()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="
+                  currentPage++;
+                  fetchGroups();
+                "
+              >
                 {{ t('common.pagination.next') }}
               </BaseButton>
             </div>
@@ -98,16 +154,33 @@
 
       <BaseModal :show="showModal" :title="modalTitle" @close="closeModal">
         <form @submit.prevent="submitGroup" class="space-y-4">
-          <p v-if="submitError" class="text-sm text-red-600">{{ submitError }}</p>
+          <p v-if="submitError" class="text-sm text-red-600">
+            {{ submitError }}
+          </p>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.groupName') }}</label>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.groupName')
+            }}</label>
             <input v-model="form.name" type="text" class="form-input" />
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectRoles') }}</label>
-            <div class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
-              <label v-for="role in roleOptions" :key="role.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
-                <input v-model="form.role_ids" type="checkbox" :value="role.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.selectRoles')
+            }}</label>
+            <div
+              class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2"
+            >
+              <label
+                v-for="role in roleOptions"
+                :key="role.id"
+                class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50"
+              >
+                <input
+                  v-model="form.role_ids"
+                  type="checkbox"
+                  :value="role.id"
+                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
                 <span class="text-sm text-gray-700">{{ role.name }}</span>
               </label>
             </div>
@@ -115,7 +188,11 @@
         </form>
         <template #footer>
           <div class="flex flex-row-reverse gap-2">
-            <BaseButton variant="primary" :loading="submitLoading" @click="submitGroup">
+            <BaseButton
+              variant="primary"
+              :loading="submitLoading"
+              @click="submitGroup"
+            >
               {{ t('common.confirm') }}
             </BaseButton>
             <BaseButton variant="outline" @click="closeModal">
@@ -160,17 +237,22 @@ const totalPages = computed(() =>
 )
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from:
+    totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
 
 const modalTitle = computed(() =>
-  mode.value === 'create' ? t('management.createGroup') : t('management.editGroup')
+  mode.value === 'create'
+    ? t('management.createGroup')
+    : t('management.editGroup')
 )
 
 function joinNames(items) {
-  return Array.isArray(items) && items.length ? items.map((item) => item.name).join(', ') : '—'
+  return Array.isArray(items) && items.length
+    ? items.map((item) => item.name).join(', ')
+    : '—'
 }
 
 function closeModal() {
@@ -192,7 +274,9 @@ function openEditModal(group) {
   editingGroupId.value = group.id
   form.value = {
     name: group.name || '',
-    role_ids: Array.isArray(group.roles) ? group.roles.map((item) => item.id) : []
+    role_ids: Array.isArray(group.roles)
+      ? group.roles.map((item) => item.id)
+      : []
   }
   showModal.value = true
 }
@@ -231,7 +315,8 @@ async function submitGroup() {
     if (e?.response?.data?.code === 'name_taken') {
       submitError.value = t('management.groupNameTaken')
     } else {
-      submitError.value = e?.response?.data?.detail || e?.message || t('common.error')
+      submitError.value =
+        e?.response?.data?.detail || e?.message || t('common.error')
     }
   } finally {
     submitLoading.value = false
@@ -247,7 +332,9 @@ async function fetchGroups() {
       page_size: pageSize.value
     })
     groups.value = Array.isArray(data) ? data : (data?.results ?? [])
-    totalCount.value = Array.isArray(data) ? data.length : Number(data?.count ?? groups.value.length)
+    totalCount.value = Array.isArray(data)
+      ? data.length
+      : Number(data?.count ?? groups.value.length)
   } catch (e) {
     groups.value = []
     totalCount.value = 0

@@ -25,7 +25,9 @@
       v-if="show"
       class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
     >
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('dataCollector.records.detailTitle') }}
         </h2>
@@ -34,15 +36,32 @@
           class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
           @click="handleClose"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
-      <nav v-if="record" class="flex border-b border-gray-200 px-6 flex-shrink-0 bg-gray-50">
+      <nav
+        v-if="record"
+        class="flex border-b border-gray-200 px-6 flex-shrink-0 bg-gray-50"
+      >
         <button
           type="button"
-          :class="activeTab === 'detail' ? 'border-primary-600 text-primary-600 bg-white -mb-px' : 'border-transparent text-gray-600 hover:text-gray-900'"
+          :class="
+            activeTab === 'detail'
+              ? 'border-primary-600 text-primary-600 bg-white -mb-px'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          "
           class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
           @click="activeTab = 'detail'"
         >
@@ -51,7 +70,11 @@
         <button
           v-if="record.platform !== 'license'"
           type="button"
-          :class="activeTab === 'comments' ? 'border-primary-600 text-primary-600 bg-white -mb-px' : 'border-transparent text-gray-600 hover:text-gray-900'"
+          :class="
+            activeTab === 'comments'
+              ? 'border-primary-600 text-primary-600 bg-white -mb-px'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          "
           class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
           @click="activeTab = 'comments'"
         >
@@ -62,21 +85,35 @@
             {{ t('dataCollector.records.tabComments') }}
           </span>
           <span
-            v-if="record.platform === 'feishu' ? feishuTimelineRows.length : commentsList.length"
+            v-if="
+              record.platform === 'feishu'
+                ? feishuTimelineRows.length
+                : commentsList.length
+            "
             class="ml-1 text-gray-500"
           >
-            ({{ record.platform === 'feishu' ? feishuTimelineRows.length : commentsList.length }})
+            ({{
+              record.platform === 'feishu'
+                ? feishuTimelineRows.length
+                : commentsList.length
+            }})
           </span>
         </button>
         <button
           v-if="record.platform !== 'license'"
           type="button"
-          :class="activeTab === 'attachments' ? 'border-primary-600 text-primary-600 bg-white -mb-px' : 'border-transparent text-gray-600 hover:text-gray-900'"
+          :class="
+            activeTab === 'attachments'
+              ? 'border-primary-600 text-primary-600 bg-white -mb-px'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          "
           class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
           @click="activeTab = 'attachments'"
         >
           {{ t('dataCollector.records.tabAttachments') }}
-          <span v-if="effectiveAttachments.length" class="ml-1 text-gray-500">({{ effectiveAttachments.length }})</span>
+          <span v-if="effectiveAttachments.length" class="ml-1 text-gray-500"
+            >({{ effectiveAttachments.length }})</span
+          >
         </button>
       </nav>
       <div class="flex-1 overflow-y-auto min-h-0">
@@ -86,132 +123,227 @@
         </div>
         <template v-else>
           <div v-show="activeTab === 'detail'" class="p-6 space-y-6">
-          <section v-if="record.platform === 'jira'" class="jira-basic-data">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.basicData') }}</h3>
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.platform') }}</dt>
-                <dd class="font-medium text-gray-900">{{ record.platform }}</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.sourceId') }}</dt>
-                <dd class="font-medium text-gray-900">{{ record.source_unique_id }}</dd>
-              </div>
-              <div class="sm:col-span-2">
-                <dt class="text-gray-500">{{ t('dataCollector.records.title') }}</dt>
-                <dd class="font-medium text-gray-900">{{ displayTitle }}</dd>
-              </div>
-              <template v-if="jiraKeyFields">
-                <div v-for="(v, k) in jiraKeyFields" :key="k">
-                  <dt class="text-gray-500">{{ k }}</dt>
-                  <dd class="text-gray-900 break-words">{{ v }}</dd>
-                </div>
-              </template>
-              <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.lastCollected') }}</dt>
-                <dd class="text-gray-900">{{ formatDate(record.last_collected_at) }}</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.deleted') }}</dt>
-                <dd :class="record.is_deleted ? 'text-red-600' : 'text-gray-900'">
-                  {{ record.is_deleted ? t('common.yes') : t('common.no') }}
-                </dd>
-              </div>
-              <div v-if="record.filter_metadata && Object.keys(record.filter_metadata).length" class="sm:col-span-2">
-                <dt class="text-gray-500">{{ t('dataCollector.records.filterMetadata') }}</dt>
-                <dd class="flex flex-wrap gap-2 mt-1">
-                  <span
-                    v-for="(val, key) in record.filter_metadata"
-                    :key="key"
-                    class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700"
-                  >
-                    {{ key }}: {{ val }}
-                  </span>
-                </dd>
-              </div>
-            </dl>
-          </section>
-
-          <section v-if="record.platform === 'jira' && jiraDescriptionText" class="mt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.issueDescription') }}</h3>
-            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <div class="text-sm text-gray-900 whitespace-pre-wrap break-words">{{ jiraDescriptionText }}</div>
-            </div>
-          </section>
-
-          <template v-else>
-            <section>
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.basicInfo') }}</h3>
+            <section v-if="record.platform === 'jira'" class="jira-basic-data">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('dataCollector.records.basicData') }}
+              </h3>
               <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div>
-                  <dt class="text-gray-500">{{ t('dataCollector.records.platform') }}</dt>
-                  <dd class="font-medium text-gray-900">{{ record.platform }}</dd>
-                </div>
-                <div>
                   <dt class="text-gray-500">
-                    {{ record.platform === 'feishu' ? t('dataCollector.records.approvalInstanceCode') : t('dataCollector.records.sourceId') }}
-                  </dt>
-                  <dd class="font-medium text-gray-900">{{ record.source_unique_id }}</dd>
-                </div>
-                <div v-if="record.platform === 'license'" class="sm:col-span-2">
-                  <dt class="text-gray-500">{{ t('dataCollector.records.resourceType') }}</dt>
-                  <dd class="font-medium text-gray-900">{{ t('dataCollector.records.order') }}</dd>
-                </div>
-                <div v-else class="sm:col-span-2">
-                  <dt class="text-gray-500">
-                    {{ record.platform === 'feishu' ? t('dataCollector.records.approvalName') : t('dataCollector.records.title') }}
+                    {{ t('dataCollector.records.platform') }}
                   </dt>
                   <dd class="font-medium text-gray-900">
-                    {{ record.platform === 'feishu' ? (record.filter_metadata?.approval_name ?? displayTitle) : displayTitle }}
+                    {{ record.platform }}
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-gray-500">{{ t('dataCollector.records.lastCollected') }}</dt>
-                  <dd class="text-gray-900">{{ formatDate(record.last_collected_at) }}</dd>
+                  <dt class="text-gray-500">
+                    {{ t('dataCollector.records.sourceId') }}
+                  </dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ record.source_unique_id }}
+                  </dd>
+                </div>
+                <div class="sm:col-span-2">
+                  <dt class="text-gray-500">
+                    {{ t('dataCollector.records.title') }}
+                  </dt>
+                  <dd class="font-medium text-gray-900">{{ displayTitle }}</dd>
+                </div>
+                <template v-if="jiraKeyFields">
+                  <div v-for="(v, k) in jiraKeyFields" :key="k">
+                    <dt class="text-gray-500">{{ k }}</dt>
+                    <dd class="text-gray-900 break-words">{{ v }}</dd>
+                  </div>
+                </template>
+                <div>
+                  <dt class="text-gray-500">
+                    {{ t('dataCollector.records.lastCollected') }}
+                  </dt>
+                  <dd class="text-gray-900">
+                    {{ formatDate(record.last_collected_at) }}
+                  </dd>
                 </div>
                 <div>
-                  <dt class="text-gray-500">{{ t('dataCollector.records.deleted') }}</dt>
-                  <dd :class="record.is_deleted ? 'text-red-600' : 'text-gray-900'">
+                  <dt class="text-gray-500">
+                    {{ t('dataCollector.records.deleted') }}
+                  </dt>
+                  <dd
+                    :class="
+                      record.is_deleted ? 'text-red-600' : 'text-gray-900'
+                    "
+                  >
                     {{ record.is_deleted ? t('common.yes') : t('common.no') }}
+                  </dd>
+                </div>
+                <div
+                  v-if="
+                    record.filter_metadata &&
+                    Object.keys(record.filter_metadata).length
+                  "
+                  class="sm:col-span-2"
+                >
+                  <dt class="text-gray-500">
+                    {{ t('dataCollector.records.filterMetadata') }}
+                  </dt>
+                  <dd class="flex flex-wrap gap-2 mt-1">
+                    <span
+                      v-for="(val, key) in record.filter_metadata"
+                      :key="key"
+                      class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700"
+                    >
+                      {{ key }}: {{ val }}
+                    </span>
                   </dd>
                 </div>
               </dl>
             </section>
-            <section v-if="record.filter_metadata && Object.keys(record.filter_metadata).length">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.filterMetadata') }}</h3>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="(val, key) in record.filter_metadata"
-                  :key="key"
-                  class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-sm font-medium text-gray-700"
+
+            <section
+              v-if="record.platform === 'jira' && jiraDescriptionText"
+              class="mt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('dataCollector.records.issueDescription') }}
+              </h3>
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div
+                  class="text-sm text-gray-900 whitespace-pre-wrap break-words"
                 >
-                  {{ key }}: {{ val }}
-                </span>
+                  {{ jiraDescriptionText }}
+                </div>
               </div>
             </section>
-          </template>
 
-          <section>
-            <button
-              type="button"
-              class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 border border-gray-200 rounded-t text-left text-sm font-semibold text-gray-700 hover:bg-gray-100"
-              @click="showRawData = !showRawData"
-            >
-              {{ t('dataCollector.records.rawData') }}
-              <svg
-                class="w-4 h-4 transition-transform"
-                :class="{ 'rotate-180': showRawData }"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <template v-else>
+              <section>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('dataCollector.records.basicInfo') }}
+                </h3>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <dt class="text-gray-500">
+                      {{ t('dataCollector.records.platform') }}
+                    </dt>
+                    <dd class="font-medium text-gray-900">
+                      {{ record.platform }}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="text-gray-500">
+                      {{
+                        record.platform === 'feishu'
+                          ? t('dataCollector.records.approvalInstanceCode')
+                          : t('dataCollector.records.sourceId')
+                      }}
+                    </dt>
+                    <dd class="font-medium text-gray-900">
+                      {{ record.source_unique_id }}
+                    </dd>
+                  </div>
+                  <div
+                    v-if="record.platform === 'license'"
+                    class="sm:col-span-2"
+                  >
+                    <dt class="text-gray-500">
+                      {{ t('dataCollector.records.resourceType') }}
+                    </dt>
+                    <dd class="font-medium text-gray-900">
+                      {{ t('dataCollector.records.order') }}
+                    </dd>
+                  </div>
+                  <div v-else class="sm:col-span-2">
+                    <dt class="text-gray-500">
+                      {{
+                        record.platform === 'feishu'
+                          ? t('dataCollector.records.approvalName')
+                          : t('dataCollector.records.title')
+                      }}
+                    </dt>
+                    <dd class="font-medium text-gray-900">
+                      {{
+                        record.platform === 'feishu'
+                          ? (record.filter_metadata?.approval_name ??
+                            displayTitle)
+                          : displayTitle
+                      }}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="text-gray-500">
+                      {{ t('dataCollector.records.lastCollected') }}
+                    </dt>
+                    <dd class="text-gray-900">
+                      {{ formatDate(record.last_collected_at) }}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="text-gray-500">
+                      {{ t('dataCollector.records.deleted') }}
+                    </dt>
+                    <dd
+                      :class="
+                        record.is_deleted ? 'text-red-600' : 'text-gray-900'
+                      "
+                    >
+                      {{ record.is_deleted ? t('common.yes') : t('common.no') }}
+                    </dd>
+                  </div>
+                </dl>
+              </section>
+              <section
+                v-if="
+                  record.filter_metadata &&
+                  Object.keys(record.filter_metadata).length
+                "
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div v-show="showRawData" class="p-4 border border-t-0 border-gray-200 rounded-b overflow-x-auto">
-              <pre class="text-xs text-gray-700 bg-gray-50 p-4 rounded whitespace-pre-wrap break-words">{{ rawDataJson }}</pre>
-            </div>
-          </section>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ t('dataCollector.records.filterMetadata') }}
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="(val, key) in record.filter_metadata"
+                    :key="key"
+                    class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-sm font-medium text-gray-700"
+                  >
+                    {{ key }}: {{ val }}
+                  </span>
+                </div>
+              </section>
+            </template>
+
+            <section>
+              <button
+                type="button"
+                class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 border border-gray-200 rounded-t text-left text-sm font-semibold text-gray-700 hover:bg-gray-100"
+                @click="showRawData = !showRawData"
+              >
+                {{ t('dataCollector.records.rawData') }}
+                <svg
+                  class="w-4 h-4 transition-transform"
+                  :class="{ 'rotate-180': showRawData }"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <div
+                v-show="showRawData"
+                class="p-4 border border-t-0 border-gray-200 rounded-b overflow-x-auto"
+              >
+                <pre
+                  class="text-xs text-gray-700 bg-gray-50 p-4 rounded whitespace-pre-wrap break-words"
+                  >{{ rawDataJson }}</pre
+                >
+              </div>
+            </section>
           </div>
 
           <div v-show="activeTab === 'comments'" class="p-6">
@@ -219,28 +351,42 @@
             <template v-if="record.platform === 'feishu'">
               <section v-if="feishuTimelineRows.length">
                 <h3 class="text-sm font-semibold text-gray-900 mb-4">
-                  {{ t('dataCollector.records.approvalFlow') }} ({{ feishuTimelineRows.length }})
+                  {{ t('dataCollector.records.approvalFlow') }} ({{
+                    feishuTimelineRows.length
+                  }})
                 </h3>
                 <div class="overflow-x-auto border border-gray-200 rounded-lg">
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th
+                          class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                        >
                           {{ t('dataCollector.records.approvalNodeName') }}
                         </th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th
+                          class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                        >
                           {{ t('dataCollector.records.approvalUser') }}
                         </th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th
+                          class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                        >
                           {{ t('dataCollector.records.approvalStatus') }}
                         </th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th
+                          class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                        >
                           {{ t('dataCollector.records.approvalTime') }}
                         </th>
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
-                      <tr v-for="row in feishuTimelineRows" :key="row.index" class="hover:bg-gray-50">
+                      <tr
+                        v-for="row in feishuTimelineRows"
+                        :key="row.index"
+                        class="hover:bg-gray-50"
+                      >
                         <td class="px-4 py-3 text-sm text-gray-700">
                           {{ row.nodeDisplay }}
                         </td>
@@ -252,7 +398,9 @@
                               {{ (row.userName || '—').slice(0, 2) }}
                             </span>
                             <div class="min-w-0">
-                              <div class="text-sm font-medium text-gray-900 truncate">
+                              <div
+                                class="text-sm font-medium text-gray-900 truncate"
+                              >
                                 {{ row.userName || '—' }}
                               </div>
                             </div>
@@ -266,7 +414,9 @@
                             {{ row.statusLabel }}
                           </span>
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                        <td
+                          class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
+                        >
                           {{ row.time ? formatDate(row.time) : '—' }}
                         </td>
                       </tr>
@@ -283,7 +433,9 @@
             <template v-else>
               <section v-if="commentsList.length">
                 <h3 class="text-sm font-semibold text-gray-900 mb-4">
-                  {{ t('dataCollector.records.commentsFullData') }} ({{ commentsList.length }})
+                  {{ t('dataCollector.records.commentsFullData') }} ({{
+                    commentsList.length
+                  }})
                 </h3>
                 <ul class="space-y-4">
                   <li
@@ -293,24 +445,40 @@
                   >
                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                       <div v-if="c.id != null">
-                        <dt class="text-gray-500">{{ t('dataCollector.records.commentId') }}</dt>
+                        <dt class="text-gray-500">
+                          {{ t('dataCollector.records.commentId') }}
+                        </dt>
                         <dd class="text-gray-900 font-mono">{{ c.id }}</dd>
                       </div>
                       <div>
-                        <dt class="text-gray-500">{{ t('dataCollector.records.commentAuthor') }}</dt>
+                        <dt class="text-gray-500">
+                          {{ t('dataCollector.records.commentAuthor') }}
+                        </dt>
                         <dd class="text-gray-900">{{ commentAuthor(c) }}</dd>
                       </div>
                       <div v-if="c.created">
-                        <dt class="text-gray-500">{{ t('dataCollector.records.commentCreated') }}</dt>
-                        <dd class="text-gray-900">{{ formatDate(c.created) }}</dd>
+                        <dt class="text-gray-500">
+                          {{ t('dataCollector.records.commentCreated') }}
+                        </dt>
+                        <dd class="text-gray-900">
+                          {{ formatDate(c.created) }}
+                        </dd>
                       </div>
                       <div v-if="c.updated">
-                        <dt class="text-gray-500">{{ t('dataCollector.records.commentUpdated') }}</dt>
-                        <dd class="text-gray-900">{{ formatDate(c.updated) }}</dd>
+                        <dt class="text-gray-500">
+                          {{ t('dataCollector.records.commentUpdated') }}
+                        </dt>
+                        <dd class="text-gray-900">
+                          {{ formatDate(c.updated) }}
+                        </dd>
                       </div>
                       <div class="sm:col-span-2">
-                        <dt class="text-gray-500">{{ t('dataCollector.records.commentBody') }}</dt>
-                        <dd class="text-gray-900 whitespace-pre-wrap break-words mt-1">
+                        <dt class="text-gray-500">
+                          {{ t('dataCollector.records.commentBody') }}
+                        </dt>
+                        <dd
+                          class="text-gray-900 whitespace-pre-wrap break-words mt-1"
+                        >
                           {{ commentBodyText(c) }}
                         </dd>
                       </div>
@@ -329,14 +497,22 @@
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </button>
                       <div
                         v-show="expandedCommentRaw.has(idx)"
                         class="mt-2 p-3 border border-gray-200 rounded overflow-x-auto bg-white"
                       >
-                        <pre class="text-xs text-gray-700 whitespace-pre-wrap break-words">{{ commentRawJson(c) }}</pre>
+                        <pre
+                          class="text-xs text-gray-700 whitespace-pre-wrap break-words"
+                          >{{ commentRawJson(c) }}</pre
+                        >
                       </div>
                     </div>
                   </li>
@@ -350,42 +526,134 @@
 
           <div v-show="activeTab === 'attachments'" class="p-6">
             <section v-if="effectiveAttachments.length">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dataCollector.records.attachments') }} ({{ effectiveAttachments.length }})</h3>
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('dataCollector.records.attachments') }} ({{
+                  effectiveAttachments.length
+                }})
+              </h3>
               <ul class="divide-y divide-gray-200">
                 <li
                   v-for="(att, idx) in effectiveAttachments"
                   :key="att.uuid || att.id || idx"
                   class="py-3 flex items-center gap-3"
                 >
-                  <span class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gray-100 text-gray-600" :title="att.file_type || getFileTypeCategory(att.file_name, att.file_type)">
-                    <svg v-if="getFileTypeCategory(att.file_name, att.file_type) === 'pdf'" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-3 10.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm1.5-4a2.5 2.5 0 0 1 2.45 2h-4.9a2.5 2.5 0 0 1 2.45-2zm5.5 4a1.5 1.5 0 0 1-3 0 1.5 1.5 0 0 1 3 0zm0-4a2.5 2.5 0 0 1-2.45 2h-4.9A2.5 2.5 0 0 1 13 12.5z"/>
+                  <span
+                    class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gray-100 text-gray-600"
+                    :title="
+                      att.file_type ||
+                      getFileTypeCategory(att.file_name, att.file_type)
+                    "
+                  >
+                    <svg
+                      v-if="
+                        getFileTypeCategory(att.file_name, att.file_type) ===
+                        'pdf'
+                      "
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-3 10.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm1.5-4a2.5 2.5 0 0 1 2.45 2h-4.9a2.5 2.5 0 0 1 2.45-2zm5.5 4a1.5 1.5 0 0 1-3 0 1.5 1.5 0 0 1 3 0zm0-4a2.5 2.5 0 0 1-2.45 2h-4.9A2.5 2.5 0 0 1 13 12.5z"
+                      />
                     </svg>
-                    <svg v-else-if="getFileTypeCategory(att.file_name, att.file_type) === 'image'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    <svg
+                      v-else-if="
+                        getFileTypeCategory(att.file_name, att.file_type) ===
+                        'image'
+                      "
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
-                    <svg v-else-if="getFileTypeCategory(att.file_name, att.file_type) === 'word'" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm2 2h5v5h-5V4zm5.5 10.5L11 20H9l2.5-5.5H9.5V13H13v1.5h-1.5L15 20h2l-2.5-5.5H14V14h-2v-.5h2.5z"/>
+                    <svg
+                      v-else-if="
+                        getFileTypeCategory(att.file_name, att.file_type) ===
+                        'word'
+                      "
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm2 2h5v5h-5V4zm5.5 10.5L11 20H9l2.5-5.5H9.5V13H13v1.5h-1.5L15 20h2l-2.5-5.5H14V14h-2v-.5h2.5z"
+                      />
                     </svg>
-                    <svg v-else-if="getFileTypeCategory(att.file_name, att.file_type) === 'excel'" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-2.5 11L9 15l1.5-3 1.5 3 1.5-3L17 17h-2l-1-2-1 2h-2z"/>
+                    <svg
+                      v-else-if="
+                        getFileTypeCategory(att.file_name, att.file_type) ===
+                        'excel'
+                      "
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-2.5 11L9 15l1.5-3 1.5 3 1.5-3L17 17h-2l-1-2-1 2h-2z"
+                      />
                     </svg>
-                    <svg v-else-if="getFileTypeCategory(att.file_name, att.file_type) === 'text'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    <svg
+                      v-else-if="
+                        getFileTypeCategory(att.file_name, att.file_type) ===
+                        'text'
+                      "
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
                     </svg>
-                    <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    <svg
+                      v-else
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
                     </svg>
                   </span>
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-gray-900 truncate" :title="att.file_name">{{ att.file_name }}</p>
+                    <p
+                      class="text-sm font-medium text-gray-900 truncate"
+                      :title="att.file_name"
+                    >
+                      {{ att.file_name }}
+                    </p>
                     <p class="text-xs text-gray-500 mt-0.5">
-                      <span v-if="att.file_type" class="mr-2">{{ att.file_type }}</span>
+                      <span v-if="att.file_type" class="mr-2">{{
+                        att.file_type
+                      }}</span>
                       <span>{{ formatFileSize(att.file_size) }}</span>
-                      <span v-if="attachmentDisplayDate(att)" class="ml-2">{{ formatDate(attachmentDisplayDate(att)) }}</span>
+                      <span v-if="attachmentDisplayDate(att)" class="ml-2">{{
+                        formatDate(attachmentDisplayDate(att))
+                      }}</span>
                     </p>
                   </div>
-                  <div v-if="att.uuid" class="flex items-center gap-1 flex-shrink-0">
+                  <div
+                    v-if="att.uuid"
+                    class="flex items-center gap-1 flex-shrink-0"
+                  >
                     <button
                       v-if="canViewInBrowser(att)"
                       type="button"
@@ -394,9 +662,24 @@
                       :disabled="viewingAttachment === (att.uuid || att.id)"
                       @click="onViewAttachment(att)"
                     >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
                       </svg>
                     </button>
                     <button
@@ -406,8 +689,18 @@
                       :disabled="downloadingAttachment === (att.uuid || att.id)"
                       @click="onDownloadAttachment(att)"
                     >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -416,8 +709,18 @@
                     class="flex-shrink-0 p-2 rounded-md text-gray-300 cursor-not-allowed"
                     :title="t('dataCollector.records.downloadNotSynced')"
                   >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
                     </svg>
                   </span>
                 </li>
@@ -460,7 +763,8 @@ const viewingAttachment = ref(null)
 
 const displayTitle = computed(() => {
   if (!record.value) return ''
-  if (record.value.raw_data?.issue?.fields?.summary) return record.value.raw_data.issue.fields.summary
+  if (record.value.raw_data?.issue?.fields?.summary)
+    return record.value.raw_data.issue.fields.summary
   return record.value.source_unique_id || '—'
 })
 
@@ -486,7 +790,8 @@ function extractAdfText(node) {
   if (!node) return ''
   if (typeof node === 'string') return node
   if (node.text != null) return String(node.text)
-  if (Array.isArray(node.content)) return node.content.map(extractAdfText).join('')
+  if (Array.isArray(node.content))
+    return node.content.map(extractAdfText).join('')
   return ''
 }
 
@@ -524,13 +829,21 @@ const feishuUserMap = computed(() => {
   function addUser(u) {
     if (!u || typeof u !== 'object') return
     const id = u.user_id || u.id || u.open_id || u.openId
-    const name = u.name || u.username || u.cn_name || u.en_name || u.display_name
+    const name =
+      u.name || u.username || u.cn_name || u.en_name || u.display_name
     if (id && name && !map[id]) {
       map[id] = name
     }
   }
 
-  const candidateArrays = ['approvers', 'cc_list', 'participants', 'users', 'user_list', 'userList']
+  const candidateArrays = [
+    'approvers',
+    'cc_list',
+    'participants',
+    'users',
+    'user_list',
+    'userList'
+  ]
   candidateArrays.forEach((key) => {
     const arr = inst[key]
     if (Array.isArray(arr)) {
@@ -544,7 +857,12 @@ const feishuUserMap = computed(() => {
       if (typeof val === 'string') {
         if (!map[id]) map[id] = val
       } else if (val && typeof val === 'object') {
-        const name = val.name || val.username || val.cn_name || val.en_name || val.display_name
+        const name =
+          val.name ||
+          val.username ||
+          val.cn_name ||
+          val.en_name ||
+          val.display_name
         if (id && name && !map[id]) {
           map[id] = name
         }
@@ -574,7 +892,8 @@ const feishuTaskIdToNodeName = computed(() => {
     const tid = task.task_id ?? task.id
     if (tid == null) continue
     const name = task.node_name ?? task.name ?? task.node_key
-    if (name != null && String(name).trim()) map[String(tid).trim()] = String(name).trim()
+    if (name != null && String(name).trim())
+      map[String(tid).trim()] = String(name).trim()
   }
   return map
 })
@@ -583,23 +902,37 @@ const feishuTimelineRows = computed(() => {
   const taskIdToNodeName = feishuTaskIdToNodeName.value
   return feishuTimeline.value.map((item, index) => {
     const rawAction =
-      item.type ||
-      item.result ||
-      item.action ||
-      item.node_status ||
-      item.status
-    const action = typeof rawAction === 'string' ? rawAction.toUpperCase() : String(rawAction || '')
+      item.type || item.result || item.action || item.node_status || item.status
+    const action =
+      typeof rawAction === 'string'
+        ? rawAction.toUpperCase()
+        : String(rawAction || '')
 
     // CC: users from ext.user_id_list or user_id_list
     let userName
     let userId
     if (action === 'CC') {
       const ext = item.ext || {}
-      const idList = ext.user_id_list ?? item.user_id_list ?? (ext.user_id ? [ext.user_id] : [])
+      const idList =
+        ext.user_id_list ??
+        item.user_id_list ??
+        (ext.user_id ? [ext.user_id] : [])
       const ids = Array.isArray(idList) ? idList : [idList].filter(Boolean)
-      const names = ids.map((id) => resolveFeishuUserName(id, null)).filter((n) => n && n !== '—')
-      userName = names.length ? names.join(', ') : resolveFeishuUserName(item.user_id || item.userId || item.operator_id || item.operatorId, item)
-      userId = ids[0] ?? item.user_id ?? item.userId ?? item.operator_id ?? item.operatorId
+      const names = ids
+        .map((id) => resolveFeishuUserName(id, null))
+        .filter((n) => n && n !== '—')
+      userName = names.length
+        ? names.join(', ')
+        : resolveFeishuUserName(
+            item.user_id || item.userId || item.operator_id || item.operatorId,
+            item
+          )
+      userId =
+        ids[0] ??
+        item.user_id ??
+        item.userId ??
+        item.operator_id ??
+        item.operatorId
     } else {
       userId =
         item.user_id ||
@@ -659,9 +992,23 @@ const feishuTimelineRows = computed(() => {
 
     const taskId = item.task_id != null ? String(item.task_id).trim() : ''
     const nodeNameFromTask = taskId ? (taskIdToNodeName[taskId] ?? null) : null
-    const node = nodeNameFromTask ?? item.type ?? item.result ?? item.status ?? item.node_name ?? item.nodeName ?? item.stage_name ?? item.step_name ?? '—'
+    const node =
+      nodeNameFromTask ??
+      item.type ??
+      item.result ??
+      item.status ??
+      item.node_name ??
+      item.nodeName ??
+      item.stage_name ??
+      item.step_name ??
+      '—'
     const nodeUpper = node != null ? String(node).toUpperCase() : ''
-    const nodeDisplay = nodeUpper === 'CC' ? '抄送' : nodeUpper === 'START' ? '审批开始' : (node || '—')
+    const nodeDisplay =
+      nodeUpper === 'CC'
+        ? '抄送'
+        : nodeUpper === 'START'
+          ? '审批开始'
+          : node || '—'
     const remark = item.comment || item.remark || item.reason || item.note || ''
     return {
       index: index + 1,
@@ -684,12 +1031,14 @@ function resolveFeishuUserName(userId, item) {
     if (item.operator_name) return item.operator_name
     if (item.user && typeof item.user === 'object') {
       const u = item.user
-      const name = u.name || u.username || u.cn_name || u.en_name || u.display_name
+      const name =
+        u.name || u.username || u.cn_name || u.en_name || u.display_name
       if (name) return name
     }
     if (item.operator && typeof item.operator === 'object') {
       const o = item.operator
-      const name = o.name || o.username || o.cn_name || o.en_name || o.display_name
+      const name =
+        o.name || o.username || o.cn_name || o.en_name || o.display_name
       if (name) return name
     }
   }
@@ -702,13 +1051,30 @@ function resolveFeishuUserName(userId, item) {
 function feishuStatusBadgeClass(status) {
   const s = String(status || '').toUpperCase()
   if (!s) return 'bg-gray-100 text-gray-700'
-  if (s === 'PASS' || s === 'AUTO_PASS' || s === 'REMOVE_REPEAT' || s.includes('同意') || s.includes('通过')) {
+  if (
+    s === 'PASS' ||
+    s === 'AUTO_PASS' ||
+    s === 'REMOVE_REPEAT' ||
+    s.includes('同意') ||
+    s.includes('通过')
+  ) {
     return 'bg-green-100 text-green-800'
   }
-  if (s === 'REJECT' || s === 'AUTO_REJECT' || s.includes('拒绝') || s.includes('驳回')) {
+  if (
+    s === 'REJECT' ||
+    s === 'AUTO_REJECT' ||
+    s.includes('拒绝') ||
+    s.includes('驳回')
+  ) {
     return 'bg-red-100 text-red-800'
   }
-  if (s === 'START' || s === 'ROLLBACK' || s === 'ROLLBACK_SELECTED' || s.includes('开始') || s.includes('处理中')) {
+  if (
+    s === 'START' ||
+    s === 'ROLLBACK' ||
+    s === 'ROLLBACK_SELECTED' ||
+    s.includes('开始') ||
+    s.includes('处理中')
+  ) {
     return 'bg-amber-100 text-amber-800'
   }
   return 'bg-gray-100 text-gray-700'
@@ -717,13 +1083,30 @@ function feishuStatusBadgeClass(status) {
 function feishuStatusDotClass(status) {
   const s = String(status || '').toUpperCase()
   if (!s) return 'bg-gray-300'
-  if (s === 'PASS' || s === 'AUTO_PASS' || s === 'REMOVE_REPEAT' || s.includes('同意') || s.includes('通过')) {
+  if (
+    s === 'PASS' ||
+    s === 'AUTO_PASS' ||
+    s === 'REMOVE_REPEAT' ||
+    s.includes('同意') ||
+    s.includes('通过')
+  ) {
     return 'bg-green-400'
   }
-  if (s === 'REJECT' || s === 'AUTO_REJECT' || s.includes('拒绝') || s.includes('驳回')) {
+  if (
+    s === 'REJECT' ||
+    s === 'AUTO_REJECT' ||
+    s.includes('拒绝') ||
+    s.includes('驳回')
+  ) {
     return 'bg-red-400'
   }
-  if (s === 'START' || s === 'ROLLBACK' || s === 'ROLLBACK_SELECTED' || s.includes('开始') || s.includes('处理中')) {
+  if (
+    s === 'START' ||
+    s === 'ROLLBACK' ||
+    s === 'ROLLBACK_SELECTED' ||
+    s.includes('开始') ||
+    s.includes('处理中')
+  ) {
     return 'bg-amber-400'
   }
   return 'bg-gray-300'
@@ -780,7 +1163,7 @@ const effectiveAttachments = computed(() => {
       file_type: a.file_type || '',
       file_size: a.file_size ?? 0,
       source_created_at: a.source_created_at,
-      created_at: a.created_at,
+      created_at: a.created_at
     }))
   }
   const fromRaw = rec.raw_data?.attachments
@@ -792,7 +1175,7 @@ const effectiveAttachments = computed(() => {
     file_type: a.mimeType || '',
     file_size: a.size ?? 0,
     source_created_at: a.created,
-    created_at: null,
+    created_at: null
   }))
 })
 
@@ -834,9 +1217,16 @@ function getFileTypeCategory(name, mimeType) {
   const n = (name || '').toLowerCase()
   const m = (mimeType || '').toLowerCase()
   if (/\.(pdf)$/i.test(n) || m.includes('pdf')) return 'pdf'
-  if (/\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(n) || m.startsWith('image/')) return 'image'
-  if (/\.(docx?|doc)$/i.test(n) || m.includes('word') || m.includes('msword')) return 'word'
-  if (/\.(xlsx?|xls|csv)$/i.test(n) || m.includes('sheet') || m.includes('excel')) return 'excel'
+  if (/\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(n) || m.startsWith('image/'))
+    return 'image'
+  if (/\.(docx?|doc)$/i.test(n) || m.includes('word') || m.includes('msword'))
+    return 'word'
+  if (
+    /\.(xlsx?|xls|csv)$/i.test(n) ||
+    m.includes('sheet') ||
+    m.includes('excel')
+  )
+    return 'excel'
   if (/\.(txt|md|log)$/i.test(n) || m.startsWith('text/')) return 'text'
   return 'file'
 }

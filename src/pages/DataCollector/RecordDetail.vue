@@ -6,8 +6,18 @@
           :to="{ name: 'DataCollectorRecords' }"
           class="text-gray-500 hover:text-gray-700 flex items-center gap-1 text-sm"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           {{ t('dataCollector.records.backToList') }}
         </router-link>
@@ -28,48 +38,88 @@
         </div>
 
         <div class="space-y-6">
-          <section class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-            <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
+          <section
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <h2
+              class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700"
+            >
               {{ t('dataCollector.records.basicInfo') }}
             </h2>
             <dl class="px-4 py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.platform') }}</dt>
+                <dt class="text-gray-500">
+                  {{ t('dataCollector.records.platform') }}
+                </dt>
                 <dd class="font-medium text-gray-900">{{ record.platform }}</dd>
               </div>
               <div>
                 <dt class="text-gray-500">
-                  {{ record.platform === 'feishu' ? t('dataCollector.records.approvalInstanceCode') : t('dataCollector.records.sourceId') }}
+                  {{
+                    record.platform === 'feishu'
+                      ? t('dataCollector.records.approvalInstanceCode')
+                      : t('dataCollector.records.sourceId')
+                  }}
                 </dt>
-                <dd class="font-medium text-gray-900">{{ record.source_unique_id }}</dd>
+                <dd class="font-medium text-gray-900">
+                  {{ record.source_unique_id }}
+                </dd>
               </div>
               <div v-if="record.platform === 'license'" class="sm:col-span-2">
-                <dt class="text-gray-500">{{ t('dataCollector.records.resourceType') }}</dt>
-                <dd class="font-medium text-gray-900">{{ t('dataCollector.records.order') }}</dd>
+                <dt class="text-gray-500">
+                  {{ t('dataCollector.records.resourceType') }}
+                </dt>
+                <dd class="font-medium text-gray-900">
+                  {{ t('dataCollector.records.order') }}
+                </dd>
               </div>
               <div v-else class="sm:col-span-2">
                 <dt class="text-gray-500">
-                  {{ record.platform === 'feishu' ? t('dataCollector.records.approvalName') : t('dataCollector.records.title') }}
+                  {{
+                    record.platform === 'feishu'
+                      ? t('dataCollector.records.approvalName')
+                      : t('dataCollector.records.title')
+                  }}
                 </dt>
                 <dd class="font-medium text-gray-900">
-                  {{ record.platform === 'feishu' ? (record.filter_metadata?.approval_name ?? displayTitle) : displayTitle }}
+                  {{
+                    record.platform === 'feishu'
+                      ? (record.filter_metadata?.approval_name ?? displayTitle)
+                      : displayTitle
+                  }}
                 </dd>
               </div>
               <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.lastCollected') }}</dt>
-                <dd class="text-gray-900">{{ formatDate(record.last_collected_at) }}</dd>
+                <dt class="text-gray-500">
+                  {{ t('dataCollector.records.lastCollected') }}
+                </dt>
+                <dd class="text-gray-900">
+                  {{ formatDate(record.last_collected_at) }}
+                </dd>
               </div>
               <div>
-                <dt class="text-gray-500">{{ t('dataCollector.records.deleted') }}</dt>
-                <dd :class="record.is_deleted ? 'text-red-600' : 'text-gray-900'">
+                <dt class="text-gray-500">
+                  {{ t('dataCollector.records.deleted') }}
+                </dt>
+                <dd
+                  :class="record.is_deleted ? 'text-red-600' : 'text-gray-900'"
+                >
                   {{ record.is_deleted ? t('common.yes') : t('common.no') }}
                 </dd>
               </div>
             </dl>
           </section>
 
-          <section v-if="record.filter_metadata && Object.keys(record.filter_metadata).length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-            <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
+          <section
+            v-if="
+              record.filter_metadata &&
+              Object.keys(record.filter_metadata).length
+            "
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <h2
+              class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700"
+            >
               {{ t('dataCollector.records.filterMetadata') }}
             </h2>
             <div class="px-4 py-4 flex flex-wrap gap-2">
@@ -83,8 +133,13 @@
             </div>
           </section>
 
-          <section v-if="record.platform === 'jira' && jiraKeyFields" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-            <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
+          <section
+            v-if="record.platform === 'jira' && jiraKeyFields"
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <h2
+              class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700"
+            >
               {{ t('dataCollector.records.jiraKeyFields') }}
             </h2>
             <dl class="px-4 py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -95,9 +150,16 @@
             </dl>
           </section>
 
-          <section v-if="record.platform !== 'license' && commentsList.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-            <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
-              {{ t('dataCollector.records.comments') }} ({{ commentsList.length }})
+          <section
+            v-if="record.platform !== 'license' && commentsList.length"
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <h2
+              class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700"
+            >
+              {{ t('dataCollector.records.comments') }} ({{
+                commentsList.length
+              }})
             </h2>
             <ul class="px-4 py-4 space-y-4">
               <li
@@ -106,15 +168,27 @@
                 class="border border-gray-200 rounded-lg p-4 bg-gray-50"
               >
                 <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                  <span>{{ t('dataCollector.records.commentAuthor') }}: {{ commentAuthor(c) }}</span>
-                  <span v-if="c.created"> · {{ t('dataCollector.records.commentCreated') }}: {{ formatDate(c.created) }}</span>
+                  <span
+                    >{{ t('dataCollector.records.commentAuthor') }}:
+                    {{ commentAuthor(c) }}</span
+                  >
+                  <span v-if="c.created">
+                    · {{ t('dataCollector.records.commentCreated') }}:
+                    {{ formatDate(c.created) }}</span
+                  >
                 </div>
-                <div class="text-sm text-gray-900 whitespace-pre-wrap break-words">{{ commentBodyText(c) }}</div>
+                <div
+                  class="text-sm text-gray-900 whitespace-pre-wrap break-words"
+                >
+                  {{ commentBodyText(c) }}
+                </div>
               </li>
             </ul>
           </section>
 
-          <section class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
+          <section
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
             <button
               type="button"
               class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 border-b border-gray-200 text-left text-sm font-semibold text-gray-700 hover:bg-gray-100"
@@ -128,17 +202,32 @@
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
             <div v-show="showRawData" class="p-4 overflow-x-auto">
-              <pre class="text-xs text-gray-700 bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-wrap break-words">{{ rawDataJson }}</pre>
+              <pre
+                class="text-xs text-gray-700 bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-wrap break-words"
+                >{{ rawDataJson }}</pre
+              >
             </div>
           </section>
 
-          <section v-if="record.platform !== 'license' && effectiveAttachments.length" class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
-            <h2 class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
-              {{ t('dataCollector.records.attachments') }} ({{ effectiveAttachments.length }})
+          <section
+            v-if="record.platform !== 'license' && effectiveAttachments.length"
+            class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <h2
+              class="px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700"
+            >
+              {{ t('dataCollector.records.attachments') }} ({{
+                effectiveAttachments.length
+              }})
             </h2>
             <ul class="px-4 py-4 divide-y divide-gray-200">
               <li
@@ -146,7 +235,9 @@
                 :key="att.uuid || att.id || idx"
                 class="py-2 flex items-center justify-between"
               >
-                <span class="text-sm text-gray-900 truncate mr-2">{{ att.file_name }}</span>
+                <span class="text-sm text-gray-900 truncate mr-2">{{
+                  att.file_name
+                }}</span>
                 <a
                   v-if="att.file_url"
                   :href="att.file_url"
@@ -182,7 +273,8 @@ const showRawData = ref(false)
 
 const displayTitle = computed(() => {
   if (!record.value) return ''
-  if (record.value.raw_data?.issue?.fields?.summary) return record.value.raw_data.issue.fields.summary
+  if (record.value.raw_data?.issue?.fields?.summary)
+    return record.value.raw_data.issue.fields.summary
   return record.value.source_unique_id || '—'
 })
 
@@ -246,7 +338,11 @@ const effectiveAttachments = computed(() => {
   if (!rec) return []
   const fromDb = rec.attachments || []
   if (fromDb.length) {
-    return fromDb.map((a) => ({ uuid: a.uuid, file_name: a.file_name, file_url: a.file_url }))
+    return fromDb.map((a) => ({
+      uuid: a.uuid,
+      file_name: a.file_name,
+      file_url: a.file_url
+    }))
   }
   const fromRaw = rec.raw_data?.attachments
   if (!Array.isArray(fromRaw)) return []

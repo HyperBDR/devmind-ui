@@ -72,77 +72,77 @@
             </div>
           </div>
 
-        <!-- Username -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="username"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.jira.username') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.jira.usernameDesc') }}
-            </p>
+          <!-- Username -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="username"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.jira.username') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.jira.usernameDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="username"
+                v-model="localConfig.username"
+                type="text"
+                :placeholder="t('settings.jira.usernamePlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="username"
-              v-model="localConfig.username"
-              type="text"
-              :placeholder="t('settings.jira.usernamePlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
 
-        <!-- API Token -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="apiToken"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.jira.apiToken') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.jira.apiTokenDesc') }}
-            </p>
+          <!-- API Token -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="apiToken"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.jira.apiToken') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.jira.apiTokenDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="apiToken"
+                v-model="localConfig.api_token"
+                type="password"
+                :placeholder="t('settings.jira.apiTokenPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="apiToken"
-              v-model="localConfig.api_token"
-              type="password"
-              :placeholder="t('settings.jira.apiTokenPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
 
-        <!-- Project Key -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-          <div class="md:col-span-1">
-            <label
-              for="projectKey"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ t('settings.jira.projectKey') }}
-            </label>
-            <p class="text-xs text-gray-500 mb-2 md:mb-0">
-              {{ t('settings.jira.projectKeyDesc') }}
-            </p>
+          <!-- Project Key -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="projectKey"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{ t('settings.jira.projectKey') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.jira.projectKeyDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <input
+                id="projectKey"
+                v-model="localConfig.project_key"
+                type="text"
+                :placeholder="t('settings.jira.projectKeyPlaceholder')"
+                class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
           </div>
-          <div class="md:col-span-2">
-            <input
-              id="projectKey"
-              v-model="localConfig.project_key"
-              type="text"
-              :placeholder="t('settings.jira.projectKeyPlaceholder')"
-              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
-        </div>
         </template>
 
         <div v-if="error" class="rounded-md bg-red-50 p-2.5">
@@ -246,7 +246,9 @@
             class="w-full sm:w-auto"
             :loading="validating"
             :disabled="validating || saving || !hasRequiredFields"
-            :title="!hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''"
+            :title="
+              !hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''
+            "
             @click="handleValidate"
           >
             {{ validating ? t('common.loading') : t('settings.jira.validate') }}
@@ -299,7 +301,12 @@ const validationError = ref('')
 const validationSuccess = ref('')
 
 const hasRequiredFields = computed(() => {
-  return localConfig.server_url && localConfig.username && localConfig.api_token && localConfig.project_key
+  return (
+    localConfig.server_url &&
+    localConfig.username &&
+    localConfig.api_token &&
+    localConfig.project_key
+  )
 })
 
 watch(
@@ -312,9 +319,13 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(localConfig, (newValue) => {
-  emit('update:modelValue', { ...newValue })
-}, { deep: true })
+watch(
+  localConfig,
+  (newValue) => {
+    emit('update:modelValue', { ...newValue })
+  },
+  { deep: true }
+)
 
 const handleValidate = async () => {
   validating.value = true
@@ -326,7 +337,9 @@ const handleValidate = async () => {
     const validation = response.data || response
 
     if (!validation.valid) {
-      const errors = validation.errors || [validation.message || t('settings.jira.validateError')]
+      const errors = validation.errors || [
+        validation.message || t('settings.jira.validateError')
+      ]
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
       validationSuccess.value = t('settings.jira.validateSuccess')
@@ -341,7 +354,8 @@ const handleValidate = async () => {
       const errors = errorData.data.errors
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
-      validationError.value = errorData?.message || err.message || t('settings.jira.validateError')
+      validationError.value =
+        errorData?.message || err.message || t('settings.jira.validateError')
     }
   } finally {
     validating.value = false
@@ -361,8 +375,7 @@ const saveConfig = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save JIRA config:', err)
-    error.value =
-      err.response?.data?.message || t('settings.jira.saveError')
+    error.value = err.response?.data?.message || t('settings.jira.saveError')
   } finally {
     saving.value = false
   }

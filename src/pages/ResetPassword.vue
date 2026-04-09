@@ -1,6 +1,10 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-    <div class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12"
+  >
+    <div
+      class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm"
+    >
       <div class="mb-6 text-center">
         <h1 class="text-2xl font-semibold text-gray-900">
           {{ t('password.reset.title') }}
@@ -29,7 +33,11 @@
         {{ errorMessage }}
       </div>
 
-      <form v-if="!resetComplete" class="space-y-4" @submit.prevent="handleSubmit">
+      <form
+        v-if="!resetComplete"
+        class="space-y-4"
+        @submit.prevent="handleSubmit"
+      >
         <BaseInput
           v-model="form.newPassword1"
           :label="t('password.reset.newPassword')"

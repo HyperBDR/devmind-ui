@@ -13,9 +13,16 @@
       <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div class="p-6">
           <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <span class="text-sm text-gray-600">{{ t('management.totalUsers', { count: totalCount }) }}</span>
+            <span class="text-sm text-gray-600">{{
+              t('management.totalUsers', { count: totalCount })
+            }}</span>
             <div class="flex items-center gap-2">
-              <BaseButton variant="outline" size="sm" :loading="loading" @click="fetchUsers">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :loading="loading"
+                @click="fetchUsers"
+              >
                 {{ t('common.refresh') }}
               </BaseButton>
               <BaseButton variant="primary" size="sm" @click="openCreateModal">
@@ -37,7 +44,9 @@
             v-else-if="!users.length"
             class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
           >
-            <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('common.noData') }}
+            </p>
           </div>
 
           <div
@@ -52,7 +61,9 @@
                   <th class="table-head">{{ t('dashboard.email') }}</th>
                   <th class="table-head">{{ t('management.groups') }}</th>
                   <th class="table-head">{{ t('management.roles') }}</th>
-                  <th class="table-head">{{ t('management.defaultPlatform') }}</th>
+                  <th class="table-head">
+                    {{ t('management.defaultPlatform') }}
+                  </th>
                   <th class="table-head">{{ t('dashboard.isStaff') }}</th>
                   <th class="table-head">{{ t('management.isActive') }}</th>
                   <th class="table-head">{{ t('management.dateJoined') }}</th>
@@ -60,29 +71,70 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
-                <tr v-for="user in users" :key="user.id" class="transition-colors duration-150 hover:bg-gray-50">
+                <tr
+                  v-for="user in users"
+                  :key="user.id"
+                  class="transition-colors duration-150 hover:bg-gray-50"
+                >
                   <td class="table-cell text-gray-900">{{ user.id }}</td>
                   <td class="table-cell">
-                    <div class="font-medium text-gray-900">{{ user.username }}</div>
-                    <div class="text-xs text-gray-500">{{ user.display_name || '—' }}</div>
+                    <div class="font-medium text-gray-900">
+                      {{ user.username }}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      {{ user.display_name || '—' }}
+                    </div>
                   </td>
-                  <td class="table-cell text-gray-500">{{ user.email || '—' }}</td>
-                  <td class="table-cell text-gray-500">{{ joinNames(user.groups) }}</td>
-                  <td class="table-cell text-gray-500">{{ joinNames(user.effective_roles || user.roles) }}</td>
-                  <td class="table-cell text-gray-500">{{ formatPlatform(user.preferred_platform || user.access_profile?.preferred_platform) }}</td>
+                  <td class="table-cell text-gray-500">
+                    {{ user.email || '—' }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ joinNames(user.groups) }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ joinNames(user.effective_roles || user.roles) }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{
+                      formatPlatform(
+                        user.preferred_platform ||
+                          user.access_profile?.preferred_platform
+                      )
+                    }}
+                  </td>
                   <td class="table-cell">
-                    <span :class="user.is_staff ? 'text-indigo-600' : 'text-gray-400'">
+                    <span
+                      :class="
+                        user.is_staff ? 'text-indigo-600' : 'text-gray-400'
+                      "
+                    >
                       {{ user.is_staff ? t('common.yes') : t('common.no') }}
                     </span>
                   </td>
                   <td class="table-cell">
-                    <span :class="user.is_active !== false ? 'text-green-600' : 'text-gray-400'">
-                      {{ user.is_active !== false ? t('common.yes') : t('common.no') }}
+                    <span
+                      :class="
+                        user.is_active !== false
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      "
+                    >
+                      {{
+                        user.is_active !== false
+                          ? t('common.yes')
+                          : t('common.no')
+                      }}
                     </span>
                   </td>
-                  <td class="table-cell text-gray-500">{{ formatDate(user.date_joined) }}</td>
+                  <td class="table-cell text-gray-500">
+                    {{ formatDate(user.date_joined) }}
+                  </td>
                   <td class="table-cell">
-                    <BaseButton variant="outline" size="sm" @click="openEditModal(user)">
+                    <BaseButton
+                      variant="outline"
+                      size="sm"
+                      @click="openEditModal(user)"
+                    >
                       {{ t('common.edit') }}
                     </BaseButton>
                   </td>
@@ -99,21 +151,33 @@
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
             <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <label class="text-sm text-gray-600"
+                >{{ t('common.pagination.itemsPerPage') }}:</label
+              >
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                @change="currentPage = 1; fetchUsers()"
+                @change="handlePageSizeChange"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
                 <option :value="50">50</option>
                 <option :value="100">100</option>
               </select>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage <= 1" @click="currentPage--; fetchUsers()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="goToPreviousPage"
+              >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage >= totalPages" @click="currentPage++; fetchUsers()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="goToNextPage"
+              >
                 {{ t('common.pagination.next') }}
               </BaseButton>
             </div>
@@ -123,56 +187,117 @@
 
       <BaseModal :show="showModal" :title="modalTitle" @close="closeModal">
         <form @submit.prevent="submitUser" class="space-y-4">
-          <p v-if="submitError" class="text-sm text-red-600">{{ submitError }}</p>
+          <p v-if="submitError" class="text-sm text-red-600">
+            {{ submitError }}
+          </p>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('dashboard.username') }}</label>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('dashboard.username')
+            }}</label>
             <input v-model="form.username" type="text" class="form-input" />
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('dashboard.email') }}</label>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('dashboard.email')
+            }}</label>
             <input v-model="form.email" type="email" class="form-input" />
           </div>
           <div v-if="mode === 'create'">
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('password.reset.newPassword') }}</label>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('password.reset.newPassword')
+            }}</label>
             <input v-model="form.password" type="password" class="form-input" />
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectGroups') }}</label>
-            <div class="max-h-32 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
-              <label v-for="group in groupOptions" :key="group.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
-                <input v-model="form.group_ids" type="checkbox" :value="group.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.selectGroups')
+            }}</label>
+            <div
+              class="max-h-32 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2"
+            >
+              <label
+                v-for="group in groupOptions"
+                :key="group.id"
+                class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50"
+              >
+                <input
+                  v-model="form.group_ids"
+                  type="checkbox"
+                  :value="group.id"
+                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
                 <span class="text-sm text-gray-700">{{ group.name }}</span>
               </label>
             </div>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.selectRoles') }}</label>
-            <div class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2">
-              <label v-for="role in roleOptions" :key="role.id" class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50">
-                <input v-model="form.role_ids" type="checkbox" :value="role.id" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.selectRoles')
+            }}</label>
+            <div
+              class="max-h-40 space-y-2 overflow-y-auto rounded-md border border-gray-300 bg-white p-2"
+            >
+              <label
+                v-for="role in roleOptions"
+                :key="role.id"
+                class="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50"
+              >
+                <input
+                  v-model="form.role_ids"
+                  type="checkbox"
+                  :value="role.id"
+                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
                 <span class="text-sm text-gray-700">{{ role.name }}</span>
               </label>
             </div>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.defaultPlatform') }}</label>
-            <select v-model="form.preferred_platform" class="form-input bg-white">
-              <option value="">{{ t('management.followRolePreference') }}</option>
-              <option v-for="platform in platformOptions" :key="platform.key" :value="platform.key">
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.defaultPlatform')
+            }}</label>
+            <select
+              v-model="form.preferred_platform"
+              class="form-input bg-white"
+            >
+              <option value="">
+                {{ t('management.followRolePreference') }}
+              </option>
+              <option
+                v-for="platform in platformOptions"
+                :key="platform.key"
+                :value="platform.key"
+              >
                 {{ platform.label }}
               </option>
             </select>
           </div>
           <div class="grid gap-4 md:grid-cols-2">
             <div class="flex items-center gap-3">
-              <input v-model="form.is_staff" type="checkbox" id="user-is-staff" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-              <label for="user-is-staff" class="cursor-pointer text-sm font-medium text-gray-700">
+              <input
+                v-model="form.is_staff"
+                type="checkbox"
+                id="user-is-staff"
+                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <label
+                for="user-is-staff"
+                class="cursor-pointer text-sm font-medium text-gray-700"
+              >
                 {{ t('dashboard.isStaff') }}
               </label>
             </div>
             <div class="flex items-center gap-3">
-              <input v-model="form.is_active" type="checkbox" id="user-is-active" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-              <label for="user-is-active" class="cursor-pointer text-sm font-medium text-gray-700">
+              <input
+                v-model="form.is_active"
+                type="checkbox"
+                id="user-is-active"
+                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <label
+                for="user-is-active"
+                class="cursor-pointer text-sm font-medium text-gray-700"
+              >
                 {{ t('management.isActive') }}
               </label>
             </div>
@@ -180,7 +305,11 @@
         </form>
         <template #footer>
           <div class="flex flex-row-reverse gap-2">
-            <BaseButton variant="primary" :loading="submitLoading" @click="submitUser">
+            <BaseButton
+              variant="primary"
+              :loading="submitLoading"
+              @click="submitUser"
+            >
               {{ t('common.confirm') }}
             </BaseButton>
             <BaseButton variant="outline" @click="closeModal">
@@ -239,13 +368,16 @@ const totalPages = computed(() =>
 )
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from:
+    totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
 
 const modalTitle = computed(() =>
-  mode.value === 'create' ? t('management.createUser') : t('management.editUser')
+  mode.value === 'create'
+    ? t('management.createUser')
+    : t('management.editUser')
 )
 
 const platformOptions = computed(() =>
@@ -256,7 +388,9 @@ const platformOptions = computed(() =>
 )
 
 function joinNames(items) {
-  return Array.isArray(items) && items.length ? items.map((item) => item.name).join(', ') : '—'
+  return Array.isArray(items) && items.length
+    ? items.map((item) => item.name).join(', ')
+    : '—'
 }
 
 function formatDate(value) {
@@ -293,8 +427,12 @@ function openEditModal(user) {
     password: '',
     is_staff: !!user.is_staff,
     is_active: user.is_active !== false,
-    group_ids: Array.isArray(user.groups) ? user.groups.map((item) => item.id) : [],
-    role_ids: Array.isArray(user.roles) ? user.roles.map((item) => item.id) : [],
+    group_ids: Array.isArray(user.groups)
+      ? user.groups.map((item) => item.id)
+      : [],
+    role_ids: Array.isArray(user.roles)
+      ? user.roles.map((item) => item.id)
+      : [],
     preferred_platform: user.preferred_platform || ''
   }
   showModal.value = true
@@ -306,8 +444,12 @@ async function loadOptions() {
       managementApi.getGroups({ page: 1, page_size: 1000 }),
       managementApi.getRoles({ page: 1, page_size: 1000 })
     ])
-    groupOptions.value = Array.isArray(groupsData) ? groupsData : (groupsData?.results ?? [])
-    roleOptions.value = Array.isArray(rolesData) ? rolesData : (rolesData?.results ?? [])
+    groupOptions.value = Array.isArray(groupsData)
+      ? groupsData
+      : (groupsData?.results ?? [])
+    roleOptions.value = Array.isArray(rolesData)
+      ? rolesData
+      : (rolesData?.results ?? [])
   } catch {
     groupOptions.value = []
     roleOptions.value = []
@@ -355,11 +497,27 @@ async function submitUser() {
     } else if (e?.response?.data?.code === 'email_taken') {
       submitError.value = t('management.emailTaken')
     } else {
-      submitError.value = typeof detail === 'string' ? detail : t('common.error')
+      submitError.value =
+        typeof detail === 'string' ? detail : t('common.error')
     }
   } finally {
     submitLoading.value = false
   }
+}
+
+function handlePageSizeChange() {
+  currentPage.value = 1
+  fetchUsers()
+}
+
+function goToPreviousPage() {
+  currentPage.value -= 1
+  fetchUsers()
+}
+
+function goToNextPage() {
+  currentPage.value += 1
+  fetchUsers()
 }
 
 async function fetchUsers() {
@@ -371,7 +529,9 @@ async function fetchUsers() {
       page_size: pageSize.value
     })
     users.value = Array.isArray(data) ? data : (data?.results ?? [])
-    totalCount.value = Array.isArray(data) ? data.length : Number(data?.count ?? users.value.length)
+    totalCount.value = Array.isArray(data)
+      ? data.length
+      : Number(data?.count ?? users.value.length)
   } catch (e) {
     users.value = []
     totalCount.value = 0

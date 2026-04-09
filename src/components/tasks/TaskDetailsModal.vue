@@ -33,7 +33,9 @@
         @click.stop
       >
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0 rounded-t-lg">
+        <div
+          class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0 rounded-t-lg"
+        >
           <h2 class="text-lg font-semibold text-gray-900">
             {{ t('tasks.details') }}
           </h2>
@@ -59,228 +61,324 @@
 
         <!-- Content - Scrollable -->
         <div class="flex-1 overflow-y-auto min-h-0">
-        <div v-if="task" class="p-6 space-y-6">
-          <div>
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('tasks.basicInfo') }}
-            </h3>
-            <dl class="grid grid-cols-1 gap-4">
-              <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  {{ t('tasks.name') }}
-                </dt>
-                <dd class="text-sm font-medium text-gray-900">{{ task.name }}</dd>
-              </div>
-              <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  {{ t('tasks.statusLabel') }}
-                </dt>
-                <dd>
-                  <StatusBadge :status="mapStatus(task.status)" />
-                </dd>
-              </div>
-              <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  {{ t('tasks.startedAt') }}
-                </dt>
-                <dd class="text-sm font-medium text-gray-900">{{ formatDate(task.started_at) }}</dd>
-              </div>
-              <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  {{ t('tasks.finishedAt') }}
-                </dt>
-                <dd class="text-sm font-medium text-gray-900">{{ formatDate(task.finished_at) }}</dd>
-              </div>
-              <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
-                  {{ t('tasks.createdAt') }}
-                </dt>
-                <dd class="text-sm font-medium text-gray-900">{{ formatDate(task.created_at) }}</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div v-if="task.last_error" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('tasks.error') }}
-            </h3>
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
-              <pre class="text-xs font-medium text-red-800 whitespace-pre-wrap">{{ task.last_error }}</pre>
-            </div>
-          </div>
-
-          <div v-if="task.result && Object.keys(task.result).length > 0" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('tasks.result') }}
-            </h3>
-            <div class="space-y-3">
-              <!-- Formatted Result Display -->
-              <div v-if="formattedResult" class="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4 shadow-sm">
-                <div v-for="(value, key) in formattedResult" :key="key" class="flex items-start">
-                  <span class="text-sm font-semibold text-gray-700 min-w-[140px]">{{ key }}:</span>
-                  <span
-                    class="text-sm font-medium text-gray-900 flex-1 break-words"
-                    :class="Array.isArray(value) ? 'block' : ''"
+          <div v-if="task" class="p-6 space-y-6">
+            <div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('tasks.basicInfo') }}
+              </h3>
+              <dl class="grid grid-cols-1 gap-4">
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
                   >
-                    <template v-if="Array.isArray(value)">
-                      <div class="space-y-2">
-                        <span
-                          v-for="(item, idx) in value"
-                          :key="idx"
-                          class="inline-block bg-white px-2.5 py-1 rounded-full text-xs font-medium border border-gray-200 shadow-sm mr-2 mb-1"
-                        >
-                          {{ item }}
-                        </span>
-                      </div>
-                    </template>
-                    <template v-else>
-                      {{ value }}
-                    </template>
-                  </span>
+                    {{ t('tasks.name') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ task.name }}
+                  </dd>
                 </div>
-              </div>
-              <!-- Statistics with Progress Bars -->
-              <div v-if="statisticsData" class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4 shadow-sm">
-                <!-- Collected Count -->
-                <div v-if="statisticsData.collected > 0">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      {{ t('tasks.collectedCount') }}
-                    </span>
-                    <span class="text-sm font-semibold text-gray-900">
-                      {{ statisticsData.collected }}
-                    </span>
-                  </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('tasks.statusLabel') }}
+                  </dt>
+                  <dd>
+                    <StatusBadge :status="mapStatus(task.status)" />
+                  </dd>
                 </div>
-
-                <!-- Success Progress -->
-                <div v-if="statisticsData.total > 0">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      {{ t('tasks.success') }}
-                    </span>
-                    <span class="text-sm font-semibold text-green-700">
-                      {{ statisticsData.successful }} / {{ statisticsData.total }}
-                    </span>
-                  </div>
-                  <div class="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
-                    <div
-                      class="bg-green-600 h-2.5 rounded-full transition-all shadow-sm"
-                      :style="{ width: `${statisticsData.successPercentage}%` }"
-                    />
-                  </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('tasks.startedAt') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatDate(task.started_at) }}
+                  </dd>
                 </div>
-
-                <!-- Failed Progress -->
-                <div v-if="statisticsData.failed > 0">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      {{ t('tasks.failed') }}
-                    </span>
-                    <span class="text-sm font-semibold text-red-700">
-                      {{ statisticsData.failed }} / {{ statisticsData.total }}
-                    </span>
-                  </div>
-                  <div class="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
-                    <div
-                      class="bg-red-600 h-2.5 rounded-full transition-all shadow-sm"
-                      :style="{ width: `${statisticsData.failedPercentage}%` }"
-                    />
-                  </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('tasks.finishedAt') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatDate(task.finished_at) }}
+                  </dd>
                 </div>
-
-                <!-- Success Rate -->
-                <div v-if="statisticsData.total > 0" class="pt-3 border-t border-gray-200">
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      {{ t('tasks.successRate') }}
-                    </span>
-                    <span class="text-sm font-semibold text-primary-700">
-                      {{ statisticsData.successRate }}%
-                    </span>
-                  </div>
+                <div>
+                  <dt
+                    class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                  >
+                    {{ t('tasks.createdAt') }}
+                  </dt>
+                  <dd class="text-sm font-medium text-gray-900">
+                    {{ formatDate(task.created_at) }}
+                  </dd>
                 </div>
-              </div>
-
-              <!-- Failure Reasons -->
-              <div v-if="failureReasons && failureReasons.length > 0" class="border-t border-gray-200 pt-4">
-                <h4 class="text-xs font-semibold text-gray-900 mb-3 uppercase tracking-wider">
-                  {{ t('tasks.failureReasons') }}
-                </h4>
-                <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                      <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                          {{ t('tasks.reason') }}
-                        </th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                          {{ t('tasks.count') }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                      <tr
-                        v-for="(item, index) in failureReasons"
-                        :key="index"
-                        class="transition-colors duration-150 hover:bg-gray-50"
-                      >
-                        <td class="px-4 py-4 text-sm font-medium text-gray-900">
-                          {{ item.reason }}
-                        </td>
-                        <td class="px-4 py-4 text-sm font-semibold text-red-600 text-right">
-                          {{ item.count }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Raw Data -->
-              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <details class="cursor-pointer">
-                  <summary class="text-xs font-semibold text-gray-700 mb-2">
-                    {{ t('tasks.viewRawData') }}
-                  </summary>
-                  <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap mt-3 bg-white p-3 rounded border border-gray-200">{{ JSON.stringify(task.result, null, 2) }}</pre>
-                </details>
-              </div>
+              </dl>
             </div>
-          </div>
 
-          <div v-if="task.parameters && Object.keys(task.parameters).length > 0" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('tasks.parameters') }}
-            </h3>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-              <pre class="text-xs font-mono font-medium text-gray-800 whitespace-pre-wrap">{{ JSON.stringify(task.parameters, null, 2) }}</pre>
-            </div>
-          </div>
-
-          <div v-if="task.steps && task.steps.length > 0" class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">
-              {{ t('tasks.steps') }}
-            </h3>
-            <div class="space-y-3">
+            <div v-if="task.last_error" class="border-t border-gray-200 pt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('tasks.error') }}
+              </h3>
               <div
-                v-for="(step, index) in task.steps"
-                :key="index"
-                class="border border-gray-200 rounded-lg p-4 bg-white shadow-sm transition-shadow hover:shadow-md"
+                class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm"
               >
-                <div class="text-sm font-semibold text-gray-900 mb-2">
-                  {{ step.step || step.name || `Step ${index + 1}` }}
+                <pre
+                  class="text-xs font-medium text-red-800 whitespace-pre-wrap"
+                  >{{ task.last_error }}</pre
+                >
+              </div>
+            </div>
+
+            <div
+              v-if="task.result && Object.keys(task.result).length > 0"
+              class="border-t border-gray-200 pt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('tasks.result') }}
+              </h3>
+              <div class="space-y-3">
+                <!-- Formatted Result Display -->
+                <div
+                  v-if="formattedResult"
+                  class="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4 shadow-sm"
+                >
+                  <div
+                    v-for="(value, key) in formattedResult"
+                    :key="key"
+                    class="flex items-start"
+                  >
+                    <span
+                      class="text-sm font-semibold text-gray-700 min-w-[140px]"
+                      >{{ key }}:</span
+                    >
+                    <span
+                      class="text-sm font-medium text-gray-900 flex-1 break-words"
+                      :class="Array.isArray(value) ? 'block' : ''"
+                    >
+                      <template v-if="Array.isArray(value)">
+                        <div class="space-y-2">
+                          <span
+                            v-for="(item, idx) in value"
+                            :key="idx"
+                            class="inline-block bg-white px-2.5 py-1 rounded-full text-xs font-medium border border-gray-200 shadow-sm mr-2 mb-1"
+                          >
+                            {{ item }}
+                          </span>
+                        </div>
+                      </template>
+                      <template v-else>
+                        {{ value }}
+                      </template>
+                    </span>
+                  </div>
                 </div>
-                <div v-if="step.message" class="text-sm font-medium text-gray-700">
-                  {{ step.message }}
+                <!-- Statistics with Progress Bars -->
+                <div
+                  v-if="statisticsData"
+                  class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4 shadow-sm"
+                >
+                  <!-- Collected Count -->
+                  <div v-if="statisticsData.collected > 0">
+                    <div class="flex items-center justify-between mb-2">
+                      <span
+                        class="text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                      >
+                        {{ t('tasks.collectedCount') }}
+                      </span>
+                      <span class="text-sm font-semibold text-gray-900">
+                        {{ statisticsData.collected }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Success Progress -->
+                  <div v-if="statisticsData.total > 0">
+                    <div class="flex items-center justify-between mb-2">
+                      <span
+                        class="text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                      >
+                        {{ t('tasks.success') }}
+                      </span>
+                      <span class="text-sm font-semibold text-green-700">
+                        {{ statisticsData.successful }} /
+                        {{ statisticsData.total }}
+                      </span>
+                    </div>
+                    <div
+                      class="w-full bg-gray-200 rounded-full h-2.5 shadow-inner"
+                    >
+                      <div
+                        class="bg-green-600 h-2.5 rounded-full transition-all shadow-sm"
+                        :style="{
+                          width: `${statisticsData.successPercentage}%`
+                        }"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Failed Progress -->
+                  <div v-if="statisticsData.failed > 0">
+                    <div class="flex items-center justify-between mb-2">
+                      <span
+                        class="text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                      >
+                        {{ t('tasks.failed') }}
+                      </span>
+                      <span class="text-sm font-semibold text-red-700">
+                        {{ statisticsData.failed }} / {{ statisticsData.total }}
+                      </span>
+                    </div>
+                    <div
+                      class="w-full bg-gray-200 rounded-full h-2.5 shadow-inner"
+                    >
+                      <div
+                        class="bg-red-600 h-2.5 rounded-full transition-all shadow-sm"
+                        :style="{
+                          width: `${statisticsData.failedPercentage}%`
+                        }"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Success Rate -->
+                  <div
+                    v-if="statisticsData.total > 0"
+                    class="pt-3 border-t border-gray-200"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                      >
+                        {{ t('tasks.successRate') }}
+                      </span>
+                      <span class="text-sm font-semibold text-primary-700">
+                        {{ statisticsData.successRate }}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div v-if="step.timestamp" class="text-xs font-medium text-gray-500 mt-2">
-                  {{ formatDate(step.timestamp) }}
+
+                <!-- Failure Reasons -->
+                <div
+                  v-if="failureReasons && failureReasons.length > 0"
+                  class="border-t border-gray-200 pt-4"
+                >
+                  <h4
+                    class="text-xs font-semibold text-gray-900 mb-3 uppercase tracking-wider"
+                  >
+                    {{ t('tasks.failureReasons') }}
+                  </h4>
+                  <div
+                    class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm"
+                  >
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <tr>
+                          <th
+                            class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                          >
+                            {{ t('tasks.reason') }}
+                          </th>
+                          <th
+                            class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                          >
+                            {{ t('tasks.count') }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-100">
+                        <tr
+                          v-for="(item, index) in failureReasons"
+                          :key="index"
+                          class="transition-colors duration-150 hover:bg-gray-50"
+                        >
+                          <td
+                            class="px-4 py-4 text-sm font-medium text-gray-900"
+                          >
+                            {{ item.reason }}
+                          </td>
+                          <td
+                            class="px-4 py-4 text-sm font-semibold text-red-600 text-right"
+                          >
+                            {{ item.count }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Raw Data -->
+                <div
+                  class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm"
+                >
+                  <details class="cursor-pointer">
+                    <summary class="text-xs font-semibold text-gray-700 mb-2">
+                      {{ t('tasks.viewRawData') }}
+                    </summary>
+                    <pre
+                      class="text-xs font-mono text-gray-800 whitespace-pre-wrap mt-3 bg-white p-3 rounded border border-gray-200"
+                      >{{ JSON.stringify(task.result, null, 2) }}</pre
+                    >
+                  </details>
+                </div>
+              </div>
+            </div>
+
+            <div
+              v-if="task.parameters && Object.keys(task.parameters).length > 0"
+              class="border-t border-gray-200 pt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('tasks.parameters') }}
+              </h3>
+              <div
+                class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm"
+              >
+                <pre
+                  class="text-xs font-mono font-medium text-gray-800 whitespace-pre-wrap"
+                  >{{ JSON.stringify(task.parameters, null, 2) }}</pre
+                >
+              </div>
+            </div>
+
+            <div
+              v-if="task.steps && task.steps.length > 0"
+              class="border-t border-gray-200 pt-6"
+            >
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                {{ t('tasks.steps') }}
+              </h3>
+              <div class="space-y-3">
+                <div
+                  v-for="(step, index) in task.steps"
+                  :key="index"
+                  class="border border-gray-200 rounded-lg p-4 bg-white shadow-sm transition-shadow hover:shadow-md"
+                >
+                  <div class="text-sm font-semibold text-gray-900 mb-2">
+                    {{ step.step || step.name || `Step ${index + 1}` }}
+                  </div>
+                  <div
+                    v-if="step.message"
+                    class="text-sm font-medium text-gray-700"
+                  >
+                    {{ step.message }}
+                  </div>
+                  <div
+                    v-if="step.timestamp"
+                    class="text-xs font-medium text-gray-500 mt-2"
+                  >
+                    {{ formatDate(step.timestamp) }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
@@ -347,10 +445,16 @@ const formattedResult = computed(() => {
     if (result.users_processed !== undefined) {
       formatted[t('tasks.usersProcessed')] = result.users_processed
     }
-    if (result.articles && Array.isArray(result.articles) && result.articles.length > 0) {
+    if (
+      result.articles &&
+      Array.isArray(result.articles) &&
+      result.articles.length > 0
+    ) {
       formatted[t('tasks.publishedArticles')] = result.articles.length
-      formatted[t('tasks.articleList')] = result.articles.map(a =>
-        a.title ? `${a.id} (${a.title.substring(0, 30)}${a.title.length > 30 ? '...' : ''})` : a.id
+      formatted[t('tasks.articleList')] = result.articles.map((a) =>
+        a.title
+          ? `${a.id} (${a.title.substring(0, 30)}${a.title.length > 30 ? '...' : ''})`
+          : a.id
       )
     }
     if (Object.keys(formatted).length > 0) {
@@ -375,7 +479,6 @@ const formattedResult = computed(() => {
     }
   }
 
-
   return null
 })
 
@@ -385,17 +488,29 @@ const statisticsData = computed(() => {
   const result = props.task.result
   const statistics = result.statistics || {}
 
-  const successful = statistics.successful ?? result.successful_count ?? result.success_count ?? result.processed_count ?? 0
+  const successful =
+    statistics.successful ??
+    result.successful_count ??
+    result.success_count ??
+    result.processed_count ??
+    0
   const failed = statistics.failed ?? result.failed_count ?? 0
-  const collected = statistics.total ?? result.collected_count ?? result.article_source_count ?? (successful + failed)
+  const collected =
+    statistics.total ??
+    result.collected_count ??
+    result.article_source_count ??
+    successful + failed
 
   const total = successful + failed || collected
 
   if (total === 0 && collected === 0) return null
 
-  const successPercentage = total > 0 ? Math.round((successful / total) * 100) : 0
+  const successPercentage =
+    total > 0 ? Math.round((successful / total) * 100) : 0
   const failedPercentage = total > 0 ? Math.round((failed / total) * 100) : 0
-  const successRate = statistics.success_rate ?? (total > 0 ? ((successful / total) * 100).toFixed(1) : 0)
+  const successRate =
+    statistics.success_rate ??
+    (total > 0 ? ((successful / total) * 100).toFixed(1) : 0)
 
   return {
     collected,
@@ -413,7 +528,7 @@ const formatFileSize = (bytes) => {
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
 const formattedParameters = computed(() => {
@@ -471,15 +586,15 @@ const formattedParameters = computed(() => {
 
 const formatParameterKey = (key) => {
   const keyMap = {
-    'task_type': t('tasks.taskType'),
-    'scan_hours': t('tasks.scanHours'),
-    'query_keywords': t('tasks.queryKeywords'),
-    'query_topics': t('tasks.queryTopics'),
-    'count': t('tasks.count'),
-    'source_language': t('tasks.sourceLanguage'),
-    'source_region': t('tasks.sourceRegion'),
-    'period': t('tasks.period'),
-    'social_account': t('tasks.socialAccount')
+    task_type: t('tasks.taskType'),
+    scan_hours: t('tasks.scanHours'),
+    query_keywords: t('tasks.queryKeywords'),
+    query_topics: t('tasks.queryTopics'),
+    count: t('tasks.count'),
+    source_language: t('tasks.sourceLanguage'),
+    source_region: t('tasks.sourceRegion'),
+    period: t('tasks.period'),
+    social_account: t('tasks.socialAccount')
   }
   return keyMap[key] || key
 }
@@ -528,11 +643,18 @@ const getResultStats = (result) => {
   const statistics = result.statistics || {}
 
   // Extract counts from statistics or direct properties
-  const total = statistics.total ?? result.total_count ?? result.article_source_count ?? 0
-  const successful = statistics.successful ?? result.successful_count ?? result.success_count ?? result.processed_count ?? 0
+  const total =
+    statistics.total ?? result.total_count ?? result.article_source_count ?? 0
+  const successful =
+    statistics.successful ??
+    result.successful_count ??
+    result.success_count ??
+    result.processed_count ??
+    0
   const failed = statistics.failed ?? result.failed_count ?? 0
   const skipped = statistics.skipped ?? result.skipped_count ?? 0
-  const collected = result.collected_count ?? result.article_source_count ?? total
+  const collected =
+    result.collected_count ?? result.article_source_count ?? total
 
   // Check for arrays that indicate counts
   if (Array.isArray(result.processed_articles)) {
@@ -575,7 +697,7 @@ const getResultStats = (result) => {
   }
 
   // Calculate total from available counts
-  const finalTotal = total || (successful + failed + skipped) || collected
+  const finalTotal = total || successful + failed + skipped || collected
   if (finalTotal > 0) {
     stats[t('tasks.totalCount')] = finalTotal
 
@@ -590,7 +712,9 @@ const getResultStats = (result) => {
 
   // Success flag
   if (typeof result.success === 'boolean') {
-    stats[t('tasks.overallStatus')] = result.success ? t('tasks.success') : t('tasks.failed')
+    stats[t('tasks.overallStatus')] = result.success
+      ? t('tasks.success')
+      : t('tasks.failed')
   }
 
   return stats
@@ -603,7 +727,10 @@ const getFailureReasons = (result) => {
   const statistics = result.statistics || {}
 
   // Extract error reasons
-  if (statistics.error_reasons && typeof statistics.error_reasons === 'object') {
+  if (
+    statistics.error_reasons &&
+    typeof statistics.error_reasons === 'object'
+  ) {
     Object.entries(statistics.error_reasons).forEach(([reason, count]) => {
       if (count > 0) {
         reasons.push({

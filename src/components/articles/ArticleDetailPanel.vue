@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('articles.preview') }}
         </h2>
@@ -100,7 +102,6 @@
       </div>
     </div>
   </Transition>
-
 </template>
 
 <script setup>
@@ -149,11 +150,14 @@ const tabs = computed(() => {
   return tabList
 })
 
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    activeTab.value = 'translated'
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      activeTab.value = 'translated'
+    }
   }
-})
+)
 
 const handleClose = () => {
   emit('close')

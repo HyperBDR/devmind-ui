@@ -29,9 +29,15 @@
       class="fixed inset-y-0 right-0 w-full max-w-3xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0"
+      >
         <h2 class="text-base font-semibold text-gray-900">
-          {{ t('githubTrending.dateDetail.title', { date: formatDate(selectedDate) }) }}
+          {{
+            t('githubTrending.dateDetail.title', {
+              date: formatDate(selectedDate)
+            })
+          }}
         </h2>
         <button
           @click="handleClose"
@@ -76,7 +82,8 @@
                   <span>{{ tab.icon }}</span>
                   <span>{{ tab.label }}</span>
                   <span class="text-xs text-gray-400">
-                    ({{ getRecordsByPeriod(tab.id).length }} {{ t('githubTrending.dateDetail.projects') }})
+                    ({{ getRecordsByPeriod(tab.id).length }}
+                    {{ t('githubTrending.dateDetail.projects') }})
                   </span>
                 </button>
               </nav>
@@ -84,29 +91,45 @@
 
             <div class="mt-4">
               <!-- Table for active tab -->
-              <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+              <div
+                class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm"
+              >
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.rank') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.project') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.language') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.stars') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.forks') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.starGrowth') }}
                       </th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                      <th
+                        class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200"
+                      >
                         {{ t('githubTrending.table.rankChange') }}
                       </th>
                     </tr>
@@ -154,10 +177,13 @@
                           v-if="record.star_growth !== null"
                           :class="[
                             'text-sm font-semibold',
-                            record.star_growth >= 0 ? 'text-green-600' : 'text-red-600'
+                            record.star_growth >= 0
+                              ? 'text-green-600'
+                              : 'text-red-600'
                           ]"
                         >
-                          {{ record.star_growth >= 0 ? '+' : '' }}{{ formatNumber(record.star_growth) }}
+                          {{ record.star_growth >= 0 ? '+' : ''
+                          }}{{ formatNumber(record.star_growth) }}
                         </span>
                         <span v-else class="text-sm text-gray-400">-</span>
                       </td>
@@ -166,11 +192,25 @@
                           v-if="record.rank_change !== null"
                           :class="[
                             'text-sm font-semibold',
-                            record.rank_change > 0 ? 'text-green-600' : record.rank_change < 0 ? 'text-red-600' : 'text-gray-600'
+                            record.rank_change > 0
+                              ? 'text-green-600'
+                              : record.rank_change < 0
+                                ? 'text-red-600'
+                                : 'text-gray-600'
                           ]"
                         >
-                          {{ record.rank_change > 0 ? '↑' : record.rank_change < 0 ? '↓' : '→' }}
-                          {{ record.rank_change !== 0 ? Math.abs(record.rank_change) : '' }}
+                          {{
+                            record.rank_change > 0
+                              ? '↑'
+                              : record.rank_change < 0
+                                ? '↓'
+                                : '→'
+                          }}
+                          {{
+                            record.rank_change !== 0
+                              ? Math.abs(record.rank_change)
+                              : ''
+                          }}
                         </span>
                         <span v-else class="text-sm text-gray-400">-</span>
                       </td>
@@ -183,7 +223,9 @@
         </div>
 
         <div v-else class="py-8 text-center">
-          <p class="text-sm text-gray-600">{{ t('githubTrending.dateDetail.noRecords') }}</p>
+          <p class="text-sm text-gray-600">
+            {{ t('githubTrending.dateDetail.noRecords') }}
+          </p>
         </div>
       </div>
     </div>
@@ -225,7 +267,7 @@ const allTabs = [
 ]
 
 const availableTabs = computed(() => {
-  return allTabs.filter(tab => getRecordsByPeriod(tab.id).length > 0)
+  return allTabs.filter((tab) => getRecordsByPeriod(tab.id).length > 0)
 })
 
 const loadDateRecords = async () => {
@@ -305,7 +347,8 @@ const formatNumber = (num) => {
 
 const getRecordsByPeriod = (period) => {
   if (!dateRecords.value || dateRecords.value.length === 0) return []
-  return dateRecords.value.filter(record => record.trending_period === period)
+  return dateRecords.value
+    .filter((record) => record.trending_period === period)
     .sort((a, b) => a.trending_rank - b.trending_rank)
 }
 
@@ -317,15 +360,21 @@ const handleViewProject = (projectId) => {
   emit('view-project', projectId)
 }
 
-watch(() => props.show, (newVal) => {
-  if (newVal && props.selectedDate) {
-    loadDateRecords()
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal && props.selectedDate) {
+      loadDateRecords()
+    }
   }
-})
+)
 
-watch(() => props.selectedDate, () => {
-  if (props.show && props.selectedDate) {
-    loadDateRecords()
+watch(
+  () => props.selectedDate,
+  () => {
+    if (props.show && props.selectedDate) {
+      loadDateRecords()
+    }
   }
-})
+)
 </script>

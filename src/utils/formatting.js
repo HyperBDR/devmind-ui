@@ -10,7 +10,10 @@ export function formatNumLocale(value, locale) {
   if (value === null || value === undefined) return '-'
   const n = Number(value)
   if (Number.isNaN(n)) return '-'
-  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(n)
+  return new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0
+  }).format(n)
 }
 
 /**
@@ -80,7 +83,8 @@ export function formatChange(change) {
 export function formatDate(dateString, pattern = 'yyyy-MM-dd HH:mm') {
   if (!dateString) return '-'
   try {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
+    const date =
+      typeof dateString === 'string' ? new Date(dateString) : dateString
     return format(date, pattern)
   } catch {
     return dateString
@@ -114,7 +118,11 @@ export function formatDuration(seconds) {
  * @param {boolean} includeFontMedium - Whether to include 'font-medium' class (default: false)
  * @returns {string} CSS class string
  */
-export function getChangeClass(change, defaultClass = 'text-gray-500', includeFontMedium = false) {
+export function getChangeClass(
+  change,
+  defaultClass = 'text-gray-500',
+  includeFontMedium = false
+) {
   if (change === null || change === undefined) return defaultClass
   const baseClass = change >= 0 ? 'text-red-600' : 'text-green-600'
   return includeFontMedium ? `${baseClass} font-medium` : baseClass

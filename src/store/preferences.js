@@ -29,11 +29,13 @@ export const usePreferencesStore = defineStore('preferences', {
       this.language = language
       i18n.global.locale.value = language
       localStorage.setItem('userLanguage', language)
-      
+
       // Note: saveToBackend is kept for backward compatibility but should not be used
       // UI language switching should not affect Profile.language
       if (saveToBackend) {
-        console.warn('setLanguage with saveToBackend=true is deprecated. UI language should not sync to Profile.language')
+        console.warn(
+          'setLanguage with saveToBackend=true is deprecated. UI language should not sync to Profile.language'
+        )
       }
     },
 

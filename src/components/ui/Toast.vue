@@ -15,7 +15,7 @@
           'rounded-md border p-3 shadow-lg',
           typeClasses[state.type]
         ]"
-        style="z-index: 9999;"
+        style="z-index: 9999"
         role="alert"
       >
         <div class="flex gap-2">
@@ -29,10 +29,7 @@
           </div>
           <button
             @click="handleClose"
-            :class="[
-              'flex-shrink-0',
-              closeButtonClasses[state.type]
-            ]"
+            :class="['flex-shrink-0', closeButtonClasses[state.type]]"
             :title="t('common.close')"
           >
             <svg

@@ -13,9 +13,16 @@
       <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div class="p-6">
           <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <span class="text-sm text-gray-600">{{ t('management.totalRoles', { count: totalCount }) }}</span>
+            <span class="text-sm text-gray-600">{{
+              t('management.totalRoles', { count: totalCount })
+            }}</span>
             <div class="flex items-center gap-2">
-              <BaseButton variant="outline" size="sm" :loading="loading" @click="fetchRoles">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :loading="loading"
+                @click="fetchRoles"
+              >
                 {{ t('common.refresh') }}
               </BaseButton>
               <BaseButton variant="primary" size="sm" @click="openCreateModal">
@@ -26,12 +33,20 @@
 
           <BaseLoading v-if="loading && !roles.length" />
 
-          <div v-else-if="error" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
+          <div
+            v-else-if="error"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
+          >
             <p class="text-sm font-medium text-red-600">{{ error }}</p>
           </div>
 
-          <div v-else-if="!roles.length" class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center">
-            <p class="text-sm font-medium text-gray-600">{{ t('common.noData') }}</p>
+          <div
+            v-else-if="!roles.length"
+            class="rounded-lg border border-gray-200 bg-gray-50 py-16 text-center"
+          >
+            <p class="text-sm font-medium text-gray-600">
+              {{ t('common.noData') }}
+            </p>
           </div>
 
           <div
@@ -43,29 +58,57 @@
                 <tr>
                   <th class="table-head">ID</th>
                   <th class="table-head">{{ t('management.roleName') }}</th>
-                  <th class="table-head">{{ t('management.visibleFeatures') }}</th>
-                  <th class="table-head">{{ t('management.defaultPlatform') }}</th>
-                  <th class="table-head">{{ t('management.groupUserCount') }}</th>
+                  <th class="table-head">
+                    {{ t('management.visibleFeatures') }}
+                  </th>
+                  <th class="table-head">
+                    {{ t('management.defaultPlatform') }}
+                  </th>
+                  <th class="table-head">
+                    {{ t('management.groupUserCount') }}
+                  </th>
                   <th class="table-head">{{ t('management.groupCount') }}</th>
                   <th class="table-head">{{ t('management.isActive') }}</th>
                   <th class="table-head">{{ t('common.actions') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
-                <tr v-for="role in roles" :key="role.id" class="transition-colors duration-150 hover:bg-gray-50">
+                <tr
+                  v-for="role in roles"
+                  :key="role.id"
+                  class="transition-colors duration-150 hover:bg-gray-50"
+                >
                   <td class="table-cell text-gray-900">{{ role.id }}</td>
-                  <td class="table-cell font-medium text-gray-900">{{ role.name }}</td>
-                  <td class="table-cell text-gray-500">{{ formatFeatures(role.visible_features) }}</td>
-                  <td class="table-cell text-gray-500">{{ formatPlatform(role.preferred_platform) }}</td>
-                  <td class="table-cell text-gray-500">{{ role.user_count ?? 0 }}</td>
-                  <td class="table-cell text-gray-500">{{ role.group_count ?? 0 }}</td>
+                  <td class="table-cell font-medium text-gray-900">
+                    {{ role.name }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ formatFeatures(role.visible_features) }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ formatPlatform(role.preferred_platform) }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ role.user_count ?? 0 }}
+                  </td>
+                  <td class="table-cell text-gray-500">
+                    {{ role.group_count ?? 0 }}
+                  </td>
                   <td class="table-cell">
-                    <span :class="role.is_active ? 'text-green-600' : 'text-gray-400'">
+                    <span
+                      :class="
+                        role.is_active ? 'text-green-600' : 'text-gray-400'
+                      "
+                    >
                       {{ role.is_active ? t('common.yes') : t('common.no') }}
                     </span>
                   </td>
                   <td class="table-cell">
-                    <BaseButton variant="outline" size="sm" @click="openEditModal(role)">
+                    <BaseButton
+                      variant="outline"
+                      size="sm"
+                      @click="openEditModal(role)"
+                    >
                       {{ t('common.edit') }}
                     </BaseButton>
                   </td>
@@ -82,21 +125,33 @@
               {{ t('common.pagination.showing', paginationShowing) }}
             </p>
             <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-600">{{ t('common.pagination.itemsPerPage') }}:</label>
+              <label class="text-sm text-gray-600"
+                >{{ t('common.pagination.itemsPerPage') }}:</label
+              >
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                @change="currentPage = 1; fetchRoles()"
+                @change="handlePageSizeChange"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
                 <option :value="50">50</option>
                 <option :value="100">100</option>
               </select>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage <= 1" @click="currentPage--; fetchRoles()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage <= 1"
+                @click="goToPreviousPage"
+              >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
-              <BaseButton variant="outline" size="sm" :disabled="currentPage >= totalPages" @click="currentPage++; fetchRoles()">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                :disabled="currentPage >= totalPages"
+                @click="goToNextPage"
+              >
                 {{ t('common.pagination.next') }}
               </BaseButton>
             </div>
@@ -106,39 +161,77 @@
 
       <BaseModal :show="showModal" :title="modalTitle" @close="closeModal">
         <form @submit.prevent="submitRole" class="space-y-4">
-          <p v-if="submitError" class="text-sm text-red-600">{{ submitError }}</p>
+          <p v-if="submitError" class="text-sm text-red-600">
+            {{ submitError }}
+          </p>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.roleName') }}</label>
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.roleName')
+            }}</label>
             <input v-model="form.name" type="text" class="form-input" />
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.visibleFeatures') }}</label>
-            <div class="space-y-2 rounded-md border border-gray-300 bg-white p-3">
-              <label v-for="platform in platformOptions" :key="platform.key" class="flex cursor-pointer items-start gap-3 rounded px-2 py-1 hover:bg-gray-50">
-                <input v-model="form.visible_features" type="checkbox" :value="platform.key" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.visibleFeatures')
+            }}</label>
+            <div
+              class="space-y-2 rounded-md border border-gray-300 bg-white p-3"
+            >
+              <label
+                v-for="platform in platformOptions"
+                :key="platform.key"
+                class="flex cursor-pointer items-start gap-3 rounded px-2 py-1 hover:bg-gray-50"
+              >
+                <input
+                  v-model="form.visible_features"
+                  type="checkbox"
+                  :value="platform.key"
+                  class="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
                 <span class="text-sm text-gray-700">{{ platform.label }}</span>
               </label>
             </div>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('management.defaultPlatform') }}</label>
-            <select v-model="form.preferred_platform" class="form-input bg-white">
+            <label class="mb-1 block text-sm font-medium text-gray-700">{{
+              t('management.defaultPlatform')
+            }}</label>
+            <select
+              v-model="form.preferred_platform"
+              class="form-input bg-white"
+            >
               <option value="">{{ t('management.noDefaultPlatform') }}</option>
-              <option v-for="platform in selectedPlatformOptions" :key="platform.key" :value="platform.key">
+              <option
+                v-for="platform in selectedPlatformOptions"
+                :key="platform.key"
+                :value="platform.key"
+              >
                 {{ platform.label }}
               </option>
             </select>
           </div>
           <div class="flex items-center gap-3">
-            <input v-model="form.is_active" type="checkbox" id="role-is-active" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-            <label for="role-is-active" class="cursor-pointer text-sm font-medium text-gray-700">
+            <input
+              v-model="form.is_active"
+              type="checkbox"
+              id="role-is-active"
+              class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <label
+              for="role-is-active"
+              class="cursor-pointer text-sm font-medium text-gray-700"
+            >
               {{ t('management.isActive') }}
             </label>
           </div>
         </form>
         <template #footer>
           <div class="flex flex-row-reverse gap-2">
-            <BaseButton variant="primary" :loading="submitLoading" @click="submitRole">
+            <BaseButton
+              variant="primary"
+              :loading="submitLoading"
+              @click="submitRole"
+            >
               {{ t('common.confirm') }}
             </BaseButton>
             <BaseButton variant="outline" @click="closeModal">
@@ -187,13 +280,16 @@ const totalPages = computed(() =>
 )
 
 const paginationShowing = computed(() => ({
-  from: totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
+  from:
+    totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1,
   to: Math.min(currentPage.value * pageSize.value, totalCount.value),
   total: totalCount.value
 }))
 
 const modalTitle = computed(() =>
-  mode.value === 'create' ? t('management.createRole') : t('management.editRole')
+  mode.value === 'create'
+    ? t('management.createRole')
+    : t('management.editRole')
 )
 
 const platformOptions = computed(() =>
@@ -204,7 +300,9 @@ const platformOptions = computed(() =>
 )
 
 const selectedPlatformOptions = computed(() =>
-  platformOptions.value.filter((item) => form.value.visible_features.includes(item.key))
+  platformOptions.value.filter((item) =>
+    form.value.visible_features.includes(item.key)
+  )
 )
 
 watch(
@@ -219,7 +317,11 @@ watch(
 function formatFeatures(items) {
   if (!Array.isArray(items) || !items.length) return '—'
   return items
-    .map((item) => platformOptions.value.find((platform) => platform.key === item)?.label || item)
+    .map(
+      (item) =>
+        platformOptions.value.find((platform) => platform.key === item)
+          ?.label || item
+    )
     .join(', ')
 }
 
@@ -253,11 +355,28 @@ function openEditModal(role) {
   editingRoleId.value = role.id
   form.value = {
     name: role.name || '',
-    visible_features: Array.isArray(role.visible_features) ? [...role.visible_features] : [],
+    visible_features: Array.isArray(role.visible_features)
+      ? [...role.visible_features]
+      : [],
     preferred_platform: role.preferred_platform || '',
     is_active: role.is_active !== false
   }
   showModal.value = true
+}
+
+function handlePageSizeChange() {
+  currentPage.value = 1
+  fetchRoles()
+}
+
+function goToPreviousPage() {
+  currentPage.value -= 1
+  fetchRoles()
+}
+
+function goToNextPage() {
+  currentPage.value += 1
+  fetchRoles()
 }
 
 async function submitRole() {
@@ -272,7 +391,9 @@ async function submitRole() {
   try {
     const payload = {
       name,
-      visible_features: Array.isArray(form.value.visible_features) ? form.value.visible_features : [],
+      visible_features: Array.isArray(form.value.visible_features)
+        ? form.value.visible_features
+        : [],
       preferred_platform: form.value.preferred_platform || '',
       is_active: !!form.value.is_active
     }
@@ -287,7 +408,8 @@ async function submitRole() {
     if (e?.response?.data?.code === 'name_taken') {
       submitError.value = t('management.roleNameTaken')
     } else {
-      submitError.value = e?.response?.data?.detail || e?.message || t('common.error')
+      submitError.value =
+        e?.response?.data?.detail || e?.message || t('common.error')
     }
   } finally {
     submitLoading.value = false
@@ -303,7 +425,9 @@ async function fetchRoles() {
       page_size: pageSize.value
     })
     roles.value = Array.isArray(data) ? data : (data?.results ?? [])
-    totalCount.value = Array.isArray(data) ? data.length : Number(data?.count ?? roles.value.length)
+    totalCount.value = Array.isArray(data)
+      ? data.length
+      : Number(data?.count ?? roles.value.length)
   } catch (e) {
     roles.value = []
     totalCount.value = 0

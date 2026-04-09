@@ -21,7 +21,9 @@
       isMobile && !showMobileMenu ? '-translate-x-full' : 'translate-x-0'
     ]"
   >
-    <div class="flex items-center justify-between h-16 px-4 border-b border-slate-700">
+    <div
+      class="flex items-center justify-between h-16 px-4 border-b border-slate-700"
+    >
       <router-link
         to="/management"
         class="flex items-center space-x-2 flex-1"
@@ -41,23 +43,48 @@
         @click="$emit('close')"
         class="p-2 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-700"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </div>
 
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto flex flex-col">
       <div class="flex-1 space-y-1">
-        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
+        <div
+          v-if="userStore.userHasFeature('admin_console')"
+          class="menu-group"
+        >
           <button
             @click="toggleUserManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+              />
             </svg>
-            <span class="flex-1 text-left">{{ t('management.userManagement') }}</span>
+            <span class="flex-1 text-left">{{
+              t('management.userManagement')
+            }}</span>
             <svg
               class="w-4 h-4 transition-transform"
               :class="userManagementMenuOpen ? 'rotate-90' : ''"
@@ -65,7 +92,12 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
           <Transition
@@ -80,44 +112,99 @@
               <router-link
                 to="/management/users"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/users') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/users') ? 'admin-nav-item-active' : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/users')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
                 <span>{{ t('management.userManagement') }}</span>
               </router-link>
               <router-link
                 to="/management/groups"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/groups') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/groups') ? 'admin-nav-item-active' : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/groups')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
                 <span>{{ t('management.groupManagement') }}</span>
               </router-link>
               <router-link
                 to="/management/roles"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/roles') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/roles') ? 'admin-nav-item-active' : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/roles')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6l2.09 4.26L19 11l-3.5 3.41L16.18 19 12 16.77 7.82 19l.68-4.59L5 11l4.91-.74L12 6z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6l2.09 4.26L19 11l-3.5 3.41L16.18 19 12 16.77 7.82 19l.68-4.59L5 11l4.91-.74L12 6z"
+                  />
+                </svg>
                 <span>{{ t('management.roleManagement') }}</span>
               </router-link>
             </div>
           </Transition>
         </div>
 
-        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
+        <div
+          v-if="userStore.userHasFeature('admin_console')"
+          class="menu-group"
+        >
           <button
             @click="toggleLLMMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              />
             </svg>
             <span class="flex-1 text-left">{{ t('llm.menuTitle') }}</span>
             <svg
@@ -127,7 +214,12 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
           <Transition
@@ -142,56 +234,135 @@
               <router-link
                 to="/management/llm/stats"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/llm/stats') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/llm/stats')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/llm/stats')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
                 <span>{{ t('llm.stats.title') }}</span>
               </router-link>
               <router-link
                 to="/management/llm/usage"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/llm/usage') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/llm/usage')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/llm/usage')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                  />
+                </svg>
                 <span>{{ t('llm.usage.title') }}</span>
               </router-link>
               <router-link
                 to="/management/llm/config"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/llm/config') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/llm/config')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/llm/config')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                </svg>
                 <span>{{ t('llm.config.title') }}</span>
               </router-link>
               <router-link
                 to="/management/llm/data-settings"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/llm/data-settings') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/llm/data-settings')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/llm/data-settings')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 <span>{{ t('llm.dataSettings.title') }}</span>
               </router-link>
             </div>
           </Transition>
         </div>
 
-        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
+        <div
+          v-if="userStore.userHasFeature('admin_console')"
+          class="menu-group"
+        >
           <button
             @click="toggleTaskManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+              />
             </svg>
-            <span class="flex-1 text-left">{{ t('taskManagement.menuTitle') }}</span>
+            <span class="flex-1 text-left">{{
+              t('taskManagement.menuTitle')
+            }}</span>
             <svg
               class="w-4 h-4 transition-transform"
               :class="taskManagementMenuOpen ? 'rotate-90' : ''"
@@ -199,7 +370,12 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
           <Transition
@@ -214,46 +390,111 @@
               <router-link
                 to="/management/task-management/stats"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/task-management/stats') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/task-management/stats')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/task-management/stats')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
                 <span>{{ t('taskManagement.stats.title') }}</span>
               </router-link>
               <router-link
                 to="/management/task-management/list"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/task-management/list') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/task-management/list')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/task-management/list')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                  />
+                </svg>
                 <span>{{ t('taskManagement.list.title') }}</span>
               </router-link>
               <router-link
                 to="/management/task-management/settings"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/task-management/settings') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/task-management/settings')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
-                @mouseenter="preloadRoute('/management/task-management/settings')"
+                @mouseenter="
+                  preloadRoute('/management/task-management/settings')
+                "
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                </svg>
                 <span>{{ t('taskManagement.settings.title') }}</span>
               </router-link>
             </div>
           </Transition>
         </div>
 
-        <div v-if="userStore.userHasFeature('admin_console')" class="menu-group">
+        <div
+          v-if="userStore.userHasFeature('admin_console')"
+          class="menu-group"
+        >
           <button
             @click="toggleNotificationManagementMenu"
             class="admin-nav-item admin-nav-item-parent w-full"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
             </svg>
-            <span class="flex-1 text-left">{{ t('notificationManagement.menuTitle') }}</span>
+            <span class="flex-1 text-left">{{
+              t('notificationManagement.menuTitle')
+            }}</span>
             <svg
               class="w-4 h-4 transition-transform"
               :class="notificationManagementMenuOpen ? 'rotate-90' : ''"
@@ -261,7 +502,12 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
           <Transition
@@ -276,42 +522,116 @@
               <router-link
                 to="/management/notifier/stats"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/notifier/stats') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/notifier/stats')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/notifier/stats')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
                 <span>{{ t('notificationManagement.stats.title') }}</span>
               </router-link>
               <router-link
                 to="/management/notifier/records"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/notifier/records') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/notifier/records')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/notifier/records')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                  />
+                </svg>
                 <span>{{ t('notificationManagement.records.title') }}</span>
               </router-link>
               <router-link
                 to="/management/notifier/channels"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/notifier/channels') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/notifier/channels')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/notifier/channels')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                <span>{{ t('notificationManagement.channels.menuTitle') }}</span>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <span>{{
+                  t('notificationManagement.channels.menuTitle')
+                }}</span>
               </router-link>
               <router-link
                 to="/management/notifier/settings"
                 class="admin-nav-item admin-nav-item-child"
-                :class="isActive('/management/notifier/settings') ? 'admin-nav-item-active' : ''"
+                :class="
+                  isActive('/management/notifier/settings')
+                    ? 'admin-nav-item-active'
+                    : ''
+                "
                 @click="isMobile && $emit('close')"
                 @mouseenter="preloadRoute('/management/notifier/settings')"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                <span>{{ t('notificationManagement.settings.menuTitle') }}</span>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <span>{{
+                  t('notificationManagement.settings.menuTitle')
+                }}</span>
               </router-link>
             </div>
           </Transition>
@@ -325,8 +645,18 @@
           @click="isMobile && $emit('close')"
           @mouseenter="preloadRoute('/dashboard')"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
           <span>{{ t('management.backToUserPlatform') }}</span>
         </router-link>
@@ -393,10 +723,13 @@ watch(
       newPath.startsWith('/management/users') ||
       newPath.startsWith('/management/groups') ||
       newPath.startsWith('/management/roles')
-    ) userManagementMenuOpen.value = true
+    )
+      userManagementMenuOpen.value = true
     if (newPath.startsWith('/management/llm')) llmMenuOpen.value = true
-    if (newPath.startsWith('/management/task-management')) taskManagementMenuOpen.value = true
-    if (newPath.startsWith('/management/notifier')) notificationManagementMenuOpen.value = true
+    if (newPath.startsWith('/management/task-management'))
+      taskManagementMenuOpen.value = true
+    if (newPath.startsWith('/management/notifier'))
+      notificationManagementMenuOpen.value = true
   },
   { immediate: true }
 )
@@ -480,7 +813,9 @@ onMounted(() => {})
 
 .admin-nav-item-parent svg:last-child {
   @apply flex-shrink-0 ml-1 opacity-70;
-  transition: transform 0.2s ease-in-out, opacity 0.2s;
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s;
 }
 
 .admin-nav-item-parent:hover svg:last-child {

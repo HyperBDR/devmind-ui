@@ -19,7 +19,9 @@ export const managementApi = {
   },
 
   updateUser(userId, body) {
-    return apiClient.patch(`/v1/management/users/${userId}/`, body).then(extractData)
+    return apiClient
+      .patch(`/v1/management/users/${userId}/`, body)
+      .then(extractData)
   },
 
   getGroups(params = {}) {
@@ -31,7 +33,9 @@ export const managementApi = {
   },
 
   updateGroup(groupId, body) {
-    return apiClient.patch(`/v1/management/groups/${groupId}/`, body).then(extractData)
+    return apiClient
+      .patch(`/v1/management/groups/${groupId}/`, body)
+      .then(extractData)
   },
 
   getRoles(params = {}) {
@@ -43,6 +47,8 @@ export const managementApi = {
   },
 
   updateRole(roleId, body) {
-    return apiClient.patch(`/v1/management/roles/${roleId}/`, body).then(extractData)
+    return apiClient
+      .patch(`/v1/management/roles/${roleId}/`, body)
+      .then(extractData)
   }
 }

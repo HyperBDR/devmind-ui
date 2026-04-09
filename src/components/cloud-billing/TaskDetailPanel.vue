@@ -29,7 +29,9 @@
       class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl z-50 flex flex-col"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex-shrink-0"
+      >
         <h2 class="text-lg font-semibold text-gray-900">
           {{ t('cloudBilling.tasks.details') }}
         </h2>
@@ -63,15 +65,23 @@
             </h3>
             <dl class="grid grid-cols-1 gap-4">
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.taskName') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ task.name || task.task_name || 'cloud_billing.tasks.collect_billing_data' }}
+                  {{
+                    task.name ||
+                    task.task_name ||
+                    'cloud_billing.tasks.collect_billing_data'
+                  }}
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.status') }}
                 </dt>
                 <dd>
@@ -79,7 +89,9 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.taskId') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 font-mono">
@@ -87,7 +99,9 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.startTime') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -95,7 +109,9 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.endTime') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
@@ -103,15 +119,27 @@
                 </dd>
               </div>
               <div>
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.duration') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900">
-                  {{ formatDuration(task.duration || calculateDuration(task.started_at || task.created_at, task.finished_at)) }}
+                  {{
+                    formatDuration(
+                      task.duration ||
+                        calculateDuration(
+                          task.started_at || task.created_at,
+                          task.finished_at
+                        )
+                    )
+                  }}
                 </dd>
               </div>
               <div v-if="task.error">
-                <dt class="text-xs font-semibold text-red-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-red-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.error') }}
                 </dt>
                 <dd class="text-sm text-red-600 whitespace-pre-wrap">
@@ -119,11 +147,16 @@
                 </dd>
               </div>
               <div v-if="task.result !== undefined && task.result !== null">
-                <dt class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">
+                <dt
+                  class="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider"
+                >
                   {{ t('cloudBilling.tasks.result') }}
                 </dt>
                 <dd class="text-sm text-gray-600">
-                  <pre class="bg-gray-50 p-3 rounded text-xs overflow-auto max-h-64">{{ JSON.stringify(task.result, null, 2) }}</pre>
+                  <pre
+                    class="bg-gray-50 p-3 rounded text-xs overflow-auto max-h-64"
+                    >{{ JSON.stringify(task.result, null, 2) }}</pre
+                  >
                 </dd>
               </div>
             </dl>
@@ -134,8 +167,13 @@
             <h3 class="text-sm font-semibold text-gray-900 mb-4">
               {{ t('taskManagement.list.detailedSteps') }}
             </h3>
-            <div v-if="currentProgressText" class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-              <span class="font-medium">{{ t('taskManagement.list.currentProgress') }}:</span>
+            <div
+              v-if="currentProgressText"
+              class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800"
+            >
+              <span class="font-medium"
+                >{{ t('taskManagement.list.currentProgress') }}:</span
+              >
               {{ currentProgressText }}
             </div>
             <div
@@ -147,10 +185,18 @@
                   v-for="(item, index) in detailSteps"
                   :key="index"
                   class="p-4 bg-white hover:bg-gray-50/80 transition-colors"
-                  :class="item.level === 'ERROR' ? 'border-l-4 border-l-red-500' : item.level === 'WARNING' ? 'border-l-4 border-l-amber-500' : ''"
+                  :class="
+                    item.level === 'ERROR'
+                      ? 'border-l-4 border-l-red-500'
+                      : item.level === 'WARNING'
+                        ? 'border-l-4 border-l-amber-500'
+                        : ''
+                  "
                 >
                   <div class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-semibold">
+                    <span
+                      class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-semibold"
+                    >
                       {{ index + 1 }}
                     </span>
                     <div class="flex-1 min-w-0">
@@ -175,13 +221,20 @@
                           {{ formatStepTime(item.timestamp) }}
                         </span>
                       </div>
-                      <p class="text-sm text-gray-800 whitespace-pre-wrap break-words">
+                      <p
+                        class="text-sm text-gray-800 whitespace-pre-wrap break-words"
+                      >
                         {{ item.message }}
                       </p>
                       <pre
                         v-if="item.exception"
                         class="mt-2 text-xs font-mono text-red-700 whitespace-pre-wrap bg-red-50 p-2 rounded border border-red-100"
-                      >{{ typeof item.exception === 'string' ? item.exception : JSON.stringify(item.exception) }}</pre>
+                        >{{
+                          typeof item.exception === 'string'
+                            ? item.exception
+                            : JSON.stringify(item.exception)
+                        }}</pre
+                      >
                     </div>
                   </div>
                 </div>
@@ -200,8 +253,13 @@
             <h3 class="text-sm font-semibold text-gray-900 mb-4">
               {{ t('cloudBilling.tasks.traceback') }}
             </h3>
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
-              <pre class="text-xs font-mono text-red-800 whitespace-pre-wrap overflow-auto max-h-96">{{ task.traceback }}</pre>
+            <div
+              class="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm"
+            >
+              <pre
+                class="text-xs font-mono text-red-800 whitespace-pre-wrap overflow-auto max-h-96"
+                >{{ task.traceback }}</pre
+              >
             </div>
           </div>
         </div>
@@ -275,7 +333,8 @@ const currentProgressText = computed(() => {
 function formatStepTime(value) {
   if (value == null) return ''
   try {
-    const date = typeof value === 'number' ? new Date(value * 1000) : new Date(value)
+    const date =
+      typeof value === 'number' ? new Date(value * 1000) : new Date(value)
     if (Number.isNaN(date.getTime())) return String(value)
     return format(date, 'yyyy-MM-dd HH:mm:ss')
   } catch {

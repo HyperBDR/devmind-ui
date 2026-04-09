@@ -43,8 +43,12 @@
               v-model="form.language"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm"
             >
-              <option value="zh-CN">{{ t('settings.preferences.languages.zh-CN') }}</option>
-              <option value="en-US">{{ t('settings.preferences.languages.en') }}</option>
+              <option value="zh-CN">
+                {{ t('settings.preferences.languages.zh-CN') }}
+              </option>
+              <option value="en-US">
+                {{ t('settings.preferences.languages.en') }}
+              </option>
             </select>
           </div>
         </div>
@@ -89,7 +93,13 @@
           </BaseButton>
         </div>
       </form>
-      <p v-if="saveMessage" class="mt-2 text-sm" :class="saveMessageType === 'success' ? 'text-green-600' : 'text-red-600'">
+      <p
+        v-if="saveMessage"
+        class="mt-2 text-sm"
+        :class="
+          saveMessageType === 'success' ? 'text-green-600' : 'text-red-600'
+        "
+      >
         {{ saveMessage }}
       </p>
     </div>
@@ -156,7 +166,9 @@ async function handleSave() {
     })
     saveMessage.value = t('settings.settingsSaved')
     saveMessageType.value = 'success'
-    setTimeout(() => { saveMessage.value = '' }, 3000)
+    setTimeout(() => {
+      saveMessage.value = ''
+    }, 3000)
   } catch (err) {
     saveMessage.value = t('settings.settingsError')
     saveMessageType.value = 'error'

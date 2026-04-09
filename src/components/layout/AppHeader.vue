@@ -1,5 +1,7 @@
 <template>
-  <header class="bg-white shadow-sm border-b border-gray-200 flex-shrink-0 z-30">
+  <header
+    class="bg-white shadow-sm border-b border-gray-200 flex-shrink-0 z-30"
+  >
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Mobile menu button -->

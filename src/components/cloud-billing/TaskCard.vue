@@ -6,7 +6,11 @@
     <div class="p-4">
       <!-- Task Name -->
       <h3 class="text-sm font-semibold text-gray-900 mb-3 line-clamp-2">
-        {{ task.name || task.task_name || 'cloud_billing.tasks.collect_billing_data' }}
+        {{
+          task.name ||
+          task.task_name ||
+          'cloud_billing.tasks.collect_billing_data'
+        }}
       </h3>
 
       <!-- Status and Time -->
@@ -17,10 +21,23 @@
             {{ formatDate(task.started_at || task.created_at) }}
           </span>
         </div>
-        <div v-if="task.duration || (task.started_at && task.finished_at)" class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">{{ t('cloudBilling.tasks.duration') }}</span>
+        <div
+          v-if="task.duration || (task.started_at && task.finished_at)"
+          class="flex items-center justify-between"
+        >
+          <span class="text-xs text-gray-500">{{
+            t('cloudBilling.tasks.duration')
+          }}</span>
           <span class="text-sm font-medium text-gray-900">
-            {{ formatDuration(task.duration || calculateDuration(task.started_at || task.created_at, task.finished_at)) }}
+            {{
+              formatDuration(
+                task.duration ||
+                  calculateDuration(
+                    task.started_at || task.created_at,
+                    task.finished_at
+                  )
+              )
+            }}
           </span>
         </div>
       </div>
@@ -71,12 +88,12 @@ const mapTaskStatus = (status) => {
     running: 'processing',
     completed: 'success',
     failed: 'failed',
-    'PENDING': 'pending',
-    'STARTED': 'processing',
-    'SUCCESS': 'success',
-    'FAILURE': 'failed',
-    'RETRY': 'processing',
-    'REVOKED': 'failed'
+    PENDING: 'pending',
+    STARTED: 'processing',
+    SUCCESS: 'success',
+    FAILURE: 'failed',
+    RETRY: 'processing',
+    REVOKED: 'failed'
   }
   return statusMap[status] || status?.toLowerCase() || 'pending'
 }

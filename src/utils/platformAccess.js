@@ -21,12 +21,7 @@ export const FEATURE_DEFINITIONS = [
     key: 'admin_console',
     labelKey: 'platforms.adminConsole',
     defaultPath: '/management/users',
-    matchers: [
-      '/management',
-      '/llm',
-      '/task-management',
-      '/notifier'
-    ]
+    matchers: ['/management', '/llm', '/task-management', '/notifier']
   }
 ]
 
@@ -34,9 +29,7 @@ export const FEATURE_KEY_SET = new Set(
   FEATURE_DEFINITIONS.map((item) => item.key)
 )
 
-const FEATURE_MAP = new Map(
-  FEATURE_DEFINITIONS.map((item) => [item.key, item])
-)
+const FEATURE_MAP = new Map(FEATURE_DEFINITIONS.map((item) => [item.key, item]))
 
 const FEATURE_ALIASES = {
   cloud_billing: 'operations_console',
@@ -51,15 +44,13 @@ export function normalizeFeatureKeys(values) {
   if (!Array.isArray(values)) return []
 
   const seen = new Set()
-  return FEATURE_DEFINITIONS
-    .map((item) => item.key)
-    .filter((key) => {
-      const matches = values.some((value) => {
-        const normalized = FEATURE_ALIASES[value] || value
-        return normalized === key
-      })
-      return matches && !seen.has(key) && seen.add(key)
+  return FEATURE_DEFINITIONS.map((item) => item.key).filter((key) => {
+    const matches = values.some((value) => {
+      const normalized = FEATURE_ALIASES[value] || value
+      return normalized === key
     })
+    return matches && !seen.has(key) && seen.add(key)
+  })
 }
 
 export function normalizePlatformKey(value) {
@@ -88,16 +79,16 @@ export function getAvailablePlatforms(user, t) {
     (accessProfile.available_platforms || []).map((item) => [item.key, item])
   )
 
-  return FEATURE_DEFINITIONS
-    .filter((item) => platformMap.has(item.key))
-    .map((item) => {
+  return FEATURE_DEFINITIONS.filter((item) => platformMap.has(item.key)).map(
+    (item) => {
       const resolved = platformMap.get(item.key)
       return {
         key: item.key,
         label: t ? t(item.labelKey) : item.key,
         defaultPath: resolved?.default_path || item.defaultPath
       }
-    })
+    }
+  )
 }
 
 export function getLandingPath(user) {

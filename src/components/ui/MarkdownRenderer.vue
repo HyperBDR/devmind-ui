@@ -53,9 +53,7 @@ const renderedContent = computed(() => {
   if (!props.content) return ''
 
   try {
-    let markdown = props.content
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
+    let markdown = props.content.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 
     // Convert relative image paths to absolute URLs
     // Always use local HTTP service, never object storage URLs
@@ -67,7 +65,10 @@ const renderedContent = computed(() => {
         const baseUrl = window.location.origin
 
         // If it's an OSS/object storage URL (https:// or http://), convert to local path
-        if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) {
+        if (
+          trimmedPath.startsWith('http://') ||
+          trimmedPath.startsWith('https://')
+        ) {
           // OSS URL format: https://.../admin/articles/{article_id}/images/{filename}
           // Or: https://.../media/articles/{article_id}/{filename}
           // Extract article ID and filename
@@ -75,17 +76,22 @@ const renderedContent = computed(() => {
           let filename = null
 
           // Try pattern: /admin/articles/{article_id}/images/{filename}
-          const adminMatch = trimmedPath.match(/\/admin\/articles\/([^\/]+)\/images\/([^\/]+)$/)
+          const adminMatch = trimmedPath.match(
+            /\/admin\/articles\/([^\/]+)\/images\/([^\/]+)$/
+          )
           if (adminMatch) {
-            [, articleId, filename] = adminMatch
+            ;[, articleId, filename] = adminMatch
           } else {
             // Try pattern: /media/articles/{article_id}/{filename}
-            const mediaMatch = trimmedPath.match(/\/media\/articles\/([^\/]+)\/([^\/]+)$/)
+            const mediaMatch = trimmedPath.match(
+              /\/media\/articles\/([^\/]+)\/([^\/]+)$/
+            )
             if (mediaMatch) {
-              [, articleId, filename] = mediaMatch
+              ;[, articleId, filename] = mediaMatch
             } else {
               // Try to extract from any path that contains article ID pattern (UUID)
-              const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
+              const uuidPattern =
+                /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
               const uuidMatch = trimmedPath.match(uuidPattern)
               if (uuidMatch) {
                 articleId = uuidMatch[1]
@@ -139,24 +145,32 @@ const renderedContent = computed(() => {
         const baseUrl = window.location.origin
 
         // If it's an OSS/object storage URL, convert to local path
-        if (trimmedSrc.startsWith('http://') || trimmedSrc.startsWith('https://')) {
+        if (
+          trimmedSrc.startsWith('http://') ||
+          trimmedSrc.startsWith('https://')
+        ) {
           // OSS URL format: https://.../admin/articles/{article_id}/images/{filename}
           // Or: https://.../media/articles/{article_id}/{filename}
           let articleId = null
           let filename = null
 
           // Try pattern: /admin/articles/{article_id}/images/{filename}
-          const adminMatch = trimmedSrc.match(/\/admin\/articles\/([^\/]+)\/images\/([^\/]+)$/)
+          const adminMatch = trimmedSrc.match(
+            /\/admin\/articles\/([^\/]+)\/images\/([^\/]+)$/
+          )
           if (adminMatch) {
-            [, articleId, filename] = adminMatch
+            ;[, articleId, filename] = adminMatch
           } else {
             // Try pattern: /media/articles/{article_id}/{filename}
-            const mediaMatch = trimmedSrc.match(/\/media\/articles\/([^\/]+)\/([^\/]+)$/)
+            const mediaMatch = trimmedSrc.match(
+              /\/media\/articles\/([^\/]+)\/([^\/]+)$/
+            )
             if (mediaMatch) {
-              [, articleId, filename] = mediaMatch
+              ;[, articleId, filename] = mediaMatch
             } else {
               // Try to extract from any path that contains article ID pattern (UUID)
-              const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
+              const uuidPattern =
+                /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
               const uuidMatch = trimmedSrc.match(uuidPattern)
               if (uuidMatch) {
                 articleId = uuidMatch[1]
@@ -221,7 +235,7 @@ const renderedContent = computed(() => {
 
 .markdown-content :deep(br) {
   display: block;
-  content: "";
+  content: '';
   margin-bottom: 0.25em;
 }
 

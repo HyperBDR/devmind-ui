@@ -1,8 +1,15 @@
 <template>
-  <BaseModal :show="show" :title="title" @close="handleClose" :closeOnBackdrop="false">
+  <BaseModal
+    :show="show"
+    :title="title"
+    @close="handleClose"
+    :closeOnBackdrop="false"
+  >
     <p class="text-sm text-gray-700">{{ message }}</p>
     <template #footer>
-      <div class="w-full flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2">
+      <div
+        class="w-full flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2"
+      >
         <BaseButton
           variant="secondary"
           @click="handleClose"

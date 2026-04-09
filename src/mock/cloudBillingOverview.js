@@ -12,8 +12,8 @@ export const cloudBillingOverviewSummary = {
     { date: '03-23', cny: 11240, usd: 1490 },
     { date: '03-24', cny: 11860, usd: 1535 },
     { date: '03-25', cny: 12120, usd: 1590 },
-    { date: '03-26', cny: 12680, usd: 1645 },
-  ],
+    { date: '03-26', cny: 12680, usd: 1645 }
+  ]
 }
 
 export const cloudBillingOverviewCurrencyBreakdown = [
@@ -23,7 +23,7 @@ export const cloudBillingOverviewCurrencyBreakdown = [
     value: 286540.22,
     original_value: 286540.22,
     percentage: 61,
-    color: '#2563eb',
+    color: '#2563eb'
   },
   {
     code: 'USD',
@@ -31,8 +31,8 @@ export const cloudBillingOverviewCurrencyBreakdown = [
     value: 182350.41,
     original_value: 25503.55,
     percentage: 39,
-    color: '#10b981',
-  },
+    color: '#10b981'
+  }
 ]
 
 export const cloudBillingOverviewFinancialHealth = {
@@ -40,11 +40,15 @@ export const cloudBillingOverviewFinancialHealth = {
   totalDays: 12,
   bottleneck: 'Huawei Intl - Global Production',
   rechargeAlerts: [
-    { name: 'Huawei Intl - Global Production', category: 'Cloud', days_remaining: 6 },
+    {
+      name: 'Huawei Intl - Global Production',
+      category: 'Cloud',
+      days_remaining: 6
+    },
     { name: 'AWS - Main Settlement', category: 'Cloud', days_remaining: 9 },
     { name: 'Zhipu AI', category: 'LLM', days_remaining: 14 },
-    { name: 'Azure - Europe', category: 'Cloud', days_remaining: 18 },
-  ],
+    { name: 'Azure - Europe', category: 'Cloud', days_remaining: 18 }
+  ]
 }
 
 export const cloudBillingOverviewAccounts = [
@@ -76,8 +80,8 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 14320 },
       { date: '03-24', value: 13680 },
       { date: '03-25', value: 12940 },
-      { date: '03-26', value: 12000 },
-    ],
+      { date: '03-26', value: 12000 }
+    ]
   },
   {
     id: 'acct-aws-1',
@@ -107,8 +111,8 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 21480 },
       { date: '03-24', value: 20520 },
       { date: '03-25', value: 19460 },
-      { date: '03-26', value: 18500 },
-    ],
+      { date: '03-26', value: 18500 }
+    ]
   },
   {
     id: 'acct-azure-1',
@@ -138,8 +142,8 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 9780 },
       { date: '03-24', value: 9310 },
       { date: '03-25', value: 8960 },
-      { date: '03-26', value: 8600 },
-    ],
+      { date: '03-26', value: 8600 }
+    ]
   },
   {
     id: 'acct-zhipu-1',
@@ -169,8 +173,8 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 7950 },
       { date: '03-24', value: 7540 },
       { date: '03-25', value: 7180 },
-      { date: '03-26', value: 6840 },
-    ],
+      { date: '03-26', value: 6840 }
+    ]
   },
   {
     id: 'acct-alibaba-1',
@@ -200,8 +204,8 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 23510 },
       { date: '03-24', value: 23280 },
       { date: '03-25', value: 23060 },
-      { date: '03-26', value: 22880 },
-    ],
+      { date: '03-26', value: 22880 }
+    ]
   },
   {
     id: 'acct-baidu-1',
@@ -231,7 +235,7 @@ export const cloudBillingOverviewAccounts = [
       { date: '03-23', value: 11980 },
       { date: '03-24', value: 11750 },
       { date: '03-25', value: 11590 },
-      { date: '03-26', value: 11420 },
-    ],
-  },
+      { date: '03-26', value: 11420 }
+    ]
+  }
 ]

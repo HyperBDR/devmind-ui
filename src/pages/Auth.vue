@@ -21,10 +21,7 @@
       </div>
 
       <!-- Login Form -->
-      <form
-        class="mt-6 space-y-4"
-        @submit.prevent="handleLogin"
-      >
+      <form class="mt-6 space-y-4" @submit.prevent="handleLogin">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ t('auth.username') }}

@@ -60,7 +60,9 @@
       <ConfirmDialog
         :show="showBatchDeleteDialog"
         :title="t('articles.batchDeleteConfirm')"
-        :message="t('articles.batchDeleteMessage', { count: batchDeleteIds.length })"
+        :message="
+          t('articles.batchDeleteMessage', { count: batchDeleteIds.length })
+        "
         :variant="'danger'"
         :loading="deleting"
         @close="showBatchDeleteDialog = false"
@@ -164,7 +166,10 @@ const loadArticles = async () => {
       totalPages.value = total > 0 ? Math.ceil(total / actualPageSize) : 1
       currentPage.value = data.pagination.page || 1
       // Update pageSize if backend returned a different value
-      if (data.pagination.pageSize && data.pagination.pageSize !== pageSize.value) {
+      if (
+        data.pagination.pageSize &&
+        data.pagination.pageSize !== pageSize.value
+      ) {
         pageSize.value = data.pagination.pageSize
       }
     } else {
@@ -172,7 +177,6 @@ const loadArticles = async () => {
       totalPages.value = 1
       totalCount.value = articles.value.length
     }
-
   } catch (error) {
     showError(extractErrorMessage(error, t('articles.loadError')))
   } finally {
@@ -277,8 +281,8 @@ const handlePreview = async (article) => {
   } catch (error) {
     showError(extractErrorMessage(error, t('articles.loadError')))
     // Fallback to list data if detail fetch fails
-  selectedArticle.value = article
-  showPreviewModal.value = true
+    selectedArticle.value = article
+    showPreviewModal.value = true
   }
 }
 
@@ -301,7 +305,7 @@ const handleRetryConfirm = async ({ force }) => {
     await articlesApi.retryArticle(articleId, force)
 
     // Update only the specific article in the list instead of reloading all
-    const articleIndex = articles.value.findIndex(a => a.id === articleId)
+    const articleIndex = articles.value.findIndex((a) => a.id === articleId)
     if (articleIndex !== -1) {
       try {
         // Fetch updated article data
@@ -360,20 +364,27 @@ const handleUpload = async (article) => {
           const updatedData = extractResponseData(updatedArticle)
 
           // Update article in list
-          const articleIndex = articles.value.findIndex(a => a.id === article.id)
+          const articleIndex = articles.value.findIndex(
+            (a) => a.id === article.id
+          )
           if (articleIndex !== -1) {
             articles.value[articleIndex] = updatedData
           }
 
           // Check if upload completed
-          if (updatedData.is_uploaded === true || updatedData.is_uploaded === 'true') {
+          if (
+            updatedData.is_uploaded === true ||
+            updatedData.is_uploaded === 'true'
+          ) {
             clearInterval(pollInterval)
             const index = uploadingIds.value.indexOf(article.id)
             if (index > -1) {
               uploadingIds.value.splice(index, 1)
             }
             showSuccess(
-              force ? t('articles.reuploadSuccess') : t('articles.uploadSuccess')
+              force
+                ? t('articles.reuploadSuccess')
+                : t('articles.uploadSuccess')
             )
           } else if (pollCount >= maxPolls) {
             // Stop polling after max attempts
@@ -395,7 +406,7 @@ const handleUpload = async (article) => {
     } else {
       // Synchronous response (shouldn't happen with new async implementation)
       // Update only the specific article in the list
-      const articleIndex = articles.value.findIndex(a => a.id === article.id)
+      const articleIndex = articles.value.findIndex((a) => a.id === article.id)
       if (articleIndex !== -1) {
         try {
           const updatedArticle = await articlesApi.getArticle(article.id)
@@ -452,7 +463,7 @@ const handleDeleteConfirm = async () => {
 
 const handleBatchRetryClick = async (ids) => {
   // Immediately add to retrying list for instant feedback
-  ids.forEach(id => {
+  ids.forEach((id) => {
     if (!retryingIds.value.includes(id)) {
       retryingIds.value.push(id)
     }
@@ -462,9 +473,9 @@ const handleBatchRetryClick = async (ids) => {
     // For batch retry, we need to get articles to check their status
     // For completed articles, force must be true
     // For processing articles, force is optional (default false)
-    const articlesToRetry = articles.value.filter(a => ids.includes(a.id))
+    const articlesToRetry = articles.value.filter((a) => ids.includes(a.id))
     await Promise.all(
-      articlesToRetry.map(article => {
+      articlesToRetry.map((article) => {
         // Completed articles require force=true
         const force = article.status === 'completed'
         return articlesApi.retryArticle(article.id, force)
@@ -476,7 +487,7 @@ const handleBatchRetryClick = async (ids) => {
     showError(extractErrorMessage(error, t('articles.batchRetryError')))
   } finally {
     // Remove from retrying list
-    ids.forEach(id => {
+    ids.forEach((id) => {
       const index = retryingIds.value.indexOf(id)
       if (index > -1) {
         retryingIds.value.splice(index, 1)
@@ -509,9 +520,7 @@ const handleBatchDeleteConfirm = async () => {
 
 // Check if there are any processing articles
 const hasProcessingArticles = computed(() => {
-  return articles.value.some(
-    article => article.status === 'processing'
-  )
+  return articles.value.some((article) => article.status === 'processing')
 })
 
 // Polling for real-time updates when there are processing articles
@@ -547,11 +556,15 @@ onUnmounted(() => {
 })
 
 // Watch for changes in processing articles to start/stop polling
-watch(hasProcessingArticles, (hasProcessing) => {
-  if (hasProcessing) {
-    resume()
-  } else {
-    pause()
-  }
-}, { immediate: true })
+watch(
+  hasProcessingArticles,
+  (hasProcessing) => {
+    if (hasProcessing) {
+      resume()
+    } else {
+      pause()
+    }
+  },
+  { immediate: true }
+)
 </script>

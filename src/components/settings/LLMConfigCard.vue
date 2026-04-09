@@ -44,14 +44,21 @@
               v-model="localConfig.provider"
               class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
-              <option value="openai">{{ t('settings.llm.providerOpenAI') }}</option>
-              <option value="azure_openai">{{ t('settings.llm.providerAzureOpenAI') }}</option>
+              <option value="openai">
+                {{ t('settings.llm.providerOpenAI') }}
+              </option>
+              <option value="azure_openai">
+                {{ t('settings.llm.providerAzureOpenAI') }}
+              </option>
             </select>
           </div>
         </div>
 
         <!-- OpenAI Configuration -->
-        <div v-if="localConfig.provider === 'openai'" class="space-y-3 border-t border-gray-200 pt-4">
+        <div
+          v-if="localConfig.provider === 'openai'"
+          class="space-y-3 border-t border-gray-200 pt-4"
+        >
           <h4 class="text-sm font-semibold text-gray-900 mb-3">
             {{ t('settings.llm.openaiConfig') }}
           </h4>
@@ -130,7 +137,10 @@
         </div>
 
         <!-- Azure OpenAI Configuration -->
-        <div v-if="localConfig.provider === 'azure_openai'" class="space-y-3 border-t border-gray-200 pt-4">
+        <div
+          v-if="localConfig.provider === 'azure_openai'"
+          class="space-y-3 border-t border-gray-200 pt-4"
+        >
           <h4 class="text-sm font-semibold text-gray-900 mb-3">
             {{ t('settings.llm.azureOpenAIConfig') }}
           </h4>
@@ -333,7 +343,9 @@
             class="w-full sm:w-auto"
             :loading="validating"
             :disabled="validating || saving || !hasRequiredFields"
-            :title="!hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''"
+            :title="
+              !hasRequiredFields ? t('settings.pleaseFillRequiredFields') : ''
+            "
             @click="handleValidate"
           >
             {{ validating ? t('common.loading') : t('settings.llm.validate') }}
@@ -394,9 +406,17 @@ const validationSuccess = ref('')
 
 const hasRequiredFields = computed(() => {
   if (localConfig.provider === 'openai') {
-    return localConfig.openai?.api_key && localConfig.openai?.base_url && localConfig.openai?.model
+    return (
+      localConfig.openai?.api_key &&
+      localConfig.openai?.base_url &&
+      localConfig.openai?.model
+    )
   } else if (localConfig.provider === 'azure_openai') {
-    return localConfig.azure_openai?.api_key && localConfig.azure_openai?.endpoint && localConfig.azure_openai?.deployment_name
+    return (
+      localConfig.azure_openai?.api_key &&
+      localConfig.azure_openai?.endpoint &&
+      localConfig.azure_openai?.deployment_name
+    )
   }
   return false
 })
@@ -416,7 +436,8 @@ watch(
           api_key: newValue.azure_openai?.api_key || '',
           endpoint: newValue.azure_openai?.endpoint || '',
           deployment_name: newValue.azure_openai?.deployment_name || '',
-          api_version: newValue.azure_openai?.api_version || '2024-02-15-preview'
+          api_version:
+            newValue.azure_openai?.api_version || '2024-02-15-preview'
         }
       })
     }
@@ -424,9 +445,13 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(localConfig, (newValue) => {
-  emit('update:modelValue', { ...newValue })
-}, { deep: true })
+watch(
+  localConfig,
+  (newValue) => {
+    emit('update:modelValue', { ...newValue })
+  },
+  { deep: true }
+)
 
 const handleValidate = async () => {
   validating.value = true
@@ -438,7 +463,9 @@ const handleValidate = async () => {
     const validation = response.data || response
 
     if (!validation.valid) {
-      const errors = validation.errors || [validation.message || t('settings.llm.validateError')]
+      const errors = validation.errors || [
+        validation.message || t('settings.llm.validateError')
+      ]
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
       validationSuccess.value = t('settings.llm.validateSuccess')
@@ -453,7 +480,8 @@ const handleValidate = async () => {
       const errors = errorData.data.errors
       validationError.value = Array.isArray(errors) ? errors.join(', ') : errors
     } else {
-      validationError.value = errorData?.message || err.message || t('settings.llm.validateError')
+      validationError.value =
+        errorData?.message || err.message || t('settings.llm.validateError')
     }
   } finally {
     validating.value = false
@@ -473,8 +501,7 @@ const saveConfig = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save LLM config:', err)
-    error.value =
-      err.response?.data?.message || t('settings.llm.saveError')
+    error.value = err.response?.data?.message || t('settings.llm.saveError')
   } finally {
     saving.value = false
   }
