@@ -161,6 +161,7 @@
                         c.platform === 'jira' ||
                         c.platform === 'feishu' ||
                         c.platform === 'license' ||
+                        c.platform === 'hyperbdr' ||
                         c.platform === 'ai_pricehub'
                       "
                       @click="openFullEdit(c)"
@@ -285,6 +286,7 @@
                   c.platform === 'jira' ||
                   c.platform === 'feishu' ||
                   c.platform === 'license' ||
+                  c.platform === 'hyperbdr' ||
                   c.platform === 'ai_pricehub'
                 "
                 variant="outline"
@@ -510,6 +512,7 @@ const platformLabels = {
 function getPlatformLabel(platform) {
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'hyperbdr') return t('dataCollector.platforms.hyperbdr')
   if (platform === 'ai_pricehub')
     return t('dataCollector.platforms.ai_pricehub')
   return platformLabels[platform] || platform

@@ -31,7 +31,7 @@
         <div class="flex items-center space-x-4">
           <LanguageSwitcher variant="dark" />
           <PlatformSwitcher
-            button-class="!border-slate-600 !bg-slate-800/95 !text-slate-100 hover:!border-slate-500 hover:!bg-slate-700/90 hover:!text-white"
+            button-class="border-slate-600 bg-slate-800 text-slate-200 hover:border-indigo-400 hover:text-white"
           />
           <div class="relative" ref="userMenuRef">
             <button

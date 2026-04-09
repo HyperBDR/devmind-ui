@@ -259,10 +259,7 @@
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1 text-sm"
-                  @change="
-                    page = 1;
-                    fetchRecords();
-                  "
+                  @change="page = 1; fetchRecords()"
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>
@@ -278,10 +275,7 @@
                   :disabled="page <= 1"
                   :title="t('common.pagination.previous')"
                   class="flex items-center gap-1"
-                  @click="
-                    page--;
-                    fetchRecords();
-                  "
+                  @click="page--; fetchRecords()"
                 >
                   <svg
                     class="w-4 h-4"
@@ -306,10 +300,7 @@
                   :disabled="page >= totalPages"
                   :title="t('common.pagination.next')"
                   class="flex items-center gap-1"
-                  @click="
-                    page++;
-                    fetchRecords();
-                  "
+                  @click="page++; fetchRecords()"
                 >
                   <svg
                     class="w-4 h-4"

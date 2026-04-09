@@ -12,6 +12,12 @@ export const FEATURE_DEFINITIONS = [
     matchers: ['/operations']
   },
   {
+    key: 'hyperbdr_dashboard',
+    labelKey: 'platforms.hyperbdrDashboard',
+    defaultPath: '/hyperbdr-dashboard',
+    matchers: ['/hyperbdr-dashboard']
+  },
+  {
     key: 'ai_pricehub',
     labelKey: 'platforms.aiPriceHub',
     defaultPath: '/ai-pricehub',
@@ -70,7 +76,11 @@ export function getAccessProfile(user) {
 }
 
 export function hasFeature(user, featureKey) {
-  return getAccessProfile(user).visible_features.includes(featureKey)
+  const normalizedFeatureKey = FEATURE_ALIASES[featureKey] || featureKey
+  const visibleFeatures = normalizeFeatureKeys(
+    getAccessProfile(user).visible_features
+  )
+  return visibleFeatures.includes(normalizedFeatureKey)
 }
 
 export function getAvailablePlatforms(user, t) {

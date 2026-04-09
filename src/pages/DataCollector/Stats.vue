@@ -122,14 +122,18 @@ import { dataCollectorApi } from '@/api/dataCollector'
 const { t } = useI18n()
 const loading = ref(false)
 const stats = ref(null)
+const platformLabels = {
+  jira: 'Jira'
+}
 
 function getPlatformLabel(platform) {
+  if (!platform) return ''
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'hyperbdr') return t('dataCollector.platforms.hyperbdr')
   if (platform === 'ai_pricehub')
     return t('dataCollector.platforms.ai_pricehub')
-  if (platform === 'jira') return t('dataCollector.platforms.jira')
-  return platform || '-'
+  return platformLabels[platform] || platform
 }
 
 function extractData(res) {

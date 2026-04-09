@@ -236,7 +236,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="goToPreviousPage"
+                @click="currentPage -= 1; loadRecords()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -244,7 +244,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="goToNextPage"
+                @click="currentPage += 1; loadRecords()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>
@@ -256,7 +256,7 @@
       <RecordDetailPanel
         :show="showDetailPanel"
         :record-uuid="selectedRecordUuid"
-        @close="closeRecordDetail"
+        @close="showDetailPanel = false; selectedRecordUuid = ''"
       />
     </div>
   </AppLayout>
@@ -290,6 +290,7 @@ const platformLabels = { jira: 'Jira' }
 function getPlatformLabel(platform) {
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'hyperbdr') return t('dataCollector.platforms.hyperbdr')
   if (platform === 'ai_pricehub')
     return t('dataCollector.platforms.ai_pricehub')
   return (
@@ -312,21 +313,6 @@ function openRecordDetail(uuid) {
 function onPageSizeChange() {
   currentPage.value = 1
   loadRecords()
-}
-
-function goToPreviousPage() {
-  currentPage.value -= 1
-  loadRecords()
-}
-
-function goToNextPage() {
-  currentPage.value += 1
-  loadRecords()
-}
-
-function closeRecordDetail() {
-  showDetailPanel.value = false
-  selectedRecordUuid.value = ''
 }
 
 function formatDate(s) {

@@ -115,10 +115,7 @@
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                @change="
-                  currentPage = 1;
-                  fetchGroups();
-                "
+                @change="currentPage = 1; fetchGroups()"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
@@ -129,10 +126,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="
-                  currentPage--;
-                  fetchGroups();
-                "
+                @click="currentPage--; fetchGroups()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -140,10 +134,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="
-                  currentPage++;
-                  fetchGroups();
-                "
+                @click="currentPage++; fetchGroups()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>

@@ -3,6 +3,11 @@ import { useUserStore } from '@/store/user'
 import { adminRoutes } from '@/admin/routes'
 import { getLandingPath, hasFeature } from '@/utils/platformAccess'
 
+const hyperbdrMonitorRouteMeta = {
+  requiresAuth: true,
+  requiredFeature: 'hyperbdr_dashboard'
+}
+
 const routes = [
   {
     path: '/',
@@ -13,11 +18,6 @@ const routes = [
     name: 'Login',
     component: () => import('@/pages/Auth.vue'),
     meta: { requiresGuest: true }
-  },
-  {
-    path: '/reset-password/:uid/:token/',
-    name: 'ResetPassword',
-    component: () => import('@/pages/ResetPassword.vue')
   },
   {
     path: '/dashboard',
@@ -77,6 +77,12 @@ const routes = [
     name: 'OperationsDashboard',
     component: () => import('@/pages/Operations/Dashboard.vue'),
     meta: { requiresAuth: true, requiredFeature: 'operations_console' }
+  },
+  {
+    path: '/hyperbdr-dashboard',
+    name: 'HyperBRDDashboard',
+    component: () => import('@/pages/HyperBDRDashboard.vue'),
+    meta: { requiresAuth: true, requiredFeature: 'hyperbdr_dashboard' }
   },
   {
     path: '/cloud-billing',
@@ -149,6 +155,74 @@ const routes = [
     name: 'DataCollectorSettings',
     component: () => import('@/pages/DataCollector/Settings.vue'),
     meta: { requiresAuth: true, requiredFeature: 'operations_console' }
+  },
+  {
+    path: '/hyperbdr-monitor',
+    redirect: '/hyperbdr-monitor/dashboard'
+  },
+  {
+    path: '/hyperbdr-monitor/dashboard',
+    name: 'HyperBDRMonitorDashboard',
+    component: () => import('@/pages/HyperBDRMonitor/Dashboard.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/tenants',
+    name: 'HyperBDRMonitorTenants',
+    component: () => import('@/pages/HyperBDRMonitor/Tenants.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/licenses',
+    name: 'HyperBDRMonitorLicenses',
+    component: () => import('@/pages/HyperBDRMonitor/Licenses.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/hosts',
+    name: 'HyperBDRMonitorHosts',
+    component: () => import('@/pages/HyperBDRMonitor/Hosts.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/tasks',
+    name: 'HyperBDRMonitorTasks',
+    component: () => import('@/pages/HyperBDRMonitor/Tasks.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/tasks/:id',
+    name: 'HyperBDRMonitorTaskDetail',
+    component: () => import('@/pages/HyperBDRMonitor/TaskDetail.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/settings',
+    redirect: '/hyperbdr-monitor/settings/data-sources'
+  },
+  {
+    path: '/hyperbdr-monitor/settings/data-sources',
+    name: 'HyperBDRMonitorSettingsDataSources',
+    component: () => import('@/pages/HyperBDRMonitor/Settings/DataSources.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/settings/data-sources/create',
+    name: 'HyperBDRMonitorSettingsDataSourceCreate',
+    component: () =>
+      import('@/pages/HyperBDRMonitor/Settings/DataSourceForm.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/settings/data-sources/edit/:id',
+    name: 'HyperBDRMonitorSettingsDataSourceEdit',
+    component: () =>
+      import('@/pages/HyperBDRMonitor/Settings/DataSourceForm.vue'),
+    meta: hyperbdrMonitorRouteMeta
+  },
+  {
+    path: '/hyperbdr-monitor/settings/system',
+    redirect: '/hyperbdr-monitor/settings/data-sources'
   },
   {
     path: '/llm',

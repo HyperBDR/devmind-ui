@@ -131,7 +131,7 @@
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                @change="handlePageSizeChange"
+                @change="currentPage = 1; fetchRoles()"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
@@ -142,7 +142,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="goToPreviousPage"
+                @click="currentPage -= 1; fetchRoles()"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -150,7 +150,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="goToNextPage"
+                @click="currentPage += 1; fetchRoles()"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>
@@ -362,21 +362,6 @@ function openEditModal(role) {
     is_active: role.is_active !== false
   }
   showModal.value = true
-}
-
-function handlePageSizeChange() {
-  currentPage.value = 1
-  fetchRoles()
-}
-
-function goToPreviousPage() {
-  currentPage.value -= 1
-  fetchRoles()
-}
-
-function goToNextPage() {
-  currentPage.value += 1
-  fetchRoles()
 }
 
 async function submitRole() {

@@ -313,6 +313,7 @@ function getPlatformLabel(platform) {
   if (!platform) return ''
   if (platform === 'feishu') return t('dataCollector.platforms.feishu')
   if (platform === 'license') return t('dataCollector.platforms.license')
+  if (platform === 'hyperbdr') return t('dataCollector.platforms.hyperbdr')
   if (platform === 'ai_pricehub')
     return t('dataCollector.platforms.ai_pricehub')
   return platformLabels[platform] || platform

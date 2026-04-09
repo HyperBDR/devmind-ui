@@ -108,6 +108,9 @@
                   <option value="license">
                     {{ t('dataCollector.platforms.license') }}
                   </option>
+                  <option value="hyperbdr">
+                    {{ t('dataCollector.platforms.hyperbdr') }}
+                  </option>
                   <option value="ai_pricehub">
                     {{ t('dataCollector.platforms.ai_pricehub') }}
                   </option>
@@ -446,6 +449,91 @@
             </div>
           </template>
 
+          <template v-else-if="formData.platform === 'hyperbdr'">
+            <div class="space-y-3 border-b border-gray-200 pb-4">
+              <h4 class="text-sm font-semibold text-gray-900">
+                {{ t('dataCollector.settings.authConfig') }}
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+                <div class="md:col-span-1">
+                  <label
+                    for="hyperbdr_base_url"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    {{ t('dataCollector.hyperbdr.baseUrl') }}
+                  </label>
+                  <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                    {{ t('dataCollector.hyperbdr.baseUrlDesc') }}
+                  </p>
+                </div>
+                <div class="md:col-span-2">
+                  <BaseInput
+                    id="hyperbdr_base_url"
+                    v-model="formData.hyperbdr_base_url"
+                    type="url"
+                    :placeholder="
+                      t('dataCollector.hyperbdr.baseUrlPlaceholder')
+                    "
+                    required
+                    class="w-full"
+                  />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+                <div class="md:col-span-1">
+                  <label
+                    for="hyperbdrUsername"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    {{ t('dataCollector.hyperbdr.username') }}
+                  </label>
+                  <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                    {{ t('dataCollector.hyperbdr.usernameDesc') }}
+                  </p>
+                </div>
+                <div class="md:col-span-2">
+                  <BaseInput
+                    id="hyperbdrUsername"
+                    v-model="formData.hyperbdr_username"
+                    type="text"
+                    :placeholder="
+                      t('dataCollector.hyperbdr.usernamePlaceholder')
+                    "
+                    required
+                    class="w-full"
+                  />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+                <div class="md:col-span-1">
+                  <label
+                    for="hyperbdrPassword"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    {{ t('dataCollector.hyperbdr.password') }}
+                  </label>
+                  <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                    {{ t('dataCollector.hyperbdr.passwordDesc') }}
+                  </p>
+                </div>
+                <div class="md:col-span-2">
+                  <BaseInput
+                    id="hyperbdrPassword"
+                    v-model="formData.hyperbdr_password"
+                    type="password"
+                    :placeholder="
+                      config
+                        ? t('dataCollector.hyperbdr.passwordPlaceholderEdit')
+                        : t('dataCollector.hyperbdr.passwordPlaceholder')
+                    "
+                    :required="!config"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </template>
+
           <!-- AI Price Hub: 配置主平台信息 -->
           <template v-else-if="formData.platform === 'ai_pricehub'">
             <div class="space-y-3 border-b border-gray-200 pb-4">
@@ -595,6 +683,7 @@
               formData.platform === 'jira' ||
               formData.platform === 'feishu' ||
               formData.platform === 'license' ||
+              formData.platform === 'hyperbdr' ||
               formData.platform === 'ai_pricehub'
             "
             class="space-y-1 pt-2"
@@ -754,6 +843,12 @@
                 <span class="text-sm text-gray-500">{{ proj.key }}</span>
               </label>
             </div>
+          </template>
+
+          <template v-else-if="formData.platform === 'hyperbdr'">
+            <p class="text-sm text-gray-600">
+              {{ t('dataCollector.hyperbdr.step2Desc') }}
+            </p>
           </template>
 
           <!-- Feishu: 手动配置审批定义 ID + 名称 -->
@@ -1141,7 +1236,7 @@
             "
             @click="
               currentStep = 2;
-              loadProjectsIfNeeded();
+              loadProjectsIfNeeded()
             "
             class="w-full sm:w-auto"
           >
@@ -1257,6 +1352,10 @@ const formData = reactive({
   license_base_url: '',
   license_username: '',
   license_password: '',
+  // HyperBDR-specific fields
+  hyperbdr_base_url: '',
+  hyperbdr_username: '',
+  hyperbdr_password: '',
   // AI Price Hub-specific fields
   ai_pricehub_platform_slug: 'agione',
   ai_pricehub_vendor_name: 'AGIOne',
@@ -1333,6 +1432,13 @@ const step1AuthFieldsFilled = computed(() => {
       !!(formData.license_base_url || '').trim() &&
       !!(formData.license_username || '').trim() &&
       !!(formData.license_password || '').trim()
+    )
+  }
+  if (formData.platform === 'hyperbdr') {
+    return (
+      !!(formData.hyperbdr_base_url || '').trim() &&
+      !!(formData.hyperbdr_username || '').trim() &&
+      (!!(formData.hyperbdr_password || '').trim() || !!props.config)
     )
   }
   if (formData.platform === 'ai_pricehub') {
@@ -1441,6 +1547,16 @@ function buildAuthValue() {
       }
     }
   }
+  if (formData.platform === 'hyperbdr') {
+    return {
+      base_url: formData.hyperbdr_base_url,
+      auth: {
+        base_url: formData.hyperbdr_base_url,
+        username: formData.hyperbdr_username,
+        password: formData.hyperbdr_password
+      }
+    }
+  }
   if (formData.platform === 'ai_pricehub') {
     return {
       primary_sources: [
@@ -1467,6 +1583,16 @@ function buildAuthValue() {
 }
 
 function buildAuthValueForPatch() {
+  if (formData.platform === 'hyperbdr') {
+    return {
+      base_url: formData.hyperbdr_base_url,
+      auth: {
+        base_url: formData.hyperbdr_base_url,
+        username: formData.hyperbdr_username,
+        password: formData.hyperbdr_password
+      }
+    }
+  }
   if (formData.platform === 'ai_pricehub') {
     return {
       primary_sources: [
@@ -1515,16 +1641,11 @@ function buildAuthValueForPatch() {
   return v
 }
 
-function buildSyncTargetsValueForPatch() {
-  return {
-    project_keys: Array.isArray(formData.selected_project_keys)
-      ? formData.selected_project_keys
-      : []
-  }
-}
-
 function buildFullEditValueForPatch() {
   const authPatch = buildAuthValueForPatch()
+  if (formData.platform === 'hyperbdr') {
+    return authPatch
+  }
   const projectKeys = Array.isArray(formData.selected_project_keys)
     ? formData.selected_project_keys
     : []
@@ -1598,6 +1719,13 @@ function buildValue() {
     value.project_keys = Array.isArray(formData.selected_project_keys)
       ? formData.selected_project_keys
       : []
+  } else if (formData.platform === 'hyperbdr') {
+    value.base_url = formData.hyperbdr_base_url
+    value.auth = {
+      base_url: formData.hyperbdr_base_url,
+      username: formData.hyperbdr_username,
+      password: formData.hyperbdr_password
+    }
   } else if (formData.platform === 'ai_pricehub') {
     value.primary_sources = [
       {
@@ -1640,6 +1768,9 @@ function applyConfig(c) {
   formData.license_base_url = v.base_url || auth.base_url || ''
   formData.license_username = auth.username || ''
   formData.license_password = ''
+  formData.hyperbdr_base_url = v.base_url || auth.base_url || ''
+  formData.hyperbdr_username = auth.username || ''
+  formData.hyperbdr_password = ''
   // Feishu 只在新建时从表单获取，编辑时不回显密钥
   formData.feishu_app_id = auth.app_id || ''
   formData.feishu_app_secret = ''
@@ -1728,6 +1859,9 @@ watch(
         formData.license_base_url = ''
         formData.license_username = ''
         formData.license_password = ''
+        formData.hyperbdr_base_url = ''
+        formData.hyperbdr_username = ''
+        formData.hyperbdr_password = ''
         formData.ai_pricehub_platform_slug = 'agione'
         formData.ai_pricehub_vendor_name = 'AGIOne'
         formData.ai_pricehub_region = ''
@@ -1761,7 +1895,10 @@ watch(
     formData.jira_auth_version,
     formData.license_base_url,
     formData.license_username,
-    formData.license_password
+    formData.license_password,
+    formData.hyperbdr_base_url,
+    formData.hyperbdr_username,
+    formData.hyperbdr_password
   ],
   () => {
     projects.value = []
@@ -1784,6 +1921,9 @@ watch(
     license_base_url: formData.license_base_url,
     license_username: formData.license_username,
     license_password: formData.license_password,
+    hyperbdr_base_url: formData.hyperbdr_base_url,
+    hyperbdr_username: formData.hyperbdr_username,
+    hyperbdr_password: formData.hyperbdr_password,
     ai_pricehub_platform_slug: formData.ai_pricehub_platform_slug,
     ai_pricehub_vendor_name: formData.ai_pricehub_vendor_name,
     ai_pricehub_region: formData.ai_pricehub_region,
@@ -1823,7 +1963,7 @@ watch(
       ) {
         formData.initial_range = '10d'
       }
-    } else if (plat === 'jira' || plat === 'license') {
+    } else if (plat === 'jira' || plat === 'license' || plat === 'hyperbdr') {
       if (
         formData.initial_range === '10d' ||
         formData.initial_range === '30d' ||

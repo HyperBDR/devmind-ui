@@ -5,7 +5,9 @@
       class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-primary-300 hover:text-primary-700"
       :class="buttonClass"
     >
-      <span>{{ currentPlatform?.label || t('platforms.switchPlatform') }}</span>
+      <span class="max-w-[20rem] truncate whitespace-nowrap">{{
+        currentPlatform?.label || t('platforms.switchPlatform')
+      }}</span>
       <svg
         class="h-4 w-4 transition-transform"
         :class="{ 'rotate-180': open }"
@@ -32,7 +34,7 @@
     >
       <div
         v-if="open"
-        class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+        class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
       >
         <div
           class="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500"
@@ -46,7 +48,9 @@
           class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
           @click="open = false"
         >
-          <span>{{ platform.label }}</span>
+          <span class="min-w-0 flex-1 truncate whitespace-nowrap pr-2">{{
+            platform.label
+          }}</span>
           <span
             v-if="platform.key === currentPlatformKey"
             class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700"

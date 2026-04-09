@@ -198,19 +198,24 @@
               >{{ t('dashboard.overview.goToModule') }} →</span
             >
           </router-link>
-          <div
-            class="flex flex-col bg-white border border-gray-200 rounded-xl p-6"
+          <router-link
+            v-if="userStore.userHasFeature('hyperbdr_dashboard')"
+            :to="{ name: 'HyperBDRMonitorDashboard' }"
+            class="flex flex-col bg-white border border-gray-200 rounded-xl p-6 border-l-4 border-l-emerald-500 hover:border-gray-300 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
-            <span class="text-xs font-medium text-gray-400">{{
-              t('dashboard.overview.comingSoon')
+            <span class="text-xs font-medium text-emerald-600">{{
+              t('dashboard.overview.availableNow')
             }}</span>
             <h3 class="mt-2 text-base font-semibold text-gray-900">
-              {{ t('dashboard.overview.moduleRndAnalytics') }}
+              {{ t('dashboard.overview.moduleHyperBDRMonitor') }}
             </h3>
             <p class="mt-2 text-sm text-gray-600 flex-1">
-              {{ t('dashboard.overview.moduleRndAnalyticsDesc') }}
+              {{ t('dashboard.overview.moduleHyperBDRMonitorDesc') }}
             </p>
-          </div>
+            <span class="mt-4 text-sm font-medium text-emerald-600"
+              >{{ t('dashboard.overview.goToModule') }} →</span
+            >
+          </router-link>
           <div
             class="flex flex-col bg-white border border-gray-200 rounded-xl p-6"
           >
@@ -222,6 +227,19 @@
             </h3>
             <p class="mt-2 text-sm text-gray-600 flex-1">
               {{ t('dashboard.overview.moduleHyperMotionDesc') }}
+            </p>
+          </div>
+          <div
+            class="flex flex-col bg-white border border-gray-200 rounded-xl p-6"
+          >
+            <span class="text-xs font-medium text-gray-400">{{
+              t('dashboard.overview.comingSoon')
+            }}</span>
+            <h3 class="mt-2 text-base font-semibold text-gray-900">
+              {{ t('dashboard.overview.moduleRndAnalytics') }}
+            </h3>
+            <p class="mt-2 text-sm text-gray-600 flex-1">
+              {{ t('dashboard.overview.moduleRndAnalyticsDesc') }}
             </p>
           </div>
           <div

@@ -2279,12 +2279,21 @@ function daysToRisk(daysRemaining) {
   return 'low'
 }
 
+function legacyRisk(account) {
+  const risk = String(account?.risk || '').toLowerCase()
+  if (risk === 'high' || risk === 'medium' || risk === 'low') {
+    return risk
+  }
+  return ''
+}
+
 function hasDaysRemainingReference(account) {
   return Boolean(account?.has_days_remaining_reference)
 }
 
 function daysRemainingRisk(account) {
-  if (!hasDaysRemainingReference(account)) return 'unknown'
+  if (!hasDaysRemainingReference(account))
+    return legacyRisk(account) || 'unknown'
   return daysToRisk(account?.days_remaining)
 }
 
@@ -2329,6 +2338,9 @@ function displayDaysRemaining(
   unitKey = 'cloudBilling.billing.overviewDaysUnit'
 ) {
   if (!hasDaysRemainingReference(account)) {
+    if (Number.isFinite(Number(account?.days_remaining))) {
+      return `${account.days_remaining}${t(unitKey)}`
+    }
     return t('cloudBilling.billing.overviewDaysReferenceUnavailable')
   }
   return `${account.days_remaining}${t(unitKey)}`
@@ -2383,6 +2395,10 @@ function compareAccountsByAvailability(a, b) {
 
 function recommendationStatus(account, detail) {
   if (!hasDaysRemainingReference(account)) {
+    const risk = legacyRisk(account)
+    if (risk) {
+      return risk === 'high' ? 'attention' : 'healthy'
+    }
     return 'unknown'
   }
   return detail?.recommendation_status || 'healthy'
