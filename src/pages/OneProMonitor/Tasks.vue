@@ -2,14 +2,14 @@
   <AppLayout>
     <div class="w-full max-w-full p-6 space-y-6">
       <OneProPageHeader
-        :eyebrow="t('oneproMonitor.tasksPage.eyebrow')"
-        :title="t('oneproMonitor.tasksPage.title')"
-        :subtitle="t('oneproMonitor.tasksPage.subtitle')"
-        :scope-hint="t('oneproMonitor.tasksPage.scopeHint')"
+        :eyebrow="t('hyperbdrMonitor.tasksPage.eyebrow')"
+        :title="t('hyperbdrMonitor.tasksPage.title')"
+        :subtitle="t('hyperbdrMonitor.tasksPage.subtitle')"
+        :scope-hint="t('hyperbdrMonitor.tasksPage.scopeHint')"
       >
         <template #toolbarActions>
           <BaseButton :loading="collecting" @click="triggerCollection">
-            {{ t('oneproMonitor.actions.collectNow') }}
+            {{ t('hyperbdrMonitor.actions.collectNow') }}
           </BaseButton>
         </template>
         <template #summary>
@@ -19,13 +19,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-700/70"
             >
-              {{ t('oneproMonitor.tasksPage.completedTitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.completedTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ completedCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.tasksPage.completedSubtitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.completedSubtitle') }}
             </p>
           </article>
           <article
@@ -34,13 +34,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-sky-700/70"
             >
-              {{ t('oneproMonitor.tasksPage.runningTitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.runningTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ runningCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.tasksPage.runningSubtitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.runningSubtitle') }}
             </p>
           </article>
           <article
@@ -49,13 +49,13 @@
             <p
               class="text-[11px] font-medium uppercase tracking-[0.2em] text-rose-700/70"
             >
-              {{ t('oneproMonitor.tasksPage.failedTitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.failedTitle') }}
             </p>
             <p class="mt-2 text-2xl font-semibold text-gray-950">
               {{ failedCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.tasksPage.failedSubtitle') }}
+              {{ t('hyperbdrMonitor.tasksPage.failedSubtitle') }}
             </p>
           </article>
         </template>
@@ -68,15 +68,15 @@
           >
             <div>
               <h2 class="text-lg font-semibold text-gray-900">
-                {{ t('oneproMonitor.tasksPage.filtersTitle') }}
+                {{ t('hyperbdrMonitor.tasksPage.filtersTitle') }}
               </h2>
               <p class="mt-1 text-sm text-gray-500">
-                {{ t('oneproMonitor.tasksPage.filtersSubtitle') }}
+                {{ t('hyperbdrMonitor.tasksPage.filtersSubtitle') }}
               </p>
             </div>
             <p class="text-sm text-gray-500">
               {{
-                t('oneproMonitor.tasksPage.showingCount', {
+                t('hyperbdrMonitor.tasksPage.showingCount', {
                   count: tasks.length
                 })
               }}
@@ -89,14 +89,14 @@
               <span
                 class="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-gray-500"
               >
-                {{ t('oneproMonitor.labels.status') }}
+                {{ t('hyperbdrMonitor.labels.status') }}
               </span>
               <select
                 v-model="filters.status"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               >
                 <option value="">
-                  {{ t('oneproMonitor.labels.allStatuses') }}
+                  {{ t('hyperbdrMonitor.labels.allStatuses') }}
                 </option>
                 <option value="pending">pending</option>
                 <option value="running">running</option>
@@ -109,7 +109,7 @@
                 class="w-full"
                 :loading="loading"
                 @click="loadTasks"
-                >{{ t('oneproMonitor.actions.filter') }}</BaseButton
+                >{{ t('hyperbdrMonitor.actions.filter') }}</BaseButton
               >
             </div>
           </div>
@@ -125,32 +125,32 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.taskId') }}
+                  {{ t('hyperbdrMonitor.labels.taskId') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.dataSource') }}
+                  {{ t('hyperbdrMonitor.labels.dataSource') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.status') }}
+                  {{ t('hyperbdrMonitor.labels.status') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.executionTime') }}
+                  {{ t('hyperbdrMonitor.labels.executionTime') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.result') }}
+                  {{ t('hyperbdrMonitor.labels.result') }}
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                 >
-                  {{ t('oneproMonitor.labels.actions') }}
+                  {{ t('hyperbdrMonitor.labels.actions') }}
                 </th>
               </tr>
             </thead>
@@ -171,7 +171,7 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">
                   {{
-                    t('oneproMonitor.tasksPage.resultSummary', {
+                    t('hyperbdrMonitor.tasksPage.resultSummary', {
                       tenants: task.total_tenants || 0,
                       licenses: task.total_licenses || 0,
                       hosts: task.total_hosts || 0
@@ -186,7 +186,7 @@
                     }"
                     class="font-medium text-primary-600 hover:text-primary-700"
                   >
-                    {{ t('oneproMonitor.tasksPage.viewDetail') }}
+                    {{ t('hyperbdrMonitor.tasksPage.viewDetail') }}
                   </router-link>
                 </td>
               </tr>
@@ -195,7 +195,7 @@
                   colspan="6"
                   class="px-6 py-12 text-center text-sm text-gray-500"
                 >
-                  {{ t('oneproMonitor.tasksPage.empty') }}
+                  {{ t('hyperbdrMonitor.tasksPage.empty') }}
                 </td>
               </tr>
             </tbody>
@@ -264,7 +264,7 @@ async function loadTasks() {
     tasks.value = payload.items || []
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.tasksPage.loadError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.tasksPage.loadError')
     )
   } finally {
     loading.value = false
@@ -277,11 +277,11 @@ async function triggerCollection() {
     await oneproMonitorApi.tasks.collect({
       data_source_id: selectedDataSource.value || undefined
     })
-    showSuccess(t('oneproMonitor.tasksPage.triggerSuccess'))
+    showSuccess(t('hyperbdrMonitor.tasksPage.triggerSuccess'))
     await loadTasks()
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('oneproMonitor.tasksPage.triggerError')
+      error?.response?.data?.detail || t('hyperbdrMonitor.tasksPage.triggerError')
     )
   } finally {
     collecting.value = false

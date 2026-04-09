@@ -14,7 +14,7 @@
               OnePro
             </span>
             <p class="text-sm text-gray-500">
-              {{ t('oneproMonitor.dashboardPage.scopeHint') }}
+              {{ t('hyperbdrMonitor.dashboardPage.scopeHint') }}
             </p>
           </div>
           <div class="w-full max-w-md">
@@ -42,12 +42,12 @@
             <h1
               class="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-gray-950 lg:text-4xl"
             >
-              {{ t('oneproMonitor.dashboardPage.title') }}
+              {{ t('hyperbdrMonitor.dashboardPage.title') }}
             </h1>
             <p
               class="mt-3 max-w-2xl text-sm leading-7 text-gray-600 lg:text-[15px]"
             >
-              {{ t('oneproMonitor.dashboardPage.subtitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.subtitle') }}
             </p>
           </div>
         </div>
@@ -63,7 +63,7 @@
               <p
                 class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
               >
-                {{ t('oneproMonitor.dashboardPage.tenantTotal') }}
+                {{ t('hyperbdrMonitor.dashboardPage.tenantTotal') }}
               </p>
               <p class="mt-3 text-3xl font-semibold text-gray-950">
                 {{ stats.tenant?.total || 0 }}
@@ -77,7 +77,7 @@
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
             {{
-              t('oneproMonitor.dashboardPage.tenantSummary', {
+              t('hyperbdrMonitor.dashboardPage.tenantSummary', {
                 active: activeTenantCount,
                 disabled: disabledTenantCount
               })
@@ -100,7 +100,7 @@
               <p
                 class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
               >
-                {{ t('oneproMonitor.dashboardPage.hostTotal') }}
+                {{ t('hyperbdrMonitor.dashboardPage.hostTotal') }}
               </p>
               <p class="mt-3 text-3xl font-semibold text-gray-950">
                 {{ stats.host?.total || 0 }}
@@ -114,7 +114,7 @@
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
             {{
-              t('oneproMonitor.dashboardPage.hostCoverageSummary', {
+              t('hyperbdrMonitor.dashboardPage.hostCoverageSummary', {
                 healthy: healthyHostCount,
                 total: stats.host?.total || 0
               })
@@ -137,7 +137,7 @@
               <p
                 class="text-[11px] font-medium uppercase tracking-[0.2em] text-gray-400"
               >
-                {{ t('oneproMonitor.dashboardPage.licenseUsage') }}
+                {{ t('hyperbdrMonitor.dashboardPage.licenseUsage') }}
               </p>
               <p class="mt-3 text-3xl font-semibold text-gray-950">
                 {{ licenseUsageRatio }}%
@@ -151,7 +151,7 @@
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-500">
             {{
-              t('oneproMonitor.dashboardPage.licenseSummary', {
+              t('hyperbdrMonitor.dashboardPage.licenseSummary', {
                 used: stats.license?.total_used || 0,
                 unused: stats.license?.total_unused || 0
               })
@@ -171,10 +171,10 @@
       >
         <div class="border-b border-gray-200 bg-gray-50/60 px-6 py-4">
           <h2 class="text-lg font-semibold text-gray-900">
-            {{ t('oneproMonitor.dashboardPage.riskTitle') }}
+            {{ t('hyperbdrMonitor.dashboardPage.riskTitle') }}
           </h2>
           <p class="mt-1 text-sm text-gray-500">
-            {{ t('oneproMonitor.dashboardPage.riskSubtitle') }}
+            {{ t('hyperbdrMonitor.dashboardPage.riskSubtitle') }}
           </p>
         </div>
         <div class="grid gap-4 px-6 py-5 md:grid-cols-3">
@@ -185,13 +185,13 @@
             "
           >
             <p class="text-sm font-medium text-gray-900">
-              {{ t('oneproMonitor.dashboardPage.failedTasksTitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.failedTasksTitle') }}
             </p>
             <p class="mt-1 text-2xl font-semibold text-gray-900">
               {{ failedTaskCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.dashboardPage.failedTasksSubtitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.failedTasksSubtitle') }}
             </p>
           </div>
           <div
@@ -201,13 +201,13 @@
             "
           >
             <p class="text-sm font-medium text-gray-900">
-              {{ t('oneproMonitor.dashboardPage.riskyHostsTitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.riskyHostsTitle') }}
             </p>
             <p class="mt-1 text-2xl font-semibold text-gray-900">
               {{ riskyHostCount }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.dashboardPage.riskyHostsSubtitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.riskyHostsSubtitle') }}
             </p>
           </div>
           <div
@@ -219,13 +219,13 @@
             "
           >
             <p class="text-sm font-medium text-gray-900">
-              {{ t('oneproMonitor.dashboardPage.invalidLicenseHostsTitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.invalidLicenseHostsTitle') }}
             </p>
             <p class="mt-1 text-2xl font-semibold text-gray-900">
               {{ stats.host?.invalid_license || 0 }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('oneproMonitor.dashboardPage.invalidLicenseHostsSubtitle') }}
+              {{ t('hyperbdrMonitor.dashboardPage.invalidLicenseHostsSubtitle') }}
             </p>
           </div>
         </div>
@@ -326,7 +326,7 @@ async function loadAll() {
   } catch (error) {
     showError(
       error?.response?.data?.detail ||
-        t('oneproMonitor.dashboardPage.loadError')
+        t('hyperbdrMonitor.dashboardPage.loadError')
     )
   }
 }

@@ -48,6 +48,8 @@
     "moreActions": "更多操作",
     "viewDetails": "查看详情",
     "current": "当前",
+    "active": "启用",
+    "inactive": "停用",
     "status": {
       "success": "成功",
       "failed": "失败",
@@ -869,6 +871,8 @@
       "passwordTooShort": "密码至少需要 8 个字符",
       "passwordTooLong": "密码不能超过 32 个字符",
       "passwordRequirements": "密码必须同时包含字母和数字",
+      "newPasswordRequired": "请输入新密码",
+      "confirmPasswordRequired": "请再次输入新密码",
       "invalidLink": "无效或已过期的重置链接",
       "error": "重置失败",
       "unknownError": "重置密码失败，请重试。",
@@ -1209,6 +1213,10 @@
         "warning": "警告",
         "info": "信息",
         "low": "低"
+      },
+      "rules": {
+        "title": "告警规则",
+        "comingSoon": "告警规则管理即将上线。"
       }
     },
     "providers": {
@@ -1233,6 +1241,14 @@
       "pleaseValidateConfigFirst": "请先验证配置",
       "validationErrors": "验证错误",
       "accountId": "账户ID",
+      "authIdentifier": "鉴权标识",
+      "authIdentifierEmpty": "暂无",
+      "authIdentifierKinds": {
+        "accessKeyId": "Access Key ID",
+        "username": "用户名",
+        "clientId": "Client ID",
+        "identifier": "标识"
+      },
       "validationErrorCodes": {
         "validation_failed": "凭证验证失败。请检查您的配置信息是否正确，包括访问密钥、密钥和区域等设置。",
         "aws_invalid_access_key_id": "凭证验证失败：访问密钥ID无效。请检查您的AWS访问密钥ID是否正确。",
@@ -1415,7 +1431,9 @@
         "addProvider": "添加云平台",
         "editProvider": "编辑云平台",
         "providerType": "云平台类型",
-        "noProviders": "暂无云平台配置"
+        "noProviders": "暂无云平台配置",
+        "searchPlaceholder": "搜索平台名称、类型、备注、标签或鉴权标识",
+        "noSearchResults": "没有匹配的云平台"
       },
       "alertRule": {
         "title": "告警规则",
@@ -1642,6 +1660,7 @@
       "noTasks": "暂无任务",
       "details": "任务详情",
       "basicInfo": "基本信息",
+      "config": "配置",
       "taskId": "任务 ID",
       "error": "错误",
       "result": "结果",
@@ -2018,6 +2037,7 @@
       "dateRange": "时间范围",
       "taskTypeAll": "全部",
       "taskTypeCloudBilling": "云账单",
+      "taskTypeAiPriceHub": "大模型比价",
       "taskTypeNotifier": "通知",
       "taskTypeTask": "任务模块",
       "taskId": "任务 ID",
@@ -2485,6 +2505,7 @@
     "loadError": "加载失败",
     "searchPlaceholder": "搜索任务名称...",
     "batchDelete": "批量删除",
+    "deleteNotSupported": "暂不支持删除任务记录。",
     "batchDeleteConfirm": "确认批量删除",
     "batchDeleteMessage": "确定要删除选中的 {count} 个定时任务吗？",
     "batchDeleteSuccess": "已成功删除 {count} 个定时任务",
@@ -2622,6 +2643,7 @@
       "startTime": "开始时间",
       "startTimeHelp": "任务将从该时间开始生效，默认为当前时间",
       "schedulePreview": "执行计划预览",
+      "scheduleFormat": "在 {hour} 的 {minute} 执行",
       "previewEveryHour": "每天每小时的 {minute} 分执行",
       "previewSchedule": "每天 {hours} 点的 {minute} 分执行",
       "previewScheduleWithDay": "每月 {dayOfMonth} 日 {hours} 点的 {minute} 分执行",
@@ -2638,6 +2660,7 @@
       "minuteUnit": "分",
       "execute": "执行",
       "everyHour": "每小时",
+      "multipleHours": "{count} 个时段",
       "multipleMonths": "{count} 个月",
       "multipleDays": "{count} 天",
       "stepTaskAndSchedule": "任务参数与调度",
@@ -2665,6 +2688,7 @@
     "durationMinutes": "分钟",
     "durationSeconds": "秒",
     "viewDetails": "查看详情",
+    "deleteNotSupported": "暂不支持删除任务记录。",
     "details": "任务详情",
     "basicInfo": "基本信息",
     "error": "错误信息",
@@ -2901,6 +2925,13 @@
     "rank": "排名",
     "starGrowth": "Star 增长",
     "rankChange": "排名变化"
+  },
+  "globalSettings": {
+    "title": "全局设置",
+    "subtitle": "管理跨模块的默认配置和运行设置。",
+    "notificationSectionTitle": "通知设置",
+    "notificationSectionDesc": "前往通知设置页面，统一管理通知渠道、调度和发送行为。",
+    "goToNotificationConfig": "前往通知设置"
   },
   "hyperbdrMonitor": {
     "menuTitle": "HyperBDR 监控",

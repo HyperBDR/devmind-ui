@@ -48,6 +48,8 @@
     "moreActions": "More Actions",
     "viewDetails": "View Details",
     "current": "Current",
+    "active": "Active",
+    "inactive": "Inactive",
     "status": {
       "success": "Success",
       "failed": "Failed",
@@ -860,6 +862,8 @@
       "passwordTooShort": "Password must be at least 8 characters long",
       "passwordTooLong": "Password cannot exceed 32 characters",
       "passwordRequirements": "Password must contain both letters and numbers",
+      "newPasswordRequired": "Please enter a new password",
+      "confirmPasswordRequired": "Please confirm the new password",
       "invalidLink": "Invalid or expired reset link",
       "error": "Reset Failed",
       "unknownError": "Failed to reset password. Please try again.",
@@ -1200,6 +1204,10 @@
         "warning": "Warning",
         "info": "Info",
         "low": "Low"
+      },
+      "rules": {
+        "title": "Alert Rules",
+        "comingSoon": "Alert rule management is coming soon."
       }
     },
     "providers": {
@@ -1224,6 +1232,14 @@
       "pleaseValidateConfigFirst": "Please validate config first",
       "validationErrors": "Validation Errors",
       "accountId": "Account ID",
+      "authIdentifier": "Auth Identifier",
+      "authIdentifierEmpty": "Not available",
+      "authIdentifierKinds": {
+        "accessKeyId": "Access Key ID",
+        "username": "Username",
+        "clientId": "Client ID",
+        "identifier": "Identifier"
+      },
       "validationErrorCodes": {
         "validation_failed": "Credential validation failed. Please check your configuration, including access key, secret key, and region settings.",
         "aws_invalid_access_key_id": "Validation failed: Invalid access key ID. Please check your AWS access key ID.",
@@ -1406,7 +1422,9 @@
         "addProvider": "Add Provider",
         "editProvider": "Edit Provider",
         "providerType": "Provider Type",
-        "noProviders": "No provider configurations"
+        "noProviders": "No provider configurations",
+        "searchPlaceholder": "Search provider name, type, note, tag, or auth identifier",
+        "noSearchResults": "No matching providers"
       },
       "alertRule": {
         "title": "Alert Rule",
@@ -1633,6 +1651,7 @@
       "noTasks": "No tasks",
       "details": "Task Details",
       "basicInfo": "Basic Information",
+      "config": "Config",
       "taskId": "Task ID",
       "error": "Error",
       "result": "Result",
@@ -2009,6 +2028,7 @@
       "dateRange": "Date range",
       "taskTypeAll": "All",
       "taskTypeCloudBilling": "Cloud billing",
+      "taskTypeAiPriceHub": "AI Price Hub",
       "taskTypeNotifier": "Notifier",
       "taskTypeTask": "Task module",
       "taskId": "Task ID",
@@ -2476,6 +2496,7 @@
     "loadError": "Failed to load",
     "searchPlaceholder": "Search task name...",
     "batchDelete": "Batch Delete",
+    "deleteNotSupported": "Deleting task records is not supported yet.",
     "batchDeleteConfirm": "Confirm Batch Delete",
     "batchDeleteMessage": "Are you sure you want to delete {count} selected scheduled tasks?",
     "batchDeleteSuccess": "Successfully deleted {count} scheduled tasks",
@@ -2611,6 +2632,7 @@
       "startTime": "Start Time",
       "startTimeHelp": "Task will start from this time, default is current time",
       "schedulePreview": "Schedule Preview",
+      "scheduleFormat": "Execute at {minute} minutes past {hour}",
       "previewEveryHour": "Execute at {minute} minutes past every hour",
       "previewSchedule": "Execute at {minute} minutes past {hours}",
       "previewScheduleWithDay": "Execute on day {dayOfMonth} at {minute} minutes past {hours}",
@@ -2627,6 +2649,7 @@
       "minuteUnit": "minute",
       "execute": "execute",
       "everyHour": "every hour",
+      "multipleHours": "{count} hours",
       "multipleMonths": "{count} months",
       "multipleDays": "{count} days",
       "stepTaskAndSchedule": "Task Parameters & Schedule",
@@ -2654,6 +2677,7 @@
     "durationMinutes": "m",
     "durationSeconds": "s",
     "viewDetails": "View Details",
+    "deleteNotSupported": "Deleting task records is not supported yet.",
     "details": "Task Details",
     "basicInfo": "Basic Information",
     "error": "Error",
@@ -2890,6 +2914,13 @@
     "rank": "Rank",
     "starGrowth": "Star Growth",
     "rankChange": "Rank Change"
+  },
+  "globalSettings": {
+    "title": "Global Settings",
+    "subtitle": "Manage cross-module defaults and operational settings.",
+    "notificationSectionTitle": "Notification Settings",
+    "notificationSectionDesc": "Open the notification settings page to manage channels, schedules, and delivery behavior.",
+    "goToNotificationConfig": "Go to notification settings"
   },
   "hyperbdrMonitor": {
     "menuTitle": "HyperBDR Monitor",

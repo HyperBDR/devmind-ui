@@ -101,21 +101,21 @@ const ONEPRO_HEALTH_STATUS_TONES = {
 
 function translateStatus(t, path, value) {
   const normalized = String(value || '').toLowerCase()
-  if (!normalized) return t('oneproMonitor.labels.unknown')
+  if (!normalized) return t('hyperbdrMonitor.labels.unknown')
   const translated = t(`${path}.${normalized}`)
   return translated === `${path}.${normalized}` ? value : translated
 }
 
 export function oneProHostStatusLabel(status, t) {
-  return translateStatus(t, 'oneproMonitor.statusText.host', status)
+  return translateStatus(t, 'hyperbdrMonitor.statusText.host', status)
 }
 
 export function oneProBootStatusLabel(status, t) {
-  return translateStatus(t, 'oneproMonitor.statusText.boot', status)
+  return translateStatus(t, 'hyperbdrMonitor.statusText.boot', status)
 }
 
 export function oneProHealthStatusLabel(status, t) {
-  return translateStatus(t, 'oneproMonitor.statusText.health', status)
+  return translateStatus(t, 'hyperbdrMonitor.statusText.health', status)
 }
 
 export function oneProHostStatusClass(status) {

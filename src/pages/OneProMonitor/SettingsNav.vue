@@ -16,7 +16,7 @@
         :to="{ name: 'OneProMonitorSettingsDataSources' }"
         class="inline-flex px-4 py-2 rounded-lg text-sm font-medium border transition-colors bg-primary-50 border-primary-200 text-primary-700"
       >
-        {{ t('oneproMonitor.nav.dataSources') }}
+        {{ t('hyperbdrMonitor.nav.dataSources') }}
       </router-link>
     </div>
   </div>
