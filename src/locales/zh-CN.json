@@ -960,6 +960,7 @@
       "overviewNotes": "备注",
       "overviewCreditLimit": "信用额度",
       "overviewDaysRemaining": "预计可用天数",
+      "overviewDaysReferenceUnavailable": "暂无参考数据",
       "overviewDaysUnit": "天",
       "overviewDaysShort": "天",
       "overviewRiskStatus": "风险状态",
@@ -984,6 +985,7 @@
       "accountDrawerStatusAttention": "关注",
       "accountDrawerRecommendationMessage": "根据近30日均消耗 {daily}，预计当前资金额度将在 {days} 天后临界。建议补充 {amount} 以覆盖未来 {window} 天消耗。",
       "accountDrawerFallbackRecommendation": "当前账号预计仍可用 {days} 天，建议结合业务波动提前预留资金缓冲。",
+      "accountDrawerNoReferenceRecommendation": "当前统计样本不足 7 天，暂无参考数据，建议继续观察后再评估预计可用天数。",
       "statistics": "使用统计",
       "details": "使用明细",
       "dateRange": "日期范围",
@@ -1284,7 +1286,9 @@
         "addProvider": "添加云平台",
         "editProvider": "编辑云平台",
         "providerType": "云平台类型",
-        "noProviders": "暂无云平台配置"
+        "noProviders": "暂无云平台配置",
+        "searchPlaceholder": "搜索名称、备注、用户名或 AK",
+        "noSearchResults": "没有匹配的云平台"
       },
       "alertRule": {
         "title": "告警规则",

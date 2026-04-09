@@ -950,6 +950,7 @@
       "overviewNotes": "Notes",
       "overviewCreditLimit": "Credit Limit",
       "overviewDaysRemaining": "Days Remaining",
+      "overviewDaysReferenceUnavailable": "Insufficient reference data",
       "overviewDaysUnit": "days",
       "overviewDaysShort": "d",
       "overviewRiskStatus": "Risk",
@@ -974,6 +975,7 @@
       "accountDrawerStatusAttention": "Attention",
       "accountDrawerRecommendationMessage": "Based on the recent average burn of {daily}, the current funds are projected to reach the threshold in {days} days. Add {amount} to cover the next {window} days.",
       "accountDrawerFallbackRecommendation": "This account is estimated to remain available for {days} more days. Reserve a buffer in advance for workload fluctuations.",
+      "accountDrawerNoReferenceRecommendation": "The current sample covers fewer than 7 days, so there is not enough reference data yet to estimate days remaining.",
       "statistics": "Usage Statistics",
       "details": "Usage Details",
       "dateRange": "Date Range",
@@ -1274,7 +1276,9 @@
         "addProvider": "Add Provider",
         "editProvider": "Edit Provider",
         "providerType": "Provider Type",
-        "noProviders": "No provider configurations"
+        "noProviders": "No provider configurations",
+        "searchPlaceholder": "Search by name, notes, username, or AK",
+        "noSearchResults": "No matching providers"
       },
       "alertRule": {
         "title": "Alert Rule",

@@ -6,7 +6,11 @@
   >
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <p class="text-sm text-gray-600">
-        {{ t('cloudBilling.providers.editNotesDesc', { name: providerDisplayName || '' }) }}
+        {{
+          t('cloudBilling.providers.editNotesDesc', {
+            name: providerDisplayName || ''
+          })
+        }}
       </p>
 
       <div class="space-y-2">
@@ -32,8 +36,18 @@
                 class="rounded-full text-primary-400 transition-colors hover:text-primary-700"
                 @click="removeTag(tag)"
               >
-                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  class="h-3.5 w-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </span>
@@ -53,14 +67,24 @@
                   class="w-full min-w-0 border-0 bg-transparent p-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0"
                   @focus="openTagDropdown"
                   @keydown.enter.prevent="handleTagEnter"
-                >
+                />
                 <button
                   type="button"
                   class="shrink-0 text-gray-400 transition-colors hover:text-gray-600"
                   @click.stop="tagDropdownOpen = !tagDropdownOpen"
                 >
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
               </div>
@@ -88,9 +112,11 @@
                   :key="`option-${tag}`"
                   type="button"
                   class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors"
-                  :class="formData.tags.includes(tag)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-gray-700 hover:bg-gray-50'"
+                  :class="
+                    formData.tags.includes(tag)
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  "
                   @click="toggleTag(tag)"
                 >
                   <span>{{ tag }}</span>
@@ -101,7 +127,12 @@
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </button>
               </div>
@@ -164,16 +195,16 @@ import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
 const props = defineProps({
   show: {
     type: Boolean,
-    default: false,
+    default: false
   },
   provider: {
     type: Object,
-    default: null,
+    default: null
   },
   tagOptions: {
     type: Array,
-    default: () => [],
-  },
+    default: () => []
+  }
 })
 
 const emit = defineEmits(['close', 'saved'])
@@ -187,7 +218,7 @@ const tagDropdownOpen = ref(false)
 const tagDropdownRef = ref(null)
 const formData = reactive({
   notes: '',
-  tags: [],
+  tags: []
 })
 
 const normalizeTag = (value) => String(value || '').trim()
@@ -214,7 +245,9 @@ const filteredAvailableTags = computed(() => {
   if (!keyword) {
     return availableTags.value
   }
-  return availableTags.value.filter((tag) => tag.toLowerCase().includes(keyword))
+  return availableTags.value.filter((tag) =>
+    tag.toLowerCase().includes(keyword)
+  )
 })
 
 const providerDisplayName = computed(() =>
@@ -280,7 +313,7 @@ watch(
     tagInput.value = ''
     tagDropdownOpen.value = false
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 onMounted(() => {
@@ -296,16 +329,19 @@ const handleSubmit = async () => {
 
   saving.value = true
   try {
-    await cloudBillingApi.patchProvider(props.provider.id, {
+    const response = await cloudBillingApi.patchProvider(props.provider.id, {
       notes: formData.notes,
-      tags: [...formData.tags],
+      tags: [...formData.tags]
     })
+    const providerData = extractResponseData(response)
     showSuccess(t('cloudBilling.providers.notesUpdateSuccess'))
-    emit('saved')
+    emit('saved', providerData)
   } catch (error) {
     console.error('Failed to update provider notes:', error)
     const responseData = extractResponseData(error?.response || error)
-    showError(responseData?.detail || t('cloudBilling.providers.notesUpdateError'))
+    showError(
+      responseData?.detail || t('cloudBilling.providers.notesUpdateError')
+    )
   } finally {
     saving.value = false
   }
