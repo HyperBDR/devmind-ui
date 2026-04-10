@@ -96,6 +96,14 @@ export const cloudBillingApi = {
     return response
   },
 
+  async getBillingDailySeries(params = {}) {
+    const response = await apiClient.get(
+      '/v1/cloud-billing/billing-data/daily-series/',
+      { params }
+    )
+    return response
+  },
+
   async getOverview(params = {}) {
     const response = await apiClient.get(
       '/v1/cloud-billing/billing-data/overview/',

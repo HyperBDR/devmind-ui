@@ -30,6 +30,15 @@ export function getProviderTypeLabel(type, t) {
   return key ? t(key) : type
 }
 
+export function appendProviderNotesLabel(baseLabel, notes) {
+  const label = String(baseLabel || '').trim()
+  const noteText = String(notes || '').trim()
+  if (!noteText) {
+    return label
+  }
+  return label ? `${label} - ${noteText}` : noteText
+}
+
 export function getLocalizedProviderDisplayName(provider, t) {
   const providerType = String(provider?.provider_type || '').trim()
   const rawDisplayName = String(provider?.display_name || '').trim()
@@ -62,7 +71,7 @@ export function getLocalizedProviderDisplayName(provider, t) {
 }
 
 export function getLocalizedBillingProviderName(billing, t) {
-  return getLocalizedProviderDisplayName(
+  const baseLabel = getLocalizedProviderDisplayName(
     {
       provider_type: billing?.provider_type,
       display_name:
@@ -71,6 +80,10 @@ export function getLocalizedBillingProviderName(billing, t) {
         billing?.provider
     },
     t
+  )
+  return appendProviderNotesLabel(
+    baseLabel,
+    billing?.provider_notes || billing?.notes
   )
 }
 

@@ -29,6 +29,10 @@ import { useI18n } from 'vue-i18n'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { formatCost } from '@/utils/formatting'
+import {
+  appendProviderNotesLabel,
+  getLocalizedProviderDisplayName
+} from '@/utils/providerDisplay'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -46,11 +50,16 @@ const props = defineProps({
 const { t } = useI18n()
 
 const buildProviderLabel = (providerData, fallbackKey) => {
-  const providerName = String(
-    providerData?.provider_name || fallbackKey || ''
-  ).trim()
-  const providerNotes = String(providerData?.provider_notes || '').trim()
-  return providerNotes ? `${providerName} - ${providerNotes}` : providerName
+  return appendProviderNotesLabel(
+    getLocalizedProviderDisplayName(
+      {
+        provider_type: providerData?.provider_type,
+        display_name: providerData?.provider_name || fallbackKey || ''
+      },
+      t
+    ),
+    providerData?.provider_notes
+  )
 }
 
 const chartCurrency = computed(() => {

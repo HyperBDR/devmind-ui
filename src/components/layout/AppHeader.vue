@@ -249,15 +249,6 @@ const pageTitle = computed(() => {
     Tasks: t('tasks.title'),
     ScheduledTasks: t('scheduledTasks.title'),
     Settings: t('common.settings'),
-    HyperBDRMonitorDashboard: t('hyperbdrMonitor.dashboard'),
-    HyperBDRMonitorTenants: t('hyperbdrMonitor.tenants'),
-    HyperBDRMonitorLicenses: t('hyperbdrMonitor.licenses'),
-    HyperBDRMonitorHosts: t('hyperbdrMonitor.hosts'),
-    HyperBDRMonitorTasks: t('hyperbdrMonitor.tasks'),
-    HyperBDRMonitorTaskDetail: t('hyperbdrMonitor.taskDetail'),
-    HyperBDRMonitorSettingsDataSources: t('hyperbdrMonitor.settings'),
-    HyperBDRMonitorSettingsDataSourceCreate: t('hyperbdrMonitor.settings'),
-    HyperBDRMonitorSettingsDataSourceEdit: t('hyperbdrMonitor.settings'),
     HyperBRDDashboard: t('platforms.hyperbdrDashboard')
   }
   return routeNames[route.name] || t('common.appName')

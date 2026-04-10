@@ -450,23 +450,33 @@
                     </div>
                   </div>
 
-                  <!-- Cost Chart (Full Width) -->
-                  <BillingChart
-                    :statistics="statistics"
-                    :daily-data="dailyBillingData"
-                    :period-type="statsPeriodType"
-                    :selected-period="statsSelectedPeriod"
-                    :selected-year="statsSelectedYear"
-                    :providers="providers"
+                  <BaseLoading
+                    v-if="
+                      statsPeriodType === 'month' &&
+                      chartLoading &&
+                      dailyBillingData.length === 0
+                    "
                   />
 
-                  <!-- Daily Cost Breakdown Chart (Monthly View Only) -->
-                  <BillingDailyCostChart
-                    v-if="statsPeriodType === 'month'"
-                    :daily-data="dailyBillingData"
-                    :statistics="statistics"
-                    :selected-period="statsSelectedPeriod"
-                  />
+                  <template v-else>
+                    <!-- Cost Chart (Full Width) -->
+                    <BillingChart
+                      :statistics="statistics"
+                      :daily-data="dailyBillingData"
+                      :period-type="statsPeriodType"
+                      :selected-period="statsSelectedPeriod"
+                      :selected-year="statsSelectedYear"
+                      :providers="providers"
+                    />
+
+                    <!-- Daily Cost Breakdown Chart (Monthly View Only) -->
+                    <BillingDailyCostChart
+                      v-if="statsPeriodType === 'month'"
+                      :daily-data="dailyBillingData"
+                      :statistics="statistics"
+                      :selected-period="statsSelectedPeriod"
+                    />
+                  </template>
                 </div>
 
                 <div
@@ -720,6 +730,61 @@
                     </tbody>
                   </table>
                 </div>
+
+                <div
+                  v-if="!detailsLoading && detailsTotalCount > 0"
+                  class="flex flex-col gap-3 px-4 py-4 mt-4 bg-white border border-gray-200 rounded-lg md:flex-row md:items-center md:justify-between"
+                >
+                  <div class="text-sm text-gray-600">
+                    {{
+                      t('common.pagination.showing', {
+                        from: detailsRangeStart,
+                        to: detailsRangeEnd,
+                        total: detailsTotalCount
+                      })
+                    }}
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <label class="text-sm text-gray-600">
+                      {{ t('common.pagination.itemsPerPage') }}:
+                    </label>
+                    <select
+                      v-model.number="detailsPageSize"
+                      class="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option :value="10">10</option>
+                      <option :value="20">20</option>
+                      <option :value="50">50</option>
+                      <option :value="100">100</option>
+                    </select>
+                    <BaseButton
+                      variant="outline"
+                      size="sm"
+                      :disabled="detailsPage <= 1 || detailsLoading"
+                      @click="detailsPage -= 1"
+                    >
+                      {{ t('common.pagination.previous') }}
+                    </BaseButton>
+                    <span class="text-sm text-gray-600">
+                      {{
+                        t('common.pagination.page', {
+                          current: detailsPage,
+                          total: detailsTotalPages
+                        })
+                      }}
+                    </span>
+                    <BaseButton
+                      variant="outline"
+                      size="sm"
+                      :disabled="
+                        detailsPage >= detailsTotalPages || detailsLoading
+                      "
+                      @click="detailsPage += 1"
+                    >
+                      {{ t('common.pagination.next') }}
+                    </BaseButton>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -759,6 +824,7 @@ import BillingChart from '@/components/cloud-billing/BillingChart.vue'
 import BillingPieChart from '@/components/cloud-billing/BillingPieChart.vue'
 import BillingDailyCostChart from '@/components/cloud-billing/BillingDailyCostChart.vue'
 import {
+  appendProviderNotesLabel,
   getLocalizedBillingProviderName,
   getLocalizedProviderDisplayName
 } from '@/utils/providerDisplay'
@@ -768,12 +834,67 @@ const { t } = useI18n()
 const getProviderDisplayName = (provider) =>
   getLocalizedProviderDisplayName(provider, t)
 const getProviderSelectLabel = (provider) => {
-  const name = getProviderDisplayName(provider)
-  const notes = String(provider?.notes || '').trim()
-  return notes ? `${name} - ${notes}` : name
+  return appendProviderNotesLabel(
+    getProviderDisplayName(provider),
+    provider?.notes
+  )
 }
 const getBillingProviderName = (billing) =>
   getLocalizedBillingProviderName(billing, t)
+
+const activeTab = ref('statistics')
+const tabs = computed(() => [
+  { id: 'statistics', label: t('cloudBilling.billing.statistics') },
+  { id: 'details', label: t('cloudBilling.billing.details') }
+])
+const isInitializing = ref(true)
+
+// Statistics tab state
+const statsLoading = ref(false)
+const chartLoading = ref(false)
+const statistics = ref(null)
+const dailyBillingData = ref([])
+const statsPeriodType = ref('month')
+const statsSelectedPeriod = ref('')
+const statsSelectedYear = ref(new Date().getFullYear())
+const statsProviderId = ref('')
+const statsAccountId = ref('')
+const providers = ref([])
+const providerTotalCount = ref(0)
+
+// Details tab state
+const detailsLoading = ref(false)
+const detailsLoaded = ref(false)
+const billings = ref([])
+const searchQuery = ref('')
+const detailsStartDate = ref('')
+const detailsEndDate = ref('')
+const detailsProviderId = ref('')
+const detailsAccountId = ref('')
+const detailsPage = ref(1)
+const detailsPageSize = ref(20)
+const detailsTotalCount = ref(0)
+const detailsAccountOptions = ref([])
+const showPreviewModal = ref(false)
+const selectedBilling = ref(null)
+
+const detailsTotalPages = computed(() =>
+  Math.max(1, Math.ceil(detailsTotalCount.value / detailsPageSize.value || 1))
+)
+const detailsRangeStart = computed(() =>
+  detailsTotalCount.value === 0
+    ? 0
+    : (detailsPage.value - 1) * detailsPageSize.value + 1
+)
+const detailsRangeEnd = computed(() =>
+  Math.min(detailsPage.value * detailsPageSize.value, detailsTotalCount.value)
+)
+
+let providersRequestId = 0
+let statsRequestId = 0
+let chartRequestId = 0
+let detailsRequestId = 0
+let detailsAccountsRequestId = 0
 
 // Count configured active providers instead of billing rows in the current period.
 const configuredProviderCount = computed(() => {
@@ -808,23 +929,7 @@ const availableAccounts = computed(() => {
   return Array.from(accounts).sort()
 })
 
-// Available accounts for details filter (based on selected provider and loaded billings)
-const availableDetailsAccounts = computed(() => {
-  if (!detailsProviderId.value) {
-    return []
-  }
-
-  const accounts = new Set()
-  billings.value.forEach((billing) => {
-    const billingProviderId = billing.provider || billing.provider_id
-    if (billingProviderId === parseInt(detailsProviderId.value)) {
-      const accountId = billing.account_id || ''
-      accounts.add(accountId)
-    }
-  })
-
-  return Array.from(accounts).sort()
-})
+const availableDetailsAccounts = computed(() => detailsAccountOptions.value)
 
 const selectedProviderBalanceUnsupported = computed(() => {
   if (!statsProviderId.value || !statistics.value?.by_provider) {
@@ -905,35 +1010,6 @@ const statsSummaryCurrency = computed(() =>
     : null
 )
 
-const activeTab = ref('statistics')
-const tabs = computed(() => [
-  { id: 'statistics', label: t('cloudBilling.billing.statistics') },
-  { id: 'details', label: t('cloudBilling.billing.details') }
-])
-
-// Statistics tab state
-const statsLoading = ref(false)
-const statistics = ref(null)
-const dailyBillingData = ref([])
-const statsPeriodType = ref('month')
-const statsSelectedPeriod = ref('')
-const statsSelectedYear = ref(new Date().getFullYear())
-const statsProviderId = ref('')
-const statsAccountId = ref('')
-const providers = ref([])
-const providerTotalCount = ref(0)
-
-// Details tab state
-const detailsLoading = ref(false)
-const billings = ref([])
-const searchQuery = ref('')
-const detailsStartDate = ref('')
-const detailsEndDate = ref('')
-const detailsProviderId = ref('')
-const detailsAccountId = ref('')
-const showPreviewModal = ref(false)
-const selectedBilling = ref(null)
-
 const extractProviderListData = (data) => {
   if (Array.isArray(data)) {
     return {
@@ -968,6 +1044,34 @@ const extractProviderListData = (data) => {
   }
 }
 
+const extractListData = (data) => {
+  if (Array.isArray(data)) {
+    return {
+      list: data,
+      total: data.length
+    }
+  }
+
+  if (data?.results && Array.isArray(data.results)) {
+    return {
+      list: data.results,
+      total: Number(data.count) || data.results.length
+    }
+  }
+
+  if (data?.list && Array.isArray(data.list)) {
+    return {
+      list: data.list,
+      total: Number(data?.pagination?.total) || data.list.length
+    }
+  }
+
+  return {
+    list: [],
+    total: 0
+  }
+}
+
 // Initialize date range: details tab default is last 3 days (from 3 days ago to today)
 const initDateRange = () => {
   const now = new Date()
@@ -984,89 +1088,54 @@ const initDateRange = () => {
   detailsStartDate.value = startStr
 }
 
+const mapBillingRows = (rows) => {
+  return rows
+    .map((billing) => {
+      const providerId = billing.provider || billing.provider_id
+
+      return {
+        id: billing.id,
+        provider: providerId,
+        provider_display_name: getBillingProviderName(billing),
+        provider_type: billing.provider_type,
+        provider_notes: billing.provider_notes,
+        collection_time: billing.collected_at,
+        cost: billing.total_cost,
+        balance: billing.balance,
+        balance_supported: billing.balance_supported,
+        balance_note: billing.balance_note,
+        currency: billing.currency,
+        change_from_last_hour: billing.change_from_last_hour,
+        period: billing.period,
+        hour: billing.hour,
+        service_costs: billing.service_costs,
+        account_id: billing.account_id
+      }
+    })
+    .sort((a, b) => new Date(b.collection_time) - new Date(a.collection_time))
+}
+
 // Load providers list
 const loadProviders = async () => {
+  const currentRequestId = ++providersRequestId
   try {
-    const pageSize = 100
+    const pageSize = 10000
     const response = await cloudBillingApi.getProviders({
       is_active: true,
       page: 1,
       page_size: pageSize
     })
     const data = extractResponseData(response)
-    const { list, total, paginated } = extractProviderListData(data)
-
-    if (!paginated) {
-      providers.value = list
-      providerTotalCount.value = total
-    } else {
-      const allProviders = [...list]
-      const totalPages = Math.max(1, Math.ceil(total / pageSize))
-
-      for (let page = 2; page <= totalPages; page += 1) {
-        const pageResponse = await cloudBillingApi.getProviders({
-          is_active: true,
-          page,
-          page_size: pageSize
-        })
-        const pageData = extractResponseData(pageResponse)
-        const { list: pageList } = extractProviderListData(pageData)
-        allProviders.push(...pageList)
-      }
-
-      providers.value = allProviders
-      providerTotalCount.value = total
-    }
+    const { list, total } = extractProviderListData(data)
+    if (currentRequestId !== providersRequestId) return
+    providers.value = list
+    providerTotalCount.value = total
   } catch (error) {
     console.error('Failed to load providers:', error)
-    providers.value = []
-    providerTotalCount.value = 0
-  }
-}
-
-// Load statistics
-const loadStatistics = async () => {
-  statsLoading.value = true
-  try {
-    const params = {}
-
-    if (statsPeriodType.value === 'month' && statsSelectedPeriod.value) {
-      params.start_period = statsSelectedPeriod.value
-      params.end_period = statsSelectedPeriod.value
-
-      // Load daily data for monthly view
-      await loadDailyBillingData()
-    } else if (statsPeriodType.value === 'year' && statsSelectedYear.value) {
-      const year = statsSelectedYear.value
-      const now = new Date()
-      const currentYear = now.getFullYear()
-      const currentMonth = now.getMonth() + 1
-
-      params.start_period = `${year}-01`
-      // Use current month as end_period to avoid backend grouping by year
-      // This allows us to get monthly breakdown data
-      if (year === currentYear) {
-        params.end_period = `${year}-${String(currentMonth).padStart(2, '0')}`
-      } else {
-        // For past years, use December
-        params.end_period = `${year}-12`
-      }
-      // Clear daily data for year view
-      dailyBillingData.value = []
+    if (currentRequestId === providersRequestId) {
+      providers.value = []
+      providerTotalCount.value = 0
     }
-
-    if (statsProviderId.value) {
-      params.provider_id = statsProviderId.value
-    }
-
-    const response = await cloudBillingApi.getBillingStats(params)
-    const data = extractResponseData(response)
-    statistics.value = data
-  } catch (error) {
-    console.error('Failed to load statistics:', error)
-    statistics.value = null
-  } finally {
-    statsLoading.value = false
   }
 }
 
@@ -1137,16 +1206,65 @@ const formatBillingBalance = (billing) => {
 
 // Load daily billing data for chart
 const loadDailyBillingData = async () => {
-  if (!statsSelectedPeriod.value) return
+  const currentRequestId = ++chartRequestId
 
+  if (statsPeriodType.value !== 'month' || !statsSelectedPeriod.value) {
+    dailyBillingData.value = []
+    chartLoading.value = false
+    return
+  }
+
+  chartLoading.value = true
   try {
     const [year, month] = statsSelectedPeriod.value.split('-')
     const startDate = new Date(parseInt(year), parseInt(month) - 1, 1)
     const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59)
 
-    const params = {
+    const response = await cloudBillingApi.getBillingDailySeries({
       start_date: format(startDate, 'yyyy-MM-dd'),
-      end_date: format(endDate, 'yyyy-MM-dd')
+      end_date: format(endDate, 'yyyy-MM-dd'),
+      ...(statsProviderId.value ? { provider_id: statsProviderId.value } : {}),
+      ...(statsAccountId.value ? { account_id: statsAccountId.value } : {})
+    })
+    const data = extractResponseData(response)
+    const { list } = extractListData(data)
+
+    if (currentRequestId !== chartRequestId) return
+
+    dailyBillingData.value = list
+  } catch (error) {
+    console.error('Failed to load daily billing data:', error)
+    if (currentRequestId === chartRequestId) {
+      dailyBillingData.value = []
+    }
+  } finally {
+    if (currentRequestId === chartRequestId) {
+      chartLoading.value = false
+    }
+  }
+}
+
+// Load statistics summary
+const loadStatistics = async () => {
+  const currentRequestId = ++statsRequestId
+  statsLoading.value = true
+  try {
+    const params = {}
+
+    if (statsPeriodType.value === 'month' && statsSelectedPeriod.value) {
+      params.start_period = statsSelectedPeriod.value
+      params.end_period = statsSelectedPeriod.value
+    } else if (statsPeriodType.value === 'year' && statsSelectedYear.value) {
+      const year = statsSelectedYear.value
+      const now = new Date()
+      const currentYear = now.getFullYear()
+      const currentMonth = now.getMonth() + 1
+
+      params.start_period = `${year}-01`
+      params.end_period =
+        year === currentYear
+          ? `${year}-${String(currentMonth).padStart(2, '0')}`
+          : `${year}-12`
     }
 
     if (statsProviderId.value) {
@@ -1157,178 +1275,113 @@ const loadDailyBillingData = async () => {
       params.account_id = statsAccountId.value
     }
 
-    // Fetch all pages of data
-    let allBillings = []
-    let nextPage = null
+    const response = await cloudBillingApi.getBillingStats(params)
+    const data = extractResponseData(response)
 
-    do {
-      const response = await cloudBillingApi.getBillingData(params)
-      const data = extractResponseData(response)
+    if (currentRequestId !== statsRequestId) return
 
-      let billingList = []
-      if (Array.isArray(data)) {
-        billingList = data
-      } else if (data && data.results) {
-        billingList = data.results
-        nextPage = data.next || null
-      }
+    statistics.value = data
 
-      allBillings = allBillings.concat(billingList)
-
-      // If there's a next page, update params to fetch it
-      if (nextPage) {
-        // Parse next URL to get the page parameter
-        const urlObj = new URL(nextPage)
-        const page = urlObj.searchParams.get('page')
-        if (page) {
-          params.page = page
-        }
-      }
-    } while (nextPage)
-
-    dailyBillingData.value = allBillings
+    if (statsPeriodType.value === 'month') {
+      loadDailyBillingData()
+    } else {
+      chartRequestId += 1
+      chartLoading.value = false
+      dailyBillingData.value = []
+    }
   } catch (error) {
-    console.error('Failed to load daily billing data:', error)
-    dailyBillingData.value = []
+    console.error('Failed to load statistics:', error)
+    if (currentRequestId === statsRequestId) {
+      statistics.value = null
+    }
+  } finally {
+    if (currentRequestId === statsRequestId) {
+      statsLoading.value = false
+    }
+  }
+}
+
+const loadDetailsAccounts = async () => {
+  const currentRequestId = ++detailsAccountsRequestId
+
+  if (!detailsProviderId.value) {
+    detailsAccountOptions.value = []
+    return
+  }
+
+  try {
+    const response = await cloudBillingApi.getLatestBillingByProviderAccount({
+      provider_id: detailsProviderId.value,
+      ...(detailsStartDate.value ? { start_date: detailsStartDate.value } : {}),
+      ...(detailsEndDate.value ? { end_date: detailsEndDate.value } : {})
+    })
+    const data = extractResponseData(response)
+    const { list } = extractListData(data)
+
+    if (currentRequestId !== detailsAccountsRequestId) return
+
+    detailsAccountOptions.value = Array.from(
+      new Set(list.map((item) => item.account_id || ''))
+    ).sort()
+  } catch (error) {
+    console.error('Failed to load billing account options:', error)
+    if (currentRequestId === detailsAccountsRequestId) {
+      detailsAccountOptions.value = []
+    }
   }
 }
 
 // Load billing details
-const loadBillings = async (query = '') => {
+const loadBillings = async ({
+  query = searchQuery.value,
+  resetPage = false
+} = {}) => {
+  if (resetPage && detailsPage.value !== 1) {
+    detailsPage.value = 1
+    return
+  }
+
+  if (resetPage) {
+    detailsLoaded.value = false
+  }
+
+  const currentRequestId = ++detailsRequestId
   detailsLoading.value = true
   try {
-    const params = {}
-
-    if (query) {
-      params.search = query
-    }
-
-    if (detailsStartDate.value) {
-      params.start_date = detailsStartDate.value
-    }
-
-    if (detailsEndDate.value) {
-      params.end_date = detailsEndDate.value
-    }
-
-    if (detailsProviderId.value) {
-      params.provider_id = detailsProviderId.value
-    }
-
-    if (detailsAccountId.value) {
-      params.account_id = detailsAccountId.value
-    }
-
-    // Fetch all pages of data
-    let allBillings = []
-    let nextPage = null
-
-    do {
-      const response = await cloudBillingApi.getBillingData(params)
-      const data = extractResponseData(response)
-
-      let billingList = []
-      if (Array.isArray(data)) {
-        billingList = data
-      } else if (data && data.results) {
-        billingList = data.results
-        nextPage = data.next || null
-      }
-
-      allBillings = allBillings.concat(billingList)
-
-      // If there's a next page, update params to fetch it
-      if (nextPage) {
-        // Parse next URL to get the page parameter
-        const urlObj = new URL(nextPage)
-        const page = urlObj.searchParams.get('page')
-        if (page) {
-          params.page = page
-        }
-      }
-    } while (nextPage)
-
-    // Map backend fields to frontend format and calculate changes
-    const billingMap = new Map()
-    allBillings.forEach((billing) => {
-      const key = `${billing.provider}_${billing.period}_${billing.hour}_${billing.account_id || ''}`
-      billingMap.set(key, billing)
+    const response = await cloudBillingApi.getBillingData({
+      ...(query ? { search: query } : {}),
+      ...(detailsStartDate.value ? { start_date: detailsStartDate.value } : {}),
+      ...(detailsEndDate.value ? { end_date: detailsEndDate.value } : {}),
+      ...(detailsProviderId.value
+        ? { provider_id: detailsProviderId.value }
+        : {}),
+      ...(detailsAccountId.value ? { account_id: detailsAccountId.value } : {}),
+      page: detailsPage.value,
+      page_size: detailsPageSize.value
     })
+    const data = extractResponseData(response)
+    const { list, total } = extractListData(data)
 
-    // Calculate change from last hour for each billing record
-    billings.value = allBillings
-      .map((billing) => {
-        const currentHour = billing.hour
-        let prevHour = currentHour === 0 ? 23 : currentHour - 1
-        let prevPeriod = billing.period
+    if (currentRequestId !== detailsRequestId) return
 
-        // Handle cross-month case (hour 0 -> previous month hour 23)
-        if (currentHour === 0) {
-          const [year, month] = billing.period.split('-')
-          const prevDate = new Date(parseInt(year), parseInt(month) - 2, 1)
-          const prevYear = prevDate.getFullYear()
-          const prevMonth = String(prevDate.getMonth() + 1).padStart(2, '0')
-          prevPeriod = `${prevYear}-${prevMonth}`
-        }
-
-        const prevKey = `${billing.provider}_${prevPeriod}_${prevHour}_${billing.account_id || ''}`
-        const prevBilling = billingMap.get(prevKey)
-
-        let changeFromLastHour = null
-        if (prevBilling && prevBilling.total_cost) {
-          const currentCost = parseFloat(billing.total_cost) || 0
-          const prevCost = parseFloat(prevBilling.total_cost) || 0
-          if (prevCost > 0) {
-            changeFromLastHour = ((currentCost - prevCost) / prevCost) * 100
-          } else if (currentCost > 0) {
-            changeFromLastHour = 100
-          }
-        }
-
-        return {
-          id: billing.id,
-          provider: billing.provider,
-          provider_display_name: getBillingProviderName(billing),
-          provider_type: billing.provider_type,
-          collection_time: billing.collected_at,
-          cost: billing.total_cost,
-          balance: billing.balance,
-          balance_supported: billing.balance_supported,
-          balance_note: billing.balance_note,
-          currency: billing.currency,
-          change_from_last_hour: changeFromLastHour,
-          period: billing.period,
-          hour: billing.hour,
-          service_costs: billing.service_costs,
-          account_id: billing.account_id
-        }
-      })
-      .sort((a, b) => {
-        return new Date(b.collection_time) - new Date(a.collection_time)
-      })
-
-    // Apply search filter
-    if (query) {
-      const lowerQuery = query.toLowerCase()
-      billings.value = billings.value.filter(
-        (billing) =>
-          String(billing.provider_display_name || '')
-            .toLowerCase()
-            .includes(lowerQuery) ||
-          (billing.account_id &&
-            billing.account_id.toLowerCase().includes(lowerQuery))
-      )
-    }
+    billings.value = mapBillingRows(list)
+    detailsTotalCount.value = total
+    detailsLoaded.value = true
   } catch (error) {
     console.error('Failed to load billings:', error)
-    billings.value = []
+    if (currentRequestId === detailsRequestId) {
+      billings.value = []
+      detailsTotalCount.value = 0
+    }
   } finally {
-    detailsLoading.value = false
+    if (currentRequestId === detailsRequestId) {
+      detailsLoading.value = false
+    }
   }
 }
 
 const { debouncedFn: debouncedSearch } = useDebounce((query) => {
-  loadBillings(query)
+  loadBillings({ query, resetPage: true })
 }, 300)
 
 const handleSearch = (query) => {
@@ -1340,7 +1393,8 @@ const handleRefresh = () => {
   if (activeTab.value === 'statistics') {
     loadStatistics()
   } else {
-    loadBillings(searchQuery.value)
+    loadDetailsAccounts()
+    loadBillings({ query: searchQuery.value })
   }
 }
 
@@ -1351,10 +1405,15 @@ const handlePreview = (billing) => {
 
 // Watch tab changes
 watch(activeTab, (newTab) => {
+  if (isInitializing.value) return
+
   if (newTab === 'statistics') {
     loadStatistics()
   } else if (newTab === 'details') {
-    loadBillings()
+    loadDetailsAccounts()
+    if (!detailsLoaded.value) {
+      loadBillings({ resetPage: true })
+    }
   }
 })
 
@@ -1368,6 +1427,7 @@ watch(
     statsAccountId
   ],
   () => {
+    if (isInitializing.value) return
     if (activeTab.value === 'statistics') {
       loadStatistics()
     }
@@ -1378,14 +1438,35 @@ watch(
 watch(
   [detailsStartDate, detailsEndDate, detailsProviderId, detailsAccountId],
   () => {
+    if (isInitializing.value) return
     if (activeTab.value === 'details') {
-      loadBillings(searchQuery.value)
+      loadDetailsAccounts()
+      loadBillings({ query: searchQuery.value, resetPage: true })
     }
   }
 )
 
+watch(detailsPage, () => {
+  if (
+    isInitializing.value ||
+    activeTab.value !== 'details' ||
+    !detailsLoaded.value
+  ) {
+    return
+  }
+  loadBillings({ query: searchQuery.value })
+})
+
+watch(detailsPageSize, () => {
+  if (isInitializing.value || activeTab.value !== 'details') {
+    return
+  }
+  loadBillings({ query: searchQuery.value, resetPage: true })
+})
+
 onMounted(() => {
   initDateRange()
+  isInitializing.value = false
   loadProviders()
   loadStatistics()
 })

@@ -43,6 +43,10 @@ import {
   endOfYear
 } from 'date-fns'
 import { zhCN, enUS } from 'date-fns/locale'
+import {
+  appendProviderNotesLabel,
+  getLocalizedProviderDisplayName
+} from '@/utils/providerDisplay'
 
 ChartJS.register(
   CategoryScale,
@@ -180,7 +184,16 @@ const chartData = computed(() => {
         providerData: data,
         providerId: data.provider_id,
         accountId: data.account_id || '',
-        name: data.provider_name || key
+        name: appendProviderNotesLabel(
+          getLocalizedProviderDisplayName(
+            {
+              provider_type: data.provider_type,
+              display_name: data.provider_name || key
+            },
+            t
+          ),
+          data.provider_notes
+        )
       }))
       .sort((a, b) => {
         // Sort by provider name first, then by account_id (same as BillingDailyCostChart)
@@ -194,7 +207,7 @@ const chartData = computed(() => {
       const data = generateProviderData(item.providerData, labels, dateRange)
 
       // Build label with provider name and account_id if available
-      let label = item.providerData.provider_name || item.key
+      let label = item.name
       if (item.providerData.account_id) {
         label = `${label} ${item.providerData.account_id}`
       }
@@ -374,7 +387,6 @@ function aggregateDailyDataByProvider(dailyData, providerId, accountId) {
   // Match by both provider_id and account_id
   const dailyMap = {}
   const dailyLatestHour = {}
-
   dailyData.forEach((billing) => {
     const billingProviderId = String(billing.provider || billing.provider_id)
     const billingAccountId = String(billing.account_id || '')
@@ -503,7 +515,6 @@ function aggregateDailyDataTotal(dailyData) {
   // total_cost is cumulative, so we use the last hour of each day
   // Then sum across all provider+account combinations for each day
   const dailyProviderMap = {}
-  const dailyLatestHour = {}
 
   dailyData.forEach((billing) => {
     const date = new Date(billing.collected_at)

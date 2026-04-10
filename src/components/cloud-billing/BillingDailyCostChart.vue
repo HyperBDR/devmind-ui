@@ -35,6 +35,10 @@ import {
 } from 'chart.js'
 import { format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
 import { zhCN, enUS } from 'date-fns/locale'
+import {
+  appendProviderNotesLabel,
+  getLocalizedProviderDisplayName
+} from '@/utils/providerDisplay'
 
 ChartJS.register(
   CategoryScale,
@@ -104,7 +108,16 @@ const chartData = computed(() => {
         .map(([key, data]) => ({
           id: data.provider_id,
           accountId: data.account_id || '',
-          name: data.provider_name || key
+          name: appendProviderNotesLabel(
+            getLocalizedProviderDisplayName(
+              {
+                provider_type: data.provider_type,
+                display_name: data.provider_name || key
+              },
+              t
+            ),
+            data.provider_notes
+          )
         }))
         .sort((a, b) => {
           const nameCompare = a.name.localeCompare(b.name)
@@ -195,7 +208,16 @@ const chartData = computed(() => {
       .map(([key, data]) => ({
         id: data.provider_id,
         accountId: data.account_id || '',
-        name: data.provider_name || key
+        name: appendProviderNotesLabel(
+          getLocalizedProviderDisplayName(
+            {
+              provider_type: data.provider_type,
+              display_name: data.provider_name || key
+            },
+            t
+          ),
+          data.provider_notes
+        )
       }))
       .sort((a, b) => {
         // Sort by provider name first, then by account_id
@@ -281,7 +303,7 @@ const chartData = computed(() => {
       const data = []
       const providerAccountKey = `${String(provider.id)}_${provider.accountId}`
 
-      days.forEach((day, dayIndex) => {
+      days.forEach((day) => {
         const dateKey = format(day, 'yyyy-MM-dd')
         const dateOnly = new Date(day)
         dateOnly.setHours(0, 0, 0, 0)
@@ -342,7 +364,7 @@ const chartData = computed(() => {
     // Add total cost dataset
     const totalData = []
 
-    days.forEach((day, dayIndex) => {
+    days.forEach((day) => {
       const dateKey = format(day, 'yyyy-MM-dd')
       const dateOnly = new Date(day)
       dateOnly.setHours(0, 0, 0, 0)
