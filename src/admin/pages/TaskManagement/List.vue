@@ -241,7 +241,7 @@
               <select
                 v-model.number="pageSize"
                 class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                @change="currentPage = 1; loadTasks()"
+                @change="handlePageSizeChange"
               >
                 <option :value="10">10</option>
                 <option :value="20">20</option>
@@ -252,7 +252,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="currentPage--; loadTasks()"
+                @click="goPrevPage"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -260,7 +260,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="currentPage++; loadTasks()"
+                @click="goNextPage"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>
@@ -397,6 +397,23 @@ async function loadTasks() {
 
 function onFilterChange() {
   currentPage.value = 1
+  loadTasks()
+}
+
+function handlePageSizeChange() {
+  currentPage.value = 1
+  loadTasks()
+}
+
+function goPrevPage() {
+  if (currentPage.value <= 1) return
+  currentPage.value -= 1
+  loadTasks()
+}
+
+function goNextPage() {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value += 1
   loadTasks()
 }
 

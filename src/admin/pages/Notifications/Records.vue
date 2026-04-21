@@ -259,7 +259,7 @@
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1 text-sm"
-                  @change="page = 1; fetchRecords()"
+                  @change="handlePageSizeChange"
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>
@@ -275,7 +275,7 @@
                   :disabled="page <= 1"
                   :title="t('common.pagination.previous')"
                   class="flex items-center gap-1"
-                  @click="page--; fetchRecords()"
+                  @click="goPrevPage"
                 >
                   <svg
                     class="w-4 h-4"
@@ -300,7 +300,7 @@
                   :disabled="page >= totalPages"
                   :title="t('common.pagination.next')"
                   class="flex items-center gap-1"
-                  @click="page++; fetchRecords()"
+                  @click="goNextPage"
                 >
                   <svg
                     class="w-4 h-4"
@@ -635,6 +635,23 @@ function closeDetail() {
   detailVisible.value = false
   selectedRecordUuid.value = null
   detailRecord.value = null
+}
+
+function handlePageSizeChange() {
+  page.value = 1
+  fetchRecords()
+}
+
+function goPrevPage() {
+  if (page.value <= 1) return
+  page.value -= 1
+  fetchRecords()
+}
+
+function goNextPage() {
+  if (page.value >= totalPages.value) return
+  page.value += 1
+  fetchRecords()
 }
 
 async function fetchDetail() {

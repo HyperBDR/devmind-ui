@@ -43,7 +43,9 @@
               <input
                 v-model="filters.name"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
-                :placeholder="t('hyperbdrMonitor.tenantsPage.searchPlaceholder')"
+                :placeholder="
+                  t('hyperbdrMonitor.tenantsPage.searchPlaceholder')
+                "
                 @keyup.enter="loadTenants"
               />
             </label>
@@ -186,7 +188,8 @@ async function loadTenants() {
     tenants.value = payload.items || []
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('hyperbdrMonitor.tenantsPage.loadError')
+      error?.response?.data?.detail ||
+        t('hyperbdrMonitor.tenantsPage.loadError')
     )
   } finally {
     loading.value = false

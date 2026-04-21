@@ -305,6 +305,25 @@
                       </svg>
                     </button>
                     <button
+                      @click="editRecharge(provider)"
+                      class="text-sky-600 hover:text-sky-900 transition-colors"
+                      :title="t('cloudBilling.providers.rechargeApproval')"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M17 9V7a5 5 0 00-10 0v2M5 9h14l-1 10H6L5 9zm4 4h6"
+                        />
+                      </svg>
+                    </button>
+                    <button
                       @click="validateProvider(provider.id)"
                       class="text-green-600 hover:text-green-900 transition-colors"
                       :title="t('cloudBilling.providers.testConnection')"
@@ -480,6 +499,12 @@
                 {{ t('cloudBilling.settings.alertRule.title') }}
               </button>
               <button
+                @click="editRecharge(provider)"
+                class="text-sky-600 hover:text-sky-900 text-sm font-medium"
+              >
+                {{ t('cloudBilling.providers.rechargeApproval') }}
+              </button>
+              <button
                 @click="validateProvider(provider.id)"
                 class="text-green-600 hover:text-green-900 text-sm font-medium"
               >
@@ -558,6 +583,14 @@
       @saved="handleNotesSaved"
     />
 
+    <ProviderRechargeModal
+      v-if="editingRechargeProvider"
+      :show="!!editingRechargeProvider"
+      :provider="editingRechargeProvider"
+      @close="editingRechargeProvider = null"
+      @saved="handleRechargeSaved"
+    />
+
     <!-- Alert Rule Modal -->
     <AlertRuleModal
       v-if="editingAlertRuleProvider"
@@ -581,6 +614,7 @@ import BaseLoading from '@/components/ui/BaseLoading.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ProviderFormModal from '@/components/cloud-billing/ProviderFormModal.vue'
 import ProviderNotesModal from '@/components/cloud-billing/ProviderNotesModal.vue'
+import ProviderRechargeModal from '@/components/cloud-billing/ProviderRechargeModal.vue'
 import AlertRuleModal from '@/components/cloud-billing/AlertRuleModal.vue'
 import {
   getLocalizedProviderDisplayName,
@@ -600,6 +634,7 @@ const searchQuery = ref('')
 const showCreateModal = ref(false)
 const editingProvider = ref(null)
 const editingNotesProvider = ref(null)
+const editingRechargeProvider = ref(null)
 const editingAlertRuleProvider = ref(null)
 const togglingIds = ref([])
 const currentPage = ref(1)
@@ -727,6 +762,15 @@ const getAlertRuleSummary = (providerId) => {
       text: `${t('cloudBilling.settings.alertRule.daysRemainingThreshold')}: ${rule.days_remaining_threshold}`
     })
   }
+  items.push({
+    key: 'auto_submit_recharge_approval',
+    text: `${t('cloudBilling.settings.alertRule.autoSubmitRechargeApproval')}: ${
+      rule.auto_submit_recharge_approval
+        ? t('common.enabled')
+        : t('common.disabled')
+    }`,
+    muted: !rule.auto_submit_recharge_approval
+  })
   if (!rule.is_active) {
     items.push({
       key: 'is_active',
@@ -933,6 +977,10 @@ const editNotes = (provider) => {
   editingNotesProvider.value = provider
 }
 
+const editRecharge = (provider) => {
+  editingRechargeProvider.value = provider
+}
+
 const editAlertRule = (provider) => {
   editingAlertRuleProvider.value = provider
 }
@@ -960,6 +1008,13 @@ const handleAlertRuleSaved = () => {
   }
   editingAlertRuleProvider.value = null
   loadAlertRulesForProviders(paginatedProviders.value)
+}
+
+const handleRechargeSaved = (provider) => {
+  editingRechargeProvider.value = null
+  if (provider) {
+    upsertProvider(provider)
+  }
 }
 
 const handleSaved = (provider) => {

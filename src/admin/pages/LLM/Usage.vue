@@ -254,10 +254,7 @@
                 <select
                   v-model.number="pageSize"
                   class="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                  @change="
-                    page = 1;
-                    fetchList()
-                  "
+                  @change="handlePageSizeChange"
                 >
                   <option :value="10">10</option>
                   <option :value="20">20</option>
@@ -673,6 +670,11 @@ function goPrevPage() {
 function goNextPage() {
   if (page.value >= totalPages.value) return
   page.value += 1
+  fetchList()
+}
+
+function handlePageSizeChange() {
+  page.value = 1
   fetchList()
 }
 

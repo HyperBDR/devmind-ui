@@ -236,7 +236,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage <= 1"
-                @click="currentPage -= 1; loadRecords()"
+                @click="goPrevPage"
               >
                 {{ t('common.pagination.previous') }}
               </BaseButton>
@@ -244,7 +244,7 @@
                 variant="outline"
                 size="sm"
                 :disabled="currentPage >= totalPages"
-                @click="currentPage += 1; loadRecords()"
+                @click="goNextPage"
               >
                 {{ t('common.pagination.next') }}
               </BaseButton>
@@ -256,7 +256,7 @@
       <RecordDetailPanel
         :show="showDetailPanel"
         :record-uuid="selectedRecordUuid"
-        @close="showDetailPanel = false; selectedRecordUuid = ''"
+        @close="closeRecordDetail"
       />
     </div>
   </AppLayout>
@@ -310,8 +310,25 @@ function openRecordDetail(uuid) {
   showDetailPanel.value = true
 }
 
+function closeRecordDetail() {
+  showDetailPanel.value = false
+  selectedRecordUuid.value = ''
+}
+
 function onPageSizeChange() {
   currentPage.value = 1
+  loadRecords()
+}
+
+function goPrevPage() {
+  if (currentPage.value <= 1) return
+  currentPage.value -= 1
+  loadRecords()
+}
+
+function goNextPage() {
+  if (currentPage.value >= totalPages.value) return
+  currentPage.value += 1
   loadRecords()
 }
 
