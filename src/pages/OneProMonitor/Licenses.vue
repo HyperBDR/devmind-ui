@@ -284,7 +284,8 @@ async function loadLicenses() {
     licenses.value = payload.items || []
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('hyperbdrMonitor.licensesPage.loadError')
+      error?.response?.data?.detail ||
+        t('hyperbdrMonitor.licensesPage.loadError')
     )
   } finally {
     loading.value = false

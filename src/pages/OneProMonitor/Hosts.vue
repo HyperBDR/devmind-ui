@@ -184,7 +184,9 @@
                   >
                     <span class="text-sm font-medium text-gray-900">
                       {{
-                        t('hyperbdrMonitor.hostsPage.exportScopes.dataSourceAll')
+                        t(
+                          'hyperbdrMonitor.hostsPage.exportScopes.dataSourceAll'
+                        )
                       }}
                     </span>
                     <span class="mt-1 text-xs leading-5 text-gray-500">
@@ -314,7 +316,9 @@
             </div>
             <p class="text-sm text-gray-500">
               {{
-                t('hyperbdrMonitor.hostsPage.showingCount', { count: totalHosts })
+                t('hyperbdrMonitor.hostsPage.showingCount', {
+                  count: totalHosts
+                })
               }}
             </p>
           </div>
@@ -602,7 +606,9 @@
 
       <BaseModal
         :show="detailVisible"
-        :title="selectedHost?.name || t('hyperbdrMonitor.hostsPage.detailTitle')"
+        :title="
+          selectedHost?.name || t('hyperbdrMonitor.hostsPage.detailTitle')
+        "
         @close="closeHostDetail"
       >
         <div v-if="selectedHost" class="space-y-6">
@@ -1119,7 +1125,8 @@ async function exportHosts(scope) {
     exportMenuOpen.value = false
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('hyperbdrMonitor.hostsPage.exportError')
+      error?.response?.data?.detail ||
+        t('hyperbdrMonitor.hostsPage.exportError')
     )
   } finally {
     exportingScope.value = ''

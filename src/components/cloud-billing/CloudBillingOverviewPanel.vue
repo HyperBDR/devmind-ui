@@ -430,17 +430,62 @@
                         </span>
                       </div>
                     </div>
-                    <span
-                      class="font-mono font-semibold"
-                      :class="riskTextClass(daysRemainingRisk(item))"
-                    >
-                      {{
-                        displayDaysRemaining(
-                          item,
-                          'cloudBilling.billing.overviewDaysShort'
-                        )
-                      }}
-                    </span>
+                    <div class="flex shrink-0 items-center gap-1.5">
+                      <span
+                        class="font-mono text-sm font-semibold"
+                        :class="riskTextClass(daysRemainingRisk(item))"
+                      >
+                        {{
+                          displayDaysRemaining(
+                            item,
+                            'cloudBilling.billing.overviewDaysShort'
+                          )
+                        }}
+                      </span>
+                      <button
+                        type="button"
+                        :disabled="
+                          !item.recharge_info_configured ||
+                          submittingRechargeKey === rechargeAlertKey(item)
+                        "
+                        :title="
+                          item.recharge_info_configured
+                            ? t('cloudBilling.billing.submitRechargeApproval')
+                            : t(
+                                'cloudBilling.billing.rechargeApprovalConfigureHint'
+                              )
+                        "
+                        class="inline-flex h-6 items-center gap-0.5 whitespace-nowrap rounded-md border px-1.5 py-0 text-[11px] font-semibold leading-none outline-none transition-colors focus-visible:ring-1 focus-visible:ring-primary-300 disabled:cursor-not-allowed"
+                        :class="
+                          item.recharge_info_configured
+                            ? 'border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100'
+                            : 'border-gray-200 bg-gray-50 text-gray-400'
+                        "
+                        @click="openRechargeSubmitDialog(item)"
+                      >
+                        <svg
+                          class="h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 6v12m6-6H6"
+                          />
+                        </svg>
+                        <span
+                          v-if="
+                            submittingRechargeKey !== rechargeAlertKey(item)
+                          "
+                        >
+                          {{ t('cloudBilling.billing.submitRechargeApproval') }}
+                        </span>
+                        <span v-else class="h-3 w-3 animate-spin rounded-full border border-current border-t-transparent" />
+                      </button>
+                    </div>
                   </div>
                   <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
                     <div
@@ -1343,6 +1388,101 @@
           </aside>
         </div>
       </Teleport>
+
+      <BaseModal
+        :show="showRechargeSubmitDialog"
+        :title="t('cloudBilling.billing.rechargeApprovalModalTitle')"
+        @close="closeRechargeSubmitDialog"
+      >
+        <div class="space-y-4">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+            <p class="text-sm font-semibold text-gray-900">
+              {{ rechargeProviderLabel(rechargeSubmitTarget || {}) }}
+            </p>
+            <p class="mt-1 text-xs text-gray-500">
+              {{
+                (rechargeSubmitTarget && rechargeSubmitTarget.account_id) ||
+                t('cloudBilling.billing.defaultAccount')
+              }}
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">
+              {{ t('cloudBilling.providers.rechargeInfo') }}
+            </label>
+            <textarea
+              :value="rechargeSubmitForm.recharge_info_text"
+              disabled
+              rows="8"
+              :placeholder="t('cloudBilling.billing.rechargeApprovalConfigureHint')"
+              class="block w-full cursor-not-allowed rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-mono text-gray-500 resize-none"
+              style="height: 280px"
+            />
+            <p class="text-xs text-gray-500">
+              {{ t('cloudBilling.billing.rechargeApprovalConfigureHint') }}
+            </p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">
+                {{ t('cloudBilling.billing.rechargeApprovalAmount') }}
+              </label>
+              <input
+                v-model="rechargeSubmitForm.amount"
+                type="number"
+                min="0"
+                step="0.01"
+                :placeholder="
+                  t('cloudBilling.billing.rechargeApprovalAmountPlaceholder')
+                "
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+              <p
+                v-if="rechargeSubmitTarget?.recommended_recharge"
+                class="mt-1 text-xs text-gray-400"
+              >
+                {{ t('cloudBilling.billing.rechargeApprovalAmountHint') }}：
+                <span class="font-medium text-primary-600">
+                  {{ rechargeSubmitTarget.recommended_recharge }}
+                  {{
+                    rechargeSubmitTarget.recommendation_currency ||
+                    selectedCurrency
+                  }}
+                </span>
+              </p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">
+                {{ t('cloudBilling.billing.rechargeApprovalExpectedDate') }}
+              </label>
+              <input
+                v-model="rechargeSubmitForm.expected_date"
+                type="date"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <template #footer>
+          <div class="flex flex-col-reverse justify-end gap-3 sm:flex-row">
+            <BaseButton variant="outline" @click="closeRechargeSubmitDialog">
+              {{ t('common.cancel') }}
+            </BaseButton>
+            <BaseButton
+              :loading="
+                submittingRechargeKey ===
+                rechargeAlertKey(rechargeSubmitTarget || {})
+              "
+              @click="submitRechargeApprovalFromDialog"
+            >
+              {{ t('cloudBilling.billing.rechargeApprovalSubmitButton') }}
+            </BaseButton>
+          </div>
+        </template>
+      </BaseModal>
     </template>
   </div>
 </template>
@@ -1371,6 +1511,7 @@ import huaweiCloudIcon from '@/assets/provider-icons/lobehub/huaweicloud.svg'
 import tencentCloudIcon from '@/assets/provider-icons/lobehub/tencentcloud.svg'
 import volcengineIcon from '@/assets/provider-icons/lobehub/volcengine.svg'
 import zhipuIcon from '@/assets/provider-icons/lobehub/zhipu.svg'
+import BaseModal from '@/components/ui/BaseModal.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseLoading from '@/components/ui/BaseLoading.vue'
 import {
@@ -1386,6 +1527,7 @@ import {
 } from '@/mock/cloudBillingOverview'
 import { extractErrorMessage, extractResponseData } from '@/utils/api'
 import { getLocalizedProviderDisplayName } from '@/utils/providerDisplay'
+import { useToast } from '@/composables/useToast'
 
 const props = defineProps({
   showHeader: {
@@ -1445,6 +1587,7 @@ const OverviewTrendIcon = createOverviewIcon('M3 17l6-6 4 4 8-8')
 const OverviewPeakIcon = createOverviewIcon('M5 12l4 4L19 6')
 
 const { t } = useI18n()
+const { showSuccess, showError, showWarning } = useToast()
 
 const loading = ref(false)
 const overviewLoaded = ref(false)
@@ -1459,6 +1602,20 @@ const showAllPrepaid = ref(false)
 const showAllPostpaid = ref(false)
 const selectedRechargeTag = ref('')
 const selectedAccount = ref(null)
+const showRechargeSubmitDialog = ref(false)
+const rechargeSubmitTarget = ref(null)
+const submittingRechargeKey = ref('')
+const rechargeSubmitForm = ref({
+  recharge_info_text: '',
+  recharge_account: '',
+  recharge_customer_name: '',
+  payment_company: '',
+  payment_way: '',
+  payment_type: '',
+  remit_method: '',
+  amount: '',
+  expected_date: ''
+})
 const accountCardInitialLimit = 4
 
 const selectedCurrency = computed({
@@ -1588,6 +1745,17 @@ function getTodayDateString(timezone) {
     return ''
   }
   return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+function addDaysToDateString(dateString, days) {
+  if (!dateString) return ''
+  const date = new Date(`${dateString}T00:00:00`)
+  if (Number.isNaN(date.getTime())) return ''
+  date.setDate(date.getDate() + Number(days || 0))
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 function normalizeTrendCostCny(item) {
@@ -2683,6 +2851,311 @@ function openAccountDrawer(account) {
 
 function closeAccountDrawer() {
   selectedAccount.value = null
+}
+
+function rechargeAlertKey(item) {
+  if (!item) return ''
+  return `${item.provider_id || item.name || 'provider'}-${item.account_id || 'default'}`
+}
+
+function parseRechargeInfo(text) {
+  const result = {
+    recharge_account: '',
+    recharge_customer_name: '',
+    payment_company: '',
+    payment_way: '',
+    payment_type: '',
+    remit_method: '',
+  }
+  if (!text) return result
+
+  // Try JSON first
+  try {
+    const parsed = JSON.parse(text)
+    if (parsed && typeof parsed === 'object') {
+      result.recharge_account = parsed.recharge_account || parsed.充值云账号 || parsed.充值账号 || ''
+      result.recharge_customer_name = parsed.recharge_customer_name || parsed.充值客户名称 || parsed.充值客户 || ''
+      result.payment_company = parsed.payment_company || parsed.付款公司 || ''
+      result.payment_way = parsed.payment_way || parsed.支付方式 || ''
+      result.payment_type = parsed.payment_type || parsed.付款类型 || ''
+      result.remit_method = parsed.remit_method || parsed.付款方式 || ''
+      return result
+    }
+  } catch {
+    // fall through to key-value parsing
+  }
+
+  // Key-value text parsing
+  const lines = text.split('\n')
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed) continue
+    const separatorIndex = Math.max(
+      trimmed.indexOf('：'),
+      trimmed.indexOf(':')
+    )
+    if (separatorIndex === -1) continue
+    const key = trimmed.slice(0, separatorIndex).trim()
+    const value = trimmed.slice(separatorIndex + 1).trim()
+
+    const keyMap = {
+      'recharge_account': 'recharge_account',
+      '充值云账号': 'recharge_account',
+      '充值账号': 'recharge_account',
+      '账号': 'recharge_account',
+      'recharge_customer_name': 'recharge_customer_name',
+      '充值客户名称': 'recharge_customer_name',
+      '充值客户': 'recharge_customer_name',
+      '客户名称': 'recharge_customer_name',
+      '客户': 'recharge_customer_name',
+      'payment_company': 'payment_company',
+      '付款公司': 'payment_company',
+      'payment_way': 'payment_way',
+      '支付方式': 'payment_way',
+      'payment_type': 'payment_type',
+      '付款类型': 'payment_type',
+      'remit_method': 'remit_method',
+      '付款方式': 'remit_method',
+    }
+    const fieldKey = keyMap[key]
+    if (fieldKey) {
+      result[fieldKey] = value
+    }
+  }
+  return result
+}
+
+function formatRechargeInfoText(source) {
+  if (!source) {
+    return ''
+  }
+
+  if (typeof source === 'string') {
+    const trimmed = source.trim()
+    if (!trimmed) {
+      return ''
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed)
+      if (parsed && typeof parsed === 'object') {
+        return renderRechargeInfoObject(parsed)
+      }
+    } catch {
+      return trimmed
+    }
+
+    return trimmed
+  }
+
+  if (typeof source === 'object') {
+    return renderRechargeInfoObject(source)
+  }
+
+  return String(source).trim()
+}
+
+const RECHARGE_INFO_LABEL_MAP = {
+  cloud_type: '云厂商类型',
+  充值云类型: '云厂商类型',
+  payment_type: '付款类型',
+  付款类型: '付款类型',
+  recharge_customer_name: '充值客户名称',
+  充值客户名称: '充值客户名称',
+  充值客户: '充值客户名称',
+  customer_name: '充值客户名称',
+  recharge_account: '充值云账号',
+  充值云账号: '充值云账号',
+  充值账号: '充值云账号',
+  account: '充值云账号',
+  payment_company: '付款公司',
+  付款公司: '付款公司',
+  payment_way: '支付方式',
+  支付方式: '支付方式',
+  remit_method: '付款方式',
+  付款方式: '付款方式',
+  amount: '付款金额',
+  付款金额: '付款金额',
+  currency: '币种',
+  币种: '币种',
+  expected_date: '期望到账时间',
+  期望到账时间: '期望到账时间',
+  payment_note: '付款说明',
+  付款说明: '付款说明',
+  remark: '备注',
+  备注: '备注',
+  'payee.type': '收款类型',
+  'payee.account_name': '户名',
+  'payee.account_number': '账号',
+  'payee.bank_name': '银行',
+  'payee.bank_region': '银行地区',
+  'payee.bank_branch': '支行'
+}
+
+function translateRechargeInfoKey(key) {
+  const text = String(key || '').trim()
+  return RECHARGE_INFO_LABEL_MAP[text] || text
+}
+
+function shouldSkipRechargeInfoKey(key, value) {
+  const text = String(value || '').trim()
+  return (
+    !text ||
+    (
+      translateRechargeInfoKey(key) === '备注' &&
+      ['备注', 'remark'].includes(text)
+    )
+  )
+}
+
+function renderRechargeInfoObject(source, prefix = '') {
+  if (!source || typeof source !== 'object') {
+    return ''
+  }
+
+  const lines = []
+  const entries = Array.isArray(source)
+    ? source.entries()
+    : Object.entries(source)
+
+  for (const [rawKey, rawValue] of entries) {
+    const key = String(rawKey)
+    const value = rawValue
+    const path = prefix ? `${prefix}.${key}` : key
+
+    if (value === null || value === undefined || value === '') {
+      continue
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) continue
+      const nested = value.some(
+        (item) => item && typeof item === 'object' && !Array.isArray(item)
+      )
+      if (nested) {
+        value.forEach((item, index) => {
+          const rendered = renderRechargeInfoObject(item, `${path}[${index}]`)
+          if (rendered) {
+            lines.push(rendered)
+          }
+        })
+        continue
+      }
+      const label = translateRechargeInfoKey(path)
+      lines.push(
+        `${label}： ${value.map((item) => String(item).trim()).join('，')}`
+      )
+      continue
+    }
+
+    if (typeof value === 'object') {
+      const nested = renderRechargeInfoObject(value, path)
+      if (nested) {
+        lines.push(nested)
+      }
+      continue
+    }
+
+    if (shouldSkipRechargeInfoKey(path, value)) {
+      continue
+    }
+
+    const label = translateRechargeInfoKey(path)
+    lines.push(`${label}： ${String(value).trim()}`)
+  }
+
+  return lines.join('\n')
+}
+
+async function openRechargeSubmitDialog(item) {
+  const today = getTodayDateString(selectedTimezone.value)
+  const parsed = parseRechargeInfo(item.recharge_info || '')
+  let rechargeInfoText = formatRechargeInfoText(item.recharge_info || '')
+
+  if (!rechargeInfoText && item?.provider_id) {
+    try {
+      const response = await cloudBillingApi.getProvider(item.provider_id)
+      const provider = extractResponseData(response)
+      rechargeInfoText = formatRechargeInfoText(provider?.recharge_info || '')
+    } catch (error) {
+      console.error('Failed to load provider recharge info:', error)
+    }
+  }
+
+  rechargeSubmitTarget.value = item
+  rechargeSubmitForm.value = {
+    recharge_info_text: rechargeInfoText,
+    recharge_account: parsed.recharge_account || item.account_id || '',
+    recharge_customer_name: parsed.recharge_customer_name || '',
+    payment_company: parsed.payment_company || '',
+    payment_way: parsed.payment_way || '公司支付',
+    payment_type: parsed.payment_type || '仅充值',
+    remit_method: parsed.remit_method || '转账',
+    amount: '',
+    expected_date: addDaysToDateString(today, 7)
+  }
+  showRechargeSubmitDialog.value = true
+}
+
+function closeRechargeSubmitDialog() {
+  if (submittingRechargeKey.value) return
+  showRechargeSubmitDialog.value = false
+  rechargeSubmitTarget.value = null
+  rechargeSubmitForm.value = {
+    recharge_info_text: '',
+    recharge_account: '',
+    recharge_customer_name: '',
+    payment_company: '',
+    payment_way: '',
+    payment_type: '',
+    remit_method: '',
+    amount: '',
+    expected_date: ''
+  }
+}
+
+async function submitRechargeApprovalFromDialog() {
+  const item = rechargeSubmitTarget.value
+  if (!item?.provider_id) return
+  const amount = String(rechargeSubmitForm.value.amount || '').trim()
+  const expectedDate = String(
+    rechargeSubmitForm.value.expected_date || ''
+  ).trim()
+  if (!amount || !expectedDate) {
+    showWarning(t('cloudBilling.billing.rechargeApprovalRequiredFields'))
+    return
+  }
+
+  const key = rechargeAlertKey(item)
+  submittingRechargeKey.value = key
+  try {
+    const response = await cloudBillingApi.submitProviderRechargeApproval(
+      item.provider_id,
+      {
+        recharge_account: rechargeSubmitForm.value.recharge_account,
+        recharge_customer_name: rechargeSubmitForm.value.recharge_customer_name,
+        payment_company: rechargeSubmitForm.value.payment_company,
+        payment_way: rechargeSubmitForm.value.payment_way,
+        payment_type: rechargeSubmitForm.value.payment_type,
+        remit_method: rechargeSubmitForm.value.remit_method,
+        amount,
+        currency: item.recommendation_currency || selectedCurrency.value,
+        expected_date: expectedDate,
+        trigger_reason: 'operations_console_timeline'
+      }
+    )
+    const data = extractResponseData(response)
+    showSuccess(
+      data?.message || t('cloudBilling.billing.submitRechargeApprovalSuccess')
+    )
+    showRechargeSubmitDialog.value = false
+    rechargeSubmitTarget.value = null
+  } catch (err) {
+    console.error('Failed to submit recharge approval:', err)
+    showError(t('cloudBilling.billing.rechargeApprovalError'))
+  } finally {
+    submittingRechargeKey.value = ''
+  }
 }
 
 async function loadOverview() {

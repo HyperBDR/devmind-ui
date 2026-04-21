@@ -65,6 +65,22 @@ export const cloudBillingApi = {
     return response
   },
 
+  async submitProviderRechargeApproval(id, data = {}) {
+    const response = await apiClient.post(
+      `/v1/cloud-billing/providers/${id}/submit-recharge-approval/`,
+      data
+    )
+    return response
+  },
+
+  async syncProviderRechargeInfoFromFeishu(id, data = {}) {
+    const response = await apiClient.post(
+      `/v1/cloud-billing/providers/${id}/sync-recharge-info-from-feishu/`,
+      data
+    )
+    return response
+  },
+
   // Billing Data APIs
   async getBillingData(params = {}) {
     const response = await apiClient.get('/v1/cloud-billing/billing-data/', {
@@ -167,6 +183,23 @@ export const cloudBillingApi = {
   async getAlertRecord(id) {
     const response = await apiClient.get(
       `/v1/cloud-billing/alert-records/${id}/`
+    )
+    return response
+  },
+
+  async getRechargeApprovals(params = {}) {
+    const response = await apiClient.get(
+      '/v1/cloud-billing/recharge-approvals/',
+      {
+        params
+      }
+    )
+    return response
+  },
+
+  async getRechargeApproval(id) {
+    const response = await apiClient.get(
+      `/v1/cloud-billing/recharge-approvals/${id}/`
     )
     return response
   },

@@ -1234,10 +1234,7 @@
             :title="
               !canGoNextFromStep1 ? t('dataCollector.settings.verifyFirst') : ''
             "
-            @click="
-              currentStep = 2;
-              loadProjectsIfNeeded()
-            "
+            @click="goToProjectStep"
             class="w-full sm:w-auto"
           >
             {{ t('dataCollector.settings.nextStep') }}
@@ -2057,6 +2054,11 @@ async function loadProjectsIfNeeded() {
   } finally {
     projectsLoading.value = false
   }
+}
+
+function goToProjectStep() {
+  currentStep.value = 2
+  loadProjectsIfNeeded()
 }
 
 watch(currentStep, (step) => {

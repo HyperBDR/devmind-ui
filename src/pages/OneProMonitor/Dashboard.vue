@@ -225,7 +225,9 @@
               {{ stats.host?.invalid_license || 0 }}
             </p>
             <p class="mt-1 text-sm text-gray-500">
-              {{ t('hyperbdrMonitor.dashboardPage.invalidLicenseHostsSubtitle') }}
+              {{
+                t('hyperbdrMonitor.dashboardPage.invalidLicenseHostsSubtitle')
+              }}
             </p>
           </div>
         </div>

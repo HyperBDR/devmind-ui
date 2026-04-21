@@ -276,6 +276,64 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
+              for="autoSubmitRechargeApproval"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{
+                t('cloudBilling.settings.alertRule.autoSubmitRechargeApproval')
+              }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{
+                t(
+                  'cloudBilling.settings.alertRule.autoSubmitRechargeApprovalDesc'
+                )
+              }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <label
+              class="relative inline-flex items-center"
+              :class="
+                canAutoSubmitRechargeApproval
+                  ? 'cursor-pointer'
+                  : 'cursor-not-allowed opacity-60'
+              "
+            >
+              <input
+                id="autoSubmitRechargeApproval"
+                v-model="formData.auto_submit_recharge_approval"
+                type="checkbox"
+                class="sr-only peer"
+                :disabled="!canAutoSubmitRechargeApproval"
+              />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+              ></div>
+              <span class="ml-3 text-sm text-gray-700">
+                {{
+                  formData.auto_submit_recharge_approval
+                    ? t('common.enabled')
+                    : t('common.disabled')
+                }}
+              </span>
+            </label>
+            <p
+              v-if="!canAutoSubmitRechargeApproval"
+              class="text-xs text-gray-500 mt-1"
+            >
+              {{
+                t(
+                  'cloudBilling.settings.alertRule.autoSubmitRechargeApprovalHint'
+                )
+              }}
+            </p>
+          </div>
+        </div>
+
         <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
           <p class="text-xs text-blue-800">
             {{ t('cloudBilling.settings.alertRule.note') }}
@@ -356,7 +414,8 @@ const formData = ref({
   growth_threshold: null,
   growth_amount_threshold: null,
   balance_threshold: null,
-  days_remaining_threshold: null
+  days_remaining_threshold: null,
+  auto_submit_recharge_approval: false
 })
 
 const allChannels = ref([])
@@ -380,6 +439,18 @@ function normalizeThresholdValue(value) {
 const isEmailChannelSelected = computed(() =>
   (selectedChannelValue.value || '').startsWith('email:')
 )
+
+const canAutoSubmitRechargeApproval = computed(
+  () =>
+    normalizeThresholdValue(formData.value.balance_threshold) !== null ||
+    normalizeThresholdValue(formData.value.days_remaining_threshold) !== null
+)
+
+watch(canAutoSubmitRechargeApproval, (canSubmit) => {
+  if (!canSubmit) {
+    formData.value.auto_submit_recharge_approval = false
+  }
+})
 
 function normalizeChannelType(value) {
   const type = String(value || '')
@@ -616,7 +687,9 @@ watch(
         days_remaining_threshold:
           newRule.days_remaining_threshold != null
             ? String(newRule.days_remaining_threshold)
-            : null
+            : null,
+        auto_submit_recharge_approval:
+          newRule.auto_submit_recharge_approval ?? false
       }
     } else {
       formData.value = {
@@ -625,7 +698,8 @@ watch(
         growth_threshold: null,
         growth_amount_threshold: null,
         balance_threshold: null,
-        days_remaining_threshold: null
+        days_remaining_threshold: null,
+        auto_submit_recharge_approval: false
       }
     }
   },
@@ -728,7 +802,10 @@ const handleSubmit = async () => {
       days_remaining_threshold:
         daysRemainingThreshold !== null
           ? parseInt(daysRemainingThreshold, 10)
-          : null
+          : null,
+      auto_submit_recharge_approval:
+        canAutoSubmitRechargeApproval.value &&
+        formData.value.auto_submit_recharge_approval
     }
 
     const successMessage = existingRuleId

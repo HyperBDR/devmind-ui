@@ -5,6 +5,8 @@ import zhCN from '../locales/zh-CN.json'
 import adminEn from '../admin/locales/en.json'
 import adminZhCN from '../admin/locales/zh-CN.json'
 
+export const SUPPORTED_UI_LANGUAGES = ['en', 'zh-CN']
+
 const isPlainObject = (value) =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 
@@ -22,17 +24,19 @@ const deepMergeMessages = (base, extra) => {
   return output
 }
 
-// Get language from localStorage or default to 'en'
-// If stored language is 'es' (Spanish), fallback to 'en' since Spanish is no longer supported
+export const normalizeUiLanguage = (language) =>
+  SUPPORTED_UI_LANGUAGES.includes(language) ? language : 'en'
+
+// Get language from localStorage or default to 'en'.
 const getStoredLanguage = () => {
   const stored = localStorage.getItem('userLanguage')
-  if (stored === 'es') {
-    // Remove Spanish from localStorage and fallback to English
-    localStorage.setItem('userLanguage', 'en')
-    return 'en'
+  const normalized = normalizeUiLanguage(stored)
+
+  if (stored && stored !== normalized) {
+    localStorage.setItem('userLanguage', normalized)
   }
-  // Only allow 'en' or 'zh-CN', fallback to 'en' for any other value
-  return stored === 'zh-CN' || stored === 'en' ? stored : 'en'
+
+  return normalized
 }
 
 // Create Vue i18n instance

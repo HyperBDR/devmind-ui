@@ -281,7 +281,8 @@ async function triggerCollection() {
     await loadTasks()
   } catch (error) {
     showError(
-      error?.response?.data?.detail || t('hyperbdrMonitor.tasksPage.triggerError')
+      error?.response?.data?.detail ||
+        t('hyperbdrMonitor.tasksPage.triggerError')
     )
   } finally {
     collecting.value = false

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { detectTimezone, detectLanguage } from '@/utils/timezone'
-import i18n from '@/i18n'
+import i18n, { normalizeUiLanguage } from '@/i18n'
 
 export const usePreferencesStore = defineStore('preferences', {
   state: () => ({
@@ -26,9 +26,10 @@ export const usePreferencesStore = defineStore('preferences', {
     async setLanguage(language, saveToBackend = false) {
       // UI display language - only save to localStorage, not to backend Profile
       // Profile.language is for AI generation and backend logic, not UI display
-      this.language = language
-      i18n.global.locale.value = language
-      localStorage.setItem('userLanguage', language)
+      const normalizedLanguage = normalizeUiLanguage(language)
+      this.language = normalizedLanguage
+      i18n.global.locale.value = normalizedLanguage
+      localStorage.setItem('userLanguage', normalizedLanguage)
 
       // Note: saveToBackend is kept for backward compatibility but should not be used
       // UI language switching should not affect Profile.language
@@ -49,8 +50,12 @@ export const usePreferencesStore = defineStore('preferences', {
       const savedTimezone = localStorage.getItem('userTimezone')
 
       if (savedLanguage) {
-        this.language = savedLanguage
-        i18n.global.locale.value = savedLanguage
+        const normalizedLanguage = normalizeUiLanguage(savedLanguage)
+        this.language = normalizedLanguage
+        i18n.global.locale.value = normalizedLanguage
+        if (savedLanguage !== normalizedLanguage) {
+          localStorage.setItem('userLanguage', normalizedLanguage)
+        }
       }
 
       if (savedTimezone) {
@@ -76,9 +81,10 @@ export const usePreferencesStore = defineStore('preferences', {
     },
 
     reset() {
-      this.language = this.detectedLanguage
+      const normalizedLanguage = normalizeUiLanguage(this.detectedLanguage)
+      this.language = normalizedLanguage
       this.timezone = this.detectedTimezone
-      i18n.global.locale.value = this.detectedLanguage
+      i18n.global.locale.value = normalizedLanguage
       localStorage.removeItem('userLanguage')
       localStorage.removeItem('userTimezone')
     }

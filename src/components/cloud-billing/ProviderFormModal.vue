@@ -93,6 +93,29 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
           <div class="md:col-span-1">
             <label
+              for="rechargeInfo"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {{ t('cloudBilling.providers.rechargeInfo') }}
+            </label>
+            <p class="text-xs text-gray-500 mb-2 md:mb-0">
+              {{ t('cloudBilling.providers.rechargeInfoDesc') }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <textarea
+              id="rechargeInfo"
+              v-model="formData.recharge_info"
+              rows="6"
+              :placeholder="t('cloudBilling.providers.rechargeInfoPlaceholder')"
+              class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+          <div class="md:col-span-1">
+            <label
               for="providerTagInput"
               class="block text-sm font-medium text-gray-700 mb-1"
             >
@@ -1297,6 +1320,64 @@
             </div>
           </div>
 
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label
+                for="providerAutoSubmitRechargeApproval"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {{
+                  t('cloudBilling.settings.alertRule.autoSubmitRechargeApproval')
+                }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{
+                  t(
+                    'cloudBilling.settings.alertRule.autoSubmitRechargeApprovalDesc'
+                  )
+                }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <label
+                class="relative inline-flex items-center"
+                :class="
+                  canAutoSubmitRechargeApproval
+                    ? 'cursor-pointer'
+                    : 'cursor-not-allowed opacity-60'
+                "
+              >
+                <input
+                  id="providerAutoSubmitRechargeApproval"
+                  v-model="alertRuleData.auto_submit_recharge_approval"
+                  type="checkbox"
+                  class="sr-only peer"
+                  :disabled="!canAutoSubmitRechargeApproval"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+                ></div>
+                <span class="ml-3 text-sm text-gray-700">
+                  {{
+                    alertRuleData.auto_submit_recharge_approval
+                      ? t('common.enabled')
+                      : t('common.disabled')
+                  }}
+                </span>
+              </label>
+              <p
+                v-if="!canAutoSubmitRechargeApproval"
+                class="text-xs text-gray-500 mt-1"
+              >
+                {{
+                  t(
+                    'cloudBilling.settings.alertRule.autoSubmitRechargeApprovalHint'
+                  )
+                }}
+              </p>
+            </div>
+          </div>
+
           <div class="rounded-md bg-blue-50 p-3 border border-blue-200">
             <p class="text-xs text-blue-800">
               {{ t('cloudBilling.settings.alertRule.note') }}
@@ -1459,6 +1540,7 @@ const formData = reactive({
   provider_type: 'aws',
   display_name: '',
   notes: '',
+  recharge_info: '',
   tags: [],
   is_active: true
 })
@@ -1521,7 +1603,8 @@ const alertRuleData = reactive({
   growth_threshold: '',
   growth_amount_threshold: '',
   balance_threshold: '',
-  days_remaining_threshold: ''
+  days_remaining_threshold: '',
+  auto_submit_recharge_approval: false
 })
 
 const hasThresholdValue = (value) =>
@@ -1529,6 +1612,18 @@ const hasThresholdValue = (value) =>
 
 const getThresholdFormValue = (value) =>
   value !== null && value !== undefined ? String(value) : ''
+
+const canAutoSubmitRechargeApproval = computed(
+  () =>
+    hasThresholdValue(alertRuleData.balance_threshold) ||
+    hasThresholdValue(alertRuleData.days_remaining_threshold)
+)
+
+watch(canAutoSubmitRechargeApproval, (canSubmit) => {
+  if (!canSubmit) {
+    alertRuleData.auto_submit_recharge_approval = false
+  }
+})
 
 const existingAlertRuleId = ref(null)
 const allChannels = ref([])
@@ -1706,6 +1801,7 @@ watch(
         newProvider.provider_type ||
         'aws'
       formData.notes = newProvider.notes || ''
+      formData.recharge_info = newProvider.recharge_info || ''
       formData.tags = Array.isArray(newProvider.tags)
         ? [...newProvider.tags]
         : []
@@ -1825,6 +1921,8 @@ watch(
             alertRuleData.days_remaining_threshold = getThresholdFormValue(
               rule.days_remaining_threshold
             )
+            alertRuleData.auto_submit_recharge_approval =
+              rule.auto_submit_recharge_approval ?? false
           } else {
             existingAlertRuleId.value = null
             alertRuleData.is_active = false
@@ -1833,6 +1931,7 @@ watch(
             alertRuleData.growth_amount_threshold = ''
             alertRuleData.balance_threshold = ''
             alertRuleData.days_remaining_threshold = ''
+            alertRuleData.auto_submit_recharge_approval = false
           }
         } catch (error) {
           console.error('Failed to load alert rule:', error)
@@ -1843,6 +1942,7 @@ watch(
           alertRuleData.growth_amount_threshold = ''
           alertRuleData.balance_threshold = ''
           alertRuleData.days_remaining_threshold = ''
+          alertRuleData.auto_submit_recharge_approval = false
         }
       }
     } else {
@@ -1862,6 +1962,7 @@ watch(
         provider_type: 'aws',
         display_name: typeLabels['aws'] || 'aws',
         notes: '',
+        recharge_info: '',
         tags: [],
         is_active: true
       })
@@ -1902,6 +2003,7 @@ watch(
       alertRuleData.growth_amount_threshold = ''
       alertRuleData.balance_threshold = ''
       alertRuleData.days_remaining_threshold = ''
+      alertRuleData.auto_submit_recharge_approval = false
       selectedChannelValue.value = ''
       pendingChannelUuid.value = ''
       emailToRecipients.value = ['', '', '']
@@ -2351,6 +2453,9 @@ const handleSubmit = async () => {
     if (formData.notes && formData.notes.trim()) {
       data.notes = formData.notes.trim()
     }
+    if (formData.recharge_info && formData.recharge_info.trim()) {
+      data.recharge_info = formData.recharge_info.trim()
+    }
     data.tags = [...formData.tags]
     requestPayload = { ...data }
 
@@ -2397,7 +2502,10 @@ const handleSubmit = async () => {
             alertRuleData.days_remaining_threshold
           )
             ? parseInt(alertRuleData.days_remaining_threshold, 10)
-            : null
+            : null,
+          auto_submit_recharge_approval:
+            canAutoSubmitRechargeApproval.value &&
+            alertRuleData.auto_submit_recharge_approval
         }
 
         if (existingAlertRuleId.value) {
@@ -2417,7 +2525,8 @@ const handleSubmit = async () => {
           growth_threshold: null,
           growth_amount_threshold: null,
           balance_threshold: null,
-          days_remaining_threshold: null
+          days_remaining_threshold: null,
+          auto_submit_recharge_approval: false
         })
       }
     }
